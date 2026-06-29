@@ -142,7 +142,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.1, duration: 0.6 }}
-              className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-white/80 px-4 py-2 text-xs font-semibold text-ink shadow-xl shadow-violet-500/20 backdrop-blur-md"
+              className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-base-elevated/90 px-4 py-2 text-xs font-semibold text-ink shadow-xl shadow-black/40 backdrop-blur-md"
             >
               <span className="h-2 w-2 rounded-full bg-aurora-emerald animate-pulse" />
               Open to opportunities
@@ -153,7 +153,7 @@ export default function Hero() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1.25, duration: 0.6 }}
-              className="absolute -left-3 top-6 hidden rounded-2xl bg-white/80 px-3 py-2 text-left shadow-lg shadow-cyan-500/20 backdrop-blur-md sm:block"
+              className="absolute -left-3 top-6 hidden rounded-2xl border border-white/10 bg-base-elevated/90 px-3 py-2 text-left shadow-lg shadow-black/40 backdrop-blur-md sm:block"
             >
               <div className="font-display text-sm font-extrabold text-gradient">
                 {personal.firstName} {personal.lastName}

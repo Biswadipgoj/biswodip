@@ -9,7 +9,52 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: '#0b1020',
+        // Strong heading/foreground ink — flipped to near-white for the dark theme.
+        ink: '#f6f8fc',
+
+        // ---- Structured design-system palette ----
+        // Background hierarchy: base (page) → elevated → surface → raised.
+        base: {
+          DEFAULT: '#0a0b10',
+          elevated: '#10131a',
+          surface: '#171a22',
+          raised: '#1e222d',
+        },
+        // Brand: primary (indigo), secondary (cyan), accent (pink).
+        brand: {
+          primary: '#818cf8',
+          'primary-strong': '#6366f1',
+          secondary: '#22d3ee',
+          accent: '#f472b6',
+        },
+        // Neutral scale — dark-tuned (higher = lighter), AA contrast on base.
+        neutral: {
+          50: '#0a0c12',
+          100: '#11141c',
+          200: '#1b1f29',
+          300: '#2a2f3b',
+          400: '#8a92a4',
+          500: '#a7afbe',
+          600: '#c5cbd6',
+          700: '#dfe3ea',
+          800: '#edf0f4',
+          900: '#f7f9fb',
+        },
+        // Re-map the built-in `slate` scale to the same dark-tuned ramp so the
+        // existing `text-slate-*` / `bg-slate-*` utilities flip automatically:
+        // 400–700 read as light text, 100–300 as dark surfaces/borders.
+        slate: {
+          50: '#0a0c12',
+          100: '#11141c',
+          200: '#1b1f29',
+          300: '#2a2f3b',
+          400: '#8a92a4',
+          500: '#a7afbe',
+          600: '#c5cbd6',
+          700: '#dfe3ea',
+          800: '#edf0f4',
+          900: '#f7f9fb',
+        },
         aurora: {
           blue: '#3b82f6',
           cyan: '#22d3ee',
