@@ -38,7 +38,7 @@ export default function Journey() {
               >
                 {/* node */}
                 <span
-                  className={`absolute left-4 top-2 z-10 h-4 w-4 -translate-x-1/2 rounded-full ring-4 ring-white md:left-auto ${
+                  className={`absolute left-4 top-2 z-10 h-4 w-4 -translate-x-1/2 rounded-full ring-4 ring-base md:left-auto ${
                     left ? 'md:-right-2 md:translate-x-1/2' : 'md:-left-2 md:-translate-x-1/2'
                   }`}
                   style={{ background: step.accent, boxShadow: `0 0 20px ${step.accent}` }}

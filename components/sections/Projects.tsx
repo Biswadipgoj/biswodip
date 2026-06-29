@@ -12,11 +12,11 @@ function LivePreview({ project }: { project: Project }) {
   return (
     <a
       href={project.url}
-      className="card-glow group/preview relative block aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/70 bg-white shadow-lg"
+      className="card-glow group/preview relative block aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/10 bg-base-surface shadow-lg"
       aria-label={`Open ${project.name} live site`}
     >
       {/* browser chrome */}
-      <div className="absolute inset-x-0 top-0 z-20 flex h-8 items-center gap-1.5 border-b border-slate-200/70 bg-white/90 px-3 backdrop-blur">
+      <div className="absolute inset-x-0 top-0 z-20 flex h-8 items-center gap-1.5 border-b border-white/10 bg-base-elevated/90 px-3 backdrop-blur">
         <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
@@ -48,7 +48,7 @@ function LivePreview({ project }: { project: Project }) {
 
       {/* hover veil + open cue */}
       <div className="absolute inset-0 top-8 z-20 flex items-end justify-center bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover/preview:opacity-100">
-        <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-4 py-2 text-sm font-semibold text-ink shadow-lg">
+        <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-base-elevated/95 px-4 py-2 text-sm font-semibold text-white shadow-lg">
           Open live site
           <span aria-hidden>↗</span>
         </span>

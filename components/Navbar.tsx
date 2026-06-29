@@ -122,7 +122,7 @@ export default function Navbar() {
               <button
                 key={n.id}
                 onClick={() => go(n.id)}
-                className="block w-full rounded-2xl px-4 py-3 text-left text-base font-medium text-slate-700 hover:bg-white/60"
+                className="block w-full rounded-2xl px-4 py-3 text-left text-base font-medium text-slate-700 hover:bg-white/5"
               >
                 {n.label}
               </button>
