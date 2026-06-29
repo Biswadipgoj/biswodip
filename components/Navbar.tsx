@@ -94,10 +94,10 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => go('contact')}
-            className="hidden rounded-full px-4 py-2 text-sm font-semibold text-white sm:block"
-            style={{ background: 'linear-gradient(110deg,#3b82f6,#8b5cf6)' }}
+            className="hidden rounded-full px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/30 sm:block"
+            style={{ background: 'linear-gradient(110deg,#6366f1,#8b5cf6,#ec4899)' }}
           >
-            Hire me
+            Get in touch
           </button>
           <button
             onClick={() => setOpen((o) => !o)}

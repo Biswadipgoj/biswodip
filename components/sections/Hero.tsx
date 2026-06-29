@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { personal } from '@/lib/data';
 import MagneticButton from '@/components/ui/MagneticButton';
@@ -27,13 +28,14 @@ export default function Hero() {
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
-            'radial-gradient(900px 500px at 18% 50%, rgba(255,255,255,0.62), transparent 70%)',
+            'radial-gradient(900px 500px at 18% 50%, rgba(255,255,255,0.55), transparent 70%)',
         }}
         aria-hidden
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6">
-        <div className="max-w-3xl">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-10 px-6 pt-28 pb-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pt-0 lg:pb-0">
+        {/* ---- text column ---- */}
+        <div className="max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -44,7 +46,7 @@ export default function Hero() {
             {personal.role} · {personal.aspiration}
           </motion.div>
 
-          <h1 className="font-display text-[clamp(2.6rem,8vw,6rem)] font-extrabold leading-[0.98] tracking-tight">
+          <h1 className="font-display text-[clamp(2.4rem,8vw,5.6rem)] font-extrabold leading-[0.98] tracking-tight">
             {headlineWords.map((word, i) => (
               <motion.span
                 key={word + i}
@@ -64,7 +66,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.7 }}
-            className="mt-6 max-w-xl text-lg text-slate-600"
+            className="mt-6 max-w-xl text-base text-slate-600 sm:text-lg"
           >
             {personal.intro}
           </motion.p>
@@ -95,6 +97,61 @@ export default function Hero() {
             <span>🎓 {personal.education}</span>
           </motion.div>
         </div>
+
+        {/* ---- photo column ---- */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, y: 24 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mx-auto w-full max-w-[20rem] sm:max-w-sm lg:max-w-md"
+        >
+          <div className="photo-frame group relative aspect-[4/5] w-full">
+            {/* spinning vibrant ring */}
+            <span className="photo-ring" aria-hidden />
+            {/* soft color glow */}
+            <span className="photo-glow" aria-hidden />
+
+            {/* portrait */}
+            <div className="photo-inner relative h-full w-full overflow-hidden rounded-[1.7rem]">
+              <Image
+                src="/biswodip.png"
+                alt={`${personal.name} — ${personal.role}`}
+                fill
+                priority
+                sizes="(max-width: 1024px) 80vw, 420px"
+                className="object-cover object-top transition-transform duration-700 will-change-transform group-hover:scale-[1.04]"
+              />
+              {/* colour wash so the white studio background reads as vibrant, not flat */}
+              <span className="photo-wash" aria-hidden />
+            </div>
+
+            {/* floating status badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1, duration: 0.6 }}
+              className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-white/80 px-4 py-2 text-xs font-semibold text-ink shadow-xl shadow-violet-500/20 backdrop-blur-md"
+            >
+              <span className="h-2 w-2 rounded-full bg-aurora-emerald animate-pulse" />
+              Open to opportunities
+            </motion.div>
+
+            {/* floating name chip */}
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.25, duration: 0.6 }}
+              className="absolute -left-3 top-6 hidden rounded-2xl bg-white/80 px-3 py-2 text-left shadow-lg shadow-cyan-500/20 backdrop-blur-md sm:block"
+            >
+              <div className="font-display text-sm font-extrabold text-gradient">
+                {personal.firstName} {personal.lastName}
+              </div>
+              <div className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-slate-500">
+                B.Tech · CSE
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
 
       {/* scroll cue */}
@@ -103,7 +160,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4 }}
-        className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-xs font-medium uppercase tracking-[0.25em] text-slate-500"
+        className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-xs font-medium uppercase tracking-[0.25em] text-slate-500 sm:flex"
         aria-label="Scroll to about section"
       >
         Scroll

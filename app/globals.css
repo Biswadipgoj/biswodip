@@ -110,6 +110,77 @@ html.lenis body {
   }
 }
 
+/* ---------------------------------------------------------------- */
+/* Eye-catching portrait frame — turns the plain white studio        */
+/* background into a vibrant, animated, color-rich centerpiece.       */
+/* ---------------------------------------------------------------- */
+.photo-frame {
+  border-radius: 2rem;
+}
+
+/* spinning multi-colour conic ring */
+.photo-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 2rem;
+  padding: 3px;
+  background: conic-gradient(
+    from 0deg,
+    #22d3ee,
+    #3b82f6,
+    #8b5cf6,
+    #ec4899,
+    #fbbf24,
+    #34d399,
+    #22d3ee
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ring-spin 9s linear infinite;
+  z-index: 1;
+}
+
+/* soft glow bleeding out from behind the portrait */
+.photo-glow {
+  position: absolute;
+  inset: -22%;
+  border-radius: 50%;
+  z-index: -1;
+  filter: blur(46px);
+  opacity: 0.7;
+  background:
+    radial-gradient(40% 40% at 30% 25%, rgba(34, 211, 238, 0.65), transparent 70%),
+    radial-gradient(40% 40% at 75% 30%, rgba(139, 92, 246, 0.6), transparent 70%),
+    radial-gradient(45% 45% at 50% 85%, rgba(236, 72, 153, 0.55), transparent 70%);
+  animation: pulse-glow 6s ease-in-out infinite;
+}
+
+.photo-inner {
+  box-shadow:
+    0 24px 60px -18px rgba(99, 102, 241, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* tints the flat white background with colour without washing out the face */
+.photo-wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  background:
+    radial-gradient(80% 55% at 50% 38%, transparent 38%, rgba(99, 102, 241, 0.28) 100%),
+    linear-gradient(180deg, rgba(34, 211, 238, 0.18), transparent 45%, rgba(236, 72, 153, 0.3));
+}
+
+@keyframes ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .grain::after {
   content: '';
   position: fixed;
@@ -128,11 +199,30 @@ html.lenis body {
   z-index: -2;
   overflow: hidden;
   background:
-    radial-gradient(1200px 700px at 12% 8%, rgba(34, 211, 238, 0.30), transparent 60%),
-    radial-gradient(1000px 700px at 88% 12%, rgba(139, 92, 246, 0.28), transparent 60%),
-    radial-gradient(1100px 800px at 50% 100%, rgba(52, 211, 153, 0.22), transparent 60%),
-    radial-gradient(900px 600px at 80% 80%, rgba(244, 114, 182, 0.22), transparent 60%),
-    linear-gradient(180deg, #eef4ff 0%, #f4f0ff 45%, #eafaf6 100%);
+    radial-gradient(1200px 700px at 12% 8%, rgba(34, 211, 238, 0.42), transparent 60%),
+    radial-gradient(1000px 700px at 88% 12%, rgba(139, 92, 246, 0.40), transparent 60%),
+    radial-gradient(900px 600px at 50% 38%, rgba(99, 102, 241, 0.26), transparent 60%),
+    radial-gradient(1100px 800px at 50% 100%, rgba(52, 211, 153, 0.32), transparent 60%),
+    radial-gradient(900px 600px at 80% 80%, rgba(236, 72, 153, 0.34), transparent 60%),
+    linear-gradient(180deg, #e8f1ff 0%, #f0ecff 45%, #e6fbf4 100%);
+  animation: aurora-drift 22s ease-in-out infinite alternate;
+}
+
+@keyframes aurora-drift {
+  0% {
+    filter: hue-rotate(0deg) saturate(1);
+    background-position: 0% 0%;
+  }
+  100% {
+    filter: hue-rotate(18deg) saturate(1.15);
+    background-position: 100% 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-bg {
+    animation: none;
+  }
 }
 
 .aurora-blob {
