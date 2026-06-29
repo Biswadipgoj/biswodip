@@ -6,6 +6,7 @@ import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
 import Skills from '@/components/sections/Skills';
 import Projects from '@/components/sections/Projects';
+import Impact from '@/components/sections/Impact';
 import Journey from '@/components/sections/Journey';
 import GitHubSection from '@/components/sections/GitHubSection';
 import Contact from '@/components/sections/Contact';
@@ -23,6 +24,7 @@ export default function Home() {
           <About />
           <Skills />
           <Projects />
+          <Impact />
           <Journey />
           <GitHubSection />
           <Contact />

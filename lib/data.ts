@@ -34,10 +34,40 @@ export const nav = [
   { id: 'about', label: 'About' },
   { id: 'skills', label: 'Skills' },
   { id: 'projects', label: 'Work' },
+  { id: 'impact', label: 'Impact' },
   { id: 'journey', label: 'Journey' },
   { id: 'github', label: 'GitHub' },
   { id: 'contact', label: 'Contact' },
 ] as const;
+
+/** SCENE 5 — Impact / value highlights shown before the final CTA. */
+export type Impact = {
+  metric: string;
+  title: string;
+  body: string;
+  accent: string;
+};
+
+export const impacts: Impact[] = [
+  {
+    metric: 'End to end',
+    title: 'Idea → shipped',
+    body: 'I take products the whole distance — research, design, build and deploy — so nothing stalls in a half-finished prototype.',
+    accent: '#22d3ee',
+  },
+  {
+    metric: '15+ live',
+    title: 'Built for production',
+    body: 'Clean, typed, maintainable engineering that survives real users, real traffic and real change requests.',
+    accent: '#8b5cf6',
+  },
+  {
+    metric: '100% ship',
+    title: 'Outcome-first',
+    body: 'Every interface choice traces back to a business goal. I bridge the gap between the code and the result it has to drive.',
+    accent: '#f472b6',
+  },
+];
 
 export type Skill = {
   name: string;
