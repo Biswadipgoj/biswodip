@@ -1,16 +1,31 @@
 'use client';
 
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float, Icosahedron, TorusKnot, MeshTransmissionMaterial } from '@react-three/drei';
-import { EffectComposer, Bloom, ChromaticAberration } from '@react-three/postprocessing';
-import { BlendFunction } from 'postprocessing';
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 
 /* ------------------------------------------------------------------ */
-/* GPU-ish particle field that drifts and reacts to the pointer.       */
+/* Device tier — keep the experience buttery on phones & laptops alike */
+/* by scaling particle count, pixel ratio and post-processing.         */
 /* ------------------------------------------------------------------ */
-function Particles({ count = 1400 }: { count?: number }) {
+type Tier = 'low' | 'high';
+
+function detectTier(): Tier {
+  if (typeof window === 'undefined') return 'high';
+  const coarse = window.matchMedia?.('(pointer: coarse)').matches;
+  const narrow = window.innerWidth < 768;
+  const fewCores = (navigator.hardwareConcurrency ?? 8) <= 4;
+  const lowMem = (navigator as unknown as { deviceMemory?: number }).deviceMemory;
+  if (coarse || narrow || fewCores || (lowMem !== undefined && lowMem <= 4)) return 'low';
+  return 'high';
+}
+
+/* ------------------------------------------------------------------ */
+/* Drifting, pointer-reactive particle field.                          */
+/* ------------------------------------------------------------------ */
+function Particles({ count }: { count: number }) {
   const ref = useRef<THREE.Points>(null);
 
   const { positions, colors } = useMemo(() => {
@@ -20,7 +35,7 @@ function Particles({ count = 1400 }: { count?: number }) {
       new THREE.Color('#22d3ee'),
       new THREE.Color('#3b82f6'),
       new THREE.Color('#8b5cf6'),
-      new THREE.Color('#f472b6'),
+      new THREE.Color('#ec4899'),
       new THREE.Color('#34d399'),
       new THREE.Color('#fbbf24'),
     ];
@@ -41,8 +56,10 @@ function Particles({ count = 1400 }: { count?: number }) {
 
   useFrame((state, delta) => {
     if (!ref.current) return;
-    ref.current.rotation.y += delta * 0.04;
-    ref.current.rotation.x += delta * 0.012;
+    // clamp delta so a dropped frame can't cause a jarring jump
+    const d = Math.min(delta, 0.05);
+    ref.current.rotation.y += d * 0.04;
+    ref.current.rotation.x += d * 0.012;
     const { x, y } = state.pointer;
     ref.current.position.x = THREE.MathUtils.lerp(ref.current.position.x, x * 0.6, 0.04);
     ref.current.position.y = THREE.MathUtils.lerp(ref.current.position.y, y * 0.4, 0.04);
@@ -68,62 +85,67 @@ function Particles({ count = 1400 }: { count?: number }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Hero centerpiece: a glassy transmission crystal.                    */
+/* Hero centerpiece. High tier gets a real glass transmission crystal; */
+/* low tier gets a vibrant, far cheaper iridescent solid.              */
 /* ------------------------------------------------------------------ */
-function Crystal() {
+function Crystal({ tier }: { tier: Tier }) {
   const ref = useRef<THREE.Mesh>(null);
   useFrame((state, delta) => {
     if (!ref.current) return;
-    ref.current.rotation.y += delta * 0.25;
-    ref.current.rotation.x = THREE.MathUtils.lerp(
-      ref.current.rotation.x,
-      state.pointer.y * 0.4,
-      0.05,
-    );
-    ref.current.rotation.z = THREE.MathUtils.lerp(
-      ref.current.rotation.z,
-      state.pointer.x * 0.4,
-      0.05,
-    );
+    const d = Math.min(delta, 0.05);
+    ref.current.rotation.y += d * 0.25;
+    ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, state.pointer.y * 0.4, 0.05);
+    ref.current.rotation.z = THREE.MathUtils.lerp(ref.current.rotation.z, state.pointer.x * 0.4, 0.05);
   });
 
   return (
     <Float speed={1.4} rotationIntensity={0.6} floatIntensity={1.1}>
-      <Icosahedron ref={ref} args={[1.55, 0]} position={[0, 0, 0]}>
-        <MeshTransmissionMaterial
-          thickness={0.9}
-          roughness={0.06}
-          transmission={1}
-          ior={1.4}
-          chromaticAberration={0.6}
-          anisotropy={0.4}
-          distortion={0.4}
-          distortionScale={0.4}
-          temporalDistortion={0.2}
-          color="#cfe6ff"
-          background={new THREE.Color('#eaf2ff')}
-        />
+      <Icosahedron ref={ref} args={[1.55, tier === 'low' ? 0 : 0]} position={[0, 0, 0]}>
+        {tier === 'high' ? (
+          <MeshTransmissionMaterial
+            thickness={0.9}
+            roughness={0.06}
+            transmission={1}
+            ior={1.4}
+            chromaticAberration={0.6}
+            anisotropy={0.4}
+            distortion={0.4}
+            distortionScale={0.4}
+            temporalDistortion={0.2}
+            color="#cfe6ff"
+            background={new THREE.Color('#eaf2ff')}
+          />
+        ) : (
+          <meshStandardMaterial
+            color="#7dd3fc"
+            metalness={0.65}
+            roughness={0.18}
+            emissive="#6366f1"
+            emissiveIntensity={0.35}
+            flatShading
+          />
+        )}
       </Icosahedron>
     </Float>
   );
 }
 
-/* Metallic accent rings + ribbon knot orbiting the crystal. */
-function Accents() {
+/* Metallic accents orbiting the crystal. */
+function Accents({ tier }: { tier: Tier }) {
   const group = useRef<THREE.Group>(null);
-  useFrame((state, delta) => {
-    if (group.current) group.current.rotation.y += delta * 0.1;
+  useFrame((_, delta) => {
+    if (group.current) group.current.rotation.y += Math.min(delta, 0.05) * 0.1;
   });
   return (
     <group ref={group}>
       <Float speed={2} rotationIntensity={1.4} floatIntensity={1.4}>
-        <TorusKnot args={[0.5, 0.16, 160, 24]} position={[3.1, 1.2, -1]}>
+        <TorusKnot args={[0.5, 0.16, tier === 'low' ? 90 : 160, tier === 'low' ? 16 : 24]} position={[3.1, 1.2, -1]}>
           <meshStandardMaterial color="#8b5cf6" metalness={0.9} roughness={0.18} emissive="#5b21b6" emissiveIntensity={0.35} />
         </TorusKnot>
       </Float>
       <Float speed={1.6} rotationIntensity={1} floatIntensity={1.2}>
         <mesh position={[-3.3, -1, -0.5]} rotation={[Math.PI / 3, 0.4, 0]}>
-          <torusGeometry args={[0.7, 0.07, 24, 80]} />
+          <torusGeometry args={[0.7, 0.07, 18, tier === 'low' ? 48 : 80]} />
           <meshStandardMaterial color="#22d3ee" metalness={0.8} roughness={0.2} emissive="#0891b2" emissiveIntensity={0.4} />
         </mesh>
       </Float>
@@ -162,7 +184,7 @@ function ReactiveLights() {
     <>
       <ambientLight intensity={0.6} />
       <pointLight ref={a} position={[5, 4, 4]} intensity={120} color="#22d3ee" distance={30} />
-      <pointLight ref={b} position={[-5, -3, 3]} intensity={110} color="#f472b6" distance={30} />
+      <pointLight ref={b} position={[-5, -3, 3]} intensity={110} color="#ec4899" distance={30} />
       <pointLight position={[0, 5, -4]} intensity={70} color="#8b5cf6" distance={30} />
       <directionalLight position={[3, 6, 5]} intensity={1.1} color="#ffffff" />
     </>
@@ -182,27 +204,69 @@ function ScrollCamera() {
   return null;
 }
 
-export default function HeroScene() {
+/* A lightweight, fully static fallback (reduced motion / no WebGL). */
+function StaticFallback() {
   return (
-    <Canvas
-      dpr={[1, 1.8]}
-      camera={{ position: [0, 0, 7], fov: 45 }}
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-    >
-      <ReactiveLights />
-      <Crystal />
-      <Accents />
-      <Particles />
-      <ScrollCamera />
-      <EffectComposer multisampling={4}>
-        <Bloom mipmapBlur intensity={0.9} luminanceThreshold={0.15} luminanceSmoothing={0.5} />
-        <ChromaticAberration
-          blendFunction={BlendFunction.NORMAL}
-          offset={new THREE.Vector2(0.0006, 0.0009)}
-          radialModulation={false}
-          modulationOffset={0}
-        />
-      </EffectComposer>
-    </Canvas>
+    <div
+      className="absolute inset-0"
+      style={{
+        background:
+          'radial-gradient(60% 60% at 30% 35%, rgba(34,211,238,0.5), transparent 70%),' +
+          'radial-gradient(55% 55% at 72% 40%, rgba(139,92,246,0.5), transparent 70%),' +
+          'radial-gradient(60% 60% at 50% 85%, rgba(236,72,153,0.45), transparent 70%)',
+      }}
+      aria-hidden
+    />
+  );
+}
+
+export default function HeroScene() {
+  const [mounted, setMounted] = useState(false);
+  const [tier, setTier] = useState<Tier>('high');
+  const [reduced, setReduced] = useState(false);
+  const [active, setActive] = useState(true);
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+    setTier(detectTier());
+    setReduced(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false);
+  }, []);
+
+  // Pause rendering entirely once the hero scrolls off-screen — saves the
+  // GPU/CPU (and battery) on every device while you read the rest of the page.
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(([e]) => setActive(e.isIntersecting), { threshold: 0.01 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [mounted]);
+
+  if (!mounted) return <div className="absolute inset-0 animate-pulse-glow" aria-hidden />;
+  if (reduced) return <StaticFallback />;
+
+  const particleCount = tier === 'low' ? 420 : 1100;
+
+  return (
+    <div ref={wrapRef} className="absolute inset-0">
+      <Canvas
+        dpr={tier === 'low' ? [1, 1.3] : [1, 1.7]}
+        camera={{ position: [0, 0, 7], fov: 45 }}
+        frameloop={active ? 'always' : 'never'}
+        gl={{ antialias: tier === 'high', alpha: true, powerPreference: 'high-performance' }}
+      >
+        <ReactiveLights />
+        <Crystal tier={tier} />
+        <Accents tier={tier} />
+        <Particles count={particleCount} />
+        <ScrollCamera />
+        {tier === 'high' && (
+          <EffectComposer multisampling={2}>
+            <Bloom mipmapBlur intensity={0.8} luminanceThreshold={0.18} luminanceSmoothing={0.5} />
+          </EffectComposer>
+        )}
+      </Canvas>
+    </div>
   );
 }

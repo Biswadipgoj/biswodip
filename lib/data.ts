@@ -12,7 +12,7 @@ export const personal = {
   lastName: 'Goj',
   email: 'biswadipgoj@gmail.com',
   location: 'Uluberia, West Bengal, India',
-  education: 'B.Tech, Computer Science & Engineering (2024)',
+  education: 'B.Tech CSE (2021–2024) · Diploma in CSE (2018–2021)',
   role: 'Independent Software Developer',
   aspiration: 'Aspiring Business Analyst',
   tagline: 'I design, build, deploy & deliver real software.',
@@ -134,15 +134,15 @@ export type JourneyStep = {
 
 export const journey: JourneyStep[] = [
   {
-    year: '2020',
-    title: 'The first lines of code',
-    body: 'Started B.Tech in Computer Science & Engineering — and fell for the moment an idea becomes something you can actually click.',
+    year: '2018 – 2021',
+    title: 'Diploma in Computer Science & Engineering',
+    body: 'Where it began. Three years of fundamentals — programming, systems and the thrill of watching an idea turn into something you can actually click.',
     accent: '#22d3ee',
   },
   {
-    year: '2022',
-    title: 'Shipping for real people',
-    body: 'Moved past tutorials into delivering working software — learning the discipline of deploying, maintaining and iterating on live products.',
+    year: '2021 – 2024',
+    title: 'B.Tech in Computer Science & Engineering',
+    body: 'Levelled up from diploma to B.Tech, going deeper into engineering while shipping working software for real people — deploying, maintaining and iterating on live products.',
     accent: '#8b5cf6',
   },
   {
