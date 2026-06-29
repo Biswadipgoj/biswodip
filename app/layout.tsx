@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Sora, Inter } from 'next/font/google';
 import './globals.css';
 import SmoothScroll from '@/components/SmoothScroll';
+import ScrollBackdrop from '@/components/ScrollBackdrop';
 import { personal } from '@/lib/data';
 
 const display = Sora({
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="grain antialiased">
         <div className="aurora-bg" aria-hidden />
+        <ScrollBackdrop />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

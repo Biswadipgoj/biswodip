@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { skillGroups } from '@/lib/data';
 import SectionHeading from '@/components/ui/SectionHeading';
+import { RevealGroup, revealItem } from '@/components/ui/Reveal';
 
 const marqueeItems = [
   'Next.js',
@@ -27,15 +28,14 @@ export default function Skills() {
           A toolkit tuned for building fast, looking premium and holding up in production.
         </SectionHeading>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-3">
-          {skillGroups.map((group, gi) => (
+        <RevealGroup stagger={0.12} className="mt-16 grid gap-6 md:grid-cols-3">
+          {skillGroups.map((group) => (
             <motion.div
               key={group.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.6, delay: gi * 0.1 }}
-              className="glass rounded-3xl p-7"
+              variants={revealItem}
+              whileHover={{ y: -8, scale: 1.025 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+              className="card-glow glass rounded-3xl p-7"
             >
               <div
                 className={`mb-6 inline-block rounded-full bg-gradient-to-r ${group.tint} bg-clip-text px-1 font-display text-lg font-bold text-transparent`}
@@ -67,7 +67,7 @@ export default function Skills() {
               </div>
             </motion.div>
           ))}
-        </div>
+        </RevealGroup>
       </div>
 
       {/* tech marquee ribbon */}

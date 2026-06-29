@@ -1,8 +1,9 @@
 'use client';
 
+import { useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { personal } from '@/lib/data';
 import MagneticButton from '@/components/ui/MagneticButton';
 import { scrollToSection } from '@/components/SmoothScroll';
@@ -16,8 +17,17 @@ const HeroScene = dynamic(() => import('@/components/scene/HeroScene'), {
 const headlineWords = ['I', 'build', 'digital', 'products', 'that', 'ship.'];
 
 export default function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  // Apple-style: as you scroll out of the hero it zooms out, lifts and fades.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.86]);
+  const opacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 90]);
+  const blurPx = useTransform(scrollYProgress, [0, 1], [0, 6]);
+  const filter = useTransform(blurPx, (b) => `blur(${b}px)`);
+
   return (
-    <section id="hero" className="relative flex min-h-[100svh] items-center overflow-hidden">
+    <section ref={ref} id="hero" className="relative flex min-h-[100svh] items-center overflow-hidden">
       {/* 3D layer */}
       <div className="absolute inset-0 z-0">
         <HeroScene />
@@ -33,7 +43,9 @@ export default function Hero() {
         aria-hidden
       />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-10 px-6 pt-28 pb-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pt-0 lg:pb-0">
+      <motion.div
+        style={{ scale, opacity, y, filter }}
+        className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-10 px-6 pt-28 pb-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pt-0 lg:pb-0">
         {/* ---- text column ---- */}
         <div className="max-w-2xl">
           <motion.div
@@ -152,7 +164,7 @@ export default function Hero() {
             </motion.div>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
 
       {/* scroll cue */}
       <motion.button

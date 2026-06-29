@@ -12,7 +12,7 @@ function LivePreview({ project }: { project: Project }) {
   return (
     <a
       href={project.url}
-      className="group/preview relative block aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/70 bg-white shadow-lg"
+      className="card-glow group/preview relative block aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/70 bg-white shadow-lg"
       aria-label={`Open ${project.name} live site`}
     >
       {/* browser chrome */}
@@ -86,6 +86,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         onMouseMove={onMove}
         onMouseLeave={() => setTilt({ x: 0, y: 0 })}
         animate={{ rotateX: tilt.x, rotateY: tilt.y }}
+        whileHover={{ scale: 1.015 }}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         style={{ transformStyle: 'preserve-3d', perspective: 1200 }}
         className={`relative ${reversed ? 'lg:order-2' : ''}`}

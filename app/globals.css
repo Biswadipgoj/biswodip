@@ -108,6 +108,47 @@ html.lenis body {
     border: 1px solid rgba(255, 255, 255, 0.8);
     color: #6d28d9;
   }
+
+  /* Premium card: soft elevation that blooms into a colour glow on hover. */
+  .card-glow {
+    position: relative;
+    transition: box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+  .card-glow::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, #6366f1, #22d3ee, #ec4899);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+  .card-glow:hover {
+    box-shadow:
+      0 28px 60px -22px rgba(99, 102, 241, 0.55),
+      0 0 40px -12px rgba(236, 72, 153, 0.4);
+  }
+  .card-glow:hover::before {
+    opacity: 0.9;
+  }
+}
+
+/* Full-bleed cinematic gradient — the final-scene CTA surface. */
+.cta-gradient {
+  background:
+    radial-gradient(60% 80% at 15% 20%, rgba(99, 102, 241, 0.95), transparent 60%),
+    radial-gradient(55% 75% at 85% 25%, rgba(34, 211, 238, 0.9), transparent 60%),
+    radial-gradient(70% 80% at 50% 100%, rgba(236, 72, 153, 0.9), transparent 60%),
+    linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+  background-size: 180% 180%;
+  animation: gradient-pan 12s ease infinite;
 }
 
 /* ---------------------------------------------------------------- */

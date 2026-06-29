@@ -5,7 +5,7 @@ import { scrollToSection } from '@/components/SmoothScroll';
 
 export default function Footer() {
   return (
-    <footer className="relative mx-auto max-w-7xl px-6 pb-12">
+    <footer className="relative mx-auto max-w-7xl px-6 pb-12 pt-16">
       <div className="glass rounded-3xl px-6 py-10">
         <div className="flex flex-col items-center justify-between gap-8 md:flex-row md:items-start">
           <div className="text-center md:text-left">

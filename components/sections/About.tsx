@@ -48,15 +48,17 @@ export default function About() {
           className="grid grid-cols-2 gap-4 lg:col-span-2"
         >
           {stats.map((s) => (
-            <div
+            <motion.div
               key={s.label}
-              className="glass flex flex-col justify-between rounded-3xl p-6"
+              whileHover={{ y: -6, scale: 1.03 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 20 }}
+              className="card-glow glass flex flex-col justify-between rounded-3xl p-6"
             >
               <div className="font-display text-4xl font-extrabold text-gradient-cool">
                 <Counter value={s.value} suffix={s.suffix} plain={'plain' in s ? s.plain : false} />
               </div>
               <div className="mt-2 text-sm font-medium text-slate-500">{s.label}</div>
-            </div>
+            </motion.div>
           ))}
         </motion.div>
       </div>
