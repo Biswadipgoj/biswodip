@@ -191,6 +191,37 @@ function ReactiveLights() {
   );
 }
 
+/* Lighter, colorful gradient scene background. The post-processing pass writes
+   an opaque buffer, so a CSS backdrop behind the canvas can't show through —
+   setting scene.background guarantees the hero reads as a vibrant gradient
+   (instead of flat black) on every tier. One tiny texture, no per-frame cost. */
+function GradientBackground() {
+  const { scene } = useThree();
+  useEffect(() => {
+    const c = document.createElement('canvas');
+    c.width = 8;
+    c.height = 256;
+    const ctx = c.getContext('2d');
+    if (ctx) {
+      const g = ctx.createLinearGradient(0, 0, 0, 256);
+      g.addColorStop(0, '#372e80'); // indigo top
+      g.addColorStop(0.5, '#272156'); // violet mid
+      g.addColorStop(1, '#181440'); // deep base
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, 8, 256);
+    }
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const prev = scene.background;
+    scene.background = tex;
+    return () => {
+      scene.background = prev;
+      tex.dispose();
+    };
+  }, [scene]);
+  return null;
+}
+
 /* Subtle scroll-driven camera dolly. */
 function ScrollCamera() {
   const { camera } = useThree();
@@ -211,9 +242,10 @@ function StaticFallback() {
       className="absolute inset-0"
       style={{
         background:
-          'radial-gradient(60% 60% at 30% 35%, rgba(34,211,238,0.5), transparent 70%),' +
+          'radial-gradient(60% 60% at 30% 35%, rgba(56,189,248,0.45), transparent 70%),' +
           'radial-gradient(55% 55% at 72% 40%, rgba(139,92,246,0.5), transparent 70%),' +
-          'radial-gradient(60% 60% at 50% 85%, rgba(236,72,153,0.45), transparent 70%)',
+          'radial-gradient(60% 60% at 50% 85%, rgba(236,72,153,0.4), transparent 70%),' +
+          'linear-gradient(160deg, #372e80 0%, #272156 50%, #181440 100%)',
       }}
       aria-hidden
     />
@@ -256,6 +288,7 @@ export default function HeroScene() {
         frameloop={active ? 'always' : 'never'}
         gl={{ antialias: tier === 'high', alpha: true, powerPreference: 'high-performance' }}
       >
+        <GradientBackground />
         <ReactiveLights />
         <Crystal tier={tier} />
         <Accents tier={tier} />

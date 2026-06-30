@@ -243,23 +243,33 @@ html.lenis body {
   perspective: 1200px;
 }
 
-/* gentle breathing + floating wrapper (the tilt transform is layered on
-   top via framer-motion, which composes with this animation cleanly). */
+/* gentle breathing + floating wrapper. The float transform lives here; the
+   mouse-tilt lives on the inner .portrait-tilt, so the two compose cleanly. */
 .portrait-breathe {
   position: relative;
-  transform-style: preserve-3d;
+  z-index: 1;
   animation: portrait-float 7s ease-in-out infinite;
   will-change: transform;
 }
+.portrait-tilt {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
 
-/* aurora glow blooming out from behind the card */
+/* aurora glow blooming out from behind the card — centred on the card */
 .portrait-aurora {
   position: absolute;
-  inset: -26%;
+  top: 50%;
+  left: 50%;
+  width: 128%;
+  aspect-ratio: 1;
+  margin-left: -64%;
+  margin-top: -64%;
   z-index: -2;
   border-radius: 50%;
   filter: blur(52px);
-  opacity: 0.75;
+  opacity: 0.72;
   background:
     radial-gradient(38% 38% at 28% 24%, rgba(34, 211, 238, 0.7), transparent 70%),
     radial-gradient(40% 40% at 76% 30%, rgba(139, 92, 246, 0.62), transparent 70%),
@@ -269,9 +279,14 @@ html.lenis body {
   will-change: transform, opacity;
 }
 
-/* floating holographic rings — thin, iridescent, slowly counter-rotating */
+/* floating holographic rings — thin, iridescent, slowly counter-rotating.
+   Sized as true circles hugging the card and centred with negative margins so
+   the rotate keyframe is free to own `transform` (no centring conflict). */
 .holo-ring {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  aspect-ratio: 1;
   z-index: -1;
   border-radius: 50%;
   pointer-events: none;
@@ -291,14 +306,18 @@ html.lenis body {
   will-change: transform;
 }
 .holo-ring--1 {
-  inset: -11%;
-  opacity: 0.7;
-  animation: ring-spin 16s linear infinite;
+  width: 116%;
+  margin-left: -58%;
+  margin-top: -58%;
+  opacity: 0.65;
+  animation: ring-spin 18s linear infinite;
 }
 .holo-ring--2 {
-  inset: -19%;
-  opacity: 0.45;
-  animation: ring-spin 26s linear infinite reverse;
+  width: 132%;
+  margin-left: -66%;
+  margin-top: -66%;
+  opacity: 0.4;
+  animation: ring-spin 28s linear infinite reverse;
 }
 
 /* small drifting geometric orbs for depth */
@@ -464,19 +483,20 @@ html.lenis body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Deep aurora mesh background — dark base with restrained color bloom. */
+/* Aurora mesh background — a lighter, more colorful indigo/violet gradient
+   (no longer near-black) so the page reads vibrant while white text stays AA. */
 .aurora-bg {
   position: fixed;
   inset: 0;
   z-index: -2;
   overflow: hidden;
   background:
-    radial-gradient(1200px 700px at 12% 6%, rgba(34, 211, 238, 0.16), transparent 60%),
-    radial-gradient(1000px 700px at 88% 10%, rgba(99, 102, 241, 0.20), transparent 60%),
-    radial-gradient(900px 600px at 50% 40%, rgba(139, 92, 246, 0.12), transparent 60%),
-    radial-gradient(1100px 820px at 50% 100%, rgba(52, 211, 153, 0.10), transparent 62%),
-    radial-gradient(900px 640px at 82% 84%, rgba(236, 72, 153, 0.14), transparent 60%),
-    linear-gradient(180deg, #0a0b10 0%, #0b0d15 48%, #090a10 100%);
+    radial-gradient(1200px 720px at 12% 6%, rgba(34, 211, 238, 0.26), transparent 60%),
+    radial-gradient(1040px 720px at 88% 8%, rgba(129, 140, 248, 0.32), transparent 60%),
+    radial-gradient(960px 640px at 50% 42%, rgba(139, 92, 246, 0.22), transparent 62%),
+    radial-gradient(1120px 840px at 50% 100%, rgba(52, 211, 153, 0.16), transparent 64%),
+    radial-gradient(940px 660px at 82% 86%, rgba(236, 72, 153, 0.22), transparent 60%),
+    linear-gradient(165deg, #1a1740 0%, #221d4d 46%, #181436 100%);
   animation: aurora-drift 22s ease-in-out infinite alternate;
 }
 

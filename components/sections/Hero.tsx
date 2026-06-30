@@ -66,15 +66,12 @@ export default function Hero() {
   const sx = useSpring(px, { stiffness: 120, damping: 18, mass: 0.4 });
   const sy = useSpring(py, { stiffness: 120, damping: 18, mass: 0.4 });
 
-  // Card tilts toward the cursor; layers translate by different amounts for depth.
-  const rotateY = useTransform(sx, [-0.5, 0.5], [9, -9]);
-  const rotateX = useTransform(sy, [-0.5, 0.5], [-9, 9]);
-  const cardX = useTransform(sx, [-0.5, 0.5], [-14, 14]);
-  const cardY = useTransform(sy, [-0.5, 0.5], [-14, 14]);
-  const glowX = useTransform(sx, [-0.5, 0.5], [26, -26]);
-  const glowY = useTransform(sy, [-0.5, 0.5], [26, -26]);
-  const ringX = useTransform(sx, [-0.5, 0.5], [-22, 22]);
-  const ringY = useTransform(sy, [-0.5, 0.5], [-22, 22]);
+  // Card tilts toward the cursor; the inner layer translates a touch for depth.
+  // (Kept on a dedicated element so it never fights the float/spin keyframes.)
+  const rotateY = useTransform(sx, [-0.5, 0.5], [8, -8]);
+  const rotateX = useTransform(sy, [-0.5, 0.5], [-8, 8]);
+  const cardX = useTransform(sx, [-0.5, 0.5], [-12, 12]);
+  const cardY = useTransform(sy, [-0.5, 0.5], [-12, 12]);
 
   useEffect(() => {
     const fine = window.matchMedia?.('(pointer: fine)').matches;
@@ -112,26 +109,41 @@ export default function Hero() {
 
   return (
     <section ref={ref} id="hero" className="relative flex min-h-[100svh] items-center overflow-hidden">
+      {/* Lighter colorful gradient base — sits behind the (transparent) 3D layer
+          so the hero never reads as a flat dark/empty block. */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          background:
+            'radial-gradient(1100px 760px at 18% 12%, rgba(56,189,248,0.34), transparent 60%),' +
+            'radial-gradient(1000px 720px at 86% 8%, rgba(129,140,248,0.40), transparent 60%),' +
+            'radial-gradient(900px 760px at 78% 82%, rgba(236,72,153,0.30), transparent 62%),' +
+            'radial-gradient(820px 620px at 30% 88%, rgba(52,211,153,0.22), transparent 62%),' +
+            'linear-gradient(160deg, #211c4d 0%, #2a2360 45%, #1b1740 100%)',
+        }}
+        aria-hidden
+      />
+
       {/* 3D layer */}
       <div className="absolute inset-0 z-0">
         <HeroScene />
       </div>
 
-      {/* Cohesive dark scrim — weighted left so the light type stays crisp over the
-          bright 3D bloom, while the right side keeps its color for the portrait. */}
+      {/* Light readability scrim — just enough lift behind the type so it stays
+          crisp over the colorful gradient, without darkening the composition. */}
       <div
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
-            'radial-gradient(1100px 760px at 22% 46%, rgba(7,8,13,0.78), rgba(7,8,13,0.34) 46%, transparent 72%),' +
-            'linear-gradient(180deg, rgba(7,8,13,0.5) 0%, transparent 26%, transparent 74%, rgba(7,8,13,0.65) 100%)',
+            'radial-gradient(1000px 720px at 24% 46%, rgba(15,12,38,0.5), rgba(15,12,38,0.18) 48%, transparent 72%),' +
+            'linear-gradient(180deg, rgba(15,12,38,0.32) 0%, transparent 24%, transparent 78%, rgba(15,12,38,0.42) 100%)',
         }}
         aria-hidden
       />
 
       <motion.div
         style={{ scale, opacity, y, filter }}
-        className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-6 pt-28 pb-20 lg:grid-cols-[1.12fr_0.88fr] lg:gap-10 lg:pt-0 lg:pb-0"
+        className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-14 px-6 pt-28 pb-20 xl:grid-cols-[1.1fr_0.9fr] xl:gap-16 xl:pt-0 xl:pb-0"
       >
         {/* ---------------------------------------------------------------- */}
         {/* LEFT — narrative column (~55%)                                    */}
@@ -252,72 +264,72 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.92, y: 24 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.95, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="hero-portrait relative mx-auto w-full max-w-[19rem] sm:max-w-[21rem] lg:max-w-[24rem]"
+          className="hero-portrait relative mx-auto w-full max-w-[18rem] sm:max-w-[20rem] xl:max-w-[23rem]"
         >
-          {/* aurora glow that drifts opposite the cursor for parallax depth */}
-          <motion.span className="portrait-aurora" style={{ x: glowX, y: glowY }} aria-hidden />
-
-          {/* floating holographic rings */}
-          <motion.span className="holo-ring holo-ring--1" style={{ x: ringX, y: ringY }} aria-hidden />
-          <motion.span className="holo-ring holo-ring--2" style={{ x: ringX, y: ringY }} aria-hidden />
-
-          {/* subtle floating geometric accents */}
+          {/* decorative layers — centred on the card, transform-free so their
+              keyframe animations (spin / pulse) never get clobbered */}
+          <span className="portrait-aurora" aria-hidden />
+          <span className="holo-ring holo-ring--1" aria-hidden />
+          <span className="holo-ring holo-ring--2" aria-hidden />
           <span className="portrait-orb portrait-orb--cyan" aria-hidden />
           <span className="portrait-orb portrait-orb--violet" aria-hidden />
           <span className="portrait-orb portrait-orb--pink" aria-hidden />
 
-          {/* the breathing + tilting glass card */}
-          <motion.div
-            className="portrait-breathe"
-            style={{ rotateX, rotateY, x: cardX, y: cardY, transformPerspective: 1100 }}
-          >
-            <div className="portrait-card group relative aspect-[4/5] w-full">
-              {/* animated gradient border */}
-              <span className="portrait-border" aria-hidden />
+          {/* float lives on the wrapper; mouse-tilt on the inner element, so the
+              two transforms compose instead of overriding each other */}
+          <div className="portrait-breathe">
+            <motion.div
+              className="portrait-tilt"
+              style={{ rotateX, rotateY, x: cardX, y: cardY, transformPerspective: 1000 }}
+            >
+              <div className="portrait-card group relative aspect-[4/5] w-full">
+                {/* animated gradient border */}
+                <span className="portrait-border" aria-hidden />
 
-              {/* portrait media */}
-              <div className="portrait-media relative h-full w-full overflow-hidden rounded-[1.65rem]">
-                <Image
-                  src="/biswodip.png"
-                  alt={`${personal.name} — ${personal.role}`}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 80vw, 384px"
-                  className="object-cover object-top transition-transform duration-700 will-change-transform group-hover:scale-[1.05]"
-                />
-                {/* colour wash so the white studio background reads vibrant, not flat */}
-                <span className="portrait-wash" aria-hidden />
-                {/* dynamic reflection sweep */}
-                <span className="portrait-shine" aria-hidden />
+                {/* portrait media */}
+                <div className="portrait-media relative h-full w-full overflow-hidden rounded-[1.65rem]">
+                  <Image
+                    src="/biswodip.png"
+                    alt={`${personal.name} — ${personal.role}`}
+                    fill
+                    priority
+                    sizes="(max-width: 1280px) 80vw, 368px"
+                    className="object-cover object-top transition-transform duration-700 will-change-transform group-hover:scale-[1.05]"
+                  />
+                  {/* colour wash so the white studio background reads vibrant, not flat */}
+                  <span className="portrait-wash" aria-hidden />
+                  {/* dynamic reflection sweep */}
+                  <span className="portrait-shine" aria-hidden />
+                </div>
+
+                {/* floating "open to work" badge */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.15, duration: 0.6 }}
+                  className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-base-elevated/90 px-4 py-2 text-xs font-semibold text-ink shadow-xl shadow-black/40 backdrop-blur-md"
+                >
+                  <span className="h-2 w-2 rounded-full bg-aurora-emerald animate-pulse" />
+                  Open to opportunities
+                </motion.div>
+
+                {/* floating name chip */}
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 1.3, duration: 0.6 }}
+                  className="absolute -left-3 top-6 hidden rounded-2xl border border-white/10 bg-base-elevated/90 px-3 py-2 text-left shadow-lg shadow-black/40 backdrop-blur-md sm:block"
+                >
+                  <div className="font-display text-sm font-extrabold text-gradient">
+                    {personal.firstName} {personal.lastName}
+                  </div>
+                  <div className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-slate-400">
+                    B.Tech · CSE
+                  </div>
+                </motion.div>
               </div>
-
-              {/* floating "open to work" badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.15, duration: 0.6 }}
-                className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-base-elevated/90 px-4 py-2 text-xs font-semibold text-ink shadow-xl shadow-black/40 backdrop-blur-md"
-              >
-                <span className="h-2 w-2 rounded-full bg-aurora-emerald animate-pulse" />
-                Open to opportunities
-              </motion.div>
-
-              {/* floating name chip */}
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.3, duration: 0.6 }}
-                className="absolute -left-4 top-7 hidden rounded-2xl border border-white/10 bg-base-elevated/90 px-3 py-2 text-left shadow-lg shadow-black/40 backdrop-blur-md sm:block"
-              >
-                <div className="font-display text-sm font-extrabold text-gradient">
-                  {personal.firstName} {personal.lastName}
-                </div>
-                <div className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-slate-400">
-                  B.Tech · CSE
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </motion.div>
       </motion.div>
 
