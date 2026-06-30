@@ -231,20 +231,122 @@ html.lenis body {
   animation: gradient-pan 12s ease infinite;
 }
 
-/* ---------------------------------------------------------------- */
-/* Eye-catching portrait frame — turns the plain white studio        */
-/* background into a vibrant, animated, color-rich centerpiece.       */
-/* ---------------------------------------------------------------- */
-.photo-frame {
-  border-radius: 2rem;
+/* ================================================================ */
+/* Premium portrait composition — a layered, glassmorphic focal      */
+/* point: aurora glow, animated gradient border, holographic rings,   */
+/* reflections and a gentle breathing float. Built from transform/    */
+/* opacity only so it stays buttery-smooth (no per-frame re-paints).  */
+/* ================================================================ */
+
+/* perspective host for the mouse-reactive tilt */
+.hero-portrait {
+  perspective: 1200px;
 }
 
-/* spinning multi-colour conic ring */
-.photo-ring {
+/* gentle breathing + floating wrapper (the tilt transform is layered on
+   top via framer-motion, which composes with this animation cleanly). */
+.portrait-breathe {
+  position: relative;
+  transform-style: preserve-3d;
+  animation: portrait-float 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* aurora glow blooming out from behind the card */
+.portrait-aurora {
   position: absolute;
-  inset: -3px;
-  border-radius: 2rem;
-  padding: 3px;
+  inset: -26%;
+  z-index: -2;
+  border-radius: 50%;
+  filter: blur(52px);
+  opacity: 0.75;
+  background:
+    radial-gradient(38% 38% at 28% 24%, rgba(34, 211, 238, 0.7), transparent 70%),
+    radial-gradient(40% 40% at 76% 30%, rgba(139, 92, 246, 0.62), transparent 70%),
+    radial-gradient(46% 46% at 52% 84%, rgba(236, 72, 153, 0.6), transparent 70%),
+    radial-gradient(34% 34% at 80% 78%, rgba(251, 191, 36, 0.34), transparent 70%);
+  animation: portrait-aurora-pulse 7s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* floating holographic rings — thin, iridescent, slowly counter-rotating */
+.holo-ring {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    rgba(34, 211, 238, 0.55),
+    rgba(59, 130, 246, 0.1),
+    rgba(139, 92, 246, 0.55),
+    rgba(236, 72, 153, 0.1),
+    rgba(251, 191, 36, 0.5),
+    rgba(34, 211, 238, 0.55)
+  );
+  -webkit-mask:
+    radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  mask:
+    radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  will-change: transform;
+}
+.holo-ring--1 {
+  inset: -11%;
+  opacity: 0.7;
+  animation: ring-spin 16s linear infinite;
+}
+.holo-ring--2 {
+  inset: -19%;
+  opacity: 0.45;
+  animation: ring-spin 26s linear infinite reverse;
+}
+
+/* small drifting geometric orbs for depth */
+.portrait-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(0.5px);
+  pointer-events: none;
+  box-shadow: 0 0 18px 2px currentColor;
+  animation: portrait-orb-float 9s ease-in-out infinite;
+}
+.portrait-orb--cyan {
+  top: 8%;
+  right: -6%;
+  height: 12px;
+  width: 12px;
+  color: #22d3ee;
+  background: #22d3ee;
+}
+.portrait-orb--violet {
+  bottom: 16%;
+  left: -7%;
+  height: 9px;
+  width: 9px;
+  color: #8b5cf6;
+  background: #8b5cf6;
+  animation-delay: -2.5s;
+  animation-duration: 11s;
+}
+.portrait-orb--pink {
+  top: 42%;
+  right: -9%;
+  height: 7px;
+  width: 7px;
+  color: #f472b6;
+  background: #f472b6;
+  animation-delay: -5s;
+  animation-duration: 13s;
+}
+
+/* animated gradient border, masked to a hairline frame */
+.portrait-border {
+  position: absolute;
+  inset: -2px;
+  z-index: 2;
+  border-radius: 1.8rem;
+  padding: 2px;
+  pointer-events: none;
   background: conic-gradient(
     from 0deg,
     #22d3ee,
@@ -255,50 +357,99 @@ html.lenis body {
     #34d399,
     #22d3ee
   );
+  background-size: 200% 200%;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  animation: ring-spin 9s linear infinite;
-  z-index: 1;
+  animation: ring-spin 12s linear infinite;
 }
 
-/* soft glow bleeding out from behind the portrait */
-.photo-glow {
-  position: absolute;
-  inset: -22%;
-  border-radius: 50%;
-  z-index: -1;
-  filter: blur(46px);
-  opacity: 0.7;
-  background:
-    radial-gradient(40% 40% at 30% 25%, rgba(34, 211, 238, 0.65), transparent 70%),
-    radial-gradient(40% 40% at 75% 30%, rgba(139, 92, 246, 0.6), transparent 70%),
-    radial-gradient(45% 45% at 50% 85%, rgba(236, 72, 153, 0.55), transparent 70%);
-  animation: pulse-glow 6s ease-in-out infinite;
-}
-
-.photo-inner {
+/* glassmorphism media container with multi-layer depth + soft shadow */
+.portrait-media {
+  background: rgba(16, 19, 26, 0.4);
   box-shadow:
-    0 24px 60px -18px rgba(99, 102, 241, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    0 30px 70px -24px rgba(99, 102, 241, 0.6),
+    0 12px 36px -18px rgba(236, 72, 153, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
-/* tints the flat white background with colour without washing out the face */
-.photo-wash {
+/* tints the flat white studio background with colour without washing the face */
+.portrait-wash {
   position: absolute;
   inset: 0;
   pointer-events: none;
   mix-blend-mode: soft-light;
   background:
-    radial-gradient(80% 55% at 50% 38%, transparent 38%, rgba(99, 102, 241, 0.28) 100%),
-    linear-gradient(180deg, rgba(34, 211, 238, 0.18), transparent 45%, rgba(236, 72, 153, 0.3));
+    radial-gradient(80% 55% at 50% 38%, transparent 38%, rgba(99, 102, 241, 0.3) 100%),
+    linear-gradient(180deg, rgba(34, 211, 238, 0.18), transparent 45%, rgba(236, 72, 153, 0.32));
+}
+
+/* dynamic reflection sweep — a diagonal sheen that glides across on a loop */
+.portrait-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.22) 46%,
+    rgba(255, 255, 255, 0.05) 54%,
+    transparent 70%
+  );
+  background-size: 250% 250%;
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  animation: portrait-shine 6.5s ease-in-out infinite;
 }
 
 @keyframes ring-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes portrait-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes portrait-aurora-pulse {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes portrait-orb-float {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-16px) translateX(6px);
+  }
+}
+
+@keyframes portrait-shine {
+  0% {
+    background-position: 160% 0;
+  }
+  55%,
+  100% {
+    background-position: -60% 0;
   }
 }
 

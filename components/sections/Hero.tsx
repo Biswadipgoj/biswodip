@@ -1,11 +1,18 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { personal } from '@/lib/data';
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  useSpring,
+} from 'framer-motion';
+import { personal, stats, socials } from '@/lib/data';
 import MagneticButton from '@/components/ui/MagneticButton';
+import Counter from '@/components/ui/Counter';
 import { scrollToSection } from '@/components/SmoothScroll';
 
 // 3D is heavy + browser-only — load it lazily, render a gradient while it boots.
@@ -16,15 +23,92 @@ const HeroScene = dynamic(() => import('@/components/scene/HeroScene'), {
 
 const headlineWords = ['I', 'build', 'digital', 'products', 'that', 'ship.'];
 
+// Compact icon set for the social row — kept inline so there's no icon dependency.
+function SocialIcon({ label }: { label: string }) {
+  const common = { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'currentColor' } as const;
+  if (label === 'GitHub')
+    return (
+      <svg {...common} aria-hidden>
+        <path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.7.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 5 18.3 5.3 18.3 5.3c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z" />
+      </svg>
+    );
+  if (label === 'Email')
+    return (
+      <svg {...common} aria-hidden>
+        <path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2.3.5 7.7 5.2L19.7 6H4.3ZM20 7.6l-7.4 5a1 1 0 0 1-1.2 0L4 7.6V18h16V7.6Z" />
+      </svg>
+    );
+  return (
+    <svg {...common} aria-hidden>
+      <path d="M12 2C7.9 2 4.5 5.4 4.5 9.5c0 5.3 6.6 11.7 6.9 12a1 1 0 0 0 1.3 0c.3-.3 6.8-6.7 6.8-12C19.5 5.4 16.1 2 12 2Zm0 10.2a2.7 2.7 0 1 1 0-5.4 2.7 2.7 0 0 1 0 5.4Z" />
+    </svg>
+  );
+}
+
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const portraitRef = useRef<HTMLDivElement>(null);
+
   // Apple-style: as you scroll out of the hero it zooms out, lifts and fades.
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.86]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
   const opacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, 90]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 80]);
   const blurPx = useTransform(scrollYProgress, [0, 1], [0, 6]);
   const filter = useTransform(blurPx, (b) => `blur(${b}px)`);
+
+  // ---- Mouse-reactive parallax for the portrait (desktop / fine pointer only) ----
+  // Raw pointer offset, normalised to roughly [-0.5, 0.5].
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  // Smooth, spring-damped so the tilt glides instead of snapping — feels premium,
+  // and the spring naturally throttles work so it never gets laggy.
+  const sx = useSpring(px, { stiffness: 120, damping: 18, mass: 0.4 });
+  const sy = useSpring(py, { stiffness: 120, damping: 18, mass: 0.4 });
+
+  // Card tilts toward the cursor; layers translate by different amounts for depth.
+  const rotateY = useTransform(sx, [-0.5, 0.5], [9, -9]);
+  const rotateX = useTransform(sy, [-0.5, 0.5], [-9, 9]);
+  const cardX = useTransform(sx, [-0.5, 0.5], [-14, 14]);
+  const cardY = useTransform(sy, [-0.5, 0.5], [-14, 14]);
+  const glowX = useTransform(sx, [-0.5, 0.5], [26, -26]);
+  const glowY = useTransform(sy, [-0.5, 0.5], [26, -26]);
+  const ringX = useTransform(sx, [-0.5, 0.5], [-22, 22]);
+  const ringY = useTransform(sy, [-0.5, 0.5], [-22, 22]);
+
+  useEffect(() => {
+    const fine = window.matchMedia?.('(pointer: fine)').matches;
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (!fine || reduced) return;
+
+    const el = portraitRef.current;
+    if (!el) return;
+
+    let raf = 0;
+    function onMove(e: MouseEvent) {
+      if (raf) return; // coalesce to one update per frame — keeps it smooth
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const rect = el!.getBoundingClientRect();
+        const nx = (e.clientX - (rect.left + rect.width / 2)) / rect.width;
+        const ny = (e.clientY - (rect.top + rect.height / 2)) / rect.height;
+        px.set(Math.max(-0.6, Math.min(0.6, nx)));
+        py.set(Math.max(-0.6, Math.min(0.6, ny)));
+      });
+    }
+    function onLeave() {
+      px.set(0);
+      py.set(0);
+    }
+
+    el.addEventListener('mousemove', onMove);
+    el.addEventListener('mouseleave', onLeave);
+    return () => {
+      el.removeEventListener('mousemove', onMove);
+      el.removeEventListener('mouseleave', onLeave);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [px, py]);
 
   return (
     <section ref={ref} id="hero" className="relative flex min-h-[100svh] items-center overflow-hidden">
@@ -33,20 +117,25 @@ export default function Hero() {
         <HeroScene />
       </div>
 
-      {/* readability veil that doesn't kill the color */}
+      {/* Cohesive dark scrim — weighted left so the light type stays crisp over the
+          bright 3D bloom, while the right side keeps its color for the portrait. */}
       <div
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
-            'radial-gradient(900px 500px at 18% 50%, rgba(255,255,255,0.55), transparent 70%)',
+            'radial-gradient(1100px 760px at 22% 46%, rgba(7,8,13,0.78), rgba(7,8,13,0.34) 46%, transparent 72%),' +
+            'linear-gradient(180deg, rgba(7,8,13,0.5) 0%, transparent 26%, transparent 74%, rgba(7,8,13,0.65) 100%)',
         }}
         aria-hidden
       />
 
       <motion.div
         style={{ scale, opacity, y, filter }}
-        className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-10 px-6 pt-28 pb-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8 lg:pt-0 lg:pb-0">
-        {/* ---- text column ---- */}
+        className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-6 pt-28 pb-20 lg:grid-cols-[1.12fr_0.88fr] lg:gap-10 lg:pt-0 lg:pb-0"
+      >
+        {/* ---------------------------------------------------------------- */}
+        {/* LEFT — narrative column (~55%)                                    */}
+        {/* ---------------------------------------------------------------- */}
         <div className="max-w-2xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -58,7 +147,7 @@ export default function Hero() {
             {personal.role} · {personal.aspiration}
           </motion.div>
 
-          <h1 className="font-display text-[clamp(2.4rem,8vw,5.6rem)] font-extrabold leading-[0.98] tracking-tight">
+          <h1 className="font-display text-[clamp(2.4rem,7.2vw,5.4rem)] font-extrabold leading-[0.98] tracking-tight">
             {headlineWords.map((word, i) => (
               <motion.span
                 key={word + i}
@@ -78,15 +167,24 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.7 }}
-            className="mt-6 max-w-xl text-base text-slate-600 sm:text-lg"
+            className="mt-6 max-w-xl text-base leading-relaxed text-slate-500 sm:text-lg"
           >
             {personal.intro}
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.82 }}
+            className="mt-3 text-sm font-medium text-slate-400"
+          >
+            {personal.tagline}
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.9 }}
+            transition={{ duration: 0.7, delay: 0.95 }}
             className="mt-9 flex flex-wrap items-center gap-4"
           >
             <MagneticButton onClick={() => scrollToSection('projects')}>
@@ -98,71 +196,128 @@ export default function Hero() {
             </MagneticButton>
           </motion.div>
 
+          {/* social links */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1.2 }}
-            className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-500"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 1.1 }}
+            className="mt-8 flex flex-wrap items-center gap-3"
           >
-            <span>📍 {personal.location}</span>
-            <span className="hidden h-1 w-1 rounded-full bg-slate-400 sm:block" />
-            <span>🎓 {personal.education}</span>
+            {socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.url}
+                target={s.url.startsWith('http') ? '_blank' : undefined}
+                rel={s.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+                className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-slate-500 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-aurora-cyan/40 hover:text-ink"
+                aria-label={s.label}
+              >
+                <span className="text-aurora-cyan transition-colors group-hover:text-aurora-violet">
+                  <SocialIcon label={s.label} />
+                </span>
+                {s.handle}
+              </a>
+            ))}
           </motion.div>
+
+          {/* animated statistics */}
+          <motion.dl
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.25 }}
+            className="mt-10 grid max-w-xl grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4"
+          >
+            {stats.map((s) => (
+              <div key={s.label} className="flex flex-col">
+                <dt className="order-2 mt-1 text-[0.7rem] font-medium uppercase tracking-[0.14em] text-slate-400">
+                  {s.label}
+                </dt>
+                <dd className="order-1 font-display text-2xl font-extrabold text-gradient sm:text-3xl">
+                  <Counter
+                    value={s.value}
+                    suffix={'suffix' in s ? s.suffix : ''}
+                    plain={'plain' in s ? (s as { plain?: boolean }).plain : false}
+                  />
+                </dd>
+              </div>
+            ))}
+          </motion.dl>
         </div>
 
-        {/* ---- photo column ---- */}
+        {/* ---------------------------------------------------------------- */}
+        {/* RIGHT — premium portrait composition (~45%)                      */}
+        {/* ---------------------------------------------------------------- */}
         <motion.div
+          ref={portraitRef}
           initial={{ opacity: 0, scale: 0.92, y: 24 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="relative mx-auto w-full max-w-[20rem] sm:max-w-sm lg:max-w-md"
+          transition={{ duration: 0.95, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="hero-portrait relative mx-auto w-full max-w-[19rem] sm:max-w-[21rem] lg:max-w-[24rem]"
         >
-          <div className="photo-frame group relative aspect-[4/5] w-full">
-            {/* spinning vibrant ring */}
-            <span className="photo-ring" aria-hidden />
-            {/* soft color glow */}
-            <span className="photo-glow" aria-hidden />
+          {/* aurora glow that drifts opposite the cursor for parallax depth */}
+          <motion.span className="portrait-aurora" style={{ x: glowX, y: glowY }} aria-hidden />
 
-            {/* portrait */}
-            <div className="photo-inner relative h-full w-full overflow-hidden rounded-[1.7rem]">
-              <Image
-                src="/biswodip.png"
-                alt={`${personal.name} — ${personal.role}`}
-                fill
-                priority
-                sizes="(max-width: 1024px) 80vw, 420px"
-                className="object-cover object-top transition-transform duration-700 will-change-transform group-hover:scale-[1.04]"
-              />
-              {/* colour wash so the white studio background reads as vibrant, not flat */}
-              <span className="photo-wash" aria-hidden />
+          {/* floating holographic rings */}
+          <motion.span className="holo-ring holo-ring--1" style={{ x: ringX, y: ringY }} aria-hidden />
+          <motion.span className="holo-ring holo-ring--2" style={{ x: ringX, y: ringY }} aria-hidden />
+
+          {/* subtle floating geometric accents */}
+          <span className="portrait-orb portrait-orb--cyan" aria-hidden />
+          <span className="portrait-orb portrait-orb--violet" aria-hidden />
+          <span className="portrait-orb portrait-orb--pink" aria-hidden />
+
+          {/* the breathing + tilting glass card */}
+          <motion.div
+            className="portrait-breathe"
+            style={{ rotateX, rotateY, x: cardX, y: cardY, transformPerspective: 1100 }}
+          >
+            <div className="portrait-card group relative aspect-[4/5] w-full">
+              {/* animated gradient border */}
+              <span className="portrait-border" aria-hidden />
+
+              {/* portrait media */}
+              <div className="portrait-media relative h-full w-full overflow-hidden rounded-[1.65rem]">
+                <Image
+                  src="/biswodip.png"
+                  alt={`${personal.name} — ${personal.role}`}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 80vw, 384px"
+                  className="object-cover object-top transition-transform duration-700 will-change-transform group-hover:scale-[1.05]"
+                />
+                {/* colour wash so the white studio background reads vibrant, not flat */}
+                <span className="portrait-wash" aria-hidden />
+                {/* dynamic reflection sweep */}
+                <span className="portrait-shine" aria-hidden />
+              </div>
+
+              {/* floating "open to work" badge */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.15, duration: 0.6 }}
+                className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-base-elevated/90 px-4 py-2 text-xs font-semibold text-ink shadow-xl shadow-black/40 backdrop-blur-md"
+              >
+                <span className="h-2 w-2 rounded-full bg-aurora-emerald animate-pulse" />
+                Open to opportunities
+              </motion.div>
+
+              {/* floating name chip */}
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.3, duration: 0.6 }}
+                className="absolute -left-4 top-7 hidden rounded-2xl border border-white/10 bg-base-elevated/90 px-3 py-2 text-left shadow-lg shadow-black/40 backdrop-blur-md sm:block"
+              >
+                <div className="font-display text-sm font-extrabold text-gradient">
+                  {personal.firstName} {personal.lastName}
+                </div>
+                <div className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-slate-400">
+                  B.Tech · CSE
+                </div>
+              </motion.div>
             </div>
-
-            {/* floating status badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.1, duration: 0.6 }}
-              className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-base-elevated/90 px-4 py-2 text-xs font-semibold text-ink shadow-xl shadow-black/40 backdrop-blur-md"
-            >
-              <span className="h-2 w-2 rounded-full bg-aurora-emerald animate-pulse" />
-              Open to opportunities
-            </motion.div>
-
-            {/* floating name chip */}
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.25, duration: 0.6 }}
-              className="absolute -left-3 top-6 hidden rounded-2xl border border-white/10 bg-base-elevated/90 px-3 py-2 text-left shadow-lg shadow-black/40 backdrop-blur-md sm:block"
-            >
-              <div className="font-display text-sm font-extrabold text-gradient">
-                {personal.firstName} {personal.lastName}
-              </div>
-              <div className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-slate-500">
-                B.Tech · CSE
-              </div>
-            </motion.div>
-          </div>
+          </motion.div>
         </motion.div>
       </motion.div>
 
@@ -172,7 +327,7 @@ export default function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4 }}
-        className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-xs font-medium uppercase tracking-[0.25em] text-slate-500 sm:flex"
+        className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-xs font-medium uppercase tracking-[0.25em] text-slate-400 sm:flex"
         aria-label="Scroll to about section"
       >
         Scroll
