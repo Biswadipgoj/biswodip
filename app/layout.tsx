@@ -1,42 +1,43 @@
 import type { Metadata, Viewport } from 'next';
-import { Sora, Inter } from 'next/font/google';
+import { Space_Grotesk, Manrope } from 'next/font/google';
 import './globals.css';
 import SmoothScroll from '@/components/SmoothScroll';
-import ScrollBackdrop from '@/components/ScrollBackdrop';
-import { personal } from '@/lib/data';
+import { brand } from '@/lib/data';
 
-const display = Sora({
+// Space Grotesk for display/headings, Manrope for body — matching the design doc.
+const display = Space_Grotesk({
   subsets: ['latin'],
-  weight: ['400', '600', '700', '800'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-display',
   display: 'swap',
 });
 
-const sans = Inter({
+const sans = Manrope({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '500', '600', '700', '800'],
   variable: '--font-sans',
   display: 'swap',
 });
 
-const title = `${personal.name} — ${personal.role}`;
-const description = personal.intro;
+const title = `${brand.name} — one screen to run the counter`;
+const description =
+  'The Mobile World ERP workspace: GST-ready billing, IMEI-level inventory, dealer ledgers and live analytics — unified in one workspace fast enough to keep up with the counter.';
 
 export const metadata: Metadata = {
   title,
   description,
   keywords: [
-    'Biswodip Goj',
-    'Software Developer',
-    'Business Analyst',
-    'Next.js',
-    'Three.js',
-    'Portfolio',
+    'Mobile World',
+    'mobile shop ERP',
+    'GST billing',
+    'IMEI inventory',
+    'dealer ledger',
+    'retail analytics',
+    'point of sale',
     'West Bengal',
-    'India',
   ],
-  authors: [{ name: personal.name }],
-  creator: personal.name,
+  authors: [{ name: brand.name }],
+  creator: brand.name,
   openGraph: {
     title,
     description,
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0a0b10',
+  themeColor: '#f7f5ff',
   width: 'device-width',
   initialScale: 1,
 };
@@ -59,9 +60,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
-      <body className="grain antialiased">
-        <div className="aurora-bg" aria-hidden />
-        <ScrollBackdrop />
+      <body className="antialiased">
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

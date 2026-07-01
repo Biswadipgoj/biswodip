@@ -2,38 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Dipali's Mobile World — design tokens ported from the Mobile World design doc.
+ * Light "aurora" system: violet → fuchsia → indigo over airy off-white surfaces,
+ * ink text, glassmorphism and soft coloured shadows.
+ */
 :root {
-  /* ---- Background hierarchy ---- */
-  --bg-base: #0a0b10; /* page */
-  --bg-elevated: #10131a; /* raised bands / nav */
-  --bg-surface: #171a22; /* cards */
-  --bg-raised: #1e222d; /* popovers / hovered surfaces */
+  /* Aurora brand ramp */
+  --violet: #7c3aed;
+  --fuchsia: #c026d3;
+  --indigo: #4f46e5;
+  --pink: #ec4899;
+  --sky: #38bdf8;
+  --violet-700: #6d28d9;
 
-  /* ---- Foreground (AA contrast on --bg-base) ---- */
-  --text-strong: #f6f8fc; /* headings */
-  --text: #c5cbd6; /* body */
-  --text-muted: #a7afbe; /* secondary */
-  --text-faint: #8a92a4; /* captions / disabled */
+  /* Ink + surfaces */
+  --ink: #0b0b16;
+  --page: #dedce6;
+  --surface: #f7f5ff;
+  --surface-2: #fcfaff;
 
-  /* ---- Brand ---- */
-  --primary: #818cf8;
-  --primary-strong: #6366f1;
-  --secondary: #22d3ee;
-  --accent: #f472b6;
+  /* Text hierarchy (AA on light surfaces) */
+  --text-strong: #0b0b16;
+  --text: #3b3752;
+  --text-muted: #504c66;
+  --text-faint: #6b6784;
+  --text-ghost: #9a96ae;
 
-  /* ---- Separation ---- */
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
+  /* Feedback */
+  --green: #16a34a;
+  --green-strong: #15803d;
+  --amber: #b45309;
+  --red: #dc2626;
 
-  /* ---- Elevation ---- */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
-  --shadow-md: 0 12px 28px -14px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.04) inset;
-  --shadow-lg: 0 30px 60px -24px rgba(0, 0, 0, 0.85), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+  /* The signature aurora gradient */
+  --aurora: linear-gradient(135deg, #7c3aed, #c026d3 55%, #4f46e5);
+  --aurora-115: linear-gradient(115deg, #7c3aed, #c026d3 50%, #4f46e5);
 
-  /* legacy aliases kept so any --ink/--bg-1 reference still resolves */
-  --ink: var(--text-strong);
-  --bg-1: var(--bg-base);
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 * {
@@ -43,493 +49,102 @@
 html {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
 }
 
 html,
 body {
   padding: 0;
   margin: 0;
-  background: var(--bg-base);
-  color: var(--text);
   overflow-x: hidden;
 }
 
 body {
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans), 'Manrope', system-ui, sans-serif;
+  color: var(--text);
   position: relative;
+  /* Page-wide aurora wash that all sections float over. */
+  background:
+    radial-gradient(1200px 720px at 12% 2%, rgba(124, 58, 237, 0.16), transparent 55%),
+    radial-gradient(1000px 620px at 92% 6%, rgba(236, 72, 153, 0.14), transparent 52%),
+    radial-gradient(1100px 820px at 78% 96%, rgba(56, 189, 248, 0.12), transparent 58%),
+    linear-gradient(180deg, #f7f5ff, #f1eef8 60%, #ece9f5);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
-/* Stronger type hierarchy: headings pop bright against muted body copy. */
 h1,
 h2,
 h3,
-h4 {
-  color: var(--text-strong);
-  letter-spacing: -0.02em;
+.font-display {
+  font-family: var(--font-display), 'Space Grotesk', system-ui, sans-serif;
 }
 
-/* Lenis smooth-scroll baseline */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-::selection {
-  background: rgba(129, 140, 248, 0.35);
-  color: #ffffff;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  background: #0a0b10;
-}
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #22d3ee, #6366f1, #f472b6);
-  border-radius: 999px;
-  border: 2px solid #0a0b10;
-}
-
-@layer components {
-  /* Elevated dark glass surface — the default card material. */
-  .glass {
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
-      rgba(23, 26, 34, 0.72);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-md);
-  }
-
-  /* Denser surface for nav / popovers — reads as clearly raised. */
-  .glass-strong {
-    background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
-      rgba(16, 19, 26, 0.9);
-    backdrop-filter: blur(22px) saturate(160%);
-    -webkit-backdrop-filter: blur(22px) saturate(160%);
-    border: 1px solid var(--border-strong);
-    box-shadow: var(--shadow-lg);
-  }
-
-  .text-gradient {
-    background: linear-gradient(110deg, #3b82f6, #22d3ee, #8b5cf6, #f472b6, #fbbf24);
-    background-size: 250% 250%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradient-pan 8s ease infinite;
-  }
-
-  .text-gradient-cool {
-    background: linear-gradient(110deg, #3b82f6, #22d3ee, #34d399);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .chip {
-    @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium;
-    color: var(--text-muted);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .section-eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em];
-    background: rgba(129, 140, 248, 0.12);
-    border: 1px solid rgba(129, 140, 248, 0.28);
-    color: #c7d2fe;
-  }
-
-  /* ---- Solid, clickable buttons with visible hover/active feedback ---- */
-  .btn-primary {
-    @apply relative inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white;
-    background: linear-gradient(110deg, #6366f1, #8b5cf6, #ec4899);
-    background-size: 200% 200%;
-    box-shadow:
-      0 10px 28px -10px rgba(99, 102, 241, 0.7),
-      0 0 0 1px rgba(255, 255, 255, 0.08) inset;
-    transition: transform 0.18s ease, box-shadow 0.25s ease, background-position 0.5s ease;
-  }
-  .btn-primary:hover {
-    background-position: 100% 50%;
-    transform: translateY(-2px);
-    box-shadow:
-      0 16px 36px -10px rgba(236, 72, 153, 0.6),
-      0 0 0 1px rgba(255, 255, 255, 0.12) inset;
-  }
-  .btn-primary:active {
-    transform: translateY(0) scale(0.98);
-  }
-
-  .btn-secondary {
-    @apply relative inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold;
-    color: var(--text-strong);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--border-strong);
-    transition: transform 0.18s ease, background 0.25s ease, border-color 0.25s ease;
-  }
-  .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(129, 140, 248, 0.5);
-    transform: translateY(-2px);
-  }
-  .btn-secondary:active {
-    transform: translateY(0) scale(0.98);
-  }
-
-  /* Premium card: soft elevation that blooms into a colour glow on hover. */
-  .card-glow {
-    position: relative;
-    transition: box-shadow 0.4s ease, border-color 0.4s ease;
-  }
-  .card-glow::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    background: linear-gradient(135deg, #6366f1, #22d3ee, #ec4899);
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+/* ----- Motion (from the design doc) ----- */
+@keyframes riseIn {
+  from {
     opacity: 0;
-    transition: opacity 0.4s ease;
-    pointer-events: none;
+    transform: translateY(26px);
   }
-  .card-glow:hover {
-    box-shadow:
-      0 28px 60px -22px rgba(99, 102, 241, 0.55),
-      0 0 40px -12px rgba(236, 72, 153, 0.4);
-  }
-  .card-glow:hover::before {
-    opacity: 0.9;
-  }
-}
-
-/* Full-bleed cinematic gradient — the final-scene CTA surface. */
-.cta-gradient {
-  background:
-    radial-gradient(60% 80% at 15% 20%, rgba(99, 102, 241, 0.95), transparent 60%),
-    radial-gradient(55% 75% at 85% 25%, rgba(34, 211, 238, 0.9), transparent 60%),
-    radial-gradient(70% 80% at 50% 100%, rgba(236, 72, 153, 0.9), transparent 60%),
-    linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
-  background-size: 180% 180%;
-  animation: gradient-pan 12s ease infinite;
-}
-
-/* ================================================================ */
-/* Premium portrait composition — a layered, glassmorphic focal      */
-/* point: aurora glow, animated gradient border, holographic rings,   */
-/* reflections and a gentle breathing float. Built from transform/    */
-/* opacity only so it stays buttery-smooth (no per-frame re-paints).  */
-/* ================================================================ */
-
-/* perspective host for the mouse-reactive tilt */
-.hero-portrait {
-  perspective: 1200px;
-}
-
-/* gentle breathing + floating wrapper. The float transform lives here; the
-   mouse-tilt lives on the inner .portrait-tilt, so the two compose cleanly. */
-.portrait-breathe {
-  position: relative;
-  z-index: 1;
-  animation: portrait-float 7s ease-in-out infinite;
-  will-change: transform;
-}
-.portrait-tilt {
-  position: relative;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-/* aurora glow blooming out from behind the card — centred on the card */
-.portrait-aurora {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 128%;
-  aspect-ratio: 1;
-  margin-left: -64%;
-  margin-top: -64%;
-  z-index: -2;
-  border-radius: 50%;
-  filter: blur(52px);
-  opacity: 0.72;
-  background:
-    radial-gradient(38% 38% at 28% 24%, rgba(34, 211, 238, 0.7), transparent 70%),
-    radial-gradient(40% 40% at 76% 30%, rgba(139, 92, 246, 0.62), transparent 70%),
-    radial-gradient(46% 46% at 52% 84%, rgba(236, 72, 153, 0.6), transparent 70%),
-    radial-gradient(34% 34% at 80% 78%, rgba(251, 191, 36, 0.34), transparent 70%);
-  animation: portrait-aurora-pulse 7s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-
-/* floating holographic rings — thin, iridescent, slowly counter-rotating.
-   Sized as true circles hugging the card and centred with negative margins so
-   the rotate keyframe is free to own `transform` (no centring conflict). */
-.holo-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  aspect-ratio: 1;
-  z-index: -1;
-  border-radius: 50%;
-  pointer-events: none;
-  background: conic-gradient(
-    from 0deg,
-    rgba(34, 211, 238, 0.55),
-    rgba(59, 130, 246, 0.1),
-    rgba(139, 92, 246, 0.55),
-    rgba(236, 72, 153, 0.1),
-    rgba(251, 191, 36, 0.5),
-    rgba(34, 211, 238, 0.55)
-  );
-  -webkit-mask:
-    radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-  mask:
-    radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-  will-change: transform;
-}
-.holo-ring--1 {
-  width: 116%;
-  margin-left: -58%;
-  margin-top: -58%;
-  opacity: 0.65;
-  animation: ring-spin 18s linear infinite;
-}
-.holo-ring--2 {
-  width: 132%;
-  margin-left: -66%;
-  margin-top: -66%;
-  opacity: 0.4;
-  animation: ring-spin 28s linear infinite reverse;
-}
-
-/* small drifting geometric orbs for depth */
-.portrait-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(0.5px);
-  pointer-events: none;
-  box-shadow: 0 0 18px 2px currentColor;
-  animation: portrait-orb-float 9s ease-in-out infinite;
-}
-.portrait-orb--cyan {
-  top: 8%;
-  right: -6%;
-  height: 12px;
-  width: 12px;
-  color: #22d3ee;
-  background: #22d3ee;
-}
-.portrait-orb--violet {
-  bottom: 16%;
-  left: -7%;
-  height: 9px;
-  width: 9px;
-  color: #8b5cf6;
-  background: #8b5cf6;
-  animation-delay: -2.5s;
-  animation-duration: 11s;
-}
-.portrait-orb--pink {
-  top: 42%;
-  right: -9%;
-  height: 7px;
-  width: 7px;
-  color: #f472b6;
-  background: #f472b6;
-  animation-delay: -5s;
-  animation-duration: 13s;
-}
-
-/* animated gradient border, masked to a hairline frame */
-.portrait-border {
-  position: absolute;
-  inset: -2px;
-  z-index: 2;
-  border-radius: 1.8rem;
-  padding: 2px;
-  pointer-events: none;
-  background: conic-gradient(
-    from 0deg,
-    #22d3ee,
-    #3b82f6,
-    #8b5cf6,
-    #ec4899,
-    #fbbf24,
-    #34d399,
-    #22d3ee
-  );
-  background-size: 200% 200%;
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: ring-spin 12s linear infinite;
-}
-
-/* glassmorphism media container with multi-layer depth + soft shadow */
-.portrait-media {
-  background: rgba(16, 19, 26, 0.4);
-  box-shadow:
-    0 30px 70px -24px rgba(99, 102, 241, 0.6),
-    0 12px 36px -18px rgba(236, 72, 153, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
-}
-
-/* tints the flat white studio background with colour without washing the face */
-.portrait-wash {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  mix-blend-mode: soft-light;
-  background:
-    radial-gradient(80% 55% at 50% 38%, transparent 38%, rgba(99, 102, 241, 0.3) 100%),
-    linear-gradient(180deg, rgba(34, 211, 238, 0.18), transparent 45%, rgba(236, 72, 153, 0.32));
-}
-
-/* dynamic reflection sweep — a diagonal sheen that glides across on a loop */
-.portrait-shine {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    115deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.22) 46%,
-    rgba(255, 255, 255, 0.05) 54%,
-    transparent 70%
-  );
-  background-size: 250% 250%;
-  mix-blend-mode: screen;
-  opacity: 0.9;
-  animation: portrait-shine 6.5s ease-in-out infinite;
-}
-
-@keyframes ring-spin {
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: none;
   }
 }
-
-@keyframes portrait-float {
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes floaty {
   0%,
   100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-12px);
+    transform: translateY(-14px);
   }
 }
-
-@keyframes portrait-aurora-pulse {
+@keyframes glow {
   0%,
   100% {
-    opacity: 0.62;
-    transform: scale(1);
+    opacity: 0.5;
   }
   50% {
     opacity: 0.85;
-    transform: scale(1.06);
   }
 }
 
-@keyframes portrait-orb-float {
-  0%,
-  100% {
-    transform: translateY(0) translateX(0);
-  }
-  50% {
-    transform: translateY(-16px) translateX(6px);
-  }
+/* ----- Helpers ----- */
+.aurora-text {
+  background: var(--aurora-115);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-@keyframes portrait-shine {
-  0% {
-    background-position: 160% 0;
-  }
-  55%,
-  100% {
-    background-position: -60% 0;
-  }
+.aurora-fill {
+  background: var(--aurora);
 }
 
-.grain::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 60;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+.glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
-/* Aurora mesh background — a lighter, more colorful indigo/violet gradient
-   (no longer near-black) so the page reads vibrant while white text stays AA. */
-.aurora-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  overflow: hidden;
-  background:
-    radial-gradient(1200px 720px at 12% 6%, rgba(34, 211, 238, 0.26), transparent 60%),
-    radial-gradient(1040px 720px at 88% 8%, rgba(129, 140, 248, 0.32), transparent 60%),
-    radial-gradient(960px 640px at 50% 42%, rgba(139, 92, 246, 0.22), transparent 62%),
-    radial-gradient(1120px 840px at 50% 100%, rgba(52, 211, 153, 0.16), transparent 64%),
-    radial-gradient(940px 660px at 82% 86%, rgba(236, 72, 153, 0.22), transparent 60%),
-    linear-gradient(165deg, #1a1740 0%, #221d4d 46%, #181436 100%);
-  animation: aurora-drift 22s ease-in-out infinite alternate;
+/* Thin, unobtrusive scrollbars inside the app frames. */
+.mw-scroll::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
 }
-
-/* Hairline separators between major scenes so sections never blend together. */
-.scene-divider {
-  height: 1px;
-  width: 100%;
-  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
-}
-
-@keyframes aurora-drift {
-  0% {
-    filter: hue-rotate(0deg) saturate(1);
-    background-position: 0% 0%;
-  }
-  100% {
-    filter: hue-rotate(18deg) saturate(1.15);
-    background-position: 100% 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .aurora-bg {
-    animation: none;
-  }
-}
-
-.aurora-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.6;
-  will-change: transform;
+.mw-scroll::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.28);
+  border-radius: 999px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -539,5 +154,6 @@ html.lenis body {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
