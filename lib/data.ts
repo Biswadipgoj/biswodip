@@ -1,168 +1,202 @@
 /**
- * Single content source for Dipali's Mobile World — the internal ERP workspace.
- * Every visitor-facing string, stat and table row lives here so the whole
- * experience stays content-driven (a future admin panel / CMS would write here).
+ * Central content source for the portfolio.
  *
- * Ported from the "Mobile World" design doc — three screens:
- *   1a  Portal + login   1b  Dashboard home   1c  On the counter phone
+ * Everything visitor-facing is defined here so the site stays content-driven:
+ * personal info, navigation, skills, projects, journey, stats and socials.
+ * This is the single layer an admin panel / CMS would write to.
  */
 
-export const brand = {
-  name: "Dipali's Mobile World",
-  short: 'Mobile World',
-  kind: 'internal ERP workspace',
-  email: 'dipali@mobileworld.shop',
-  location: 'Uluberia, West Bengal',
+export const personal = {
+  name: 'Biswodip Goj',
+  firstName: 'Biswodip',
+  lastName: 'Goj',
+  email: 'biswadipgoj@gmail.com',
+  location: 'Uluberia, West Bengal, India',
+  education: 'B.Tech CSE (2021–2024) · Diploma in CSE (2018–2021)',
+  role: 'Independent Software Developer',
+  aspiration: 'Aspiring Business Analyst',
+  tagline: 'I design, build, deploy & deliver real software.',
+  intro:
+    'Independent software developer and aspiring business analyst from West Bengal, India. I turn ambiguous ideas into shipped products — from the first wireframe to a deployed, used-in-the-wild application.',
+  about:
+    'I work end to end: research, design, engineering and delivery. Over 15+ real solutions, I have learned that great software is equal parts crisp interface, solid engineering and a clear understanding of the business problem underneath. That bridge — between code and outcomes — is exactly where I want to keep building.',
+} as const;
+
+export const stats = [
+  { value: 15, suffix: '+', label: 'Solutions delivered' },
+  { value: 2024, suffix: '', label: 'B.Tech CSE', plain: true },
+  { value: 100, suffix: '%', label: 'Ship rate' },
+  { value: 8, suffix: '+', label: 'Core technologies' },
+] as const;
+
+export const nav = [
+  { id: 'hero', label: 'Home' },
+  { id: 'about', label: 'About' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'projects', label: 'Work' },
+  { id: 'impact', label: 'Impact' },
+  { id: 'journey', label: 'Journey' },
+  { id: 'github', label: 'GitHub' },
+  { id: 'contact', label: 'Contact' },
+] as const;
+
+/** SCENE 5 — Impact / value highlights shown before the final CTA. */
+export type Impact = {
+  metric: string;
+  title: string;
+  body: string;
+  accent: string;
 };
 
-/** Top navigation labels (shared by the marketing nav and the app sidebar). */
-export const nav = ['Billing', 'Inventory', 'Retailers', 'Analytics'] as const;
-
-/* ------------------------------------------------------------------ */
-/* 1a — Portal + login                                                 */
-/* ------------------------------------------------------------------ */
-
-export const hero = {
-  eyebrow: 'The Mobile World ERP workspace',
-  /** The headline renders as three lines; `counter` is the aurora-gradient word. */
-  title: {
-    line1: 'Run the whole',
-    gradientWord: 'counter',
-    line2Rest: ' from',
-    line3: 'a single screen.',
+export const impacts: Impact[] = [
+  {
+    metric: 'End to end',
+    title: 'Idea → shipped',
+    body: 'I take products the whole distance — research, design, build and deploy — so nothing stalls in a half-finished prototype.',
+    accent: '#22d3ee',
   },
-  subtitle:
-    'Billing, inventory, retailers and live analytics for the shop — unified in one workspace fast enough to keep up with the counter.',
-  featurePills: ['GST-ready billing', 'IMEI-level tracking', 'Dealer ledgers'],
-  stats: [
-    { value: '₹4.2', suffix: 'Cr', label: 'billed this year' },
-    { value: '12,480', label: 'SKUs in stock' },
-    { value: '340', label: 'dealers on ledger' },
-  ],
-};
-
-export const login = {
-  title: 'Sign in to your workspace',
-  subtitle: 'Welcome back. Pick up right at the counter.',
-  userId: 'dipali.admin',
-  password: 'counter2026',
-  cta: 'Sign in',
-  help: 'Trouble signing in?',
-  helpAction: 'Contact your admin',
-};
-
-/** Floating glass badges over the login art. */
-export const floatingCards = {
-  sales: { label: "Today's sales", value: '₹1,24,500', delta: '▲ 18% vs yesterday' },
-  lowStock: { label: 'Low stock', value: 'iPhone 15 · 3 left' },
-};
-
-/* ------------------------------------------------------------------ */
-/* 1b — Dashboard home                                                 */
-/* ------------------------------------------------------------------ */
-
-export const dashboard = {
-  sidebar: [
-    { label: 'Overview', active: true },
-    { label: 'Billing' },
-    { label: 'Inventory' },
-    { label: 'Retailers' },
-    { label: 'Analytics' },
-    { label: 'Settings' },
-  ],
-  storeHealth: { title: 'Store health', note: '99.98% uptime · all synced', pct: 92 },
-  greeting: 'Good morning, Dipali',
-  date: "Tuesday, 1 July · Here's how the store is doing today.",
-  searchPlaceholder: 'Search bills, IMEI, dealers…',
-  primaryAction: '+ New bill',
-  avatar: 'D',
-  stats: [
-    { label: "Today's revenue", value: '₹1,24,500', delta: '▲ 18% vs yesterday', tone: 'brand' },
-    { label: 'Bills today', value: '86', delta: '▲ 12 more than avg', tone: 'green' },
-    { label: 'Low stock', value: '7', unit: 'items', delta: 'Needs reorder', tone: 'red' },
-    { label: 'Dealer dues', value: '₹3.8L', delta: 'across 22 dealers', tone: 'neutral' },
-  ] as {
-    label: string;
-    value: string;
-    unit?: string;
-    delta: string;
-    tone: 'brand' | 'green' | 'red' | 'neutral';
-  }[],
-  /** Sales · last 7 days — bar heights are percentages; `active` = today. */
-  week: [
-    { day: 'Wed', height: 52 },
-    { day: 'Thu', height: 68 },
-    { day: 'Fri', height: 44 },
-    { day: 'Sat', height: 82 },
-    { day: 'Sun', height: 74 },
-    { day: 'Mon', height: 58 },
-    { day: 'Tue', height: 100, active: true },
-  ] as { day: string; height: number; active?: boolean }[],
-  topModels: [
-    { name: 'Samsung Galaxy A55', count: 42, pct: 90 },
-    { name: 'Redmi Note 14', count: 36, pct: 77 },
-    { name: 'iPhone 15', count: 28, pct: 60 },
-    { name: 'vivo T3x', count: 21, pct: 45 },
-  ],
-  recentBills: [
-    { invoice: '#MW-4821', customer: 'Rahul Deshmukh', item: 'Galaxy A55', amount: '₹38,999', status: 'Paid' },
-    { invoice: '#MW-4820', customer: 'Sneha Kulkarni', item: 'Redmi Note 14', amount: '₹18,499', status: 'Paid' },
-    { invoice: '#MW-4819', customer: 'Amit Traders (dealer)', item: 'iPhone 15 ×4', amount: '₹2,55,960', status: 'Credit' },
-    { invoice: '#MW-4818', customer: 'Priya Sharma', item: 'vivo T3x', amount: '₹14,999', status: 'Paid' },
-  ] as { invoice: string; customer: string; item: string; amount: string; status: 'Paid' | 'Credit' }[],
-};
-
-/* ------------------------------------------------------------------ */
-/* 1c — On the counter phone                                           */
-/* ------------------------------------------------------------------ */
-
-export const phone = {
-  date: 'Tuesday, 1 July',
-  greeting: 'Hello, Dipali',
-  avatar: 'D',
-  revenueLabel: "Today's revenue",
-  revenue: '₹1,24,500',
-  revenueStats: [
-    { label: 'Bills', value: '86' },
-    { label: 'vs avg', value: '▲ 18%' },
-    { label: 'Dues', value: '₹3.8L' },
-  ],
-  quickActions: ['New bill', 'Stock', 'Dealers', 'Reports'],
-  bills: [
-    { initial: 'R', name: 'Rahul Deshmukh', meta: 'Galaxy A55 · #MW-4821', amount: '₹38,999', status: 'Paid', tone: 'violet' },
-    { initial: 'A', name: 'Amit Traders', meta: 'iPhone 15 ×4 · #MW-4819', amount: '₹2,55,960', status: 'Credit', tone: 'amber' },
-  ] as { initial: string; name: string; meta: string; amount: string; status: 'Paid' | 'Credit'; tone: 'violet' | 'amber' }[],
-};
-
-/* ------------------------------------------------------------------ */
-/* Section framing for the marketing page                              */
-/* ------------------------------------------------------------------ */
-
-export const sections = {
-  dashboard: {
-    eyebrow: 'The workspace',
-    title: 'One home screen for the whole shop',
-    subtitle:
-      'Revenue, bills, stock alerts and dealer dues at a glance — with a live 7-day pulse and your top-selling models, updated as each bill is raised.',
+  {
+    metric: '15+ live',
+    title: 'Built for production',
+    body: 'Clean, typed, maintainable engineering that survives real users, real traffic and real change requests.',
+    accent: '#8b5cf6',
   },
-  phone: {
-    eyebrow: 'In your pocket',
-    title: 'The counter, wherever you are',
-    subtitle:
-      'The same workspace on the phone — raise a bill, check stock, settle a dealer or pull a report between customers. Everything syncs the instant you tap.',
-    highlights: [
-      'Raise GST bills in seconds with saved customers',
-      'IMEI-level stock, so every handset is accounted for',
-      'Dealer ledgers and dues that always reconcile',
+  {
+    metric: '100% ship',
+    title: 'Outcome-first',
+    body: 'Every interface choice traces back to a business goal. I bridge the gap between the code and the result it has to drive.',
+    accent: '#f472b6',
+  },
+];
+
+export type Skill = {
+  name: string;
+  level: number; // 0 - 100
+  color: string;
+};
+
+export const skillGroups: { title: string; tint: string; skills: Skill[] }[] = [
+  {
+    title: 'Frontend & Experience',
+    tint: 'from-aurora-cyan to-aurora-blue',
+    skills: [
+      { name: 'React / Next.js', level: 92, color: '#22d3ee' },
+      { name: 'TypeScript', level: 88, color: '#3b82f6' },
+      { name: 'Tailwind CSS', level: 90, color: '#38bdf8' },
+      { name: 'Three.js / R3F', level: 80, color: '#8b5cf6' },
     ],
   },
+  {
+    title: 'Engineering & Backend',
+    tint: 'from-aurora-violet to-aurora-pink',
+    skills: [
+      { name: 'Node.js', level: 85, color: '#34d399' },
+      { name: 'REST APIs', level: 86, color: '#a78bfa' },
+      { name: 'Databases', level: 82, color: '#f472b6' },
+      { name: 'Python', level: 78, color: '#fbbf24' },
+    ],
+  },
+  {
+    title: 'Delivery & Analysis',
+    tint: 'from-aurora-emerald to-aurora-gold',
+    skills: [
+      { name: 'Product Thinking', level: 88, color: '#34d399' },
+      { name: 'Requirements Analysis', level: 84, color: '#fbbf24' },
+      { name: 'Deployment / DevOps', level: 80, color: '#22d3ee' },
+      { name: 'UX & Design', level: 83, color: '#f472b6' },
+    ],
+  },
+];
+
+export type Project = {
+  name: string;
+  blurb: string;
+  description: string;
+  url: string;
+  repo?: string;
+  accent: string;
+  accentSoft: string;
+  tags: string[];
+  features: string[];
 };
 
-export const footer = {
-  tagline: 'Built for the counter — fast, unified and always in sync.',
-  columns: [
-    { title: 'Workspace', links: ['Overview', 'Billing', 'Inventory', 'Analytics'] },
-    { title: 'Business', links: ['Retailers', 'Dealer ledgers', 'GST filing', 'Reports'] },
-    { title: 'Support', links: ['Help centre', 'Contact admin', 'Status', 'Privacy'] },
-  ],
+export const projects: Project[] = [
+  {
+    name: 'TelePoint',
+    blurb: 'Real-time communication, reimagined.',
+    description:
+      'A sleek communication platform focused on instant, friction-free connection. Built for speed with a modern reactive stack and a clean, responsive interface that works everywhere.',
+    url: 'https://telepoint-topaz.vercel.app/',
+    accent: '#22d3ee',
+    accentSoft: 'rgba(34,211,238,0.16)',
+    tags: ['Next.js', 'TypeScript', 'Real-time', 'Responsive UI'],
+    features: [
+      'Instant, low-latency interactions',
+      'Modern reactive component architecture',
+      'Mobile-first responsive layout',
+      'Deployed & live on Vercel',
+    ],
+  },
+  {
+    name: 'Trip',
+    blurb: 'Plan journeys that feel effortless.',
+    description:
+      'A travel planning experience that turns scattered ideas into a clear, beautiful itinerary. Thoughtful flows, smooth transitions and a focus on getting people from idea to plan fast.',
+    url: 'https://trip-mu-coral.vercel.app/',
+    accent: '#f472b6',
+    accentSoft: 'rgba(244,114,182,0.16)',
+    tags: ['Next.js', 'TypeScript', 'UX Design', 'Web App'],
+    features: [
+      'Guided, friction-free planning flow',
+      'Clean, content-first interface',
+      'Smooth, considered transitions',
+      'Deployed & live on Vercel',
+    ],
+  },
+];
+
+export type JourneyStep = {
+  year: string;
+  title: string;
+  body: string;
+  accent: string;
+};
+
+export const journey: JourneyStep[] = [
+  {
+    year: '2018 – 2021',
+    title: 'Diploma in Computer Science & Engineering',
+    body: 'Where it began. Three years of fundamentals — programming, systems and the thrill of watching an idea turn into something you can actually click.',
+    accent: '#22d3ee',
+  },
+  {
+    year: '2021 – 2024',
+    title: 'B.Tech in Computer Science & Engineering',
+    body: 'Levelled up from diploma to B.Tech, going deeper into engineering while shipping working software for real people — deploying, maintaining and iterating on live products.',
+    accent: '#8b5cf6',
+  },
+  {
+    year: '2024',
+    title: 'B.Tech CSE, complete',
+    body: 'Graduated and went all-in as an independent developer, building and shipping 15+ real solutions end to end.',
+    accent: '#34d399',
+  },
+  {
+    year: 'Now',
+    title: 'Engineer + analyst',
+    body: 'Pairing hands-on engineering with business analysis — translating real-world problems into software that moves the needle.',
+    accent: '#fbbf24',
+  },
+];
+
+export const socials = [
+  { label: 'GitHub', handle: '@Biswadipgoj', url: 'https://github.com/Biswadipgoj' },
+  { label: 'Email', handle: personal.email, url: `mailto:${personal.email}` },
+  { label: 'Location', handle: 'Uluberia, WB, India', url: 'https://maps.google.com/?q=Uluberia,West+Bengal,India' },
+];
+
+export const github = {
+  username: 'Biswadipgoj',
+  url: 'https://github.com/Biswadipgoj',
+  blurb: 'Open source, experiments and the projects behind the products. Everything I build lives here.',
 };
