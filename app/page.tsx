@@ -17,9 +17,10 @@ export default function Home() {
       <ScrollProgress />
       <CursorGlow />
       <Navbar />
+      {/* Every section floats over the one persistent 3D universe mounted in
+          the layout — the camera flies through it as this page scrolls. */}
       <main className="relative">
         <Hero />
-        {/* Sections flow into one another over a single continuous aurora canvas */}
         <div className="relative">
           <About />
           <Skills />

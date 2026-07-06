@@ -3,22 +3,34 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { personal, socials } from '@/lib/data';
+import MagneticButton from '@/components/ui/MagneticButton';
+import Tilt3D from '@/components/ui/Tilt3D';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
+/**
+ * The finale — the camera in the world behind sails into a glowing portal,
+ * and this panel is what's on the other side: the invitation. It grows out
+ * of the depth as you approach, ringed by slowly turning halos.
+ */
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] });
-  // the finale scales up into view like a curtain rising
-  const scale = useTransform(scrollYProgress, [0, 1], [0.9, 1]);
-  const radius = useTransform(scrollYProgress, [0, 1], [48, 0]);
+  // approach through the portal: scale + straighten out of the depth
+  const scale = useTransform(scrollYProgress, [0, 1], [0.78, 1]);
+  const rotateX = useTransform(scrollYProgress, [0, 1], [16, 0]);
+  const radius = useTransform(scrollYProgress, [0, 1], [64, 0]);
 
   return (
-    <section id="contact" ref={ref} className="relative px-0 pt-10 md:pt-16">
+    <section id="contact" ref={ref} className="relative px-0 pt-10 md:pt-16" style={{ perspective: 1600 }}>
       <motion.div
-        style={{ scale, borderRadius: radius }}
+        style={{ scale, rotateX, borderRadius: radius, transformStyle: 'preserve-3d' }}
         className="cta-gradient relative mx-auto flex min-h-[100svh] w-full max-w-[1600px] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center text-white"
       >
+        {/* portal halos — slow counter-rotating rings around the invitation */}
+        <span className="portal-halo portal-halo--1" aria-hidden />
+        <span className="portal-halo portal-halo--2" aria-hidden />
+
         {/* floating glow accents */}
         <motion.span
           aria-hidden
@@ -42,14 +54,15 @@ export default function Contact() {
             className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] backdrop-blur"
           >
             <span className="h-2 w-2 rounded-full bg-white animate-pulse" />
-            Let&apos;s build
+            You made it through the universe
           </motion.div>
 
           <motion.h2
-            initial={{ opacity: 0, y: 30, scale: 0.96 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ opacity: 0, y: 40, rotateX: -30 }}
+            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: EASE }}
+            transition={{ duration: 0.9, ease: EASE }}
+            style={{ transformStyle: 'preserve-3d' }}
             className="font-display text-[clamp(2.4rem,7vw,5rem)] font-extrabold leading-[1.02] tracking-tight drop-shadow-sm"
           >
             Have an idea worth <br className="hidden sm:block" />
@@ -74,48 +87,48 @@ export default function Contact() {
             transition={{ duration: 0.7, delay: 0.2, ease: EASE }}
             className="mt-10 flex flex-wrap items-center justify-center gap-4"
           >
-            <motion.a
+            <MagneticButton
               href={`mailto:${personal.email}`}
-              whileHover={{ y: -3, scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-              className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-indigo-600 shadow-xl shadow-indigo-900/20"
+              className="!bg-white !text-indigo-600 shadow-xl shadow-indigo-900/20"
+              variant="ghost"
             >
               {personal.email}
               <span aria-hidden>✦</span>
-            </motion.a>
-            <motion.a
+            </MagneticButton>
+            <MagneticButton
               href="https://github.com/Biswadipgoj"
               target="_blank"
               rel="noreferrer"
-              whileHover={{ y: -3, scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-              className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-white/20"
+              variant="ghost"
+              className="!border !border-white/60 !bg-white/10 !text-white backdrop-blur"
             >
               View GitHub
-            </motion.a>
+            </MagneticButton>
           </motion.div>
 
           <div className="mx-auto mt-14 grid max-w-2xl gap-4 sm:grid-cols-3">
             {socials.map((s, i) => (
-              <motion.a
+              <motion.div
                 key={s.label}
-                href={s.url}
-                target={s.url.startsWith('http') ? '_blank' : undefined}
-                rel="noreferrer"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 30, rotateX: 24 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 + i * 0.1, ease: EASE }}
-                whileHover={{ y: -5 }}
-                className="rounded-2xl border border-white/30 bg-white/10 px-4 py-4 text-left backdrop-blur transition-colors hover:bg-white/20"
               >
-                <div className="text-xs font-semibold uppercase tracking-wider text-white/70">
-                  {s.label}
-                </div>
-                <div className="mt-1 truncate text-sm font-medium text-white">{s.handle}</div>
-              </motion.a>
+                <Tilt3D maxTilt={10}>
+                  <a
+                    href={s.url}
+                    target={s.url.startsWith('http') ? '_blank' : undefined}
+                    rel="noreferrer"
+                    className="block h-full rounded-2xl border border-white/30 bg-white/10 px-4 py-4 text-left backdrop-blur transition-colors hover:bg-white/20"
+                  >
+                    <div className="text-xs font-semibold uppercase tracking-wider text-white/70">
+                      {s.label}
+                    </div>
+                    <div className="mt-1 truncate text-sm font-medium text-white">{s.handle}</div>
+                  </a>
+                </Tilt3D>
+              </motion.div>
             ))}
           </div>
         </div>

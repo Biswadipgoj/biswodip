@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Sora, Inter } from 'next/font/google';
 import './globals.css';
 import SmoothScroll from '@/components/SmoothScroll';
-import ScrollBackdrop from '@/components/ScrollBackdrop';
+import WorldCanvas from '@/components/scene/WorldCanvas';
 import { personal } from '@/lib/data';
 
 const display = Sora({
@@ -60,9 +60,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="grain antialiased">
+        {/* CSS aurora carries the scene until (or instead of) the 3D world */}
         <div className="aurora-bg" aria-hidden />
-        <ScrollBackdrop />
-        <SmoothScroll>{children}</SmoothScroll>
+        <WorldCanvas />
+        <div className="relative z-10">
+          <SmoothScroll>{children}</SmoothScroll>
+        </div>
       </body>
     </html>
   );

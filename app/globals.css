@@ -472,6 +472,70 @@ html.lenis body {
   }
 }
 
+/* ================================================================ */
+/* The Orbit — skill constellation. The carrier spins the stars       */
+/* around the core; each node counter-spins so its label stays        */
+/* upright. Both are transform-only, so the system is free.           */
+/* ================================================================ */
+.orbit-carrier {
+  animation-name: orbit-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.orbit-node {
+  animation-name: orbit-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+/* hovering the system pauses the whole sky so stars are easy to catch */
+.orbit-system:hover .orbit-carrier,
+.orbit-system:hover .orbit-node {
+  animation-play-state: paused;
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Portal halos around the finale CTA — big, slow, counter-rotating rings. */
+.portal-halo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.5)
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  will-change: transform;
+  opacity: 0.5;
+}
+.portal-halo--1 {
+  width: min(120vw, 68rem);
+  margin-left: max(-60vw, -34rem);
+  margin-top: max(-60vw, -34rem);
+  animation: ring-spin 40s linear infinite;
+}
+.portal-halo--2 {
+  width: min(96vw, 54rem);
+  margin-left: max(-48vw, -27rem);
+  margin-top: max(-48vw, -27rem);
+  animation: ring-spin 28s linear infinite reverse;
+  opacity: 0.35;
+}
+
 .grain::after {
   content: '';
   position: fixed;
