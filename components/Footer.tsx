@@ -46,7 +46,7 @@ export default function Footer() {
 
         <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-white/10 pt-6 text-xs text-slate-400 sm:flex-row">
           <span>© {new Date().getFullYear()} {personal.name}. Crafted with code & color.</span>
-          <span>Next.js · Three.js · GSAP · Framer Motion</span>
+          <span>Built inside its own little universe ✦ scroll up to fly again</span>
         </div>
       </div>
     </footer>

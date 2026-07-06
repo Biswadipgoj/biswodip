@@ -2,8 +2,8 @@
  * Central content source for the portfolio.
  *
  * Everything visitor-facing is defined here so the site stays content-driven:
- * personal info, navigation, skills, projects, journey, stats and socials.
- * This is the single layer an admin panel / CMS would write to.
+ * personal info, navigation, the skill constellation, projects, journey,
+ * story-facts and socials. This is the single layer a CMS would write to.
  */
 
 export const personal = {
@@ -19,20 +19,24 @@ export const personal = {
   intro:
     'Independent software developer and aspiring business analyst from West Bengal, India. I turn ambiguous ideas into shipped products — from the first wireframe to a deployed, used-in-the-wild application.',
   about:
-    'I work end to end: research, design, engineering and delivery. Over 15+ real solutions, I have learned that great software is equal parts crisp interface, solid engineering and a clear understanding of the business problem underneath. That bridge — between code and outcomes — is exactly where I want to keep building.',
+    'I work end to end: research, design, engineering and delivery. Across every real solution I have shipped, I have learned that great software is equal parts crisp interface, solid engineering and a clear understanding of the business problem underneath. That bridge — between code and outcomes — is exactly where I want to keep building.',
 } as const;
 
-export const stats = [
-  { value: 15, suffix: '+', label: 'Solutions delivered' },
-  { value: 2024, suffix: '', label: 'B.Tech CSE', plain: true },
-  { value: 100, suffix: '%', label: 'Ship rate' },
-  { value: 8, suffix: '+', label: 'Core technologies' },
+/**
+ * Story-facts — the numbers that matter, told as a story
+ * (no dry percentages, no spec-sheet stats).
+ */
+export const facts = [
+  { figure: '15+', label: 'Ideas turned real', detail: 'researched, designed, built & delivered' },
+  { figure: '0', label: 'Builds left unfinished', detail: 'everything I start reaches its users' },
+  { figure: '2', label: 'Journeys through CSE', detail: 'diploma, then a B.Tech on top' },
+  { figure: '∞', label: 'Curiosity on tap', detail: 'the one resource that never runs out' },
 ] as const;
 
 export const nav = [
   { id: 'hero', label: 'Home' },
   { id: 'about', label: 'About' },
-  { id: 'skills', label: 'Skills' },
+  { id: 'skills', label: 'Orbit' },
   { id: 'projects', label: 'Work' },
   { id: 'impact', label: 'Impact' },
   { id: 'journey', label: 'Journey' },
@@ -40,7 +44,7 @@ export const nav = [
   { id: 'contact', label: 'Contact' },
 ] as const;
 
-/** SCENE 5 — Impact / value highlights shown before the final CTA. */
+/** Impact / value highlights shown before the final CTA. */
 export type Impact = {
   metric: string;
   title: string;
@@ -56,56 +60,85 @@ export const impacts: Impact[] = [
     accent: '#22d3ee',
   },
   {
-    metric: '15+ live',
+    metric: 'Battle-tested',
     title: 'Built for production',
     body: 'Clean, typed, maintainable engineering that survives real users, real traffic and real change requests.',
     accent: '#8b5cf6',
   },
   {
-    metric: '100% ship',
+    metric: 'Zero ghosts',
     title: 'Outcome-first',
-    body: 'Every interface choice traces back to a business goal. I bridge the gap between the code and the result it has to drive.',
+    body: 'Every interface choice traces back to a business goal. No abandoned repos, no half-built demos — if I start it, it ships.',
     accent: '#f472b6',
   },
 ];
 
-export type Skill = {
+/**
+ * The skill constellation — instead of bars and percentages, every craft is a
+ * star in one of three orbits around the core. Each carries a `vibe`: the
+ * honest, human line for how that tool and I get along.
+ */
+export type Craft = {
   name: string;
-  level: number; // 0 - 100
+  vibe: string;
   color: string;
 };
 
-export const skillGroups: { title: string; tint: string; skills: Skill[] }[] = [
+export type Orbit = {
+  ring: string;
+  caption: string;
+  tint: string;
+  crafts: Craft[];
+};
+
+export const constellation: Orbit[] = [
   {
-    title: 'Frontend & Experience',
+    ring: 'Inner orbit',
+    caption: 'Gravity-locked — the instruments I reach for every single day',
     tint: 'from-aurora-cyan to-aurora-blue',
-    skills: [
-      { name: 'React / Next.js', level: 92, color: '#22d3ee' },
-      { name: 'TypeScript', level: 88, color: '#3b82f6' },
-      { name: 'Tailwind CSS', level: 90, color: '#38bdf8' },
-      { name: 'Three.js / R3F', level: 80, color: '#8b5cf6' },
+    crafts: [
+      { name: 'React & Next.js', vibe: 'Home turf. Every build starts here.', color: '#22d3ee' },
+      { name: 'TypeScript', vibe: 'My second language — arguably my first.', color: '#3b82f6' },
+      { name: 'Tailwind CSS', vibe: 'Paints interfaces at the speed of thought.', color: '#38bdf8' },
+      { name: 'Three.js', vibe: 'Turns a scroll wheel into space travel.', color: '#8b5cf6' },
     ],
   },
   {
-    title: 'Engineering & Backend',
+    ring: 'Middle orbit',
+    caption: 'The engine rooms — quiet machinery behind loud interfaces',
     tint: 'from-aurora-violet to-aurora-pink',
-    skills: [
-      { name: 'Node.js', level: 85, color: '#34d399' },
-      { name: 'REST APIs', level: 86, color: '#a78bfa' },
-      { name: 'Databases', level: 82, color: '#f472b6' },
-      { name: 'Python', level: 78, color: '#fbbf24' },
+    crafts: [
+      { name: 'Node.js', vibe: 'Keeps the lights on while the UI shows off.', color: '#34d399' },
+      { name: 'REST APIs', vibe: 'Fluent in request, response and everything between.', color: '#a78bfa' },
+      { name: 'Databases', vibe: 'Where the truth lives — I keep it tidy.', color: '#f472b6' },
+      { name: 'Python', vibe: 'A calm scalpel for gnarly problems.', color: '#fbbf24' },
     ],
   },
   {
-    title: 'Delivery & Analysis',
+    ring: 'Outer orbit',
+    caption: 'The long view — where code meets the business it serves',
     tint: 'from-aurora-emerald to-aurora-gold',
-    skills: [
-      { name: 'Product Thinking', level: 88, color: '#34d399' },
-      { name: 'Requirements Analysis', level: 84, color: '#fbbf24' },
-      { name: 'Deployment / DevOps', level: 80, color: '#22d3ee' },
-      { name: 'UX & Design', level: 83, color: '#f472b6' },
+    crafts: [
+      { name: 'Product thinking', vibe: 'Asks “why” long before “how”.', color: '#34d399' },
+      { name: 'Requirements analysis', vibe: 'Turns vague wishes into buildable lists.', color: '#fbbf24' },
+      { name: 'Deployment', vibe: 'From “works on my machine” to works everywhere.', color: '#22d3ee' },
+      { name: 'UX & design', vibe: 'Makes software feel like it likes you back.', color: '#f472b6' },
     ],
   },
+];
+
+/** The marquee ribbon — things I ship, not a parts list. */
+export const shipped = [
+  'Interfaces',
+  'Dashboards',
+  'Storefronts',
+  'Prototypes',
+  'Pipelines',
+  'Portals',
+  'Experiences',
+  'Products',
+  'Ideas',
+  'Outcomes',
 ];
 
 export type Project = {
@@ -129,12 +162,12 @@ export const projects: Project[] = [
     url: 'https://telepoint-topaz.vercel.app/',
     accent: '#22d3ee',
     accentSoft: 'rgba(34,211,238,0.16)',
-    tags: ['Next.js', 'TypeScript', 'Real-time', 'Responsive UI'],
+    tags: ['Instant by design', 'Feels native everywhere', 'Live on the internet'],
     features: [
       'Instant, low-latency interactions',
       'Modern reactive component architecture',
       'Mobile-first responsive layout',
-      'Deployed & live on Vercel',
+      'Deployed & live right now',
     ],
   },
   {
@@ -145,12 +178,12 @@ export const projects: Project[] = [
     url: 'https://trip-mu-coral.vercel.app/',
     accent: '#f472b6',
     accentSoft: 'rgba(244,114,182,0.16)',
-    tags: ['Next.js', 'TypeScript', 'UX Design', 'Web App'],
+    tags: ['Idea → itinerary', 'Designed to delight', 'Live on the internet'],
     features: [
       'Guided, friction-free planning flow',
       'Clean, content-first interface',
       'Smooth, considered transitions',
-      'Deployed & live on Vercel',
+      'Deployed & live right now',
     ],
   },
 ];
@@ -178,7 +211,7 @@ export const journey: JourneyStep[] = [
   {
     year: '2024',
     title: 'B.Tech CSE, complete',
-    body: 'Graduated and went all-in as an independent developer, building and shipping 15+ real solutions end to end.',
+    body: 'Graduated and went all-in as an independent developer, building and shipping real solutions end to end.',
     accent: '#34d399',
   },
   {
