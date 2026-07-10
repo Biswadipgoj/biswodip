@@ -60,18 +60,20 @@ function FactChip({
   const y = useTransform(sy, [-0.5, 0.5], [-12 * depth, 12 * depth]);
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8, y: 24 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ delay, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       style={{ x, y }}
       className={`pointer-events-auto absolute hidden xl:block ${position}`}
     >
-      <div className="glass card-glow flex items-center gap-3 rounded-2xl px-4 py-3 transition-transform duration-300 hover:scale-105">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, y: 24 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ delay, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="glass card-glow flex items-center gap-3 rounded-2xl px-4 py-3 transition-transform duration-300 hover:scale-105"
+      >
         <span className="font-display text-2xl font-extrabold text-gradient">{fact.figure}</span>
         <span className="max-w-[9rem] text-[0.7rem] font-medium leading-snug text-slate-500">
           {fact.label}
         </span>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
@@ -143,13 +145,16 @@ export default function Hero() {
 
       {/* ── Main content — flex-1 so it fills space above the scroll cue ── */}
       <motion.div
-        initial={{ filter: 'blur(20px)', scale: 1.1, opacity: 0, y: 40 }}
-        animate={{ filter: 'blur(0px)', scale: 1, opacity: 1, y: 0 }}
-        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-        style={{ scale, opacity, rotateX, transformStyle: 'preserve-3d' }}
+        style={{ scale, opacity, y, rotateX, transformStyle: 'preserve-3d' }}
         className="relative z-10 flex w-full flex-1 flex-col items-center justify-center px-6 pt-28 pb-6 text-center"
       >
-        {/* Fact chips — xl only, absolutely positioned within this div */}
+        <motion.div
+          initial={{ filter: 'blur(20px)', scale: 1.1, opacity: 0, y: 40 }}
+          animate={{ filter: 'blur(0px)', scale: 1, opacity: 1, y: 0 }}
+          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+          className="flex w-full flex-col items-center justify-center"
+        >
+          {/* Fact chips — xl only, absolutely positioned within this div */}
         <FactChip fact={facts[0]} position="left-6 top-16"    depth={1.6} delay={1.5}  sx={sx} sy={sy} />
         <FactChip fact={facts[1]} position="right-6 top-24"   depth={1.1} delay={1.65} sx={sx} sy={sy} />
         <FactChip fact={facts[3]} position="bottom-16 left-8" depth={0.8} delay={1.8}  sx={sx} sy={sy} />
@@ -259,6 +264,7 @@ export default function Hero() {
             </div>
           ))}
         </motion.dl>
+        </motion.div>
       </motion.div>
 
       {/* ── Portrait — absolute, 2xl only ── */}
