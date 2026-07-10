@@ -41,42 +41,7 @@ function SocialIcon({ label }: { label: string }) {
   );
 }
 
-function FactChip({
-  fact,
-  position,
-  depth,
-  delay,
-  sx,
-  sy,
-}: {
-  fact: (typeof facts)[number];
-  position: string;
-  depth: number;
-  delay: number;
-  sx: MotionValue<number>;
-  sy: MotionValue<number>;
-}) {
-  const x = useTransform(sx, [-0.5, 0.5], [-16 * depth, 16 * depth]);
-  const y = useTransform(sy, [-0.5, 0.5], [-12 * depth, 12 * depth]);
-  return (
-    <motion.div
-      style={{ x, y }}
-      className={`pointer-events-auto absolute hidden xl:block ${position}`}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8, y: 24 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ delay, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="glass card-glow flex items-center gap-3 rounded-2xl px-4 py-3 transition-transform duration-300 hover:scale-105"
-      >
-        <span className="font-display text-2xl font-extrabold text-gradient">{fact.figure}</span>
-        <span className="max-w-[9rem] text-[0.7rem] font-medium leading-snug text-slate-500">
-          {fact.label}
-        </span>
-      </motion.div>
-    </motion.div>
-  );
-}
+
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -92,9 +57,6 @@ export default function Hero() {
   const sx = useSpring(px, { stiffness: 90, damping: 20, mass: 0.5 });
   const sy = useSpring(py, { stiffness: 90, damping: 20, mass: 0.5 });
 
-  const portraitRotateY = useTransform(sx, [-0.5, 0.5], [12, -12]);
-  const portraitRotateX = useTransform(sy, [-0.5, 0.5], [-10, 10]);
-  const portraitX       = useTransform(sx, [-0.5, 0.5], [-18, 18]);
   const headX = useTransform(sx, [-0.5, 0.5], [8, -8]);
   const headY = useTransform(sy, [-0.5, 0.5], [6, -6]);
 
@@ -154,21 +116,31 @@ export default function Hero() {
           transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           className="flex w-full flex-col items-center justify-center"
         >
-          {/* Fact chips — xl only, absolutely positioned within this div */}
-        <FactChip fact={facts[0]} position="left-6 top-16"    depth={1.6} delay={1.5}  sx={sx} sy={sy} />
-        <FactChip fact={facts[1]} position="right-6 top-24"   depth={1.1} delay={1.65} sx={sx} sy={sy} />
-        <FactChip fact={facts[3]} position="bottom-16 left-8" depth={0.8} delay={1.8}  sx={sx} sy={sy} />
-
-        {/* Role eyebrow */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="section-eyebrow mb-8 inline-flex"
-        >
-          <span className="h-2 w-2 rounded-full bg-aurora-emerald animate-pulse" />
-          {personal.role} · {personal.aspiration}
-        </motion.div>
+          {/* Profile Pill */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="mb-8 flex items-center gap-3 rounded-full border border-white/10 bg-[#13161e]/80 p-1.5 pr-6 shadow-[0_0_30px_rgba(0,0,0,0.5)] backdrop-blur-md"
+          >
+            <div className="relative h-10 w-10 overflow-hidden rounded-full border border-white/20">
+              <Image
+                src="/biswodip.png"
+                alt="Biswodip Goj"
+                fill
+                className="object-cover object-top"
+              />
+            </div>
+            <div className="flex flex-col items-start justify-center">
+              <span className="text-[0.65rem] font-bold uppercase tracking-widest text-white/90">
+                Biswodip Goj
+              </span>
+              <span className="flex items-center gap-1.5 text-[0.6rem] font-medium text-slate-400">
+                <span className="h-1.5 w-1.5 rounded-full bg-aurora-emerald animate-pulse shadow-[0_0_8px_#34d399]" />
+                {personal.role}
+              </span>
+            </div>
+          </motion.div>
 
         {/* Headline — floats with pointer */}
         <motion.h1
@@ -246,74 +218,23 @@ export default function Hero() {
           ))}
         </motion.div>
 
-        {/* Facts grid — mobile only (chips are xl-only) */}
-        <motion.dl
-          initial={{ opacity: 0, y: 16 }}
+        {/* Unified Glass Stats Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.25 }}
-          className="mx-auto mt-10 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4 xl:hidden"
+          className="mx-auto mt-16 grid w-full max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4"
         >
-          {facts.map((f) => (
-            <div key={f.label} className="flex flex-col">
-              <dt className="order-2 mt-1 text-[0.68rem] font-medium uppercase tracking-[0.12em] text-slate-400">
+          {facts.map((f, i) => (
+            <div key={f.label} className="glass card-glow flex flex-col items-center justify-center rounded-2xl p-4 sm:p-6 text-center">
+              <span className="font-display text-2xl font-extrabold text-gradient sm:text-3xl">{f.figure}</span>
+              <span className="mt-1.5 text-[0.6rem] font-medium uppercase tracking-[0.12em] text-slate-400">
                 {f.label}
-              </dt>
-              <dd className="order-1 font-display text-2xl font-extrabold text-gradient sm:text-3xl">
-                {f.figure}
-              </dd>
+              </span>
             </div>
           ))}
-        </motion.dl>
         </motion.div>
-      </motion.div>
-
-      {/* ── Portrait — absolute, 2xl only ── */}
-      <motion.div
-        initial={{ opacity: 0, x: 80, rotateY: -24 }}
-        animate={{ opacity: 1, x: 0, rotateY: -14 }}
-        transition={{ duration: 1.1, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        style={{ opacity }}
-        className="hero-portrait pointer-events-none absolute right-[4%] top-1/2 z-10 hidden w-[15rem] -translate-y-1/2 2xl:block"
-        aria-hidden
-      >
-        <span className="portrait-aurora" />
-        <span className="holo-ring holo-ring--1" />
-        <span className="holo-ring holo-ring--2" />
-        <span className="holo-ring holo-ring--3" />
-        <span className="portrait-orb portrait-orb--cyan" />
-        <span className="portrait-orb portrait-orb--violet" />
-        <span className="portrait-orb portrait-orb--pink" />
-        <div className="portrait-breathe">
-          <motion.div
-            className="portrait-tilt"
-            style={{
-              rotateY: portraitRotateY,
-              rotateX: portraitRotateX,
-              x: portraitX,
-              transformPerspective: 900,
-            }}
-          >
-            <div className="portrait-card relative aspect-[4/5] w-full">
-              <span className="portrait-border" />
-              <div className="portrait-media relative h-full w-full overflow-hidden rounded-[1.65rem]">
-                <Image
-                  src="/biswodip.png"
-                  alt=""
-                  fill
-                  priority
-                  sizes="240px"
-                  className="object-cover object-top"
-                />
-                <span className="portrait-wash" />
-                <span className="portrait-shine" />
-              </div>
-              <div className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#13161e] px-4 py-2 text-xs font-semibold text-ink shadow-xl shadow-black/40">
-                <span className="h-2 w-2 rounded-full bg-aurora-emerald animate-pulse" />
-                Open to opportunities
-              </div>
-            </div>
-          </motion.div>
-        </div>
+        </motion.div>
       </motion.div>
 
       {/* ── Scroll cue ── AFTER content in flex column = ZERO overlap possible */}
