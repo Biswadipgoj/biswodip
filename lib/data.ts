@@ -36,7 +36,7 @@ export const facts = [
 export const nav = [
   { id: 'hero', label: 'Home' },
   { id: 'about', label: 'About' },
-  { id: 'skills', label: 'Orbit' },
+  { id: 'skills', label: 'Stack' },
   { id: 'projects', label: 'Work' },
   { id: 'impact', label: 'Impact' },
   { id: 'journey', label: 'Journey' },
@@ -74,14 +74,14 @@ export const impacts: Impact[] = [
 ];
 
 /**
- * The skill constellation — instead of bars and percentages, every craft is a
- * star in one of three orbits around the core. Each carries a `vibe`: the
- * honest, human line for how that tool and I get along.
+ * The tech stack — real CSE tools, organized into four layers.
+ * Each carries a `vibe`: the honest, human line for how that tool and I get along.
  */
 export type Craft = {
   name: string;
   vibe: string;
   color: string;
+  icon: string; // emoji / short symbol for the floating badge
 };
 
 export type Orbit = {
@@ -93,36 +93,79 @@ export type Orbit = {
 
 export const constellation: Orbit[] = [
   {
-    ring: 'Inner orbit',
-    caption: 'Gravity-locked — the instruments I reach for every single day',
+    ring: 'Frontend',
+    caption: 'Pixel-perfect interfaces, reactive UIs, and immersive 3D experiences',
     tint: 'from-aurora-cyan to-aurora-blue',
     crafts: [
-      { name: 'React & Next.js', vibe: 'Home turf. Every build starts here.', color: '#22d3ee' },
-      { name: 'TypeScript', vibe: 'My second language — arguably my first.', color: '#3b82f6' },
-      { name: 'Tailwind CSS', vibe: 'Paints interfaces at the speed of thought.', color: '#38bdf8' },
-      { name: 'Three.js', vibe: 'Turns a scroll wheel into space travel.', color: '#8b5cf6' },
+      { name: 'React & Next.js', vibe: 'Home turf. SSR, SSG, RSC — all of it.', color: '#22d3ee', icon: '⚛️' },
+      { name: 'TypeScript', vibe: 'Typed or it didn\'t ship. Full stop.', color: '#3b82f6', icon: 'TS' },
+      { name: 'Tailwind CSS', vibe: 'Design-system speed with total control.', color: '#38bdf8', icon: '🌊' },
+      { name: 'Three.js / WebGL', vibe: 'Turns a browser into an immersive world.', color: '#8b5cf6', icon: '🧊' },
+      { name: 'Framer Motion', vibe: 'Every UI deserves to feel alive.', color: '#f472b6', icon: '✨' },
+      { name: 'Redux & Zustand', vibe: 'Global state managed with precision.', color: '#e34f26', icon: '📦' },
+      { name: 'Vue.js & Nuxt', vibe: 'Versatile, reactive, and highly expressive.', color: '#34d399', icon: '🟢' },
+      { name: 'SvelteKit', vibe: 'Zero-runtime overhead. Pure speed.', color: '#e34f26', icon: '🔥' },
+      { name: 'WebSockets & RTC', vibe: 'Real-time collaborative interfaces.', color: '#fbbf24', icon: '⚡' },
+      { name: 'Micro-frontends', vibe: 'Decoupled UI architecture at scale.', color: '#a78bfa', icon: '🧩' },
+      { name: 'Storybook', vibe: 'UI component driven development.', color: '#f472b6', icon: '📖' },
+      { name: 'GSAP', vibe: 'High-performance complex animations.', color: '#34d399', icon: '🎬' },
     ],
   },
   {
-    ring: 'Middle orbit',
-    caption: 'The engine rooms — quiet machinery behind loud interfaces',
+    ring: 'Backend & APIs',
+    caption: 'Scalable server-side systems, real-time data, and clean REST/GraphQL contracts',
     tint: 'from-aurora-violet to-aurora-pink',
     crafts: [
-      { name: 'Node.js', vibe: 'Keeps the lights on while the UI shows off.', color: '#34d399' },
-      { name: 'REST APIs', vibe: 'Fluent in request, response and everything between.', color: '#a78bfa' },
-      { name: 'Databases', vibe: 'Where the truth lives — I keep it tidy.', color: '#f472b6' },
-      { name: 'Python', vibe: 'A calm scalpel for gnarly problems.', color: '#fbbf24' },
+      { name: 'Node.js & Express', vibe: 'Fast, event-driven, production-proven.', color: '#34d399', icon: '🟢' },
+      { name: 'Python & FastAPI', vibe: 'Async, typed, and stupidly fast to build.', color: '#fbbf24', icon: '🐍' },
+      { name: 'REST & GraphQL', vibe: 'Fluent in every flavour of API design.', color: '#a78bfa', icon: '🔗' },
+      { name: 'Kafka & RabbitMQ', vibe: 'Asynchronous, event-driven messaging.', color: '#22d3ee', icon: '⚡' },
+      { name: 'JWT & OAuth2', vibe: 'Auth done right — secure, stateless, clean.', color: '#f472b6', icon: '🔐' },
+      { name: 'Microservices', vibe: 'Decoupled services that scale independently.', color: '#2496ed', icon: '🧩' },
+      { name: 'Go (Golang)', vibe: 'High concurrency, compiled, brutal performance.', color: '#22d3ee', icon: '🐹' },
+      { name: 'Rust', vibe: 'Memory safety without garbage collection.', color: '#e34f26', icon: '🦀' },
+      { name: 'Spring Boot', vibe: 'Enterprise-grade Java backend architecture.', color: '#34d399', icon: '🍃' },
+      { name: 'gRPC & Protobuf', vibe: 'Ultra-fast inter-service communication.', color: '#3b82f6', icon: '🚄' },
+      { name: 'Serverless / Lambdas', vibe: 'Infinite scale, zero maintenance.', color: '#fbbf24', icon: '☁️' },
+      { name: 'Web3 & Contracts', vibe: 'Decentralized protocol integrations.', color: '#8b5cf6', icon: '⛓️' },
     ],
   },
   {
-    ring: 'Outer orbit',
-    caption: 'The long view — where code meets the business it serves',
+    ring: 'DevOps & Cloud',
+    caption: 'From local machine to global infrastructure — automated all the way',
+    tint: 'from-[#2496ed] to-aurora-violet',
+    crafts: [
+      { name: 'Docker & Compose', vibe: 'Containers: the great environment equalizer.', color: '#2496ed', icon: '🐳' },
+      { name: 'CI/CD Pipelines', vibe: 'Push → test → deploy. Automated. Always.', color: '#f472b6', icon: '⚙️' },
+      { name: 'AWS & Cloudflare', vibe: 'Architecting scalable cloud infrastructure.', color: '#a78bfa', icon: '☁️' },
+      { name: 'Kubernetes (K8s)', vibe: 'Orchestrating robust, self-healing clusters.', color: '#22d3ee', icon: '☸️' },
+      { name: 'Linux & Shell', vibe: 'SSH in, fix it, ship it. No GUI needed.', color: '#fbbf24', icon: '🐧' },
+      { name: 'Nginx & Proxy', vibe: 'The gateway that keeps everything running.', color: '#34d399', icon: '🌐' },
+      { name: 'Terraform & IaC', vibe: 'Infrastructure defined entirely as code.', color: '#8b5cf6', icon: '🏗️' },
+      { name: 'GCP & Azure', vibe: 'Multi-cloud strategy and deployment.', color: '#3b82f6', icon: '☁️' },
+      { name: 'Grafana & Metrics', vibe: 'System observability and live analytics.', color: '#f472b6', icon: '📊' },
+      { name: 'ArgoCD', vibe: 'GitOps continuous delivery for Kubernetes.', color: '#2496ed', icon: '🐙' },
+      { name: 'Jenkins & GitLab', vibe: 'Enterprise automation and delivery.', color: '#e34f26', icon: '🤖' },
+      { name: 'Ansible', vibe: 'Configuration management at scale.', color: '#22d3ee', icon: '📜' },
+    ],
+  },
+  {
+    ring: 'Data & Tooling',
+    caption: 'Databases, testing, and the tools that keep codebases healthy and fast',
     tint: 'from-aurora-emerald to-aurora-gold',
     crafts: [
-      { name: 'Product thinking', vibe: 'Asks “why” long before “how”.', color: '#34d399' },
-      { name: 'Requirements analysis', vibe: 'Turns vague wishes into buildable lists.', color: '#fbbf24' },
-      { name: 'Deployment', vibe: 'From “works on my machine” to works everywhere.', color: '#22d3ee' },
-      { name: 'UX & design', vibe: 'Makes software feel like it likes you back.', color: '#f472b6' },
+      { name: 'PostgreSQL & MySQL', vibe: 'Relational data — indexed, trusted, fast.', color: '#34d399', icon: '🗄️' },
+      { name: 'MongoDB & Redis', vibe: 'Document stores and blazing-fast caching.', color: '#fbbf24', icon: '🍃' },
+      { name: 'Prisma & Drizzle', vibe: 'Type-safe ORM — database as code.', color: '#8b5cf6', icon: '💎' },
+      { name: 'Jest & Vitest', vibe: 'Tests that catch bugs before users do.', color: '#f472b6', icon: '🧪' },
+      { name: 'Git & Monorepos', vibe: 'Every commit tells a story. Mine are clean.', color: '#22d3ee', icon: '🌿' },
+      { name: 'System Architecture', vibe: 'Designing for high availability and scale.', color: '#e34f26', icon: '📐' },
+      { name: 'Elasticsearch', vibe: 'High-speed search and log aggregation.', color: '#22d3ee', icon: '🔍' },
+      { name: 'Apache Spark', vibe: 'Big data processing and analytics.', color: '#f472b6', icon: '⚡' },
+      { name: 'Snowflake / BigQuery', vibe: 'Cloud data warehousing architecture.', color: '#3b82f6', icon: '❄️' },
+      { name: 'Playwright & Cypress', vibe: 'End-to-end testing for critical paths.', color: '#34d399', icon: '🎭' },
+      { name: 'Neo4j', vibe: 'Graph databases for complex relationships.', color: '#a78bfa', icon: '🕸️' },
+      { name: 'Webpack & Vite', vibe: 'Lightning fast bundlers and build tools.', color: '#fbbf24', icon: '⚡' },
     ],
   },
 ];
@@ -151,9 +194,27 @@ export type Project = {
   accentSoft: string;
   tags: string[];
   features: string[];
+  previewImage?: string;
 };
 
 export const projects: Project[] = [
+  {
+    name: 'Erpixa',
+    blurb: 'Business management, finally without the bloat.',
+    description:
+      'A modular, open-source ERP platform built for small and mid-sized businesses that are tired of paying for features they never touch. Erpixa onboards your team, detects your business type, and assembles a custom workspace — CRM, Sales, Inventory, Accounting, HR, Projects, Manufacturing, Helpdesk, Marketing — activating only what you actually need. Backed by Postgres Row-Level Security for true multi-tenant data isolation and a live KPI engine that computes every metric from real data, never from mocks.',
+    url: 'https://erpixa.vercel.app/',
+    repo: 'https://github.com/Biswadipgoj/Erpixa',
+    accent: '#8b5cf6',
+    accentSoft: 'rgba(139,92,246,0.16)',
+    tags: ['Modular by design', 'Enterprise-grade security', 'Live on the internet'],
+    features: [
+      '9 business modules activated per business type',
+      'Postgres RLS — tenant isolation at the database layer',
+      'Live KPI engine computed from real aggregates',
+      'React 19 + TypeScript + Supabase serverless stack',
+    ],
+  },
   {
     name: 'TelePoint',
     blurb: 'Real-time communication, reimagined.',
@@ -185,8 +246,10 @@ export const projects: Project[] = [
       'Smooth, considered transitions',
       'Deployed & live right now',
     ],
+    previewImage: '/trip-preview.png',
   },
 ];
+
 
 export type JourneyStep = {
   year: string;

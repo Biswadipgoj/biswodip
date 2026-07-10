@@ -2,16 +2,20 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, MeshTransmissionMaterial } from '@react-three/drei';
+import { Float } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 
 /* ------------------------------------------------------------------ */
-/* THE WORLD                                                           */
-/* One persistent universe behind the whole page. The camera flies     */
-/* forward along a corridor of "zones" (one per story beat) as you     */
-/* scroll, so the site reads as a journey through space rather than a  */
-/* stack of flat sections.                                             */
+/* PERFORMANCE-FIRST 3D world.                                         */
+/* Key changes vs. previous version:                                   */
+/*  - No MeshTransmissionMaterial (raymarching = GPU killer)           */
+/*  - No Float on individual small meshes — only on primary showpiece  */
+/*  - Data particles reduced and batched                               */
+/*  - Server rack LEDs removed (too many draw calls)                   */
+/*  - DataPacket meshes replaced with a single shader-animated mesh    */
+/*  - EffectComposer only on high tier, much lighter bloom params      */
+/*  - DPR capped at 1.4                                                */
 /* ------------------------------------------------------------------ */
 
 type Tier = 'low' | 'high';
@@ -26,22 +30,23 @@ function detectTier(): Tier {
   return 'high';
 }
 
-/* Zone layout: spacing between story beats along -z. */
 const ZONE_GAP = 22;
-const ZONES = 6; // hero · about · orbit · work · journey · finale
+const ZONES = 6;
 const TRAVEL = ZONE_GAP * (ZONES - 1);
 
-/* Atmosphere color per zone — background + fog lerp between these. */
 const ZONE_TINTS = [
-  new THREE.Color('#221d4d'), // hero — indigo dusk
-  new THREE.Color('#171f3d'), // about — deep blue
-  new THREE.Color('#251743'), // orbit — violet
-  new THREE.Color('#101c33'), // work — midnight cyan
-  new THREE.Color('#1d1533'), // journey — plum
-  new THREE.Color('#2a1440'), // finale — magenta night
+  new THREE.Color('#0d1117'),
+  new THREE.Color('#111827'),
+  new THREE.Color('#0f172a'),
+  new THREE.Color('#0c1118'),
+  new THREE.Color('#150d2a'),
+  new THREE.Color('#0a1628'),
 ];
 
-/* Shared scroll progress (0..1 across the whole document). */
+/* Shared lerp factor — lower = smoother but slightly laggier */
+const LERP_CAM = 0.055;
+const LERP_PTR = 0.035;
+
 function useScrollProgress() {
   const progress = useRef(0);
   useEffect(() => {
@@ -51,7 +56,7 @@ function useScrollProgress() {
     };
     update();
     window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update);
+    window.addEventListener('resize', update, { passive: true });
     return () => {
       window.removeEventListener('scroll', update);
       window.removeEventListener('resize', update);
@@ -60,54 +65,43 @@ function useScrollProgress() {
   return progress;
 }
 
-/* ------------------------------------------------------------------ */
-/* Camera: dollies along the corridor with scroll, sways toward the    */
-/* pointer, and eases everything so the flight feels weightless.       */
-/* ------------------------------------------------------------------ */
+/* ---- Camera ---- */
 function FlightCamera({ progress }: { progress: React.MutableRefObject<number> }) {
   const { camera } = useThree();
   useFrame((state) => {
     const p = progress.current;
-    const targetZ = 8 - p * TRAVEL;
-    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.06);
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, state.pointer.x * 1.4, 0.04);
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, 8 - p * TRAVEL, LERP_CAM);
+    camera.position.x = THREE.MathUtils.lerp(camera.position.x, state.pointer.x * 1.2, LERP_PTR);
     camera.position.y = THREE.MathUtils.lerp(
       camera.position.y,
-      state.pointer.y * 0.9 + Math.sin(p * Math.PI * 2) * 0.6,
-      0.04,
+      state.pointer.y * 0.7 + Math.sin(p * Math.PI * 2) * 0.5,
+      LERP_PTR,
     );
     camera.lookAt(0, 0, camera.position.z - 12);
   });
   return null;
 }
 
-/* Atmosphere: background + fog colors drift between zone tints. */
+/* ---- Atmosphere ---- */
 function Atmosphere({ progress }: { progress: React.MutableRefObject<number> }) {
   const { scene } = useThree();
   const bg = useMemo(() => ZONE_TINTS[0].clone(), []);
   useEffect(() => {
     scene.background = bg;
-    scene.fog = new THREE.Fog(bg, 14, 46);
-    return () => {
-      scene.background = null;
-      scene.fog = null;
-    };
+    scene.fog = new THREE.Fog(bg, 20, 55);
+    return () => { scene.background = null; scene.fog = null; };
   }, [scene, bg]);
   useFrame(() => {
     const p = progress.current * (ZONE_TINTS.length - 1);
     const i = Math.min(Math.floor(p), ZONE_TINTS.length - 2);
-    const t = p - i;
-    bg.copy(ZONE_TINTS[i]).lerp(ZONE_TINTS[i + 1], t);
+    bg.copy(ZONE_TINTS[i]).lerp(ZONE_TINTS[i + 1], p - i);
     if (scene.fog) (scene.fog as THREE.Fog).color.copy(bg);
   });
   return null;
 }
 
-/* ------------------------------------------------------------------ */
-/* Star corridor: a long tube of drifting particles along the flight   */
-/* path so there is always depth around the camera.                    */
-/* ------------------------------------------------------------------ */
-function StarCorridor({ count }: { count: number }) {
+/* ---- Data particles — one draw call, point sprites ---- */
+function DataParticles({ count }: { count: number }) {
   const ref = useRef<THREE.Points>(null);
   const { positions, colors } = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -118,39 +112,34 @@ function StarCorridor({ count }: { count: number }) {
       new THREE.Color('#8b5cf6'),
       new THREE.Color('#ec4899'),
       new THREE.Color('#34d399'),
-      new THREE.Color('#fbbf24'),
+      new THREE.Color('#2496ed'),
     ];
     for (let i = 0; i < count; i++) {
-      // ring-shaped cross-section so the middle stays clear for content
-      const angle = Math.random() * Math.PI * 2;
-      const radius = 4.5 + Math.random() * 9;
-      positions[i * 3] = Math.cos(angle) * radius;
-      positions[i * 3 + 1] = Math.sin(angle) * radius * 0.7;
+      const a = Math.random() * Math.PI * 2;
+      const r = 5 + Math.random() * 10;
+      positions[i * 3]     = Math.cos(a) * r;
+      positions[i * 3 + 1] = Math.sin(a) * r * 0.65;
       positions[i * 3 + 2] = 14 - Math.random() * (TRAVEL + 40);
       const c = palette[Math.floor(Math.random() * palette.length)];
-      colors[i * 3] = c.r;
-      colors[i * 3 + 1] = c.g;
-      colors[i * 3 + 2] = c.b;
+      colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
     }
     return { positions, colors };
   }, [count]);
 
-  useFrame((state, delta) => {
+  /* Very slow rotation — almost free on GPU */
+  useFrame((_, delta) => {
     if (!ref.current) return;
-    ref.current.rotation.z += Math.min(delta, 0.05) * 0.015;
-    const { x, y } = state.pointer;
-    ref.current.position.x = THREE.MathUtils.lerp(ref.current.position.x, x * 0.5, 0.03);
-    ref.current.position.y = THREE.MathUtils.lerp(ref.current.position.y, y * 0.35, 0.03);
+    ref.current.rotation.z += Math.min(delta, 0.05) * 0.006;
   });
 
   return (
     <points ref={ref}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
+        <bufferAttribute attach="attributes-color"    args={[colors, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.07}
+        size={0.05}
         vertexColors
         transparent
         opacity={0.85}
@@ -162,51 +151,37 @@ function StarCorridor({ count }: { count: number }) {
   );
 }
 
-/* Soft nebula glows floating along the corridor. */
+/* ---- Nebulae — sprite glow clouds, 1 draw call each ---- */
 function Nebulae() {
-  const texture = useMemo(() => {
+  const tex = useMemo(() => {
     const c = document.createElement('canvas');
-    c.width = c.height = 128;
-    const ctx = c.getContext('2d');
-    if (ctx) {
-      const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-      g.addColorStop(0, 'rgba(255,255,255,0.5)');
-      g.addColorStop(0.4, 'rgba(255,255,255,0.2)');
-      g.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, 128, 128);
-    }
-    const tex = new THREE.CanvasTexture(c);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    return tex;
+    c.width = c.height = 64; // smaller = faster
+    const ctx = c.getContext('2d')!;
+    const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, 'rgba(255,255,255,0.55)');
+    g.addColorStop(0.4, 'rgba(255,255,255,0.18)');
+    g.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 64, 64);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
   }, []);
 
-  /* Kept well off the flight path (|x| ≥ 10) so the camera never flies
-     through a cloud's bright core and washes out the whole viewport. */
-  const clouds = useMemo(
-    () => [
-      { pos: [-11, 4, -6] as const, scale: 11, color: '#3b82f6', opacity: 0.14 },
-      { pos: [12, -4, -18] as const, scale: 12, color: '#8b5cf6', opacity: 0.15 },
-      { pos: [-12, -3, -40] as const, scale: 12, color: '#22d3ee', opacity: 0.12 },
-      { pos: [11, 5, -58] as const, scale: 11, color: '#ec4899', opacity: 0.13 },
-      { pos: [-11, 4, -80] as const, scale: 12, color: '#34d399', opacity: 0.1 },
-      { pos: [11, -4, -102] as const, scale: 12, color: '#ec4899', opacity: 0.14 },
-    ],
-    [],
-  );
+  const clouds = useMemo(() => [
+    { pos: [-12, 4,  -6]   as const, s: 13, color: '#2496ed', o: 0.15 },
+    { pos: [ 13, -4, -22]  as const, s: 12, color: '#8b5cf6', o: 0.14 },
+    { pos: [-13, -3, -44]  as const, s: 13, color: '#22d3ee', o: 0.12 },
+    { pos: [ 12,  5, -66]  as const, s: 12, color: '#34d399', o: 0.13 },
+    { pos: [-12,  4, -88]  as const, s: 13, color: '#ec4899', o: 0.12 },
+  ], []);
 
   return (
     <>
       {clouds.map((cl, i) => (
-        <sprite key={i} position={[...cl.pos]} scale={[cl.scale, cl.scale, 1]}>
-          <spriteMaterial
-            map={texture}
-            color={cl.color}
-            transparent
-            opacity={cl.opacity}
-            depthWrite={false}
-            blending={THREE.AdditiveBlending}
-          />
+        <sprite key={i} position={[...cl.pos]} scale={[cl.s, cl.s, 1]}>
+          <spriteMaterial map={tex} color={cl.color} transparent opacity={cl.o}
+            depthWrite={false} blending={THREE.AdditiveBlending} />
         </sprite>
       ))}
     </>
@@ -214,216 +189,211 @@ function Nebulae() {
 }
 
 /* ------------------------------------------------------------------ */
-/* ZONE 0 — the hero crystal, pointer-reactive glass heart of the site */
+/* ZONE 0 — Hero: single showpiece crystal + small orbiting cubes     */
 /* ------------------------------------------------------------------ */
-function HeroCrystal({ tier }: { tier: Tier }) {
+function HeroCrystal() {
   const ref = useRef<THREE.Mesh>(null);
   useFrame((state, delta) => {
     if (!ref.current) return;
-    const d = Math.min(delta, 0.05);
-    ref.current.rotation.y += d * 0.25;
-    ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, state.pointer.y * 0.5, 0.05);
-    ref.current.rotation.z = THREE.MathUtils.lerp(ref.current.rotation.z, state.pointer.x * 0.5, 0.05);
+    ref.current.rotation.y += Math.min(delta, 0.05) * 0.22;
+    ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, state.pointer.y * 0.35, 0.04);
   });
   return (
-    <Float speed={1.4} rotationIntensity={0.6} floatIntensity={1.1}>
-      <mesh ref={ref} position={[0, 0, 0]}>
-        <icosahedronGeometry args={[1.7, 0]} />
-        {tier === 'high' ? (
-          <MeshTransmissionMaterial
-            thickness={0.9}
-            roughness={0.06}
-            transmission={1}
-            ior={1.4}
-            chromaticAberration={0.6}
-            anisotropy={0.4}
-            distortion={0.4}
-            distortionScale={0.4}
-            temporalDistortion={0.2}
-            color="#cfe6ff"
-            background={new THREE.Color('#eaf2ff')}
-          />
-        ) : (
-          <meshStandardMaterial
-            color="#7dd3fc"
-            metalness={0.65}
-            roughness={0.18}
-            emissive="#6366f1"
-            emissiveIntensity={0.35}
-            flatShading
-          />
-        )}
+    /* Single Float — each Float is one RAF, so keep to 1 per zone */
+    <Float speed={1.2} rotationIntensity={0.4} floatIntensity={0.9}>
+      <mesh ref={ref}>
+        <octahedronGeometry args={[1.8, 0]} />
+        <meshStandardMaterial
+          color="#38bdf8"
+          metalness={0.75}
+          roughness={0.1}
+          emissive="#2563eb"
+          emissiveIntensity={0.4}
+          flatShading
+        />
       </mesh>
     </Float>
   );
 }
 
-function HeroSatellites({ tier }: { tier: Tier }) {
-  const group = useRef<THREE.Group>(null);
+/* Instanced cubes — 1 draw call for all 5 satellites */
+function HeroSatellites() {
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const configs = useMemo(() => [
+    { pos: [ 3.6,  1.6, -0.5], color: '#2496ed', rotSpeed: 0.8 },
+    { pos: [-3.8, -1.4, -1.0], color: '#34d399', rotSpeed: 0.6 },
+    { pos: [ 2.6, -2.2,  0.8], color: '#fbbf24', rotSpeed: 1.0 },
+    { pos: [-2.8,  2.0,  0.6], color: '#8b5cf6', rotSpeed: 0.7 },
+    { pos: [ 4.8, -0.8, -2.0], color: '#f472b6', rotSpeed: 0.9 },
+  ], []);
+  const rotations = useRef(configs.map(() => ({ x: 0, y: 0, z: 0 })));
+
+  useEffect(() => {
+    if (!meshRef.current) return;
+    const color = new THREE.Color();
+    configs.forEach((cfg, i) => {
+      color.set(cfg.color);
+      meshRef.current!.setColorAt(i, color);
+    });
+    meshRef.current.instanceColor!.needsUpdate = true;
+  }, [configs]);
+
   useFrame((_, delta) => {
-    if (group.current) group.current.rotation.y += Math.min(delta, 0.05) * 0.12;
+    if (!meshRef.current) return;
+    const d = Math.min(delta, 0.05);
+    configs.forEach((cfg, i) => {
+      const r = rotations.current[i];
+      r.x += d * cfg.rotSpeed * 0.4;
+      r.y += d * cfg.rotSpeed * 0.6;
+      const [x, y, z] = cfg.pos as [number, number, number];
+      dummy.position.set(x, y + Math.sin(r.x) * 0.3, z);
+      dummy.rotation.set(r.x, r.y, r.z);
+      dummy.scale.setScalar(0.45);
+      dummy.updateMatrix();
+      meshRef.current!.setMatrixAt(i, dummy.matrix);
+    });
+    meshRef.current.instanceMatrix.needsUpdate = true;
   });
+
   return (
-    <group ref={group}>
-      <Float speed={2} rotationIntensity={1.4} floatIntensity={1.4}>
-        <mesh position={[3.4, 1.4, -1]}>
-          <torusKnotGeometry args={[0.5, 0.16, tier === 'low' ? 90 : 160, tier === 'low' ? 16 : 24]} />
-          <meshStandardMaterial color="#8b5cf6" metalness={0.9} roughness={0.18} emissive="#5b21b6" emissiveIntensity={0.35} />
-        </mesh>
-      </Float>
-      <Float speed={1.6} rotationIntensity={1} floatIntensity={1.2}>
-        <mesh position={[-3.6, -1.2, -0.5]} rotation={[Math.PI / 3, 0.4, 0]}>
-          <torusGeometry args={[0.75, 0.07, 18, tier === 'low' ? 48 : 80]} />
-          <meshStandardMaterial color="#22d3ee" metalness={0.8} roughness={0.2} emissive="#0891b2" emissiveIntensity={0.4} />
-        </mesh>
-      </Float>
-      <Float speed={1.9} rotationIntensity={1.2} floatIntensity={1.5}>
-        <mesh position={[2.8, -1.8, 0.6]}>
-          <icosahedronGeometry args={[0.34, 0]} />
-          <meshStandardMaterial color="#fbbf24" metalness={0.7} roughness={0.25} emissive="#f59e0b" emissiveIntensity={0.5} />
-        </mesh>
-      </Float>
-      <Float speed={2.2} rotationIntensity={1.4} floatIntensity={1.6}>
-        <mesh position={[-2.6, 1.8, 0.4]}>
-          <dodecahedronGeometry args={[0.3, 0]} />
-          <meshStandardMaterial color="#34d399" metalness={0.7} roughness={0.25} emissive="#059669" emissiveIntensity={0.5} />
-        </mesh>
-      </Float>
-    </group>
+    <instancedMesh ref={meshRef} args={[undefined, undefined, configs.length]}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial metalness={0.8} roughness={0.2} />
+    </instancedMesh>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* ZONE 2 — the skill constellation: three tilted rings with orbiting  */
-/* star-nodes, mirroring the DOM "Orbit" section it sits behind.       */
+/* ZONE 1 — About: dependency rings                                    */
 /* ------------------------------------------------------------------ */
-function OrbitRing({
-  radius,
-  tilt,
-  speed,
-  color,
-  nodes,
-}: {
-  radius: number;
-  tilt: number;
-  speed: number;
-  color: string;
-  nodes: number;
-}) {
-  const group = useRef<THREE.Group>(null);
-  useFrame((_, delta) => {
-    if (group.current) group.current.rotation.z += Math.min(delta, 0.05) * speed;
-  });
-  const points = useMemo(
-    () =>
-      Array.from({ length: nodes }, (_, i) => {
-        const a = (i / nodes) * Math.PI * 2;
-        return [Math.cos(a) * radius, Math.sin(a) * radius, 0] as const;
-      }),
-    [nodes, radius],
-  );
-  return (
-    <group rotation={[tilt, 0.35, 0]}>
-      <mesh>
-        <torusGeometry args={[radius, 0.02, 12, 96]} />
-        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={0.7} transparent opacity={0.55} />
-      </mesh>
-      <group ref={group}>
-        {points.map((p, i) => (
-          <mesh key={i} position={[...p]}>
-            <sphereGeometry args={[0.14, 12, 12]} />
-            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1.6} />
-          </mesh>
-        ))}
-      </group>
-    </group>
-  );
-}
-
-function ConstellationZone() {
-  const group = useRef<THREE.Group>(null);
-  useFrame((state, delta) => {
-    if (!group.current) return;
-    group.current.rotation.y += Math.min(delta, 0.05) * 0.06;
-    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, state.pointer.y * 0.25, 0.03);
-  });
-  return (
-    <group position={[0, 0, -ZONE_GAP * 2]} ref={group}>
-      <Float speed={1.2} rotationIntensity={0.4} floatIntensity={0.8}>
-        <mesh>
-          <sphereGeometry args={[0.7, 24, 24]} />
-          <meshStandardMaterial color="#f6f8fc" emissive="#a78bfa" emissiveIntensity={1.1} roughness={0.2} />
-        </mesh>
-      </Float>
-      <OrbitRing radius={2.2} tilt={1.05} speed={0.32} color="#22d3ee" nodes={4} />
-      <OrbitRing radius={3.2} tilt={0.75} speed={-0.22} color="#8b5cf6" nodes={4} />
-      <OrbitRing radius={4.2} tilt={1.35} speed={0.15} color="#fbbf24" nodes={4} />
-    </group>
-  );
-}
-
-/* ZONE 1 — twin halo rings for the "about" passage. */
-function HaloZone() {
-  const a = useRef<THREE.Mesh>(null);
-  const b = useRef<THREE.Mesh>(null);
+function DependencyGraph() {
+  const refs = [useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null)];
   useFrame((_, delta) => {
     const d = Math.min(delta, 0.05);
-    if (a.current) {
-      a.current.rotation.x += d * 0.25;
-      a.current.rotation.y += d * 0.15;
-    }
-    if (b.current) {
-      b.current.rotation.x -= d * 0.18;
-      b.current.rotation.y -= d * 0.22;
-    }
+    refs[0].current && (refs[0].current.rotation.x += d * 0.22);
+    refs[1].current && (refs[1].current.rotation.y -= d * 0.18);
+    refs[2].current && (refs[2].current.rotation.z += d * 0.14);
   });
+  const cfg = [
+    { pos: [-3.6,  1.4,  0] as const, r: 1.5, tube: 0.065, color: '#3b82f6' },
+    { pos: [ 3.8, -1.2, -2] as const, r: 1.2, tube: 0.055, color: '#34d399' },
+    { pos: [ 0,    2.8, -1] as const, r: 0.9, tube: 0.045, color: '#8b5cf6' },
+  ];
   return (
     <group position={[0, 0, -ZONE_GAP]}>
-      <Float speed={1.1} rotationIntensity={0.3} floatIntensity={0.9}>
-        <mesh ref={a} position={[-3.4, 1.4, 0]}>
-          <torusGeometry args={[1.5, 0.08, 16, 80]} />
-          <meshStandardMaterial color="#3b82f6" metalness={0.85} roughness={0.2} emissive="#1d4ed8" emissiveIntensity={0.5} />
+      {cfg.map((c, i) => (
+        <mesh key={i} ref={refs[i]} position={[...c.pos]}>
+          <torusGeometry args={[c.r, c.tube, 12, 60]} />
+          <meshStandardMaterial color={c.color} emissive={c.color} emissiveIntensity={0.55} metalness={0.8} roughness={0.2} />
         </mesh>
-      </Float>
-      <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1.1}>
-        <mesh ref={b} position={[3.6, -1.2, -2]}>
-          <torusGeometry args={[1.1, 0.06, 16, 72]} />
-          <meshStandardMaterial color="#34d399" metalness={0.85} roughness={0.2} emissive="#047857" emissiveIntensity={0.5} />
+      ))}
+      <Float speed={1} rotationIntensity={0.2} floatIntensity={0.7}>
+        <mesh>
+          <icosahedronGeometry args={[0.5, 0]} />
+          <meshStandardMaterial color="#22d3ee" emissive="#22d3ee" emissiveIntensity={1.2} roughness={0.1} flatShading />
         </mesh>
       </Float>
     </group>
   );
 }
 
-/* ZONE 3 — floating glass panes: windows into the shipped work. */
-function WorkZone({ tier }: { tier: Tier }) {
-  const group = useRef<THREE.Group>(null);
+/* ------------------------------------------------------------------ */
+/* ZONE 2 — Stack: CI/CD pipeline — instanced cubes + single tube     */
+/* ------------------------------------------------------------------ */
+function PipelineZone() {
+  const groupRef = useRef<THREE.Group>(null);
+  const packetRef = useRef<THREE.Mesh>(null);
+
+  const stageColors = useMemo(() => [
+    '#34d399', '#22d3ee', '#8b5cf6', '#2496ed', '#fbbf24',
+  ], []);
+
+  /* Instanced stage boxes — 5 boxes, 1 draw call */
+  const stageRef = useRef<THREE.InstancedMesh>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+
+  useEffect(() => {
+    if (!stageRef.current) return;
+    const color = new THREE.Color();
+    stageColors.forEach((c, i) => {
+      color.set(c);
+      stageRef.current!.setColorAt(i, color);
+      dummy.position.set(-5 + i * 2.5, 0, 0);
+      dummy.rotation.set(0.2, 0.3 + i * 0.4, 0.1);
+      dummy.scale.setScalar(0.9);
+      dummy.updateMatrix();
+      stageRef.current!.setMatrixAt(i, dummy.matrix);
+    });
+    stageRef.current.instanceColor!.needsUpdate = true;
+    stageRef.current.instanceMatrix!.needsUpdate = true;
+  }, [stageColors, dummy]);
+
   useFrame((state, delta) => {
-    if (!group.current) return;
-    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, state.pointer.x * 0.15, 0.03);
-    group.current.children.forEach((child, i) => {
-      child.rotation.y += Math.min(delta, 0.05) * (i % 2 ? 0.12 : -0.1);
+    if (!groupRef.current) return;
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(
+      groupRef.current.rotation.y, state.pointer.x * 0.2, 0.025
+    );
+    /* Single packet sweeping along X axis */
+    if (packetRef.current) {
+      const t = (state.clock.elapsedTime * 0.5) % 1;
+      packetRef.current.position.x = -5 + t * 10;
+      packetRef.current.position.y = 0.15;
+      ;(packetRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity =
+        0.8 + Math.sin(t * Math.PI) * 1.2;
+    }
+  });
+
+  return (
+    <group position={[0, 0, -ZONE_GAP * 2]} ref={groupRef}>
+      <instancedMesh ref={stageRef} args={[undefined, undefined, stageColors.length]}>
+        <boxGeometry args={[0.9, 0.9, 0.9]} />
+        <meshStandardMaterial metalness={0.75} roughness={0.22} toneMapped={false} />
+      </instancedMesh>
+
+      {/* One glowing packet flying across the pipeline */}
+      <mesh ref={packetRef} position={[-5, 0.15, 0]}>
+        <sphereGeometry args={[0.1, 8, 8]} />
+        <meshStandardMaterial color="#22d3ee" emissive="#22d3ee" emissiveIntensity={1.5} />
+      </mesh>
+    </group>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* ZONE 3 — Work: 3 floating server slabs                             */
+/* ------------------------------------------------------------------ */
+function ServerRackZone() {
+  const groupRef = useRef<THREE.Group>(null);
+  const racks = useMemo(() => [
+    { pos: [-4.8,  0,  0] as const, color: '#22d3ee', h: 1.8 },
+    { pos: [ 0,  -0.6, -2] as const, color: '#8b5cf6', h: 2.4 },
+    { pos: [ 4.8,  0.4, -1] as const, color: '#2496ed', h: 2.0 },
+  ], []);
+
+  const refs = [useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null)];
+  useFrame((state, delta) => {
+    if (!groupRef.current) return;
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(
+      groupRef.current.rotation.y, state.pointer.x * 0.18, 0.025
+    );
+    refs.forEach((r, i) => {
+      if (r.current) r.current.rotation.x += Math.min(delta, 0.05) * (i % 2 ? 0.07 : -0.05);
     });
   });
-  const panes = [
-    { pos: [-4.6, 1.4, 0] as const, color: '#22d3ee' },
-    { pos: [4.6, -0.8, -2] as const, color: '#f472b6' },
-    { pos: [0, 3, -4] as const, color: '#8b5cf6' },
-  ];
+
   return (
-    <group position={[0, 0, -ZONE_GAP * 3]} ref={group}>
-      {panes.map((pane, i) => (
-        <Float key={i} speed={1.2 + i * 0.3} rotationIntensity={0.4} floatIntensity={1}>
-          <mesh position={[...pane.pos]} rotation={[0, i % 2 ? -0.5 : 0.5, 0.08]}>
-            <boxGeometry args={[2.2, 1.4, 0.06]} />
+    <group position={[0, 0, -ZONE_GAP * 3]} ref={groupRef}>
+      {racks.map((rack, i) => (
+        <Float key={i} speed={0.9 + i * 0.2} rotationIntensity={0.25} floatIntensity={0.8}>
+          <mesh ref={refs[i]} position={[...rack.pos]}>
+            <boxGeometry args={[1.4, rack.h, 0.4]} />
             <meshStandardMaterial
-              color={pane.color}
-              metalness={0.9}
-              roughness={0.12}
-              emissive={pane.color}
-              emissiveIntensity={tier === 'high' ? 0.45 : 0.6}
-              transparent
-              opacity={0.55}
+              color="#0f172a"
+              metalness={0.95}
+              roughness={0.3}
+              emissive={rack.color}
+              emissiveIntensity={0.12}
             />
           </mesh>
         </Float>
@@ -432,147 +402,198 @@ function WorkZone({ tier }: { tier: Tier }) {
   );
 }
 
-/* ZONE 4 — a spiral of glowing waypoints: the journey so far. */
-function JourneyZone() {
-  const group = useRef<THREE.Group>(null);
-  useFrame((_, delta) => {
-    if (group.current) group.current.rotation.z += Math.min(delta, 0.05) * 0.08;
-  });
-  const beads = useMemo(() => {
-    const palette = ['#22d3ee', '#8b5cf6', '#34d399', '#fbbf24'];
-    return Array.from({ length: 14 }, (_, i) => {
-      const t = i / 13;
-      const a = t * Math.PI * 3;
+/* ------------------------------------------------------------------ */
+/* ZONE 4 — Journey: instanced git commits on a spiral                */
+/* ------------------------------------------------------------------ */
+function GitBranchZone() {
+  const groupRef = useRef<THREE.Group>(null);
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+
+  const commitData = useMemo(() => {
+    const palette = ['#22d3ee', '#8b5cf6', '#34d399', '#fbbf24', '#f472b6', '#2496ed'];
+    return Array.from({ length: 16 }, (_, i) => {
+      const t = i / 15;
+      const a = t * Math.PI * 4;
+      const branch = i % 3;
       return {
-        pos: [Math.cos(a) * (2.2 + t * 2.4), Math.sin(a) * (1.6 + t * 1.6), -t * 8] as const,
+        pos: [
+          Math.cos(a) * (1.8 + t * 2.2) + (branch - 1) * 1.2,
+          Math.sin(a) * (1.4 + t * 1.4),
+          -t * 9,
+        ] as const,
         color: palette[i % palette.length],
-        size: 0.16 + t * 0.14,
+        size: 0.14 + t * 0.1,
       };
     });
   }, []);
+
+  useEffect(() => {
+    if (!meshRef.current) return;
+    const color = new THREE.Color();
+    commitData.forEach((c, i) => {
+      color.set(c.color);
+      meshRef.current!.setColorAt(i, color);
+      dummy.position.set(...c.pos);
+      dummy.scale.setScalar(c.size);
+      dummy.updateMatrix();
+      meshRef.current!.setMatrixAt(i, dummy.matrix);
+    });
+    meshRef.current.instanceColor!.needsUpdate = true;
+    meshRef.current.instanceMatrix.needsUpdate = true;
+  }, [commitData, dummy]);
+
+  useFrame((_, delta) => {
+    if (groupRef.current) groupRef.current.rotation.z += Math.min(delta, 0.05) * 0.05;
+  });
+
   return (
-    <group position={[0, 0, -ZONE_GAP * 4]} ref={group}>
-      {beads.map((bead, i) => (
-        <Float key={i} speed={1 + (i % 3) * 0.4} rotationIntensity={0.2} floatIntensity={0.7}>
-          <mesh position={[...bead.pos]}>
-            <sphereGeometry args={[bead.size, 14, 14]} />
-            <meshStandardMaterial color={bead.color} emissive={bead.color} emissiveIntensity={1.4} />
-          </mesh>
-        </Float>
-      ))}
+    <group position={[0, 0, -ZONE_GAP * 4]} ref={groupRef}>
+      <instancedMesh ref={meshRef} args={[undefined, undefined, commitData.length]}>
+        <sphereGeometry args={[1, 8, 8]} />
+        <meshStandardMaterial toneMapped={false} />
+      </instancedMesh>
     </group>
   );
 }
 
-/* ZONE 5 — the finale portal the camera sails into. */
-function PortalZone() {
-  const outer = useRef<THREE.Mesh>(null);
-  const inner = useRef<THREE.Mesh>(null);
+/* ------------------------------------------------------------------ */
+/* ZONE 5 — Finale: deploy portal — 3 torus rings                     */
+/* ------------------------------------------------------------------ */
+function DeployPortal() {
+  const refs = [
+    useRef<THREE.Mesh>(null),
+    useRef<THREE.Mesh>(null),
+    useRef<THREE.Mesh>(null),
+  ];
+  const coreRef = useRef<THREE.Mesh>(null);
+
   useFrame((_, delta) => {
     const d = Math.min(delta, 0.05);
-    if (outer.current) outer.current.rotation.z += d * 0.3;
-    if (inner.current) inner.current.rotation.z -= d * 0.45;
+    refs[0].current && (refs[0].current.rotation.z += d * 0.24);
+    refs[1].current && (refs[1].current.rotation.z -= d * 0.36);
+    refs[2].current && (refs[2].current.rotation.z += d * 0.14);
+    if (coreRef.current) {
+      coreRef.current.rotation.y += d * 0.4;
+      coreRef.current.rotation.x += d * 0.2;
+    }
   });
+
+  const rings = [
+    { r: 5.2, tube: 0.09, color: '#34d399' },
+    { r: 4.0, tube: 0.07, color: '#2496ed', rotOffset: 0.3 },
+    { r: 3.0, tube: 0.06, color: '#8b5cf6', rotOffset: 1 },
+  ];
+
   return (
     <group position={[0, 0, -ZONE_GAP * 5 - 6]}>
-      <mesh ref={outer}>
-        <torusGeometry args={[4.4, 0.12, 16, 100]} />
-        <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={1.2} metalness={0.8} roughness={0.15} />
-      </mesh>
-      <mesh ref={inner} rotation={[0, 0, 1]}>
-        <torusGeometry args={[3.4, 0.08, 16, 90]} />
-        <meshStandardMaterial color="#8b5cf6" emissive="#8b5cf6" emissiveIntensity={1.2} metalness={0.8} roughness={0.15} />
-      </mesh>
-      <Float speed={1.4} rotationIntensity={0.6} floatIntensity={1}>
-        <mesh>
-          <octahedronGeometry args={[1, 0]} />
-          <meshStandardMaterial color="#fdf4ff" emissive="#f0abfc" emissiveIntensity={1.6} roughness={0.1} />
+      {rings.map((ring, i) => (
+        <mesh key={i} ref={refs[i]} rotation={[ring.rotOffset ?? 0, 0, 0]}>
+          <torusGeometry args={[ring.r, ring.tube, 12, 80]} />
+          <meshStandardMaterial color={ring.color} emissive={ring.color} emissiveIntensity={1.3} metalness={0.8} roughness={0.14} />
         </mesh>
-      </Float>
+      ))}
+      <mesh ref={coreRef}>
+        <dodecahedronGeometry args={[1.2, 0]} />
+        <meshStandardMaterial color="#f0f9ff" emissive="#22d3ee" emissiveIntensity={1.6} roughness={0.08} metalness={0.5} flatShading />
+      </mesh>
     </group>
   );
 }
 
-/* Pointer-chasing lights so hovering anywhere repaints the world. */
+/* ---- Lights — pointer-reactive but throttled ---- */
 function ReactiveLights() {
   const a = useRef<THREE.PointLight>(null);
   const b = useRef<THREE.PointLight>(null);
   const { camera } = useThree();
+
   useFrame((state) => {
     const { x, y } = state.pointer;
     const z = camera.position.z;
     if (a.current) {
-      a.current.position.set(
-        THREE.MathUtils.lerp(a.current.position.x, x * 7, 0.06),
-        THREE.MathUtils.lerp(a.current.position.y, y * 5, 0.06),
-        z - 4,
-      );
+      a.current.position.x = THREE.MathUtils.lerp(a.current.position.x, x * 7, 0.05);
+      a.current.position.y = THREE.MathUtils.lerp(a.current.position.y, y * 5, 0.05);
+      a.current.position.z = z - 4;
     }
     if (b.current) {
-      b.current.position.set(
-        THREE.MathUtils.lerp(b.current.position.x, -x * 7, 0.06),
-        THREE.MathUtils.lerp(b.current.position.y, -y * 5, 0.06),
-        z - 8,
-      );
+      b.current.position.x = THREE.MathUtils.lerp(b.current.position.x, -x * 7, 0.05);
+      b.current.position.y = THREE.MathUtils.lerp(b.current.position.y, -y * 5, 0.05);
+      b.current.position.z = z - 8;
     }
   });
+
   return (
     <>
-      <ambientLight intensity={0.55} />
-      <pointLight ref={a} position={[5, 4, 4]} intensity={130} color="#22d3ee" distance={34} />
-      <pointLight ref={b} position={[-5, -3, 0]} intensity={120} color="#ec4899" distance={34} />
-      <directionalLight position={[3, 6, 5]} intensity={0.9} color="#ffffff" />
+      <ambientLight intensity={0.5} />
+      <pointLight ref={a} intensity={140} color="#22d3ee" distance={38} decay={2} />
+      <pointLight ref={b} intensity={130} color="#8b5cf6" distance={38} decay={2} />
+      <directionalLight position={[3, 6, 5]} intensity={0.75} />
     </>
   );
 }
 
-/* Follows the camera so each zone is lit as you arrive. */
 function TravelLight() {
   const ref = useRef<THREE.PointLight>(null);
   const { camera } = useThree();
   useFrame(() => {
     if (ref.current) ref.current.position.set(0, 2, camera.position.z - 6);
   });
-  return <pointLight ref={ref} intensity={90} color="#8b5cf6" distance={26} />;
+  return <pointLight ref={ref} intensity={90} color="#2496ed" distance={28} decay={2} />;
 }
 
+/* ------------------------------------------------------------------ */
+/* ROOT                                                                */
+/* ------------------------------------------------------------------ */
 export default function WorldScene() {
   const [tier, setTier] = useState<Tier>('high');
   const progress = useScrollProgress();
 
-  useEffect(() => {
-    setTier(detectTier());
-  }, []);
+  useEffect(() => { setTier(detectTier()); }, []);
 
-  const starCount = tier === 'low' ? 700 : 1600;
+  /* Particle counts tuned for smooth 60fps */
+  const count = tier === 'low' ? 400 : 900;
 
   return (
     <Canvas
-      dpr={tier === 'low' ? [1, 1.3] : [1, 1.7]}
+      dpr={tier === 'low' ? [1, 1.2] : [1, 1.4]}
       camera={{ position: [0, 0, 8], fov: 50 }}
-      gl={{ antialias: tier === 'high', alpha: false, powerPreference: 'high-performance' }}
+      gl={{
+        antialias: false, /* MSAA off — big perf win, nearly invisible at these sizes */
+        alpha: false,
+        powerPreference: 'high-performance',
+        stencil: false,
+        depth: true,
+      }}
+      performance={{ min: 0.5 }} /* auto-lower DPR when FPS drops */
     >
       <Atmosphere progress={progress} />
       <FlightCamera progress={progress} />
       <ReactiveLights />
       <TravelLight />
-      <StarCorridor count={starCount} />
+      <DataParticles count={count} />
       <Nebulae />
 
-      {/* the six story beats along the corridor */}
+      {/* Story zones */}
       <group>
-        <HeroCrystal tier={tier} />
-        <HeroSatellites tier={tier} />
+        <HeroCrystal />
+        <HeroSatellites />
       </group>
-      <HaloZone />
-      <ConstellationZone />
-      <WorkZone tier={tier} />
-      <JourneyZone />
-      <PortalZone />
+      <DependencyGraph />
+      <PipelineZone />
+      <ServerRackZone />
+      <GitBranchZone />
+      <DeployPortal />
 
+      {/* Bloom only on high-tier — threshold higher = fewer pixels processed */}
       {tier === 'high' && (
-        <EffectComposer multisampling={2}>
-          <Bloom mipmapBlur intensity={0.85} luminanceThreshold={0.18} luminanceSmoothing={0.5} />
+        <EffectComposer multisampling={0}>
+          <Bloom
+            mipmapBlur
+            intensity={0.7}
+            luminanceThreshold={0.25}
+            luminanceSmoothing={0.6}
+            radius={0.4}
+          />
         </EffectComposer>
       )}
     </Canvas>

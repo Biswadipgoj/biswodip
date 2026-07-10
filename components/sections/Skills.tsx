@@ -1,222 +1,387 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { constellation, shipped } from '@/lib/data';
-import SectionHeading from '@/components/ui/SectionHeading';
-import Tilt3D from '@/components/ui/Tilt3D';
 
 /**
- * THE ORBIT — skills as a living constellation.
- *
- * No bars, no percentages, no spec sheets. Every craft is a star in one of
- * three orbits around the core; pick any star (in the system or the cards)
- * and the core tells you how that tool and I get along.
+ * SOLAR SYSTEM ARSENAL — Highly immersive 3D orbital mechanics
  */
 
-/* ring radii as a % of the system's half-width */
-const RING_RADII = [30, 44, 58];
-const RING_DURATIONS = [36, 52, 70];
+const TAB_COLORS = ['#22d3ee', '#a78bfa', '#2496ed', '#34d399'] as const;
 
-export default function Skills() {
-  const [active, setActive] = useState<[number, number]>([0, 0]);
-  const activeCraft = constellation[active[0]].crafts[active[1]];
+// Orbital configs - giving each system a unique feel
+const ORBIT_CFG = [
+  { rx: 240, ry: 80, tilt: 0.65, speed: 0.004, name: 'Frontend System' },   // Wider orbit
+  { rx: 220, ry: 90, tilt: 0.72, speed: 0.0035, name: 'Backend System' },  // Steeper tilt
+  { rx: 260, ry: 75, tilt: 0.58, speed: 0.005, name: 'DevOps System' },  // Faster, flatter
+  { rx: 230, ry: 85, tilt: 0.68, speed: 0.0045, name: 'Data System' },   // Balanced
+] as const;
+
+const SIZE = 600; // Increased size for a grander feel
+const CX = SIZE / 2;
+const CY = SIZE / 2;
+
+type Craft = { name: string; vibe: string; color: string; icon: string };
+
+function OrbitalSystem({
+  crafts,
+  tabColor,
+  cfgIdx,
+}: {
+  crafts: Craft[];
+  tabColor: string;
+  cfgIdx: number;
+}) {
+  const chipEls  = useRef<(HTMLDivElement | null)[]>([]);
+  const anglesRef = useRef<number[]>([]);
+  const pausedRef = useRef<number | null>(null);
+  const rafRef    = useRef<number>(0);
+
+  chipEls.current = [];
+
+  useEffect(() => {
+    // Distribute planets evenly
+    anglesRef.current = crafts.map((_, i) => (i / crafts.length) * Math.PI * 2);
+  }, [crafts]);
+
+  useEffect(() => {
+    const { rx, ry, tilt, speed } = ORBIT_CFG[cfgIdx];
+    const projRy = ry * Math.cos(tilt); 
+
+    const loop = () => {
+      const angles = anglesRef.current;
+
+      for (let i = 0; i < angles.length; i++) {
+        if (pausedRef.current !== i) angles[i] += speed;
+      }
+
+      const pts = angles.map((a, i) => {
+        // Vary the radius slightly for each planet so they aren't on the exact same ring
+        const radiusOffset = (i % 3 === 0 ? 0 : i % 2 === 0 ? -20 : 20);
+        const currentRx = rx + radiusOffset;
+        const currentRy = projRy + (radiusOffset * Math.cos(tilt));
+
+        const cosA = Math.cos(a);
+        const sinA = Math.sin(a);
+        const sx    = CX + cosA * currentRx;
+        const sy    = CY + sinA * currentRy;
+        const z     = sinA * Math.sin(tilt); 
+        const depth = (z + 1) / 2;            
+        return { i, sx, sy, z, depth };
+      });
+
+      pts.sort((a, b) => a.z - b.z);
+
+      pts.forEach(({ i, sx, sy, depth }) => {
+        const el = chipEls.current[i];
+        if (!el) return;
+        const paused  = pausedRef.current === i;
+        const scale   = paused ? 1.2 : 0.6 + depth * 0.6;
+        const opacity = paused ? 1    : 0.3 + depth * 0.7;
+        el.style.transform = `translate(${sx}px, ${sy}px) translate(-50%,-50%) scale(${scale})`;
+        el.style.opacity   = String(opacity.toFixed(2));
+        el.style.zIndex    = paused ? '200' : String(Math.round(depth * 100));
+        
+        // Toggle paused class for HUD
+        if (paused) {
+          el.classList.add('is-paused');
+        } else {
+          el.classList.remove('is-paused');
+        }
+      });
+
+      rafRef.current = requestAnimationFrame(loop);
+    };
+
+    rafRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [crafts, cfgIdx]);
+
+  const { rx, ry, tilt } = ORBIT_CFG[cfgIdx];
+  const projRy = ry * Math.cos(tilt);
 
   return (
-    <section id="skills" className="relative overflow-hidden py-28 md:py-36">
-      <div className="mx-auto max-w-7xl px-6">
-        <SectionHeading eyebrow="The orbit" title="Every craft is a star" highlight="in this system">
-          Skip the spec sheet. Hover the stars — each one tells you how that tool and I actually
-          get along.
-        </SectionHeading>
+    <div className="relative select-none flex items-center justify-center" style={{ width: SIZE, height: SIZE }}>
+      
+      {/* ── Background Deep Space Elements ── */}
+      <div className="absolute inset-0 pointer-events-none rounded-full" style={{
+        background: `radial-gradient(circle at center, ${tabColor}08 0%, transparent 70%)`
+      }} />
 
-        <div className="mt-20 grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
-          {/* -------------------------------------------------------------- */}
-          {/* The orbital system                                             */}
-          {/* -------------------------------------------------------------- */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, rotateX: 18 }}
-            whileInView={{ opacity: 1, scale: 1, rotateX: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            style={{ transformStyle: 'preserve-3d' }}
-            className="orbit-system relative mx-auto aspect-square w-[min(88vw,34rem)]"
+      {/* ── Orbital Rings ── */}
+      <svg className="pointer-events-none absolute inset-0" width={SIZE} height={SIZE} overflow="visible" aria-hidden>
+        {/* Render a few distinct rings to make it look like a system */}
+        {[rx - 20, rx, rx + 20].map((r, idx) => (
+           <ellipse key={idx} cx={CX} cy={CY} rx={r} ry={r * Math.cos(tilt)}
+           fill="none" stroke={tabColor} strokeWidth={idx === 1 ? "1.5" : "0.5"} strokeOpacity={idx === 1 ? "0.2" : "0.08"}
+           strokeDasharray={idx === 1 ? "4 8" : "none"} />
+        ))}
+      </svg>
+
+      {/* ── The Central Star ── */}
+      <div className="solar-center" style={{ '--star-color': tabColor } as React.CSSProperties}>
+        {/* Core */}
+        <div className="w-24 h-24 rounded-full relative overflow-hidden" style={{
+          background: `radial-gradient(circle at 30% 30%, #ffffff 0%, ${tabColor} 40%, #000000 100%)`,
+          boxShadow: `
+            0 0 40px ${tabColor}aa, 
+            0 0 80px ${tabColor}66, 
+            0 0 150px ${tabColor}33,
+            inset -10px -10px 20px rgba(0,0,0,0.8)
+          `
+        }}>
+          {/* Surface texture/swirls (simulated with CSS) */}
+          <div className="absolute inset-0 rounded-full mix-blend-overlay opacity-40" style={{
+            background: 'repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 4px, rgba(255,255,255,0.1) 5px, transparent 6px)'
+          }} />
+        </div>
+      </div>
+
+      {/* ── Orbiting Planets (Tech) ── */}
+      <div className="absolute inset-0 pointer-events-none">
+        {crafts.map((craft, i) => (
+          <div
+            key={craft.name}
+            ref={el => { chipEls.current[i] = el; }}
+            className="tech-planet-wrapper pointer-events-auto"
+            onMouseEnter={() => { pausedRef.current = i; }}
+            onMouseLeave={() => { pausedRef.current = null; }}
           >
-            {/* the core — reflects whichever star is chosen */}
-            <div className="absolute left-1/2 top-1/2 z-10 w-[11rem] -translate-x-1/2 -translate-y-1/2 text-center sm:w-[13rem]">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeCraft.name}
-                  initial={{ opacity: 0, scale: 0.85, y: 8 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.9, y: -8 }}
-                  transition={{ duration: 0.3 }}
-                  className="glass-strong rounded-3xl px-4 py-5"
-                  style={{ boxShadow: `0 0 60px -12px ${activeCraft.color}90` }}
-                >
-                  <div
-                    className="mx-auto mb-2 h-2.5 w-2.5 rounded-full"
-                    style={{ background: activeCraft.color, boxShadow: `0 0 16px ${activeCraft.color}` }}
-                    aria-hidden
-                  />
-                  <div className="font-display text-base font-extrabold text-ink sm:text-lg">
-                    {activeCraft.name}
+            <div className="tech-planet" style={{ '--c': craft.color } as React.CSSProperties}>
+               <span className="tech-planet-icon" dangerouslySetInnerHTML={{ __html: craft.icon.replace(/width="[0-9]+"/, 'width="24"').replace(/height="[0-9]+"/, 'height="24"') }}></span>
+               
+               {/* Holographic HUD */}
+               <div className="tech-planet-hud">
+                  <span className="hud-title">{craft.name}</span>
+                  <span className="hud-desc">{craft.vibe}</span>
+                  
+                  {/* Decorative sci-fi elements */}
+                  <div className="mt-2 flex gap-1">
+                    {[1,2,3].map(bar => (
+                       <div key={bar} className="h-1 bg-white/20 rounded-full flex-1 overflow-hidden">
+                          <div className="h-full bg-current w-full animate-pulse" style={{ color: craft.color, animationDelay: `${bar * 0.2}s` }} />
+                       </div>
+                    ))}
                   </div>
-                  <p className="mt-1.5 text-[0.72rem] leading-snug text-slate-500 sm:text-xs">
-                    {activeCraft.vibe}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
+               </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Main section                                                        */
+/* ------------------------------------------------------------------ */
+export default function Skills() {
+  const [activeTab, setActiveTab] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
+  const spotRef    = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start center', 'end center'],
+  });
+
+  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
+    // There are 'constellation.length' (4) tabs.
+    const newTab = Math.min(
+      constellation.length - 1,
+      Math.max(0, Math.floor(latest * constellation.length))
+    );
+    if (newTab !== activeTab) {
+      setActiveTab(newTab);
+    }
+  });
+
+  const orbit    = constellation[activeTab];
+  const tabColor = TAB_COLORS[activeTab];
+
+  /* Cursor spotlight — direct DOM, no state */
+  const onMove = (e: React.MouseEvent<HTMLElement>) => {
+    const sp = spotRef.current;
+    const s  = sectionRef.current;
+    if (!sp || !s) return;
+    const r = s.getBoundingClientRect();
+    sp.style.left = `${e.clientX - r.left}px`;
+    sp.style.top  = `${e.clientY - r.top}px`;
+  };
+
+  return (
+    <section
+      ref={sectionRef}
+      id="skills"
+      className="relative"
+      style={{ height: '400vh' }}
+    >
+      <div 
+        className="sticky top-0 min-h-screen overflow-hidden flex flex-col justify-center py-10 md:py-32"
+        onMouseMove={onMove}
+      >
+      {/* ── Ambience ── */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        <svg className="absolute inset-0 h-full w-full opacity-[0.038]" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="hex-skills" x="0" y="0" width="56" height="64" patternUnits="userSpaceOnUse">
+              <path d="M28 0L56 16v32L28 64 0 48V16z" fill="none" stroke="white" strokeWidth="0.55" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#hex-skills)" />
+        </svg>
+        {/* Colour bloom that follows active tab */}
+        <div
+          className="absolute left-1/2 md:left-1/4 top-1/2 md:top-1/4 h-[400px] md:h-[700px] w-[400px] md:w-[700px] -translate-x-1/2 md:translate-x-0 -translate-y-1/2 md:translate-y-0 rounded-full blur-[100px] md:blur-[160px] transition-all duration-700"
+          style={{ background: `${tabColor}0d` }}
+        />
+        {/* Cursor spotlight (desktop only mostly) */}
+        <div
+          ref={spotRef}
+          className="hidden md:block absolute z-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors duration-700"
+          style={{ background: `radial-gradient(circle, ${tabColor}12 0%, transparent 70%)` }}
+        />
+      </div>
+
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 h-full flex flex-col justify-center">
+        
+        <div className="flex flex-col lg:grid lg:grid-cols-[260px,1fr] gap-6 lg:gap-16 items-center lg:items-center">
+
+          {/* ═══════════════════════════════════════ */}
+          {/* LEFT / TOP — identity + vertical tab list */}
+          {/* ═══════════════════════════════════════ */}
+          <div className="w-full flex flex-col md:block order-2 lg:order-1 mt-auto lg:mt-0 z-20">
+            <div className="hidden lg:flex mb-3 items-center gap-2">
+              <span className="h-px w-6 transition-colors duration-500" style={{ background: tabColor }} />
+              <span className="font-mono text-[0.58rem] uppercase tracking-[0.28em] transition-colors duration-500" style={{ color: tabColor }}>
+                // tech.stack
+              </span>
             </div>
 
-            {/* the rings + orbiting stars */}
-            {constellation.map((orbit, oi) => {
-              const radius = RING_RADII[oi];
-              return (
-                <div key={orbit.ring}>
-                  {/* ring line */}
-                  <div
-                    className="absolute left-1/2 top-1/2 rounded-full border border-white/10"
-                    style={{
-                      width: `${radius * 2}%`,
-                      height: `${radius * 2}%`,
-                      transform: 'translate(-50%, -50%)',
-                      boxShadow: 'inset 0 0 30px rgba(139,92,246,0.06)',
-                    }}
-                    aria-hidden
-                  />
-                  {/* rotating carrier (transparent to the pointer; only stars are hot) */}
-                  <div
-                    className="orbit-carrier pointer-events-none absolute inset-0"
-                    style={{
-                      animationDuration: `${RING_DURATIONS[oi]}s`,
-                      animationDirection: oi % 2 ? 'reverse' : 'normal',
-                    }}
-                  >
-                    {orbit.crafts.map((craft, ci) => {
-                      const angle = ((360 / orbit.crafts.length) * ci + oi * 30) * (Math.PI / 180);
-                      const isActive = active[0] === oi && active[1] === ci;
-                      return (
-                        <div
-                          key={craft.name}
-                          className="absolute"
-                          style={{
-                            left: `${50 + radius * Math.cos(angle)}%`,
-                            top: `${50 + radius * Math.sin(angle)}%`,
-                          }}
-                        >
-                          {/* counter-rotate so the star stays upright */}
-                          <div
-                            className="orbit-node"
-                            style={{
-                              animationDuration: `${RING_DURATIONS[oi]}s`,
-                              animationDirection: oi % 2 ? 'normal' : 'reverse',
-                            }}
-                          >
-                            <button
-                              type="button"
-                              onMouseEnter={() => setActive([oi, ci])}
-                              onFocus={() => setActive([oi, ci])}
-                              onClick={() => setActive([oi, ci])}
-                              className={`group pointer-events-auto relative -translate-x-1/2 -translate-y-1/2 rounded-full p-2 outline-none transition-transform duration-300 ${
-                                isActive ? 'scale-125' : 'hover:scale-110'
-                              }`}
-                              aria-label={`${craft.name} — ${craft.vibe}`}
-                            >
-                              <span
-                                className="block h-3.5 w-3.5 rounded-full transition-shadow duration-300 sm:h-4 sm:w-4"
-                                style={{
-                                  background: craft.color,
-                                  boxShadow: isActive
-                                    ? `0 0 22px 5px ${craft.color}b0`
-                                    : `0 0 12px 2px ${craft.color}70`,
-                                }}
-                              />
-                              <span
-                                className={`pointer-events-none absolute left-1/2 top-full mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-base-elevated/95 px-2.5 py-1 text-[0.62rem] font-semibold backdrop-blur transition-opacity duration-300 ${
-                                  isActive ? 'opacity-100 text-ink' : 'opacity-0 group-hover:opacity-100 text-slate-500'
-                                }`}
-                              >
-                                {craft.name}
-                              </span>
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </motion.div>
+            <h2 className="text-center lg:text-left mb-2 md:mb-2 font-display text-[2.2rem] md:text-[clamp(2.8rem,5vw,4.5rem)] font-extrabold leading-[0.88] tracking-tighter text-white">
+              THE
+              <br className="hidden lg:block" />
+              <span className="ml-2 lg:ml-0 transition-all duration-500" style={{ color: tabColor, textShadow: `0 0 55px ${tabColor}55` }}>
+                ORBIT
+              </span>
+            </h2>
+            <p className="hidden lg:block mb-10 max-w-[220px] text-sm leading-relaxed text-slate-500">
+              24 battle-tested tools orbiting across 4 domains. Hover any planet to pause and inspect.
+            </p>
 
-          {/* -------------------------------------------------------------- */}
-          {/* Orbit legends — three cards, one per ring                       */}
-          {/* -------------------------------------------------------------- */}
-          <div className="space-y-5">
-            {constellation.map((orbit, oi) => (
-              <motion.div
-                key={orbit.ring}
-                initial={{ opacity: 0, x: 60, rotateY: -14 }}
-                whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
-                viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.7, delay: oi * 0.12, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <Tilt3D maxTilt={5}>
-                  <div className="glass card-glow rounded-3xl p-6">
-                    <div
-                      className={`inline-block bg-gradient-to-r ${orbit.tint} bg-clip-text font-display text-lg font-bold text-transparent`}
+            {/* Vertical timeline */}
+            <div className="relative mt-2 md:mt-0">
+              {/* Static connector line */}
+              <div className="absolute left-[7px] top-3 bottom-3 w-px bg-white/[0.07]" />
+              {/* Active progress glow */}
+              <div
+                className="pointer-events-none absolute left-[7px] w-px transition-all duration-500"
+                style={{
+                  background: `linear-gradient(180deg, ${tabColor}, transparent)`,
+                  boxShadow: `0 0 8px ${tabColor}`,
+                  top: `calc(${(activeTab / 4) * 100}% + 8px)`,
+                  height: '26%',
+                }}
+              />
+
+              <div className="space-y-0 md:space-y-0.5">
+                {constellation.map((o, i) => {
+                  const active = i === activeTab;
+                  const col = TAB_COLORS[i];
+                  return (
+                    <button
+                      key={o.ring}
+                      onClick={() => setActiveTab(i)}
+                      className="group relative flex w-full items-start gap-4 rounded-xl py-2 md:py-3 pl-6 pr-4 text-left outline-none transition-all duration-200 focus-visible:ring-1 focus-visible:ring-white/20"
+                      style={{ background: active ? `${col}0e` : 'transparent' }}
                     >
-                      {orbit.ring}
-                    </div>
-                    <p className="mt-1 text-xs text-slate-400">{orbit.caption}</p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {orbit.crafts.map((craft, ci) => {
-                        const isActive = active[0] === oi && active[1] === ci;
-                        return (
-                          <button
-                            key={craft.name}
-                            type="button"
-                            onMouseEnter={() => setActive([oi, ci])}
-                            onClick={() => setActive([oi, ci])}
-                            className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all duration-300 ${
-                              isActive
-                                ? 'border-transparent text-ink'
-                                : 'border-white/10 bg-white/[0.03] text-slate-500 hover:text-ink'
-                            }`}
-                            style={
-                              isActive
-                                ? { background: `${craft.color}26`, boxShadow: `0 0 18px -4px ${craft.color}` }
-                                : undefined
-                            }
+                      {/* Timeline dot */}
+                      <div
+                        className="absolute left-[4px] top-[15px] md:top-[19px] h-[7px] w-[7px] rounded-full border-[1.5px] transition-all duration-300"
+                        style={{
+                          borderColor: active ? col : 'rgba(255,255,255,0.18)',
+                          background: active ? col : 'transparent',
+                          boxShadow: active ? `0 0 9px ${col}` : 'none',
+                        }}
+                      />
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-baseline gap-2">
+                          <span
+                            className="font-mono text-[0.52rem] font-bold uppercase tracking-[0.22em] transition-colors duration-300"
+                            style={{ color: active ? col : 'rgba(255,255,255,0.2)' }}
                           >
-                            <span
-                              className="h-1.5 w-1.5 rounded-full"
-                              style={{ background: craft.color, boxShadow: `0 0 8px ${craft.color}` }}
-                            />
-                            {craft.name}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </Tilt3D>
+                            0{i + 1}
+                          </span>
+                          <span
+                            className="font-bold text-[0.75rem] md:text-[0.78rem] transition-colors duration-300"
+                            style={{ color: active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)' }}
+                          >
+                            {o.ring}
+                          </span>
+                        </div>
+                        <AnimatePresence>
+                          {active && (
+                            <motion.p
+                              initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                              animate={{ opacity: 1, height: 'auto', marginTop: 3 }}
+                              exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                              transition={{ duration: 0.22 }}
+                              className="overflow-hidden text-[0.6rem] md:text-[0.62rem] leading-snug text-slate-500"
+                            >
+                              {o.caption}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* ═══════════════════════════════════════ */}
+          {/* RIGHT / MIDDLE — 3D orbital display    */}
+          {/* ═══════════════════════════════════════ */}
+          <div className="w-full order-1 lg:order-2 flex items-center justify-center flex-1 h-[320px] md:h-auto overflow-visible relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, scale: 0.88 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.94 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute md:relative transform scale-[0.55] sm:scale-[0.65] lg:scale-100 origin-center"
+              >
+                <OrbitalSystem
+                  crafts={orbit.crafts}
+                  tabColor={tabColor}
+                  cfgIdx={activeTab}
+                />
               </motion.div>
+            </AnimatePresence>
+          </div>
+          
+        </div>
+
+        {/* ── Marquee ── */}
+        <div className="relative mt-8 md:mt-20 overflow-hidden opacity-50 md:opacity-100">
+          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 md:w-24"
+            style={{ background: 'linear-gradient(to right, #080a10, transparent)' }} />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 md:w-24"
+            style={{ background: 'linear-gradient(to left, #080a10, transparent)' }} />
+          <div className="skills-marquee flex gap-10 whitespace-nowrap py-1">
+            {[...shipped, ...shipped].map((s, i) => (
+              <span key={i} className="inline-flex items-center gap-2 text-[0.65rem] md:text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-white/20">
+                <span className="h-px w-4" style={{ background: TAB_COLORS[i % 4] }} />
+                {s}
+              </span>
             ))}
           </div>
         </div>
       </div>
-
-      {/* what all of it ships — a ribbon of outcomes, not a parts list */}
-      <div className="relative mt-20 flex overflow-hidden py-4" aria-hidden>
-        <div className="flex shrink-0 animate-marquee items-center gap-8 whitespace-nowrap pr-8">
-          {[...shipped, ...shipped].map((item, i) => (
-            <span key={item + i} className="font-display text-2xl font-bold text-slate-400/70 md:text-3xl">
-              {item}
-              <span className="mx-4 text-aurora-violet">✦</span>
-            </span>
-          ))}
-        </div>
       </div>
     </section>
   );

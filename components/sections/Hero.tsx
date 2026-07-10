@@ -20,7 +20,6 @@ const headline = [
   { words: ['that', 'ship.'], gradient: false },
 ];
 
-/* Compact icon set for the social row — inline so there's no icon dependency. */
 function SocialIcon({ label }: { label: string }) {
   const common = { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'currentColor' } as const;
   if (label === 'GitHub')
@@ -42,7 +41,6 @@ function SocialIcon({ label }: { label: string }) {
   );
 }
 
-/* A story-fact chip that drifts with the pointer at its own depth. */
 function FactChip({
   fact,
   position,
@@ -68,7 +66,7 @@ function FactChip({
       style={{ x, y }}
       className={`pointer-events-auto absolute hidden xl:block ${position}`}
     >
-      <div className="glass card-glow flex items-center gap-3 rounded-2xl px-4 py-3 backdrop-blur-md transition-transform duration-300 hover:scale-105">
+      <div className="glass card-glow flex items-center gap-3 rounded-2xl px-4 py-3 transition-transform duration-300 hover:scale-105">
         <span className="font-display text-2xl font-extrabold text-gradient">{fact.figure}</span>
         <span className="max-w-[9rem] text-[0.7rem] font-medium leading-snug text-slate-500">
           {fact.label}
@@ -81,14 +79,12 @@ function FactChip({
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
 
-  /* As you fly out of the hero the composition recedes into the world. */
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.86]);
+  const scale   = useTransform(scrollYProgress, [0, 1], [1, 0.86]);
   const opacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, 110]);
+  const y       = useTransform(scrollYProgress, [0, 1], [0, 110]);
   const rotateX = useTransform(scrollYProgress, [0, 1], [0, 10]);
 
-  /* Global pointer parallax feeding the whole composition. */
   const px = useMotionValue(0);
   const py = useMotionValue(0);
   const sx = useSpring(px, { stiffness: 90, damping: 20, mass: 0.5 });
@@ -96,7 +92,7 @@ export default function Hero() {
 
   const portraitRotateY = useTransform(sx, [-0.5, 0.5], [12, -12]);
   const portraitRotateX = useTransform(sy, [-0.5, 0.5], [-10, 10]);
-  const portraitX = useTransform(sx, [-0.5, 0.5], [-18, 18]);
+  const portraitX       = useTransform(sx, [-0.5, 0.5], [-18, 18]);
   const headX = useTransform(sx, [-0.5, 0.5], [8, -8]);
   const headY = useTransform(sy, [-0.5, 0.5], [6, -6]);
 
@@ -123,32 +119,39 @@ export default function Hero() {
   let wordIndex = 0;
 
   return (
+    /*
+     * LAYOUT FIX: flex-col on section so the scroll-cue sits AFTER
+     * the content div in the flex flow. It can NEVER overlap with
+     * the social row regardless of viewport height.
+     */
     <section
       ref={ref}
       id="hero"
-      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden"
+      className="relative flex min-h-[100dvh] flex-col items-center overflow-hidden"
       style={{ perspective: 1400 }}
     >
-      {/* whisper of a scrim so type stays crisp over the flying world */}
+      {/* Dark scrim over the 3D world */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           background:
-            'radial-gradient(900px 620px at 50% 46%, rgba(10,11,16,0.44), rgba(10,11,16,0.10) 55%, transparent 75%),' +
-            'linear-gradient(180deg, rgba(10,11,16,0.35) 0%, transparent 22%, transparent 78%, rgba(10,11,16,0.4) 100%)',
+            'radial-gradient(900px 620px at 50% 46%, rgba(10,11,16,0.5), rgba(10,11,16,0.12) 55%, transparent 75%),' +
+            'linear-gradient(180deg, rgba(10,11,16,0.4) 0%, transparent 20%, transparent 80%, rgba(10,11,16,0.5) 100%)',
         }}
         aria-hidden
       />
 
+      {/* ── Main content — flex-1 so it fills space above the scroll cue ── */}
       <motion.div
         style={{ scale, opacity, y, rotateX, transformStyle: 'preserve-3d' }}
-        className="relative z-10 mx-auto w-full max-w-6xl px-6 pb-24 pt-32 text-center xl:pb-16 xl:pt-24"
+        className="relative z-10 flex w-full flex-1 flex-col items-center justify-center px-6 pt-28 pb-6 text-center"
       >
-        {/* story-fact chips floating at their own depths around the stage */}
-        <FactChip fact={facts[0]} position="left-0 top-24" depth={1.6} delay={1.5} sx={sx} sy={sy} />
-        <FactChip fact={facts[1]} position="right-0 top-40" depth={1.1} delay={1.65} sx={sx} sy={sy} />
-        <FactChip fact={facts[3]} position="bottom-40 left-6" depth={0.8} delay={1.8} sx={sx} sy={sy} />
+        {/* Fact chips — xl only, absolutely positioned within this div */}
+        <FactChip fact={facts[0]} position="left-6 top-16"    depth={1.6} delay={1.5}  sx={sx} sy={sy} />
+        <FactChip fact={facts[1]} position="right-6 top-24"   depth={1.1} delay={1.65} sx={sx} sy={sy} />
+        <FactChip fact={facts[3]} position="bottom-16 left-8" depth={0.8} delay={1.8}  sx={sx} sy={sy} />
 
+        {/* Role eyebrow */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -159,7 +162,7 @@ export default function Hero() {
           {personal.role} · {personal.aspiration}
         </motion.div>
 
-        {/* headline floats on the pointer like an object in the scene */}
+        {/* Headline — floats with pointer */}
         <motion.h1
           style={{ x: headX, y: headY }}
           className="font-display text-[clamp(2.6rem,8.5vw,6.2rem)] font-extrabold leading-[0.98] tracking-tight"
@@ -174,9 +177,7 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 60, rotateX: -70, z: -120 }}
                     animate={{ opacity: 1, y: 0, rotateX: 0, z: 0 }}
                     transition={{ duration: 0.8, delay: 0.15 + i * 0.09, ease: [0.22, 1, 0.36, 1] }}
-                    className={`mr-[0.28em] inline-block last:mr-0 ${
-                      line.gradient ? 'text-gradient' : 'text-ink'
-                    }`}
+                    className={`mr-[0.28em] inline-block last:mr-0 ${line.gradient ? 'text-gradient' : 'text-ink'}`}
                     style={{ transformStyle: 'preserve-3d' }}
                   >
                     {word}
@@ -187,6 +188,7 @@ export default function Hero() {
           ))}
         </motion.h1>
 
+        {/* Intro */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -196,6 +198,7 @@ export default function Hero() {
           {personal.intro}
         </motion.p>
 
+        {/* CTA buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -211,12 +214,12 @@ export default function Hero() {
           </MagneticButton>
         </motion.div>
 
-        {/* socials */}
+        {/* Social links */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 1.1 }}
-          className="mt-9 flex flex-wrap items-center justify-center gap-3"
+          className="mt-8 flex flex-wrap items-center justify-center gap-3"
         >
           {socials.map((s) => (
             <a
@@ -224,7 +227,7 @@ export default function Hero() {
               href={s.url}
               target={s.url.startsWith('http') ? '_blank' : undefined}
               rel={s.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-              className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-slate-500 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-aurora-cyan/40 hover:text-ink"
+              className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#13161e] px-4 py-2 text-xs font-medium text-slate-500 transition-all duration-300 hover:-translate-y-0.5 hover:border-aurora-cyan/40 hover:text-ink"
               aria-label={s.label}
             >
               <span className="text-aurora-cyan transition-colors group-hover:text-aurora-violet">
@@ -235,12 +238,12 @@ export default function Hero() {
           ))}
         </motion.div>
 
-        {/* story-facts for smaller screens (the chips above are xl-only) */}
+        {/* Facts grid — mobile only (chips are xl-only) */}
         <motion.dl
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.25 }}
-          className="mx-auto mt-12 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4 xl:hidden"
+          className="mx-auto mt-10 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4 xl:hidden"
         >
           {facts.map((f) => (
             <div key={f.label} className="flex flex-col">
@@ -255,7 +258,7 @@ export default function Hero() {
         </motion.dl>
       </motion.div>
 
-      {/* the portrait — a holo-card drifting at the edge of the stage */}
+      {/* ── Portrait — absolute, 2xl only ── */}
       <motion.div
         initial={{ opacity: 0, x: 80, rotateY: -24 }}
         animate={{ opacity: 1, x: 0, rotateY: -14 }}
@@ -294,7 +297,7 @@ export default function Hero() {
                 <span className="portrait-wash" />
                 <span className="portrait-shine" />
               </div>
-              <div className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-base-elevated/90 px-4 py-2 text-xs font-semibold text-ink shadow-xl shadow-black/40 backdrop-blur-md">
+              <div className="absolute -bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/10 bg-[#13161e] px-4 py-2 text-xs font-semibold text-ink shadow-xl shadow-black/40">
                 <span className="h-2 w-2 rounded-full bg-aurora-emerald animate-pulse" />
                 Open to opportunities
               </div>
@@ -303,21 +306,21 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      {/* scroll cue */}
+      {/* ── Scroll cue ── AFTER content in flex column = ZERO overlap possible */}
       <motion.button
         onClick={() => scrollToSection('about')}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-6 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-xs font-medium uppercase tracking-[0.25em] text-slate-400 sm:flex"
+        transition={{ delay: 1.8 }}
+        className="relative z-10 mb-6 hidden flex-col items-center gap-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-slate-500/60 transition-all duration-300 hover:text-white/90 sm:flex"
         aria-label="Begin the journey"
       >
-        Begin the journey
-        <span className="flex h-9 w-5 items-start justify-center rounded-full border border-slate-400/60 p-1">
+        <span>Begin the journey</span>
+        <span className="flex h-7 w-3.5 items-start justify-center rounded-full border border-slate-600/50 p-px">
           <motion.span
-            className="h-1.5 w-1.5 rounded-full bg-aurora-violet"
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 1.6, repeat: Infinity }}
+            className="h-[3px] w-[3px] rounded-full bg-aurora-violet"
+            animate={{ y: [0, 14, 0] }}
+            transition={{ duration: 2.2, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
           />
         </span>
       </motion.button>
