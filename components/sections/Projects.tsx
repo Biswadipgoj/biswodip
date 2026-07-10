@@ -2,12 +2,15 @@
 
 import { useRef, useState, useEffect, Suspense } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, extend } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { projects, type Project } from '@/lib/data';
 import SectionHeading from '@/components/ui/SectionHeading';
 import { ProjectDistortionMaterial } from '@/components/scene/ProjectDistortionMaterial';
+
+// Ensure the material is registered with R3F and not tree-shaken
+extend({ ProjectDistortionMaterial });
 
 /* ------------------------------------------------------------------ */
 /* Mock Telemetry Data Component                                      */
