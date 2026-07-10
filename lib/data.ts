@@ -232,7 +232,7 @@ export const projects: Project[] = [
     ],
   },
   {
-    name: 'Trip',
+    name: 'Tripmate',
     blurb: 'Plan journeys that feel effortless.',
     description:
       'A travel planning experience that turns scattered ideas into a clear, beautiful itinerary. Thoughtful flows, smooth transitions and a focus on getting people from idea to plan fast.',

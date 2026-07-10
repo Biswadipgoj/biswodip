@@ -1,16 +1,9 @@
 'use client';
 
-import { useRef, useState, useEffect, Suspense } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Canvas, useFrame, extend } from '@react-three/fiber';
-import { useTexture } from '@react-three/drei';
-import * as THREE from 'three';
+import { useRef, useState, useEffect } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion';
 import { projects, type Project } from '@/lib/data';
 import SectionHeading from '@/components/ui/SectionHeading';
-import { ProjectDistortionMaterial } from '@/components/scene/ProjectDistortionMaterial';
-
-// Ensure the material is registered with R3F and not tree-shaken
-extend({ ProjectDistortionMaterial });
 
 /* ------------------------------------------------------------------ */
 /* Mock Telemetry Data Component                                      */
@@ -62,45 +55,60 @@ function TelemetryOverlay({ accent, name }: { accent: string, name: string }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* WebGL Distortion Image Component                                   */
-/* ------------------------------------------------------------------ */
-function DistortionImage({ src, hovered }: { src: string; hovered: boolean }) {
-  const texture = useTexture(src);
-  const materialRef = useRef<any>(null);
-
-  useFrame((state) => {
-    if (materialRef.current) {
-      materialRef.current.uTime = state.clock.elapsedTime;
-      materialRef.current.uHoverState = THREE.MathUtils.lerp(
-        materialRef.current.uHoverState,
-        hovered ? 1 : 0,
-        0.1
-      );
-    }
-  });
-
-  return (
-    <mesh>
-      <planeGeometry args={[2, 2, 32, 32]} />
-      {/* @ts-expect-error - Custom R3F material injected via extend */}
-      <projectDistortionMaterial ref={materialRef} uTexture={texture} />
-    </mesh>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /* Holographic Preview Interface                                      */
 /* ------------------------------------------------------------------ */
 function LivePreview({ project }: { project: Project }) {
   const [loaded, setLoaded] = useState(false);
-  const [hovered, setHovered] = useState(false);
+  const ref = useRef<HTMLAnchorElement>(null);
   
+  // Smooth 3D mouse tracking
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+  const isHovered = useMotionValue(0);
+
+  const springConfig = { damping: 20, stiffness: 150, mass: 0.5 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+  const smoothHover = useSpring(isHovered, springConfig);
+
+  // Subtle tilts
+  const rotateX = useTransform(smoothY, [0, 1], [2, -2]);
+  const rotateY = useTransform(smoothX, [0, 1], [-2, 2]);
+  // Glare movement
+  const glareX = useTransform(smoothX, [0, 1], [-20, 120]);
+  const glareY = useTransform(smoothY, [0, 1], [-20, 120]);
+  const glareOpacity = useTransform(smoothHover, [0, 1], [0, 0.08]);
+  // Smooth scale inner
+  const scale = useTransform(smoothHover, [0, 1], [1, 1.02]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!ref.current) return;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const x = (e.clientX - left) / width;
+    const y = (e.clientY - top) / height;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
+  const handleMouseEnter = () => {
+    isHovered.set(1);
+  };
+
+  const handleMouseLeave = () => {
+    isHovered.set(0);
+    mouseX.set(0.5);
+    mouseY.set(0.5);
+  };
+
   return (
-    <a
+    <motion.a
+      ref={ref}
       href={project.url}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="group/preview relative block aspect-[16/10] w-full overflow-hidden rounded-xl border border-white/10 bg-[#080a10] shadow-[0_0_50px_rgba(0,0,0,0.8)]"
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX, rotateY, transformPerspective: 1200 }}
+      className="group/preview relative block aspect-[16/10] w-full overflow-hidden rounded-xl border border-white/10 bg-[#080a10] shadow-[0_0_40px_rgba(0,0,0,0.6)] hover:border-white/20 transition-colors duration-500 will-change-transform"
       aria-label={`Open ${project.name} live site`}
       data-cursor="View Live"
     >
@@ -108,8 +116,8 @@ function LivePreview({ project }: { project: Project }) {
       <div className="absolute inset-x-0 top-0 z-20 flex h-9 items-center justify-between border-b border-white/10 bg-[#0d1018]/95 px-4 backdrop-blur">
         <div className="flex items-center gap-3">
           <div className="flex gap-1.5">
-            <span className="h-2.5 w-8 rounded-sm bg-white/10 group-hover/preview:bg-white/20 transition-colors" />
-            <span className="h-2.5 w-2.5 rounded-sm bg-white/10 group-hover/preview:bg-white/20 transition-colors" />
+            <span className="h-2.5 w-8 rounded-sm bg-white/10 group-hover/preview:bg-white/20 transition-colors duration-500" />
+            <span className="h-2.5 w-2.5 rounded-sm bg-white/10 group-hover/preview:bg-white/20 transition-colors duration-500" />
           </div>
           <span className="font-mono text-[0.65rem] font-semibold tracking-widest text-white/70 uppercase">
             {project.name} // LIVE_ENV
@@ -122,10 +130,10 @@ function LivePreview({ project }: { project: Project }) {
       </div>
 
       {/* Crosshairs & Borders */}
-      <div className="absolute top-9 left-0 w-2 h-2 border-t-2 border-l-2 border-white/20 z-20" />
-      <div className="absolute top-9 right-0 w-2 h-2 border-t-2 border-r-2 border-white/20 z-20" />
-      <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-white/20 z-20" />
-      <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-white/20 z-20" />
+      <div className="absolute top-9 left-0 w-2 h-2 border-t-2 border-l-2 border-white/20 z-20 transition-all duration-500 group-hover/preview:border-white/40 group-hover/preview:-translate-x-1 group-hover/preview:-translate-y-1" />
+      <div className="absolute top-9 right-0 w-2 h-2 border-t-2 border-r-2 border-white/20 z-20 transition-all duration-500 group-hover/preview:border-white/40 group-hover/preview:translate-x-1 group-hover/preview:-translate-y-1" />
+      <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-white/20 z-20 transition-all duration-500 group-hover/preview:border-white/40 group-hover/preview:-translate-x-1 group-hover/preview:translate-y-1" />
+      <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-white/20 z-20 transition-all duration-500 group-hover/preview:border-white/40 group-hover/preview:translate-x-1 group-hover/preview:translate-y-1" />
 
       {/* Loading shimmer */}
       {!loaded && (
@@ -136,15 +144,17 @@ function LivePreview({ project }: { project: Project }) {
       )}
 
       {/* The actual live site or image fallback */}
-      <div className="absolute inset-0 top-9 origin-top-left">
+      <motion.div 
+        style={{ scale }}
+        className="absolute inset-0 top-9 origin-center overflow-hidden"
+      >
         {project.previewImage ? (
-          <div className="w-full h-full opacity-90 group-hover/preview:opacity-100 transition-opacity">
-            <Canvas orthographic camera={{ position: [0, 0, 1], zoom: 1 }}>
-              <Suspense fallback={null}>
-                <DistortionImage src={project.previewImage} hovered={hovered} />
-              </Suspense>
-            </Canvas>
-          </div>
+          <img
+            src={project.previewImage}
+            alt={`${project.name} live preview`}
+            onLoad={() => setLoaded(true)}
+            className="w-full h-full object-cover object-top opacity-90 transition-opacity duration-700 group-hover/preview:opacity-100"
+          />
         ) : (
           <iframe
             src={project.url}
@@ -153,21 +163,30 @@ function LivePreview({ project }: { project: Project }) {
             onLoad={() => setLoaded(true)}
             referrerPolicy="no-referrer"
             sandbox="allow-scripts allow-same-origin"
-            className="pointer-events-none h-[200%] w-[200%] origin-top-left scale-[0.5] border-0 filter opacity-90 group-hover/preview:opacity-100 transition-opacity"
+            className="pointer-events-none h-[200%] w-[200%] origin-top-left scale-[0.5] border-0 filter opacity-90 transition-opacity duration-700 group-hover/preview:opacity-100"
           />
         )}
-        
-        {/* Holographic Scanline Overlay */}
-        <div className="absolute inset-0 z-10 pointer-events-none opacity-20"
-             style={{ background: 'linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.1) 51%, transparent 51%)', backgroundSize: '100% 4px' }} />
-      </div>
+      </motion.div>
+
+      {/* Dynamic Glare Overlay */}
+      <motion.div 
+        className="absolute inset-0 z-30 pointer-events-none mix-blend-overlay"
+        style={{ 
+          opacity: glareOpacity,
+          background: useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, white 0%, transparent 40%)`
+        }} 
+      />
+
+      {/* Holographic Scanline Overlay */}
+      <div className="absolute inset-0 z-10 pointer-events-none opacity-20 transition-opacity duration-500 group-hover/preview:opacity-30"
+           style={{ background: 'linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.1) 51%, transparent 51%)', backgroundSize: '100% 4px' }} />
 
       {/* Dynamic Telemetry Widget */}
       <TelemetryOverlay accent={project.accent} name={project.name} />
 
       {/* Hover action veil */}
-      <div className="absolute inset-0 top-9 z-40 flex items-center justify-center bg-black/60 opacity-0 backdrop-blur-sm transition-all duration-300 group-hover/preview:opacity-100">
-        <div className="translate-y-4 transition-transform duration-300 group-hover/preview:translate-y-0">
+      <div className="absolute inset-0 top-9 z-40 flex items-center justify-center bg-[#05070a]/40 opacity-0 backdrop-blur-[2px] transition-all duration-500 group-hover/preview:opacity-100 pointer-events-none">
+        <div className="translate-y-4 scale-95 transition-all duration-500 group-hover/preview:translate-y-0 group-hover/preview:scale-100">
           <span className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-[#0d1018]/90 px-6 py-3 text-sm font-bold text-white shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-md"
                 style={{ boxShadow: `0 0 20px ${project.accentSoft}, inset 0 0 0 1px ${project.accent}55` }}>
             <span className="font-mono tracking-widest text-[0.65rem] uppercase text-aurora-cyan">Execute Launch</span>
@@ -177,7 +196,7 @@ function LivePreview({ project }: { project: Project }) {
           </span>
         </div>
       </div>
-    </a>
+    </motion.a>
   );
 }
 
