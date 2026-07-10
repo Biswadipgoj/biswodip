@@ -28,7 +28,7 @@ function TelemetryGraph({ color, type }: { color: string, type: 'wave' | 'bars' 
 
   return (
     <div className="h-16 w-full flex items-end justify-between gap-1 mt-6 opacity-60 mix-blend-screen">
-      {type === 'bars' && data.map((val, i) => (
+      {type === 'bars' && data.length > 0 && data.map((val, i) => (
         <motion.div 
           key={i} 
           className="w-full rounded-t-sm" 
@@ -45,7 +45,7 @@ function TelemetryGraph({ color, type }: { color: string, type: 'wave' | 'bars' 
         </div>
       )}
 
-      {type === 'wave' && (
+      {type === 'wave' && data.length > 0 && (
         <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 50">
           <path 
             d={`M 0 ${50 - data[0]} Q 25 ${50 - data[5]}, 50 ${50 - data[8]} T 100 ${50 - data[14]}`} 
