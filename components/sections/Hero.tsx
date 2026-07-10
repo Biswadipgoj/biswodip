@@ -143,7 +143,10 @@ export default function Hero() {
 
       {/* ── Main content — flex-1 so it fills space above the scroll cue ── */}
       <motion.div
-        style={{ scale, opacity, y, rotateX, transformStyle: 'preserve-3d' }}
+        initial={{ filter: 'blur(20px)', scale: 1.1, opacity: 0, y: 40 }}
+        animate={{ filter: 'blur(0px)', scale: 1, opacity: 1, y: 0 }}
+        transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+        style={{ scale, opacity, rotateX, transformStyle: 'preserve-3d' }}
         className="relative z-10 flex w-full flex-1 flex-col items-center justify-center px-6 pt-28 pb-6 text-center"
       >
         {/* Fact chips — xl only, absolutely positioned within this div */}

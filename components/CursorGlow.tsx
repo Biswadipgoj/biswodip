@@ -1,54 +1,95 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 
-/** A soft, color-changing glow that trails the cursor — desktop only, pointer-fine. */
 export default function CursorGlow() {
-  const ref = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [cursorText, setCursorText] = useState('');
+  
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+  
+  const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
+  const cursorXSpring = useSpring(cursorX, springConfig);
+  const cursorYSpring = useSpring(cursorY, springConfig);
 
   useEffect(() => {
     if (window.matchMedia('(pointer: coarse)').matches) return;
-    const el = ref.current;
-    if (!el) return;
-    let raf = 0;
-    let tx = 0;
-    let ty = 0;
-    let x = 0;
-    let y = 0;
 
-    const onMove = (e: MouseEvent) => {
-      tx = e.clientX;
-      ty = e.clientY;
+    const moveCursor = (e: MouseEvent) => {
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
     };
-    const loop = () => {
-      x += (tx - x) * 0.12;
-      y += (ty - y) * 0.12;
-      
-      // Dynamically calculate hue rotation for the color changing effect
-      const hue = (Date.now() * 0.05) % 360;
-      
-      // Offset by half of 400px (200px) to center the 400x400 element on the cursor
-      el.style.transform = `translate3d(${x - 200}px, ${y - 200}px, 0)`;
-      // Apply the Tailwind blur-3xl (64px) alongside the dynamic hue rotation
-      el.style.filter = `blur(64px) hue-rotate(${hue}deg)`;
-      
-      raf = requestAnimationFrame(loop);
+    
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Check for closest interactive element
+      const interactiveEl = target.closest('a, button, .magnetic, input, textarea');
+      if (interactiveEl) {
+        setIsHovered(true);
+        // Optional: grab data attribute for custom cursor text
+        const text = interactiveEl.getAttribute('data-cursor');
+        if (text) setCursorText(text);
+      } else {
+        setIsHovered(false);
+        setCursorText('');
+      }
     };
-    window.addEventListener('mousemove', onMove);
-    raf = requestAnimationFrame(loop);
+
+    window.addEventListener('mousemove', moveCursor);
+    window.addEventListener('mouseover', handleMouseOver);
+    
+    // Hide default cursor globally on desktop
+    document.body.style.cursor = 'none';
+
     return () => {
-      window.removeEventListener('mousemove', onMove);
-      cancelAnimationFrame(raf);
+      window.removeEventListener('mousemove', moveCursor);
+      window.removeEventListener('mouseover', handleMouseOver);
+      document.body.style.cursor = 'auto';
     };
-  }, []);
+  }, [cursorX, cursorY]);
+
+  // Variants for different cursor states
+  const variants = {
+    default: {
+      height: 12,
+      width: 12,
+      x: '-50%',
+      y: '-50%',
+      backgroundColor: '#f6f8fc',
+      mixBlendMode: 'difference' as any,
+    },
+    hover: {
+      height: cursorText ? 64 : 48,
+      width: cursorText ? 64 : 48,
+      x: '-50%',
+      y: '-50%',
+      backgroundColor: '#f6f8fc',
+      mixBlendMode: 'difference' as any,
+    }
+  };
 
   return (
-    <div
-      ref={ref}
-      // Increased size to 400px (h-[400px] w-[400px]) as requested
-      className="pointer-events-none fixed left-0 top-0 z-[5] hidden h-[400px] w-[400px] rounded-full opacity-60 md:block"
-      style={{ background: 'radial-gradient(circle, rgba(34,211,238,0.40), transparent 65%)' }}
-      aria-hidden
-    />
+    <motion.div
+      className="pointer-events-none fixed left-0 top-0 z-[100] hidden items-center justify-center rounded-full text-center text-[10px] font-bold text-black md:flex"
+      style={{
+        translateX: cursorXSpring,
+        translateY: cursorYSpring,
+      }}
+      variants={variants}
+      animate={isHovered ? 'hover' : 'default'}
+      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+    >
+      {cursorText && (
+        <motion.span
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
+        >
+          {cursorText}
+        </motion.span>
+      )}
+    </motion.div>
   );
 }

@@ -45,12 +45,18 @@ function OrbitalSystem({
     anglesRef.current = crafts.map((_, i) => (i / crafts.length) * Math.PI * 2);
   }, [crafts]);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const mouseRef = useRef({ x: -1000, y: -1000, active: false });
+
   useEffect(() => {
     const { rx, ry, tilt, speed } = ORBIT_CFG[cfgIdx];
     const projRy = ry * Math.cos(tilt); 
 
     const loop = () => {
       const angles = anglesRef.current;
+      const mx = mouseRef.current.x;
+      const my = mouseRef.current.y;
+      const mouseActive = mouseRef.current.active;
 
       for (let i = 0; i < angles.length; i++) {
         if (pausedRef.current !== i) angles[i] += speed;
@@ -64,10 +70,24 @@ function OrbitalSystem({
 
         const cosA = Math.cos(a);
         const sinA = Math.sin(a);
-        const sx    = CX + cosA * currentRx;
-        const sy    = CY + sinA * currentRy;
+        let sx    = CX + cosA * currentRx;
+        let sy    = CY + sinA * currentRy;
         const z     = sinA * Math.sin(tilt); 
         const depth = (z + 1) / 2;            
+
+        // Physics: Repel from mouse
+        if (mouseActive) {
+          const dx = sx - mx;
+          const dy = sy - my;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const repelRadius = 140;
+          if (dist < repelRadius && dist > 0) {
+            const force = Math.pow((repelRadius - dist) / repelRadius, 2) * 40;
+            sx += (dx / dist) * force;
+            sy += (dy / dist) * force;
+          }
+        }
+
         return { i, sx, sy, z, depth };
       });
 
@@ -83,7 +103,6 @@ function OrbitalSystem({
         el.style.opacity   = String(opacity.toFixed(2));
         el.style.zIndex    = paused ? '200' : String(Math.round(depth * 100));
         
-        // Toggle paused class for HUD
         if (paused) {
           el.classList.add('is-paused');
         } else {
@@ -98,11 +117,31 @@ function OrbitalSystem({
     return () => cancelAnimationFrame(rafRef.current);
   }, [crafts, cfgIdx]);
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    mouseRef.current = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+      active: true
+    };
+  };
+
+  const handleMouseLeave = () => {
+    mouseRef.current.active = false;
+  };
+
   const { rx, ry, tilt } = ORBIT_CFG[cfgIdx];
   const projRy = ry * Math.cos(tilt);
 
   return (
-    <div className="relative select-none flex items-center justify-center" style={{ width: SIZE, height: SIZE }}>
+    <div 
+      ref={containerRef}
+      className="relative select-none flex items-center justify-center" 
+      style={{ width: SIZE, height: SIZE }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
       
       {/* ── Background Deep Space Elements ── */}
       <div className="absolute inset-0 pointer-events-none rounded-full" style={{

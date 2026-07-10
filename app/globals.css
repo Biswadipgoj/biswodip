@@ -56,6 +56,12 @@ body {
 body {
   font-family: var(--font-sans), system-ui, sans-serif;
   position: relative;
+  /* Cursor hidden for custom magnetic cursor (enabled via script) */
+}
+
+/* Hide default cursor on interactive elements as custom cursor takes over */
+a, button, input, select, textarea, .magnetic {
+  cursor: none !important;
 }
 
 /* Stronger type hierarchy: headings pop bright against muted body copy. */
@@ -217,6 +223,11 @@ html.lenis body {
   }
   .card-glow:hover::before {
     opacity: 0.9;
+  }
+  
+  /* Magnetic wrapper utility */
+  .magnetic {
+    display: inline-block;
   }
 }
 

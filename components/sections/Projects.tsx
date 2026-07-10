@@ -2,8 +2,12 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { useTexture } from '@react-three/drei';
+import * as THREE from 'three';
 import { projects, type Project } from '@/lib/data';
 import SectionHeading from '@/components/ui/SectionHeading';
+import { ProjectDistortionMaterial } from '@/components/scene/ProjectDistortionMaterial';
 
 /* ------------------------------------------------------------------ */
 /* Mock Telemetry Data Component                                      */
@@ -55,16 +59,47 @@ function TelemetryOverlay({ accent, name }: { accent: string, name: string }) {
 }
 
 /* ------------------------------------------------------------------ */
+/* WebGL Distortion Image Component                                   */
+/* ------------------------------------------------------------------ */
+function DistortionImage({ src, hovered }: { src: string; hovered: boolean }) {
+  const texture = useTexture(src);
+  const materialRef = useRef<any>(null);
+
+  useFrame((state) => {
+    if (materialRef.current) {
+      materialRef.current.uTime = state.clock.elapsedTime;
+      materialRef.current.uHoverState = THREE.MathUtils.lerp(
+        materialRef.current.uHoverState,
+        hovered ? 1 : 0,
+        0.1
+      );
+    }
+  });
+
+  return (
+    <mesh>
+      <planeGeometry args={[2, 2, 32, 32]} />
+      {/* @ts-expect-error - Custom R3F material injected via extend */}
+      <projectDistortionMaterial ref={materialRef} uTexture={texture} />
+    </mesh>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Holographic Preview Interface                                      */
 /* ------------------------------------------------------------------ */
 function LivePreview({ project }: { project: Project }) {
   const [loaded, setLoaded] = useState(false);
+  const [hovered, setHovered] = useState(false);
   
   return (
     <a
       href={project.url}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className="group/preview relative block aspect-[16/10] w-full overflow-hidden rounded-xl border border-white/10 bg-[#080a10] shadow-[0_0_50px_rgba(0,0,0,0.8)]"
       aria-label={`Open ${project.name} live site`}
+      data-cursor="View Live"
     >
       {/* Sci-fi UI Chrome */}
       <div className="absolute inset-x-0 top-0 z-20 flex h-9 items-center justify-between border-b border-white/10 bg-[#0d1018]/95 px-4 backdrop-blur">
@@ -100,12 +135,11 @@ function LivePreview({ project }: { project: Project }) {
       {/* The actual live site or image fallback */}
       <div className="absolute inset-0 top-9 origin-top-left">
         {project.previewImage ? (
-          <img
-            src={project.previewImage}
-            alt={`${project.name} live preview`}
-            onLoad={() => setLoaded(true)}
-            className="w-full h-full object-cover object-top opacity-90 group-hover/preview:opacity-100 transition-opacity"
-          />
+          <div className="w-full h-full opacity-90 group-hover/preview:opacity-100 transition-opacity">
+            <Canvas orthographic camera={{ position: [0, 0, 1], zoom: 1 }}>
+              <DistortionImage src={project.previewImage} hovered={hovered} />
+            </Canvas>
+          </div>
         ) : (
           <iframe
             src={project.url}

@@ -68,9 +68,27 @@ function useScrollProgress() {
 /* ---- Camera ---- */
 function FlightCamera({ progress }: { progress: React.MutableRefObject<number> }) {
   const { camera } = useThree();
-  useFrame((state) => {
+  
+  // Cinematic initialization state
+  const isReady = useRef(false);
+  const startZ = useRef(40); // Start far away
+  
+  useEffect(() => {
+    // Small delay before warp drive kicks in
+    setTimeout(() => { isReady.current = true; }, 300);
+  }, []);
+
+  useFrame((state, delta) => {
     const p = progress.current;
-    camera.position.z = THREE.MathUtils.lerp(camera.position.z, 8 - p * TRAVEL, LERP_CAM);
+    
+    // Warp drive entry sequence
+    if (isReady.current && startZ.current > 8) {
+      startZ.current = THREE.MathUtils.lerp(startZ.current, 8, delta * 4.5);
+    }
+    
+    const targetZ = startZ.current - p * TRAVEL;
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, LERP_CAM);
+
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, state.pointer.x * 1.2, LERP_PTR);
     camera.position.y = THREE.MathUtils.lerp(
       camera.position.y,
