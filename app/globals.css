@@ -86,7 +86,7 @@ html.lenis body {
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 11px;
+  width: 10px;
 }
 ::-webkit-scrollbar-track {
   background: #0a0b10;
