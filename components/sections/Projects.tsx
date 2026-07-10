@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, Suspense } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
@@ -137,7 +137,9 @@ function LivePreview({ project }: { project: Project }) {
         {project.previewImage ? (
           <div className="w-full h-full opacity-90 group-hover/preview:opacity-100 transition-opacity">
             <Canvas orthographic camera={{ position: [0, 0, 1], zoom: 1 }}>
-              <DistortionImage src={project.previewImage} hovered={hovered} />
+              <Suspense fallback={null}>
+                <DistortionImage src={project.previewImage} hovered={hovered} />
+              </Suspense>
             </Canvas>
           </div>
         ) : (
