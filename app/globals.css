@@ -290,9 +290,7 @@ html.lenis body {
   will-change: transform, opacity;
 }
 
-/* floating holographic rings — thin, iridescent, slowly counter-rotating.
-   Sized as true circles hugging the card and centred with negative margins so
-   the rotate keyframe is free to own `transform` (no centring conflict). */
+/* floating holographic rings — redesigned into a high-end glowing energy ringlight */
 .holo-ring {
   position: absolute;
   top: 50%;
@@ -303,32 +301,48 @@ html.lenis body {
   pointer-events: none;
   background: conic-gradient(
     from 0deg,
-    rgba(34, 211, 238, 0.55),
-    rgba(59, 130, 246, 0.1),
-    rgba(139, 92, 246, 0.55),
-    rgba(236, 72, 153, 0.1),
-    rgba(251, 191, 36, 0.5),
-    rgba(34, 211, 238, 0.55)
+    #22d3ee,
+    #8b5cf6,
+    #ec4899,
+    #fbbf24,
+    #22d3ee
   );
-  -webkit-mask:
-    radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-  mask:
-    radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
-  will-change: transform;
+  will-change: transform, filter, opacity;
 }
+
+/* The core sharp inner ringlight */
 .holo-ring--1 {
+  width: 110%;
+  margin-left: -55%;
+  margin-top: -55%;
+  opacity: 0.9;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  animation: ring-spin 8s linear infinite;
+}
+
+/* The thick, intense blurred glow cast by the ringlight */
+.holo-ring--2 {
   width: 116%;
   margin-left: -58%;
   margin-top: -58%;
   opacity: 0.65;
-  animation: ring-spin 18s linear infinite;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 24px), #000 calc(100% - 24px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 24px), #000 calc(100% - 24px));
+  filter: blur(14px);
+  animation: ring-spin 12s linear infinite reverse;
 }
-.holo-ring--2 {
-  width: 132%;
-  margin-left: -66%;
-  margin-top: -66%;
+
+/* A secondary thin tech-ring for detail */
+.holo-ring--3 {
+  width: 125%;
+  margin-left: -62.5%;
+  margin-top: -62.5%;
   opacity: 0.4;
-  animation: ring-spin 28s linear infinite reverse;
+  background: conic-gradient(from 180deg, transparent 0%, rgba(34, 211, 238, 0.8) 10%, transparent 40%, rgba(236, 72, 153, 0.8) 60%, transparent 100%);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1px), #000 calc(100% - 1px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1px), #000 calc(100% - 1px));
+  animation: ring-spin 16s linear infinite;
 }
 
 /* small drifting geometric orbs for depth */

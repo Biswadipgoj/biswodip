@@ -279,6 +279,7 @@ export default function Hero() {
         <span className="portrait-aurora" />
         <span className="holo-ring holo-ring--1" />
         <span className="holo-ring holo-ring--2" />
+        <span className="holo-ring holo-ring--3" />
         <span className="portrait-orb portrait-orb--cyan" />
         <span className="portrait-orb portrait-orb--violet" />
         <span className="portrait-orb portrait-orb--pink" />
