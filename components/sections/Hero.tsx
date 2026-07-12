@@ -12,6 +12,7 @@ import {
 } from 'framer-motion';
 import { personal, facts, socials } from '@/lib/data';
 import MagneticButton from '@/components/ui/MagneticButton';
+import RingLight from '@/components/ui/RingLight';
 import { scrollToSection } from '@/components/SmoothScroll';
 
 const headline = [
@@ -123,13 +124,16 @@ export default function Hero() {
             transition={{ duration: 0.7 }}
             className="mb-8 flex items-center gap-3 rounded-full border border-white/10 bg-[#13161e]/80 p-1.5 pr-6 shadow-[0_0_30px_rgba(0,0,0,0.5)] backdrop-blur-md"
           >
-            <div className="relative h-10 w-10 overflow-hidden rounded-full border border-white/20">
-              <Image
-                src="/biswodip.png"
-                alt="Biswodip Goj"
-                fill
-                className="object-cover object-top"
-              />
+            <div className="relative h-10 w-10 shrink-0">
+              <RingLight size={58} thickness={3} bulbCount={16} colorA="#22d3ee" colorB="#f472b6" speed={4.5} />
+              <div className="relative z-10 h-10 w-10 overflow-hidden rounded-full border border-white/20">
+                <Image
+                  src="/biswodip.png"
+                  alt="Biswodip Goj"
+                  fill
+                  className="object-cover object-top"
+                />
+              </div>
             </div>
             <div className="flex flex-col items-start justify-center">
               <span className="text-[0.65rem] font-bold uppercase tracking-widest text-white/90">

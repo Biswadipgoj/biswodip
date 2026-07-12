@@ -914,6 +914,161 @@ html.lenis body {
 }
 
 /* ================================================================ */
+/* Ring Light — a photography ring light rebuilt in CSS             */
+/* ================================================================ */
+
+.ring-light {
+  border-radius: 9999px;
+  z-index: 1;
+}
+
+.ring-light-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    inset 0 0 24px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 var(--rl-thick, 14px) rgba(255, 255, 255, 0.02);
+}
+
+.ring-light-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--rl-a) 10deg,
+    transparent 48deg,
+    transparent 312deg,
+    var(--rl-a) 350deg,
+    transparent 360deg
+  );
+  -webkit-mask: radial-gradient(
+    closest-side,
+    transparent calc(100% - var(--rl-thick, 14px) - 2px),
+    #000 calc(100% - var(--rl-thick, 14px)),
+    #000 100%
+  );
+  mask: radial-gradient(
+    closest-side,
+    transparent calc(100% - var(--rl-thick, 14px) - 2px),
+    #000 calc(100% - var(--rl-thick, 14px)),
+    #000 100%
+  );
+  filter: blur(1.5px) brightness(1.5);
+  animation: ring-rotate var(--rl-speed, 7s) linear infinite;
+}
+
+.ring-light-sweep-b {
+  background: conic-gradient(
+    from 180deg,
+    transparent 0deg,
+    var(--rl-b) 8deg,
+    transparent 40deg,
+    transparent 360deg
+  );
+  opacity: 0.7;
+  animation-name: ring-rotate-rev;
+  animation-duration: calc(var(--rl-speed, 7s) * 1.6);
+}
+
+@keyframes ring-rotate {
+  to { transform: rotate(360deg); }
+}
+@keyframes ring-rotate-rev {
+  to { transform: rotate(-360deg); }
+}
+
+.ring-light-breathe {
+  position: absolute;
+  inset: calc(var(--rl-thick, 14px) * -1.4);
+  border-radius: 9999px;
+  box-shadow: 0 0 60px 10px var(--rl-glow, rgba(34, 211, 238, 0.35));
+  animation: ring-breathe 4.5s ease-in-out infinite;
+}
+
+@keyframes ring-breathe {
+  0%, 100% { opacity: 0.3; transform: scale(0.96); }
+  50% { opacity: 0.7; transform: scale(1.03); }
+}
+
+.ring-light-bulb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff;
+  animation: bulb-twinkle 2.6s ease-in-out infinite;
+}
+
+@keyframes bulb-twinkle {
+  0%, 100% { opacity: 0.25; box-shadow: 0 0 4px 1px var(--bulb-color, #fff); }
+  50% { opacity: 1; box-shadow: 0 0 10px 3px var(--bulb-color, #fff); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-light-sweep,
+  .ring-light-breathe,
+  .ring-light-bulb {
+    animation: none;
+  }
+}
+
+/* ================================================================ */
+/* Orbit Sector — radar dial, sweep beam & comet trails             */
+/* ================================================================ */
+
+.orbit-sweep-clip {
+  z-index: 1;
+}
+
+.orbit-sweep {
+  position: absolute;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--sweep-c) 5deg,
+    transparent 30deg,
+    transparent 360deg
+  );
+  opacity: 0.22;
+  mix-blend-mode: screen;
+  animation: radar-rotate var(--sweep-speed, 6s) linear infinite;
+}
+
+@keyframes radar-rotate {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.tech-planet-trail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 52px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--tc, #22d3ee), transparent);
+  transform-origin: 0% 50%;
+  filter: blur(1.5px);
+  pointer-events: none;
+  will-change: transform, opacity;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-sweep {
+    animation: none;
+    opacity: 0.08;
+  }
+}
+
+/* ================================================================ */
 /* Global performance hints                                         */
 /* ================================================================ */
 
