@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from 'react';
 import { personal } from '@/lib/data';
 import SectionHeading from '@/components/ui/SectionHeading';
 import Tilt3D from '@/components/ui/Tilt3D';
+import RingLight from '@/components/ui/RingLight';
 
 /**
  * ABOUT — The Traveler (Core System)
@@ -114,15 +115,20 @@ export default function About() {
              <ellipse cx="50%" cy="50%" rx="200" ry="260" fill="none" stroke="#a78bfa" strokeWidth="1" strokeOpacity="0.05" />
           </svg>
 
+          {/* Studio Ring Light — the physical light rig this "shoot" was lit with */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <RingLight size={330} thickness={13} bulbCount={30} colorA="#22d3ee" colorB="#a78bfa" speed={10} />
+          </div>
+
           {/* Central Body (Portrait) */}
           <div className="relative z-10 w-full max-w-[16rem]">
             {/* Core Glow */}
             <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-tr from-aurora-cyan/30 to-aurora-violet/30 blur-[40px] animate-pulse" />
-            
+
             <Tilt3D maxTilt={15} glare={true} lift={true}>
               <div className="portrait-card group relative aspect-[4/5] w-full rounded-[1.8rem] border border-white/10 bg-[#0d1018] shadow-2xl overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0c10] z-10" />
-                
+
                 <Image
                   src="/biswodip.png"
                   alt={`${personal.name} — ${personal.role}`}
@@ -130,7 +136,14 @@ export default function About() {
                   sizes="(max-width: 1024px) 76vw, 304px"
                   className="object-cover object-top transition-transform duration-1000 group-hover:scale-110 opacity-90"
                 />
-                
+
+                {/* Catchlight — the ring light's reflection landing on its subject */}
+                <div
+                  className="pointer-events-none absolute -top-4 left-6 h-16 w-40 rotate-[16deg] rounded-full opacity-[0.18] blur-xl z-10"
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.95), transparent)' }}
+                  aria-hidden
+                />
+
                 {/* HUD Overlay inside portrait */}
                 <div className="absolute inset-x-0 bottom-0 p-5 z-20">
                   <div className="flex items-center gap-2 mb-1">

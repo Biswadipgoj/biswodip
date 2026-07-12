@@ -34,11 +34,13 @@ function OrbitalSystem({
   cfgIdx: number;
 }) {
   const chipEls  = useRef<(HTMLDivElement | null)[]>([]);
+  const trailEls = useRef<(HTMLDivElement | null)[]>([]);
   const anglesRef = useRef<number[]>([]);
   const pausedRef = useRef<number | null>(null);
   const rafRef    = useRef<number>(0);
 
   chipEls.current = [];
+  trailEls.current = [];
 
   useEffect(() => {
     // Distribute planets evenly
@@ -72,8 +74,13 @@ function OrbitalSystem({
         const sinA = Math.sin(a);
         let sx    = CX + cosA * currentRx;
         let sy    = CY + sinA * currentRy;
-        const z     = sinA * Math.sin(tilt); 
-        const depth = (z + 1) / 2;            
+        const z     = sinA * Math.sin(tilt);
+        const depth = (z + 1) / 2;
+
+        // Tangent direction (backward along the travel path) for the comet trail
+        const velX = -sinA * currentRx;
+        const velY =  cosA * currentRy;
+        const tailDeg = Math.atan2(-velY, -velX) * (180 / Math.PI);
 
         // Physics: Repel from mouse
         if (mouseActive) {
@@ -88,12 +95,12 @@ function OrbitalSystem({
           }
         }
 
-        return { i, sx, sy, z, depth };
+        return { i, sx, sy, z, depth, tailDeg };
       });
 
       pts.sort((a, b) => a.z - b.z);
 
-      pts.forEach(({ i, sx, sy, depth }) => {
+      pts.forEach(({ i, sx, sy, depth, tailDeg }) => {
         const el = chipEls.current[i];
         if (!el) return;
         const paused  = pausedRef.current === i;
@@ -102,11 +109,17 @@ function OrbitalSystem({
         el.style.transform = `translate(${sx}px, ${sy}px) translate(-50%,-50%) scale(${scale})`;
         el.style.opacity   = String(opacity.toFixed(2));
         el.style.zIndex    = paused ? '200' : String(Math.round(depth * 100));
-        
+
         if (paused) {
           el.classList.add('is-paused');
         } else {
           el.classList.remove('is-paused');
+        }
+
+        const trail = trailEls.current[i];
+        if (trail) {
+          trail.style.transform = `translate(${sx}px, ${sy}px) rotate(${tailDeg}deg) scaleX(${paused ? 0.3 : 0.55 + depth * 0.65})`;
+          trail.style.opacity   = paused ? '0' : String((0.1 + depth * 0.32).toFixed(2));
         }
       });
 
@@ -156,7 +169,68 @@ function OrbitalSystem({
            fill="none" stroke={tabColor} strokeWidth={idx === 1 ? "1.5" : "0.5"} strokeOpacity={idx === 1 ? "0.2" : "0.08"}
            strokeDasharray={idx === 1 ? "4 8" : "none"} />
         ))}
+
+        {/* Radar sector spokes — carve the disc into 8 scan sectors */}
+        {Array.from({ length: 8 }).map((_, idx) => {
+          const a = (idx / 8) * Math.PI * 2;
+          const outer = rx + 24;
+          const inner = outer - 42;
+          const x1 = CX + Math.cos(a) * inner;
+          const y1 = CY + Math.sin(a) * inner * Math.cos(tilt);
+          const x2 = CX + Math.cos(a) * outer;
+          const y2 = CY + Math.sin(a) * outer * Math.cos(tilt);
+          return (
+            <line key={idx} x1={x1} y1={y1} x2={x2} y2={y2}
+              stroke={tabColor} strokeWidth="0.5" strokeOpacity="0.14" strokeDasharray="1.5 4" />
+          );
+        })}
+        {/* Sector tick nodes at the sweep's outer edge */}
+        {Array.from({ length: 8 }).map((_, idx) => {
+          const a = (idx / 8) * Math.PI * 2;
+          const r = rx + 24;
+          const x = CX + Math.cos(a) * r;
+          const y = CY + Math.sin(a) * r * Math.cos(tilt);
+          return <circle key={idx} cx={x} cy={y} r="1.6" fill={tabColor} fillOpacity="0.4" />;
+        })}
       </svg>
+
+      {/* ── Radar sweep beam — a living scan rotating through the sectors ── */}
+      <div
+        className="orbit-sweep-clip pointer-events-none absolute rounded-full overflow-hidden"
+        style={{
+          width: (rx + 24) * 2,
+          height: (rx + 24) * 2 * Math.cos(tilt),
+          left: CX,
+          top: CY,
+          transform: 'translate(-50%, -50%)',
+        }}
+      >
+        <div
+          className="orbit-sweep"
+          style={
+            {
+              width: (rx + 24) * 3,
+              height: (rx + 24) * 3,
+              left: '50%',
+              top: '50%',
+              '--sweep-c': tabColor,
+              '--sweep-speed': `${(0.004 / ORBIT_CFG[cfgIdx].speed) * 8}s`,
+            } as React.CSSProperties
+          }
+        />
+      </div>
+
+      {/* ── Comet trails — one per planet, oriented along its travel path ── */}
+      <div className="absolute inset-0 pointer-events-none">
+        {crafts.map((craft, i) => (
+          <div
+            key={craft.name + '-trail'}
+            ref={el => { trailEls.current[i] = el; }}
+            className="tech-planet-trail"
+            style={{ '--tc': craft.color } as React.CSSProperties}
+          />
+        ))}
+      </div>
 
       {/* ── The Central Star ── */}
       <div className="solar-center" style={{ '--star-color': tabColor } as React.CSSProperties}>
