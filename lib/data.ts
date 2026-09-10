@@ -248,6 +248,43 @@ export const projects: Project[] = [
     ],
     previewImage: '/trip-preview.png',
   },
+  {
+    name: 'NanoLink',
+    blurb: 'Shorten any link. Share it anywhere.',
+    description:
+      'A fast, smart URL shortener built for product engineers. Paste a long link, get a clean short one in one click — with password-protected links, expiry and burn-after-read, custom aliases instead of random codes, and per-link click analytics from a real dashboard.',
+    url: 'https://nanl.vercel.app/',
+    repo: 'https://github.com/Biswadipgoj/nl',
+    accent: '#34d399',
+    accentSoft: 'rgba(52,211,153,0.16)',
+    tags: ['Privacy-first links', 'Analytics built in', 'Live on the internet'],
+    features: [
+      'Password protection, expiry & burn-after-read',
+      'Custom aliases instead of random codes',
+      'Per-link click analytics dashboard',
+      'Free, no account needed to start',
+      'Next.js + Prisma + PostgreSQL stack',
+    ],
+  },
+  {
+    name: 'Nexora',
+    blurb: 'Plan the work, watch it move, finish it together.',
+    description:
+      'A calm command center for planning, tracking and shipping work. Board, list and personal task views, a keyboard-first command palette (⌘K), drag-to-move cards with live column counts, and instant multi-user sync — isolated per workspace, running on web, Windows and Android.',
+    url: 'https://nexora-xi-rust.vercel.app/',
+    repo: 'https://github.com/Biswadipgoj/nexora',
+    accent: '#fbbf24',
+    accentSoft: 'rgba(251,191,36,0.16)',
+    tags: ['Kanban that moves fast', 'Keyboard-first', 'Live on the internet'],
+    features: [
+      'Board, list and personal task views',
+      'Command palette — plan without touching the mouse',
+      'Instant multi-user sync, isolated per workspace',
+      'Runs on web, Windows and Android',
+      'Next.js + TypeScript + Supabase stack',
+      'Electron for Windows; Capacitor for Android',
+    ],
+  },
 ];
 
 
