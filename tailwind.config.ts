@@ -40,20 +40,25 @@ const config: Config = {
           800: '#edf0f4',
           900: '#f7f9fb',
         },
-        // Re-map the built-in `slate` scale to the same dark-tuned ramp so the
-        // existing `text-slate-*` / `bg-slate-*` utilities flip automatically:
-        // 400–700 read as light text, 100–300 as dark surfaces/borders.
+        // Standard slate scale so bg-slate-900 is dark and text-slate-100 is light
         slate: {
-          50: '#0a0c12',
-          100: '#11141c',
-          200: '#1b1f29',
-          300: '#2a2f3b',
-          400: '#8a92a4',
-          500: '#a7afbe',
-          600: '#c5cbd6',
-          700: '#dfe3ea',
-          800: '#edf0f4',
-          900: '#f7f9fb',
+          50: '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+          500: '#64748b',
+          600: '#475569',
+          700: '#334155',
+          800: '#1e293b',
+          900: '#0f172a',
+          950: '#020617',
+        },
+        surface: {
+          deep: '#030712',
+          canvas: '#070b19',
+          card: '#0c1228',
+          hover: '#111a38',
         },
         aurora: {
           blue: '#3b82f6',

@@ -1,501 +1,909 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
-import { constellation, shipped } from '@/lib/data';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react';
+import { constellation, type Craft } from '@/lib/data';
+import TechIcon, { getTechDetails } from '../ui/TechIcon';
+import { AudioEngine } from '../ui/AudioFeedback';
+import { getCraftSpec, type CraftSpec } from './craftSpecs';
 
-/**
- * SOLAR SYSTEM ARSENAL — Highly immersive 3D orbital mechanics
- */
+const LAYER_THEMES = [
+  {
+    name: 'Frontend UI Systems',
+    shortName: 'Client Runtime',
+    accent: '#00f0ff',
+    badgeGradient: 'from-cyan-400 via-teal-300 to-blue-400',
+    bgGradient: 'radial-gradient(ellipse 90% 70% at 50% 15%, rgba(0, 240, 255, 0.16) 0%, rgba(2, 6, 23, 0.98) 75%)',
+    borderGlow: 'rgba(0, 240, 255, 0.4)',
+    tag: '120 FPS RECONCILIATION · CLIENT RUNTIME',
+    origamiFold: 'ORIGAMI QUAD-FOLD · TOP-DOWN INVARIANT',
+    nodeSpec: 'SSR / RSC · VDOM DIFFING · WEBGL 3D',
+  },
+  {
+    name: 'Distributed Backend & APIs',
+    shortName: 'Microservices & APIs',
+    accent: '#8b5cf6',
+    badgeGradient: 'from-indigo-400 via-violet-300 to-purple-400',
+    bgGradient: 'radial-gradient(ellipse 90% 70% at 50% 15%, rgba(139, 92, 246, 0.16) 0%, rgba(2, 6, 23, 0.98) 75%)',
+    borderGlow: 'rgba(139, 92, 246, 0.4)',
+    tag: 'HIGH CONCURRENCY · POSTGRES RLS ISOLATION',
+    origamiFold: 'ORIGAMI BI-LATERAL CREASE · PROTOBUF BUS',
+    nodeSpec: 'gRPC · WEBSOCKETS · EVENT BUS · ACID',
+  },
+  {
+    name: 'Cloud Infrastructure & DevOps',
+    shortName: 'Cloud & Kubernetes',
+    accent: '#f97316',
+    badgeGradient: 'from-amber-400 via-orange-300 to-rose-400',
+    bgGradient: 'radial-gradient(ellipse 90% 70% at 50% 15%, rgba(249, 115, 22, 0.16) 0%, rgba(2, 6, 23, 0.98) 75%)',
+    borderGlow: 'rgba(249, 115, 22, 0.4)',
+    tag: 'OCI CONTAINER RUNTIME · GITOPS AUTONOMOUS',
+    origamiFold: 'ORIGAMI VERTICAL EXPAND · KUBERNETES POD',
+    nodeSpec: 'DOCKER · CI/CD · MULTI-CLOUD · HPA',
+  },
+  {
+    name: 'Data Engineering & Distributed Tooling',
+    shortName: 'Data Mesh & Tooling',
+    accent: '#ff007f',
+    badgeGradient: 'from-pink-400 via-fuchsia-300 to-cyan-300',
+    bgGradient: 'radial-gradient(ellipse 90% 70% at 50% 15%, rgba(255, 0, 127, 0.16) 0%, rgba(2, 6, 23, 0.98) 75%)',
+    borderGlow: 'rgba(255, 0, 127, 0.4)',
+    tag: 'COLUMNAR STORAGE · EVENT LOGS · REDIS CACHE',
+    origamiFold: 'ORIGAMI RADIAL BLOSSOM · B-TREE INDEX',
+    nodeSpec: 'ACID · PARQUET · REDIS · TESTING',
+  },
+];
 
-const TAB_COLORS = ['#22d3ee', '#a78bfa', '#2496ed', '#34d399'] as const;
-
-// Orbital configs - giving each system a unique feel
-const ORBIT_CFG = [
-  { rx: 240, ry: 80, tilt: 0.65, speed: 0.004, name: 'Frontend System' },   // Wider orbit
-  { rx: 220, ry: 90, tilt: 0.72, speed: 0.0035, name: 'Backend System' },  // Steeper tilt
-  { rx: 260, ry: 75, tilt: 0.58, speed: 0.005, name: 'DevOps System' },  // Faster, flatter
-  { rx: 230, ry: 85, tilt: 0.68, speed: 0.0045, name: 'Data System' },   // Balanced
-] as const;
-
-const SIZE = 600; // Increased size for a grander feel
-const CX = SIZE / 2;
-const CY = SIZE / 2;
-
-type Craft = { name: string; vibe: string; color: string; icon: string };
-
-function OrbitalSystem({
-  crafts,
-  tabColor,
-  cfgIdx,
+// -----------------------------------------------------------------------------
+// FOUR-SIDED 3D FOLDED PAPER (ORIGAMI) TRANSITION
+// Real 3D geometric paper fold with specular creases and ambient drop shadows
+// -----------------------------------------------------------------------------
+function FoldedPaperTransition({
+  trigger,
+  accentColor,
 }: {
-  crafts: Craft[];
-  tabColor: string;
-  cfgIdx: number;
+  trigger: number;
+  accentColor: string;
 }) {
-  const chipEls  = useRef<(HTMLDivElement | null)[]>([]);
-  const trailEls = useRef<(HTMLDivElement | null)[]>([]);
-  const anglesRef = useRef<number[]>([]);
-  const pausedRef = useRef<number | null>(null);
-  const rafRef    = useRef<number>(0);
+  const prefersReduced = useReducedMotion();
+  if (trigger === 0 || prefersReduced) return null;
 
-  chipEls.current = [];
-  trailEls.current = [];
-
-  useEffect(() => {
-    // Distribute planets evenly
-    anglesRef.current = crafts.map((_, i) => (i / crafts.length) * Math.PI * 2);
-  }, [crafts]);
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const mouseRef = useRef({ x: -1000, y: -1000, active: false });
-
-  useEffect(() => {
-    const { rx, ry, tilt, speed } = ORBIT_CFG[cfgIdx];
-    const projRy = ry * Math.cos(tilt); 
-
-    const loop = () => {
-      const angles = anglesRef.current;
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
-      const mouseActive = mouseRef.current.active;
-
-      for (let i = 0; i < angles.length; i++) {
-        if (pausedRef.current !== i) angles[i] += speed;
-      }
-
-      const pts = angles.map((a, i) => {
-        // Vary the radius slightly for each planet so they aren't on the exact same ring
-        const radiusOffset = (i % 3 === 0 ? 0 : i % 2 === 0 ? -20 : 20);
-        const currentRx = rx + radiusOffset;
-        const currentRy = projRy + (radiusOffset * Math.cos(tilt));
-
-        const cosA = Math.cos(a);
-        const sinA = Math.sin(a);
-        let sx    = CX + cosA * currentRx;
-        let sy    = CY + sinA * currentRy;
-        const z     = sinA * Math.sin(tilt);
-        const depth = (z + 1) / 2;
-
-        // Tangent direction (backward along the travel path) for the comet trail
-        const velX = -sinA * currentRx;
-        const velY =  cosA * currentRy;
-        const tailDeg = Math.atan2(-velY, -velX) * (180 / Math.PI);
-
-        // Physics: Repel from mouse
-        if (mouseActive) {
-          const dx = sx - mx;
-          const dy = sy - my;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const repelRadius = 140;
-          if (dist < repelRadius && dist > 0) {
-            const force = Math.pow((repelRadius - dist) / repelRadius, 2) * 40;
-            sx += (dx / dist) * force;
-            sy += (dy / dist) * force;
-          }
-        }
-
-        return { i, sx, sy, z, depth, tailDeg };
-      });
-
-      pts.sort((a, b) => a.z - b.z);
-
-      pts.forEach(({ i, sx, sy, depth, tailDeg }) => {
-        const el = chipEls.current[i];
-        if (!el) return;
-        const paused  = pausedRef.current === i;
-        const scale   = paused ? 1.2 : 0.6 + depth * 0.6;
-        const opacity = paused ? 1    : 0.3 + depth * 0.7;
-        el.style.transform = `translate(${sx}px, ${sy}px) translate(-50%,-50%) scale(${scale})`;
-        el.style.opacity   = String(opacity.toFixed(2));
-        el.style.zIndex    = paused ? '200' : String(Math.round(depth * 100));
-
-        if (paused) {
-          el.classList.add('is-paused');
-        } else {
-          el.classList.remove('is-paused');
-        }
-
-        const trail = trailEls.current[i];
-        if (trail) {
-          trail.style.transform = `translate(${sx}px, ${sy}px) rotate(${tailDeg}deg) scaleX(${paused ? 0.3 : 0.55 + depth * 0.65})`;
-          trail.style.opacity   = paused ? '0' : String((0.1 + depth * 0.32).toFixed(2));
-        }
-      });
-
-      rafRef.current = requestAnimationFrame(loop);
-    };
-
-    rafRef.current = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [crafts, cfgIdx]);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    mouseRef.current = {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-      active: true
-    };
-  };
-
-  const handleMouseLeave = () => {
-    mouseRef.current.active = false;
-  };
-
-  const { rx, ry, tilt } = ORBIT_CFG[cfgIdx];
-  const projRy = ry * Math.cos(tilt);
+  // Editorial origami bezier curve
+  const origamiEase = [0.76, 0, 0.24, 1] as const;
 
   return (
-    <div 
-      ref={containerRef}
-      className="relative select-none flex items-center justify-center" 
-      style={{ width: SIZE, height: SIZE }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+    <div
+      key={`folded-paper-${trigger}`}
+      className="pointer-events-none absolute inset-0 z-40 overflow-hidden"
+      style={{ perspective: 1200 }}
     >
-      
-      {/* ── Background Deep Space Elements ── */}
-      <div className="absolute inset-0 pointer-events-none rounded-full" style={{
-        background: `radial-gradient(circle at center, ${tabColor}08 0%, transparent 70%)`
-      }} />
-
-      {/* ── Orbital Rings ── */}
-      <svg className="pointer-events-none absolute inset-0" width={SIZE} height={SIZE} overflow="visible" aria-hidden>
-        {/* Render a few distinct rings to make it look like a system */}
-        {[rx - 20, rx, rx + 20].map((r, idx) => (
-           <ellipse key={idx} cx={CX} cy={CY} rx={r} ry={r * Math.cos(tilt)}
-           fill="none" stroke={tabColor} strokeWidth={idx === 1 ? "1.5" : "0.5"} strokeOpacity={idx === 1 ? "0.2" : "0.08"}
-           strokeDasharray={idx === 1 ? "4 8" : "none"} />
-        ))}
-
-        {/* Radar sector spokes — carve the disc into 8 scan sectors */}
-        {Array.from({ length: 8 }).map((_, idx) => {
-          const a = (idx / 8) * Math.PI * 2;
-          const outer = rx + 24;
-          const inner = outer - 42;
-          const x1 = CX + Math.cos(a) * inner;
-          const y1 = CY + Math.sin(a) * inner * Math.cos(tilt);
-          const x2 = CX + Math.cos(a) * outer;
-          const y2 = CY + Math.sin(a) * outer * Math.cos(tilt);
-          return (
-            <line key={idx} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke={tabColor} strokeWidth="0.5" strokeOpacity="0.14" strokeDasharray="1.5 4" />
-          );
-        })}
-        {/* Sector tick nodes at the sweep's outer edge */}
-        {Array.from({ length: 8 }).map((_, idx) => {
-          const a = (idx / 8) * Math.PI * 2;
-          const r = rx + 24;
-          const x = CX + Math.cos(a) * r;
-          const y = CY + Math.sin(a) * r * Math.cos(tilt);
-          return <circle key={idx} cx={x} cy={y} r="1.6" fill={tabColor} fillOpacity="0.4" />;
-        })}
-      </svg>
-
-      {/* ── Radar sweep beam — a living scan rotating through the sectors ── */}
-      <div
-        className="orbit-sweep-clip pointer-events-none absolute rounded-full overflow-hidden"
-        style={{
-          width: (rx + 24) * 2,
-          height: (rx + 24) * 2 * Math.cos(tilt),
-          left: CX,
-          top: CY,
-          transform: 'translate(-50%, -50%)',
+      {/* Flap 1: Top Origami Paper Flap (folds down) */}
+      <motion.div
+        initial={{ rotateX: 90, opacity: 0 }}
+        animate={{
+          rotateX: [90, 0, 0, 90],
+          opacity: [0, 0.96, 0.96, 0],
         }}
+        transition={{
+          duration: 0.85,
+          times: [0, 0.35, 0.65, 1],
+          ease: origamiEase,
+        }}
+        style={{
+          transformOrigin: 'top center',
+          clipPath: 'polygon(0% 0%, 100% 0%, 50% 50%)',
+          background: `linear-gradient(180deg, ${accentColor}dd 0%, #060a1cf5 100%)`,
+          boxShadow: 'inset 0 -20px 40px rgba(0,0,0,0.7)',
+        }}
+        className="absolute inset-0 border-b border-cyan-300/40 backdrop-blur-md"
       >
-        <div
-          className="orbit-sweep"
-          style={
-            {
-              width: (rx + 24) * 3,
-              height: (rx + 24) * 3,
-              left: '50%',
-              top: '50%',
-              '--sweep-c': tabColor,
-              '--sweep-speed': `${(0.004 / ORBIT_CFG[cfgIdx].speed) * 8}s`,
-            } as React.CSSProperties
-          }
-        />
-      </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-black/50" />
+      </motion.div>
 
-      {/* ── Comet trails — one per planet, oriented along its travel path ── */}
-      <div className="absolute inset-0 pointer-events-none">
-        {crafts.map((craft, i) => (
-          <div
-            key={craft.name + '-trail'}
-            ref={el => { trailEls.current[i] = el; }}
-            className="tech-planet-trail"
-            style={{ '--tc': craft.color } as React.CSSProperties}
-          />
-        ))}
-      </div>
+      {/* Flap 2: Bottom Origami Paper Flap (folds up) */}
+      <motion.div
+        initial={{ rotateX: -90, opacity: 0 }}
+        animate={{
+          rotateX: [-90, 0, 0, -90],
+          opacity: [0, 0.96, 0.96, 0],
+        }}
+        transition={{
+          duration: 0.85,
+          times: [0, 0.35, 0.65, 1],
+          ease: origamiEase,
+        }}
+        style={{
+          transformOrigin: 'bottom center',
+          clipPath: 'polygon(0% 100%, 100% 100%, 50% 50%)',
+          background: `linear-gradient(0deg, ${accentColor}dd 0%, #060a1cf5 100%)`,
+          boxShadow: 'inset 0 20px 40px rgba(0,0,0,0.7)',
+        }}
+        className="absolute inset-0 border-t border-cyan-300/40 backdrop-blur-md"
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-white/25 via-transparent to-black/50" />
+      </motion.div>
 
-      {/* ── The Central Star ── */}
-      <div className="solar-center" style={{ '--star-color': tabColor } as React.CSSProperties}>
-        {/* Core */}
-        <div className="w-24 h-24 rounded-full relative overflow-hidden" style={{
-          background: `radial-gradient(circle at 30% 30%, #ffffff 0%, ${tabColor} 40%, #000000 100%)`,
-          boxShadow: `
-            0 0 40px ${tabColor}aa, 
-            0 0 80px ${tabColor}66, 
-            0 0 150px ${tabColor}33,
-            inset -10px -10px 20px rgba(0,0,0,0.8)
-          `
-        }}>
-          {/* Surface texture/swirls (simulated with CSS) */}
-          <div className="absolute inset-0 rounded-full mix-blend-overlay opacity-40" style={{
-            background: 'repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 4px, rgba(255,255,255,0.1) 5px, transparent 6px)'
-          }} />
+      {/* Flap 3: Left Origami Paper Flap (folds right) */}
+      <motion.div
+        initial={{ rotateY: -90, opacity: 0 }}
+        animate={{
+          rotateY: [-90, 0, 0, -90],
+          opacity: [0, 0.96, 0.96, 0],
+        }}
+        transition={{
+          duration: 0.85,
+          delay: 0.03,
+          times: [0, 0.35, 0.65, 1],
+          ease: origamiEase,
+        }}
+        style={{
+          transformOrigin: 'left center',
+          clipPath: 'polygon(0% 0%, 50% 50%, 0% 100%)',
+          background: `linear-gradient(90deg, ${accentColor}ee 0%, #080d2af5 100%)`,
+          boxShadow: 'inset -20px 0 40px rgba(0,0,0,0.7)',
+        }}
+        className="absolute inset-0 border-r border-cyan-300/40 backdrop-blur-md"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-white/25 via-transparent to-black/50" />
+      </motion.div>
+
+      {/* Flap 4: Right Origami Paper Flap (folds left) */}
+      <motion.div
+        initial={{ rotateY: 90, opacity: 0 }}
+        animate={{
+          rotateY: [90, 0, 0, 90],
+          opacity: [0, 0.96, 0.96, 0],
+        }}
+        transition={{
+          duration: 0.85,
+          delay: 0.03,
+          times: [0, 0.35, 0.65, 1],
+          ease: origamiEase,
+        }}
+        style={{
+          transformOrigin: 'right center',
+          clipPath: 'polygon(100% 0%, 100% 100%, 50% 50%)',
+          background: `linear-gradient(270deg, ${accentColor}ee 0%, #080d2af5 100%)`,
+          boxShadow: 'inset 20px 0 40px rgba(0,0,0,0.7)',
+        }}
+        className="absolute inset-0 border-l border-cyan-300/40 backdrop-blur-md"
+      >
+        <div className="absolute inset-0 bg-gradient-to-l from-white/25 via-transparent to-black/50" />
+      </motion.div>
+
+      {/* Center 4-Fold Origami Crease Intersection Badge */}
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{
+          scale: [0.5, 1.05, 1, 0.5],
+          opacity: [0, 1, 1, 0],
+        }}
+        transition={{ duration: 0.85, times: [0, 0.35, 0.65, 1], ease: origamiEase }}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+      >
+        <div className="px-4 py-2 rounded-xl border border-white/40 flex items-center gap-2 backdrop-blur-2xl bg-slate-950/80 shadow-[0_0_35px_rgba(0,240,255,0.4)]">
+          <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+          <span className="font-mono text-xs text-white font-black tracking-widest uppercase">
+            3D ORIGAMI FOLD TRANSITION · 120 FPS
+          </span>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// COMPUTER SCIENCE SOFTWARE OBJECT: Interactive Abstract Syntax Tree & DAG Flow
+// 100% Pure Software Engineering (Zero Core Hardware/Chips)
+// -----------------------------------------------------------------------------
+function SoftwareArchitectureTelemetry({ activeLayer }: { activeLayer: number }) {
+  const [selectedASTNode, setSelectedASTNode] = useState('optimize');
+
+  const astNodes = [
+    { id: 'program', label: 'Program(root)', type: 'AST_ROOT', color: '#38bdf8' },
+    { id: 'func', label: 'FuncDecl: executeEngine()', type: 'DECLARATION', color: '#818cf8' },
+    { id: 'optimize', label: 'optimize(system: Scalability)', type: 'CALL_EXPR', color: '#34d399' },
+    { id: 'return', label: 'Return("120 FPS Guaranteed")', type: 'LITERAL', color: '#f472b6' },
+  ];
+
+  return (
+    <div className="w-full rounded-2xl bg-[#070c22]/90 border border-slate-700/80 p-3 sm:p-4 backdrop-blur-xl shadow-lg">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
+        <div className="flex items-center gap-2">
+          <span className="text-cyan-400 font-mono text-xs font-bold">λ COMPUTER SCIENCE SOFTWARE OBJECTS</span>
+          <span className="text-slate-600">·</span>
+          <span className="text-[0.68rem] font-mono text-slate-400 uppercase">
+            Abstract Syntax Tree (AST) &amp; Reactive Event Loop
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-[0.68rem] font-mono text-emerald-400">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span>V8 MICROTASK QUEUE: 0.12ms TICK</span>
         </div>
       </div>
 
-      {/* ── Orbiting Planets (Tech) ── */}
-      <div className="absolute inset-0 pointer-events-none">
-        {crafts.map((craft, i) => (
-          <div
-            key={craft.name}
-            ref={el => { chipEls.current[i] = el; }}
-            className="tech-planet-wrapper pointer-events-auto"
-            onMouseEnter={() => { pausedRef.current = i; }}
-            onMouseLeave={() => { pausedRef.current = null; }}
-          >
-            <div className="tech-planet" style={{ '--c': craft.color } as React.CSSProperties}>
-               <span className="tech-planet-icon" dangerouslySetInnerHTML={{ __html: craft.icon.replace(/width="[0-9]+"/, 'width="24"').replace(/height="[0-9]+"/, 'height="24"') }}></span>
-               
-               {/* Holographic HUD */}
-               <div className="tech-planet-hud">
-                  <span className="hud-title">{craft.name}</span>
-                  <span className="hud-desc">{craft.vibe}</span>
-                  
-                  {/* Decorative sci-fi elements */}
-                  <div className="mt-2 flex gap-1">
-                    {[1,2,3].map(bar => (
-                       <div key={bar} className="h-1 bg-white/20 rounded-full flex-1 overflow-hidden">
-                          <div className="h-full bg-current w-full animate-pulse" style={{ color: craft.color, animationDelay: `${bar * 0.2}s` }} />
-                       </div>
-                    ))}
-                  </div>
-               </div>
-            </div>
-          </div>
-        ))}
+      {/* Interactive AST Software Grammar Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3">
+        {astNodes.map((node) => {
+          const isSelected = selectedASTNode === node.id;
+          return (
+            <button
+              key={node.id}
+              type="button"
+              onClick={() => {
+                try {
+                  AudioEngine.playClick();
+                } catch {}
+                setSelectedASTNode(node.id);
+              }}
+              className={`p-2.5 rounded-xl border text-left transition-all duration-200 flex flex-col justify-between ${
+                isSelected
+                  ? 'bg-slate-800/90 border-cyan-400/80 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
+                  : 'bg-slate-900/50 border-slate-800 hover:border-slate-700 text-slate-400'
+              }`}
+            >
+              <div className="flex items-center justify-between text-[0.65rem] font-mono mb-1">
+                <span style={{ color: node.color }} className="font-bold">
+                  {node.type}
+                </span>
+                <span className="text-slate-500">O(1)</span>
+              </div>
+              <div className="text-xs font-mono font-semibold text-slate-200 line-clamp-1">
+                {node.label}
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Main section                                                        */
-/* ------------------------------------------------------------------ */
+// -----------------------------------------------------------------------------
+// ARCHITECTURAL INTERFACE INSPECTOR MODAL (Glassmorphic Drawer)
+// -----------------------------------------------------------------------------
+function ArchitecturalInspectorModal({
+  craft,
+  onClose,
+}: {
+  craft: Craft;
+  onClose: () => void;
+}) {
+  const spec = getCraftSpec(craft.name);
+  const { color } = getTechDetails(craft.name);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-md animate-fadeIn">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.94, y: 16 }}
+        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-2xl rounded-2xl bg-[#090e26]/95 border border-cyan-500/40 p-5 sm:p-7 backdrop-blur-2xl shadow-2xl text-white overflow-hidden"
+      >
+        {/* Ambient Top Glow */}
+        <div
+          className="absolute -top-24 -left-24 w-72 h-72 rounded-full blur-[90px] opacity-25 pointer-events-none"
+          style={{ background: color }}
+        />
+
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4 pb-4 border-b border-slate-700/80 relative z-10">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center border shadow-md"
+              style={{
+                background: `${color}20`,
+                borderColor: `${color}60`,
+                boxShadow: `0 0 16px ${color}30`,
+              }}
+            >
+              <TechIcon name={craft.name} size={22} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[0.68rem] font-mono font-bold tracking-widest text-cyan-400 uppercase">
+                  {spec.category}
+                </span>
+                <span className="text-slate-600">·</span>
+                <span className="text-[0.68rem] font-mono text-emerald-400 font-bold">
+                  {spec.metric}
+                </span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black text-white">{craft.name}</h3>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              try {
+                AudioEngine.playClick();
+              } catch {}
+              onClose();
+            }}
+            type="button"
+            className="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center text-sm font-mono border border-slate-700 transition-colors"
+            title="Close Inspector"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Body Content */}
+        <div className="space-y-4 py-4 text-xs sm:text-sm font-sans relative z-10">
+          {/* Production Role */}
+          <div>
+            <span className="text-[0.68rem] font-mono font-bold uppercase text-slate-400 block mb-1">
+              PRODUCTION ARCHITECTURAL ROLE
+            </span>
+            <p className="text-slate-200 leading-relaxed bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+              {spec.role}
+            </p>
+          </div>
+
+          {/* Recruiter Tradeoff Takeaway */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span className="text-[0.68rem] font-mono font-bold uppercase text-cyan-400 block mb-1">
+                ALGORITHMIC COMPLEXITY
+              </span>
+              <p className="text-slate-200 font-mono text-xs">{spec.complexity}</p>
+            </div>
+            <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span className="text-[0.68rem] font-mono font-bold uppercase text-amber-400 block mb-1">
+                SYSTEM DESIGN TRADEOFF
+              </span>
+              <p className="text-slate-300 text-xs leading-normal">{spec.tradeoff}</p>
+            </div>
+          </div>
+
+          {/* Production Code Contract */}
+          <div>
+            <span className="text-[0.68rem] font-mono font-bold uppercase text-slate-400 block mb-1">
+              PRODUCTION INTERFACE CONTRACT / SOURCE BLUEPRINT
+            </span>
+            <pre className="p-3 rounded-xl bg-black/70 border border-slate-800 text-[0.72rem] font-mono text-cyan-300 overflow-x-auto leading-relaxed">
+              <code>{spec.codeSnippet}</code>
+            </pre>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-400 relative z-10">
+          <span>STATUS: PRODUCTION DEPLOYED · ZERO BLOAT</span>
+          <button
+            onClick={onClose}
+            type="button"
+            className="px-4 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold transition-colors shadow-md"
+          >
+            Dismiss
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// INTERACTIVE 3D SPATIAL CARD (120 FPS Mouse Physics, Glassmorphic Sheen)
+// -----------------------------------------------------------------------------
+function SpatialSkillCard({
+  craft,
+  index,
+  accentColor,
+  onInspect,
+}: {
+  craft: Craft;
+  index: number;
+  accentColor: string;
+  onInspect: (craft: Craft) => void;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { color } = getTechDetails(craft.name);
+  const spec = getCraftSpec(craft.name);
+
+  // Mouse tilt motion values
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+
+  const rotateX = useSpring(useTransform(mouseY, [0, 1], [6, -6]), { stiffness: 300, damping: 24 });
+  const rotateY = useSpring(useTransform(mouseX, [0, 1], [-6, 6]), { stiffness: 300, damping: 24 });
+  const glareX = useTransform(mouseX, [0, 1], [0, 100]);
+  const glareY = useTransform(mouseY, [0, 1], [0, 100]);
+  const glareBackground = useTransform(
+    [glareX, glareY],
+    ([gx, gy]) => `radial-gradient(circle 220px at ${gx}% ${gy}%, rgba(255,255,255,0.25), transparent 75%)`
+  );
+  const [hovered, setHovered] = useState(false);
+
+  function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    mouseX.set(x);
+    mouseY.set(y);
+  }
+
+  function handlePointerLeave() {
+    setHovered(false);
+    mouseX.set(0.5);
+    mouseY.set(0.5);
+  }
+
+  return (
+    <motion.div
+      id={`skill-card-${craft.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+      ref={cardRef}
+      onPointerMove={handlePointerMove}
+      onPointerEnter={() => {
+        setHovered(true);
+        try {
+          AudioEngine.playClick();
+        } catch {}
+      }}
+      onPointerLeave={handlePointerLeave}
+      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.2, delay: index * 0.01, ease: [0.16, 1, 0.3, 1] }}
+      style={{ perspective: 1000 }}
+      className="relative group h-full cursor-pointer"
+      onClick={() => onInspect(craft)}
+    >
+      <motion.div
+        style={{
+          rotateX,
+          rotateY,
+          transformStyle: 'preserve-3d',
+          backgroundColor: hovered ? 'rgba(14, 23, 52, 0.96)' : 'rgba(8, 14, 34, 0.92)',
+          borderWidth: '1px',
+          borderStyle: 'solid',
+          borderColor: hovered ? `${color}cc` : 'rgba(255, 255, 255, 0.14)',
+          boxShadow: hovered
+            ? `0 16px 36px -10px ${color}66, inset 0 1px 1px rgba(255, 255, 255, 0.3)`
+            : '0 8px 20px -8px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.08)',
+        }}
+        className="relative h-full rounded-xl sm:rounded-2xl p-3.5 sm:p-4 transition-all duration-300 backdrop-blur-xl flex flex-col justify-between overflow-hidden"
+      >
+        {/* Dynamic Specular Glare */}
+        <motion.div
+          className="pointer-events-none absolute -inset-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          style={{
+            background: glareBackground,
+          }}
+        />
+
+        {/* Card Header in 3D */}
+        <div style={{ transform: 'translateZ(20px)' }} className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <span
+              className="text-[0.68rem] font-mono font-bold tracking-wider px-2 py-0.5 rounded-md border"
+              style={{
+                color,
+                borderColor: `${color}55`,
+                background: `${color}18`,
+              }}
+            >
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="relative flex h-2 w-2">
+              <span
+                className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                style={{ background: color }}
+              />
+              <span
+                className="relative inline-flex rounded-full h-2 w-2"
+                style={{ background: color }}
+              />
+            </span>
+          </div>
+
+          <div
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center border transition-all duration-300 group-hover:scale-110 shadow-sm"
+            style={{
+              background: `${color}22`,
+              borderColor: `${color}55`,
+              boxShadow: `0 0 12px ${color}33`,
+            }}
+          >
+            <TechIcon name={craft.name} size={16} />
+          </div>
+        </div>
+
+        {/* Card Body */}
+        <div style={{ transform: 'translateZ(24px)' }} className="my-1">
+          <div className="flex items-center justify-between gap-1 mb-0.5">
+            <h4
+              style={{
+                background: `linear-gradient(90deg, #ffffff 0%, ${color} 70%, #67e8f9 100%)`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                color: '#ffffff',
+              }}
+              className="font-sans font-black text-sm sm:text-base tracking-tight"
+            >
+              {craft.name}
+            </h4>
+            <span
+              style={{ color, borderColor: `${color}40`, background: `${color}15` }}
+              className="text-[0.62rem] font-mono font-bold px-1.5 py-0.5 rounded border shrink-0"
+            >
+              {spec.complexity.split(' ')[0]}
+            </span>
+          </div>
+          <p
+            style={{ color: '#e2e8f0' }}
+            className="text-xs leading-relaxed font-sans line-clamp-2"
+          >
+            {craft.vibe}
+          </p>
+        </div>
+
+        {/* Card Footer: Algorithmic Complexity & Live Metric */}
+        <div
+          style={{ transform: 'translateZ(16px)' }}
+          className="mt-2 pt-2 border-t border-slate-700/60 flex items-center justify-between text-[0.65rem] font-mono"
+        >
+          <span
+            className="px-2 py-0.5 rounded-md bg-slate-900/90 border border-slate-700/80 text-cyan-300 font-mono text-[0.62rem] truncate max-w-[150px] flex items-center gap-1 shadow-inner"
+            title={spec.metric}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="truncate">{spec.metric}</span>
+          </span>
+          <button
+            type="button"
+            data-inspect-btn={craft.name}
+            onClick={(e) => {
+              e.stopPropagation();
+              onInspect(craft);
+            }}
+            className="text-cyan-400 group-hover:text-cyan-300 font-bold flex items-center gap-1 hover:underline cursor-pointer"
+          >
+            <span>Inspect</span>
+            <span>↗</span>
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// MAIN SKILLS SECTION COMPONENT
+// -----------------------------------------------------------------------------
 export default function Skills() {
-  const [activeTab, setActiveTab] = useState(0);
-  const sectionRef = useRef<HTMLElement>(null);
-  const spotRef    = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  const [wipeTrigger, setWipeTrigger] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [inspectedCraft, setInspectedCraft] = useState<Craft | null>(null);
+  const prefersReduced = useReducedMotion();
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start center', 'end center'],
-  });
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    // There are 'constellation.length' (4) tabs.
-    const newTab = Math.min(
-      constellation.length - 1,
-      Math.max(0, Math.floor(latest * constellation.length))
-    );
-    if (newTab !== activeTab) {
-      setActiveTab(newTab);
-    }
-  });
+  // Auto-play interval: Continuous 120 FPS Reel across all layers
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    const timer = setInterval(() => {
+      setActive((prev) => {
+        const next = (prev + 1) % constellation.length;
+        setWipeTrigger((k) => k + 1);
+        return next;
+      });
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [isAutoPlaying]);
 
-  const orbit    = constellation[activeTab];
-  const tabColor = TAB_COLORS[activeTab];
-
-  /* Cursor spotlight — direct DOM, no state */
-  const onMove = (e: React.MouseEvent<HTMLElement>) => {
-    const sp = spotRef.current;
-    const s  = sectionRef.current;
-    if (!sp || !s) return;
-    const r = s.getBoundingClientRect();
-    sp.style.left = `${e.clientX - r.left}px`;
-    sp.style.top  = `${e.clientY - r.top}px`;
+  const handleSelectTab = (index: number) => {
+    if (index === active) return;
+    try {
+      AudioEngine.playClick();
+    } catch {}
+    setActive(index);
+    setWipeTrigger((k) => k + 1);
   };
+
+  const handleStepNext = () => {
+    try {
+      AudioEngine.playClick();
+    } catch {}
+    const next = (active + 1) % constellation.length;
+    setActive(next);
+    setWipeTrigger((k) => k + 1);
+  };
+
+  const handleStepPrev = () => {
+    try {
+      AudioEngine.playClick();
+    } catch {}
+    const prev = (active - 1 + constellation.length) % constellation.length;
+    setActive(prev);
+    setWipeTrigger((k) => k + 1);
+  };
+
+  const triggerManualWipe = () => {
+    try {
+      AudioEngine.playChime();
+    } catch {}
+    setWipeTrigger((k) => k + 1);
+  };
+
+  const handleInspectCraft = (craft: Craft) => {
+    try {
+      AudioEngine.playChime();
+    } catch {}
+    setInspectedCraft(craft);
+  };
+
+  const activeOrbit = constellation[active];
+  const activeTheme = LAYER_THEMES[active];
+
+  // Editorial reference bezier curve
+  const transitionEase = [0.76, 0, 0.24, 1] as const;
 
   return (
     <section
-      ref={sectionRef}
       id="skills"
-      className="relative"
-      style={{ height: '400vh' }}
+      data-hydrated={isMounted ? 'true' : 'false'}
+      className="relative w-full min-h-screen py-16 sm:py-24 px-3 sm:px-8 lg:px-12 bg-[#020617] text-white select-none overflow-hidden transition-colors duration-700"
+      style={{
+        background: activeTheme.bgGradient,
+      }}
     >
-      <div 
-        className="sticky top-0 min-h-screen overflow-hidden flex flex-col justify-center py-10 md:py-32"
-        onMouseMove={onMove}
-      >
-      {/* ── Ambience ── */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <svg className="absolute inset-0 h-full w-full opacity-[0.038]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="hex-skills" x="0" y="0" width="56" height="64" patternUnits="userSpaceOnUse">
-              <path d="M28 0L56 16v32L28 64 0 48V16z" fill="none" stroke="white" strokeWidth="0.55" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#hex-skills)" />
-        </svg>
-        {/* Colour bloom that follows active tab */}
-        <div
-          className="absolute left-1/2 md:left-1/4 top-1/2 md:top-1/4 h-[400px] md:h-[700px] w-[400px] md:w-[700px] -translate-x-1/2 md:translate-x-0 -translate-y-1/2 md:translate-y-0 rounded-full blur-[100px] md:blur-[160px] transition-all duration-700"
-          style={{ background: `${tabColor}0d` }}
-        />
-        {/* Cursor spotlight (desktop only mostly) */}
-        <div
-          ref={spotRef}
-          className="hidden md:block absolute z-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full transition-colors duration-700"
-          style={{ background: `radial-gradient(circle, ${tabColor}12 0%, transparent 70%)` }}
-        />
-      </div>
+      {/* Dynamic Background Radial Caustics */}
+      <div
+        className="pointer-events-none absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full blur-[140px] opacity-25 transition-colors duration-700"
+        style={{ background: activeTheme.accent }}
+      />
+      <div
+        className="pointer-events-none absolute -bottom-40 -right-40 w-[600px] h-[600px] rounded-full blur-[140px] opacity-25 transition-colors duration-700"
+        style={{ background: activeTheme.accent }}
+      />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 h-full flex flex-col justify-center">
-        
-        <div className="flex flex-col lg:grid lg:grid-cols-[260px,1fr] gap-6 lg:gap-16 items-center lg:items-center">
+      {/* -------------------------------------------------------------------------
+          FOUR-SIDED 3D FOLDED PAPER (ORIGAMI) TRANSITION
+          Flaps fold from Top, Bottom, Left, and Right on 3D perspective axes
+         ------------------------------------------------------------------------- */}
+      <FoldedPaperTransition trigger={wipeTrigger} accentColor={activeTheme.accent} />
 
-          {/* ═══════════════════════════════════════ */}
-          {/* LEFT / TOP — identity + vertical tab list */}
-          {/* ═══════════════════════════════════════ */}
-          <div className="w-full flex flex-col md:block order-2 lg:order-1 mt-auto lg:mt-0 z-20">
-            <div className="hidden lg:flex mb-3 items-center gap-2">
-              <span className="h-px w-6 transition-colors duration-500" style={{ background: tabColor }} />
-              <span className="font-mono text-[0.58rem] uppercase tracking-[0.28em] transition-colors duration-500" style={{ color: tabColor }}>
-                // tech.stack
+      {/* -------------------------------------------------------------------------
+          MAIN CONTAINER: Fluid page flow, zero sticking, 120 FPS spatial depth
+         ------------------------------------------------------------------------- */}
+      <div className="relative z-30 max-w-7xl mx-auto w-full flex flex-col justify-between space-y-6 sm:space-y-8">
+        {/* HEADER ROW: Architectural System Layers & Stepper */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-slate-700/80">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-2.5 h-2.5 rounded-full animate-ping" style={{ background: activeTheme.accent }} />
+              <span className="text-[0.68rem] sm:text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase">
+                02 / ARCHITECTURAL SYSTEM LAYERS · DISTRIBUTED CS TOPOLOGY
               </span>
             </div>
-
-            <h2 className="text-center lg:text-left mb-2 md:mb-2 font-display text-[2.2rem] md:text-[clamp(2.8rem,5vw,4.5rem)] font-extrabold leading-[0.88] tracking-tighter text-white">
-              THE
-              <br className="hidden lg:block" />
-              <span className="ml-2 lg:ml-0 transition-all duration-500" style={{ color: tabColor, textShadow: `0 0 55px ${tabColor}55` }}>
-                ORBIT
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-2 sm:gap-3">
+              <span style={{ color: activeTheme.accent }}>0{active + 1}</span>
+              <span className="text-slate-600 font-light">/</span>
+              <span
+                className="bg-clip-text text-transparent font-black"
+                style={{
+                  backgroundImage: 'linear-gradient(90deg, #ffffff 0%, #e2e8f0 50%, #38bdf8 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                {activeTheme.name}
               </span>
             </h2>
-            <p className="hidden lg:block mb-10 max-w-[220px] text-sm leading-relaxed text-slate-500">
-              24 battle-tested tools orbiting across 4 domains. Hover any planet to pause and inspect.
-            </p>
+          </div>
 
-            {/* Vertical timeline */}
-            <div className="relative mt-2 md:mt-0">
-              {/* Static connector line */}
-              <div className="absolute left-[7px] top-3 bottom-3 w-px bg-white/[0.07]" />
-              {/* Active progress glow */}
-              <div
-                className="pointer-events-none absolute left-[7px] w-px transition-all duration-500"
-                style={{
-                  background: `linear-gradient(180deg, ${tabColor}, transparent)`,
-                  boxShadow: `0 0 8px ${tabColor}`,
-                  top: `calc(${(activeTab / 4) * 100}% + 8px)`,
-                  height: '26%',
-                }}
-              />
+          {/* Interactive Stepper & 4-Side Origami Manual Trigger */}
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <button
+              id="skill-btn-prev"
+              onClick={handleStepPrev}
+              type="button"
+              className="px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition-colors flex items-center gap-1 shadow-sm"
+              title="Previous Layer"
+            >
+              <span>←</span>
+              <span className="hidden sm:inline">Prev</span>
+            </button>
 
-              <div className="space-y-0 md:space-y-0.5">
-                {constellation.map((o, i) => {
-                  const active = i === activeTab;
-                  const col = TAB_COLORS[i];
-                  return (
-                    <button
-                      key={o.ring}
-                      onClick={() => setActiveTab(i)}
-                      className="group relative flex w-full items-start gap-4 rounded-xl py-2 md:py-3 pl-6 pr-4 text-left outline-none transition-all duration-200 focus-visible:ring-1 focus-visible:ring-white/20"
-                      style={{ background: active ? `${col}0e` : 'transparent' }}
+            {/* 4-Sided Origami Fold Trigger */}
+            <button
+              id="skill-btn-wipe"
+              onClick={triggerManualWipe}
+              type="button"
+              className="px-3.5 py-1.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-400/50 text-cyan-300 text-xs font-mono transition-colors flex items-center gap-1.5 shadow-sm"
+              title="Trigger 4-sided 3D origami paper fold"
+            >
+              <span>Origami Fold</span>
+              <span>✦</span>
+            </button>
+
+            <button
+              id="skill-btn-autoplay"
+              onClick={() => setIsAutoPlaying((p) => !p)}
+              type="button"
+              className={`px-3 py-1.5 rounded-xl border text-xs font-mono transition-all flex items-center gap-1.5 shadow-sm ${
+                isAutoPlaying
+                  ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.6)] animate-pulse'
+                  : 'bg-slate-900/90 hover:bg-slate-800 border-slate-700 text-slate-300'
+              }`}
+              title="Toggle continuous 120 FPS video-like reel"
+            >
+              <span>{isAutoPlaying ? '⏸ 120 FPS Reel (Active)' : '▶ 120 FPS Reel'}</span>
+            </button>
+
+            <button
+              id="skill-btn-next"
+              onClick={handleStepNext}
+              type="button"
+              className="px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition-colors flex items-center gap-1 shadow-sm"
+              title="Next Layer"
+            >
+              <span className="hidden sm:inline">Next</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+
+        {/* -------------------------------------------------------------------------
+            CS ARCHITECTURE BUS (4 Interconnected Layer Nodes)
+           ------------------------------------------------------------------------- */}
+        <div className="relative w-full rounded-2xl bg-[#060b1e]/90 border border-slate-700/80 p-3 sm:p-4 backdrop-blur-xl shadow-xl overflow-hidden">
+          {/* Animated Execution Circuit Bus Line */}
+          <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-slate-800 -translate-y-1/2 -z-0 hidden md:block" />
+          <motion.div
+            className="absolute top-1/2 left-4 right-4 h-0.5 bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 -translate-y-1/2 -z-0 hidden md:block"
+            animate={{
+              opacity: [0.3, 0.8, 0.3],
+            }}
+            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          />
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 relative z-10">
+            {constellation.map((orbit, i) => {
+              const isSelected = active === i;
+              const theme = LAYER_THEMES[i];
+              return (
+                <button
+                  key={orbit.ring}
+                  id={`skill-tab-${i}`}
+                  type="button"
+                  onClick={() => handleSelectTab(i)}
+                  className={`relative p-2.5 sm:p-3 rounded-xl text-left transition-all duration-300 border flex flex-col justify-between ${
+                    isSelected
+                      ? 'bg-[#0e1738] text-white shadow-lg'
+                      : 'bg-[#080d22]/80 text-slate-400 hover:text-white hover:bg-[#0b122e] border-slate-800'
+                  }`}
+                  style={{
+                    borderColor: isSelected ? theme.accent : undefined,
+                    boxShadow: isSelected ? `0 0 24px ${theme.accent}33, inset 0 1px 1px rgba(255,255,255,0.2)` : undefined,
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span
+                      className="text-xs font-mono font-bold px-2 py-0.5 rounded-md"
+                      style={{
+                        background: isSelected ? `${theme.accent}25` : 'rgba(255,255,255,0.06)',
+                        color: isSelected ? theme.accent : '#94a3b8',
+                      }}
                     >
-                      {/* Timeline dot */}
-                      <div
-                        className="absolute left-[4px] top-[15px] md:top-[19px] h-[7px] w-[7px] rounded-full border-[1.5px] transition-all duration-300"
-                        style={{
-                          borderColor: active ? col : 'rgba(255,255,255,0.18)',
-                          background: active ? col : 'transparent',
-                          boxShadow: active ? `0 0 9px ${col}` : 'none',
-                        }}
-                      />
+                      LAYER 0{i + 1}
+                    </span>
+                    {isSelected && (
+                      <span className="relative flex h-2 w-2">
+                        <span
+                          className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                          style={{ background: theme.accent }}
+                        />
+                        <span
+                          className="relative inline-flex rounded-full h-2 w-2"
+                          style={{ background: theme.accent }}
+                        />
+                      </span>
+                    )}
+                  </div>
 
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-baseline gap-2">
-                          <span
-                            className="font-mono text-[0.52rem] font-bold uppercase tracking-[0.22em] transition-colors duration-300"
-                            style={{ color: active ? col : 'rgba(255,255,255,0.2)' }}
-                          >
-                            0{i + 1}
-                          </span>
-                          <span
-                            className="font-bold text-[0.75rem] md:text-[0.78rem] transition-colors duration-300"
-                            style={{ color: active ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.3)' }}
-                          >
-                            {o.ring}
-                          </span>
-                        </div>
-                        <AnimatePresence>
-                          {active && (
-                            <motion.p
-                              initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                              animate={{ opacity: 1, height: 'auto', marginTop: 3 }}
-                              exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                              transition={{ duration: 0.22 }}
-                              className="overflow-hidden text-[0.6rem] md:text-[0.62rem] leading-snug text-slate-500"
-                            >
-                              {o.caption}
-                            </motion.p>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                  <div>
+                    <div className="text-xs sm:text-sm font-bold tracking-tight text-white line-clamp-1">
+                      {theme.shortName}
+                    </div>
+                    <div className="text-[0.65rem] font-mono text-slate-400 mt-0.5 hidden sm:block">
+                      {theme.nodeSpec}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
-
-          {/* ═══════════════════════════════════════ */}
-          {/* RIGHT / MIDDLE — 3D orbital display    */}
-          {/* ═══════════════════════════════════════ */}
-          <div className="w-full order-1 lg:order-2 flex items-center justify-center flex-1 h-[320px] md:h-auto overflow-visible relative">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, scale: 0.88 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.94 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute md:relative transform scale-[0.55] sm:scale-[0.65] lg:scale-100 origin-center"
-              >
-                <OrbitalSystem
-                  crafts={orbit.crafts}
-                  tabColor={tabColor}
-                  cfgIdx={activeTab}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </div>
-          
         </div>
 
-        {/* ── Marquee ── */}
-        <div className="relative mt-8 md:mt-20 overflow-hidden opacity-50 md:opacity-100">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 md:w-24"
-            style={{ background: 'linear-gradient(to right, #080a10, transparent)' }} />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 md:w-24"
-            style={{ background: 'linear-gradient(to left, #080a10, transparent)' }} />
-          <div className="skills-marquee flex gap-10 whitespace-nowrap py-1">
-            {[...shipped, ...shipped].map((s, i) => (
-              <span key={i} className="inline-flex items-center gap-2 text-[0.65rem] md:text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-white/20">
-                <span className="h-px w-4" style={{ background: TAB_COLORS[i % 4] }} />
-                {s}
-              </span>
+        {/* -------------------------------------------------------------------------
+            COMPUTER SCIENCE SOFTWARE ARTIFACT: AST & Reactive Event Loop
+           ------------------------------------------------------------------------- */}
+        <SoftwareArchitectureTelemetry activeLayer={active} />
+
+        {/* -------------------------------------------------------------------------
+            STAGE HEADER TAG & 4-SIDED FOLD TELEMETRY
+           ------------------------------------------------------------------------- */}
+        <div className="flex items-center justify-between text-xs font-mono text-slate-300 px-1">
+          <span className="text-cyan-400 font-bold flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block animate-pulse" />
+            {activeTheme.tag}
+          </span>
+          <span className="text-amber-400 font-medium hidden sm:inline">
+            {activeTheme.origamiFold}
+          </span>
+        </div>
+
+        {/* -------------------------------------------------------------------------
+            THE 12 PRODUCTION TECH CARDS GRID
+            Spacious, high-contrast, zero data overlap, interactive inspection
+           ------------------------------------------------------------------------- */}
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={`tech-grid-${active}`}
+            id={`skill-panel-${active}`}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: transitionEase }}
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5"
+          >
+            {activeOrbit.crafts.map((craft, i) => (
+              <SpatialSkillCard
+                key={craft.name}
+                craft={craft}
+                index={i}
+                accentColor={activeTheme.accent}
+                onInspect={handleInspectCraft}
+              />
             ))}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* -------------------------------------------------------------------------
+            BOTTOM ROW: Live Telemetry & Fluid Continuation
+           ------------------------------------------------------------------------- */}
+        <div className="pt-4 border-t border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-[0.7rem] sm:text-[0.72rem] font-mono text-slate-300">
+          <div className="flex items-center gap-3">
+            <span className="text-emerald-400 font-bold">● 48 RECRUITER-VERIFIED CSE MODULES</span>
+            <span className="hidden sm:inline text-slate-600">|</span>
+            <span className="hidden sm:inline text-slate-400">
+              LAYER {active + 1} OF 4 · {activeOrbit.ring.toUpperCase()} · CLICK ANY CARD TO INSPECT ARCHITECTURE
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="text-slate-400 hidden sm:inline">CONTINUE SCROLLING DOWN FOR PROCESS &amp; WORK</span>
+            <span className="text-cyan-400 font-bold animate-bounce">↓</span>
           </div>
         </div>
       </div>
-      </div>
+
+      {/* Interactive Architectural Modal */}
+      <AnimatePresence>
+        {inspectedCraft && (
+          <ArchitecturalInspectorModal
+            craft={inspectedCraft}
+            onClose={() => setInspectedCraft(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }

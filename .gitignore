@@ -8,6 +8,8 @@
 
 # next.js
 /.next/
+/.next-dev/
+/.next-verify/
 /out/
 
 # production
@@ -32,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local browser review artifacts
+/*-preview.png
+/artifacts/
+/test-results/
+/playwright-report/

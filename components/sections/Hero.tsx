@@ -1,264 +1,271 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import Image from 'next/image';
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useMotionValue,
-  useSpring,
-  type MotionValue,
-} from 'framer-motion';
-import { personal, facts, socials } from '@/lib/data';
-import MagneticButton from '@/components/ui/MagneticButton';
-import RingLight from '@/components/ui/RingLight';
-import { scrollToSection } from '@/components/SmoothScroll';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useInView } from 'motion/react';
+import { personal } from '@/lib/data';
+import { useExperience } from '../ExperienceProvider';
+import Icon from '../ui/Icon';
+import Sticker from '../ui/Sticker';
 
-const headline = [
-  { words: ['I', 'build'], gradient: false },
-  { words: ['digital', 'worlds'], gradient: true },
-  { words: ['that', 'ship.'], gradient: false },
+import Computer3D from '../ui/Computer3D';
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+/** Syntax-highlighted source shown in the editor pane. */
+const CODE: Array<Array<[string, string]>> = [
+  [['tok-key', 'export default async function'], ['tok-punc', ' '], ['tok-fn', 'ship'], ['tok-punc', '() {']],
+  [['tok-punc', '  '], ['tok-key', 'const'], ['tok-punc', ' '], ['tok-var', 'idea'], ['tok-punc', ' = '], ['tok-key', 'await'], ['tok-punc', ' '], ['tok-fn', 'understand'], ['tok-punc', '(']],
+  [['tok-punc', '    '], ['tok-str', "'the business problem'"], ['tok-punc', ',']],
+  [['tok-punc', '  );']],
+  [['tok-com', '  // design → build → deploy']],
+  [['tok-punc', '  '], ['tok-key', 'const'], ['tok-punc', ' '], ['tok-var', 'product'], ['tok-punc', ' = '], ['tok-fn', 'build'], ['tok-punc', '('], ['tok-var', 'idea'], ['tok-punc', ', { ']],
+  [['tok-punc', '    typed'], ['tok-punc', ': '], ['tok-num', 'true'], ['tok-punc', ', tested'], ['tok-punc', ': '], ['tok-num', 'true'], ['tok-punc', ',']],
+  [['tok-punc', '  });']],
+  [['tok-punc', '  '], ['tok-key', 'return'], ['tok-punc', ' '], ['tok-fn', 'deploy'], ['tok-punc', '('], ['tok-var', 'product'], ['tok-punc', ');']],
+  [['tok-punc', '}']],
 ];
 
-function SocialIcon({ label }: { label: string }) {
-  const common = { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'currentColor' } as const;
-  if (label === 'GitHub')
-    return (
-      <svg {...common} aria-hidden>
-        <path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.7.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 5 18.3 5.3 18.3 5.3c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5 4.6-1.5 7.9-5.8 7.9-10.9C23.5 5.7 18.3.5 12 .5Z" />
-      </svg>
-    );
-  if (label === 'Email')
-    return (
-      <svg {...common} aria-hidden>
-        <path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2.3.5 7.7 5.2L19.7 6H4.3ZM20 7.6l-7.4 5a1 1 0 0 1-1.2 0L4 7.6V18h16V7.6Z" />
-      </svg>
-    );
-  return (
-    <svg {...common} aria-hidden>
-      <path d="M12 2C7.9 2 4.5 5.4 4.5 9.5c0 5.3 6.6 11.7 6.9 12a1 1 0 0 0 1.3 0c.3-.3 6.8-6.7 6.8-12C19.5 5.4 16.1 2 12 2Zm0 10.2a2.7 2.7 0 1 1 0-5.4 2.7 2.7 0 0 1 0 5.4Z" />
-    </svg>
-  );
-}
+const TERMINAL = [
+  { text: '$ npm run deploy', cls: '' },
+  { text: '✓ typecheck   0 errors', cls: 'term-ok' },
+  { text: '✓ tests       passing', cls: 'term-ok' },
+  { text: '✓ build       optimized', cls: 'term-ok' },
+  { text: '→ shipping to production…', cls: 'term-hi' },
+  { text: '✓ live · used in the wild', cls: 'term-ok' },
+];
 
-
+const MODULES = [
+  { name: 'interface', width: '92%', color: '#7c3aed' },
+  { name: 'services', width: '78%', color: '#0f766e' },
+  { name: 'data', width: '64%', color: '#9d174d' },
+  { name: 'delivery', width: '85%', color: '#1d4ed8' },
+];
 
 export default function Hero() {
-  const ref = useRef<HTMLElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const stack = useRef<HTMLDivElement>(null);
+  const inView = useInView(heroRef, { margin: '0px 0px -20% 0px' });
+  const { animated, spatial } = useExperience();
+  const [lines, setLines] = useState(TERMINAL.length);
+  const [stageMode, setStageMode] = useState<'3d' | 'code'>('3d');
 
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const scale   = useTransform(scrollYProgress, [0, 1], [1, 0.86]);
-  const opacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
-  const y       = useTransform(scrollYProgress, [0, 1], [0, 110]);
-  const rotateX = useTransform(scrollYProgress, [0, 1], [0, 10]);
-
-  const px = useMotionValue(0);
-  const py = useMotionValue(0);
-  const sx = useSpring(px, { stiffness: 90, damping: 20, mass: 0.5 });
-  const sy = useSpring(py, { stiffness: 90, damping: 20, mass: 0.5 });
-
-  const headX = useTransform(sx, [-0.5, 0.5], [8, -8]);
-  const headY = useTransform(sy, [-0.5, 0.5], [6, -6]);
-
+  // Stream the terminal log while the hero is visible.
   useEffect(() => {
-    const fine = window.matchMedia?.('(pointer: fine)').matches;
-    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (!fine || reduced) return;
-    let raf = 0;
-    function onMove(e: MouseEvent) {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        px.set(e.clientX / window.innerWidth - 0.5);
-        py.set(e.clientY / window.innerHeight - 0.5);
-      });
+    if (!animated || !inView) {
+      setLines(TERMINAL.length);
+      return;
     }
-    window.addEventListener('mousemove', onMove);
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [px, py]);
+    setLines(1);
+    let n = 1;
+    const timer = setInterval(() => {
+      n += 1;
+      setLines(n);
+      if (n >= TERMINAL.length) clearInterval(timer);
+    }, 450);
+    return () => clearInterval(timer);
+  }, [animated, inView, stageMode]);
 
-  let wordIndex = 0;
+  // Pointer parallax across the pane stack.
+  useEffect(() => {
+    const node = stack.current;
+    if (!node) return;
+    if (!spatial) {
+      node.style.setProperty('--px', '0deg');
+      node.style.setProperty('--py', '0deg');
+      return;
+    }
+    let frame = 0;
+    let px = 0;
+    let py = 0;
+    const apply = () => {
+      frame = 0;
+      node.style.setProperty('--px', `${px}deg`);
+      node.style.setProperty('--py', `${py}deg`);
+    };
+    const move = (event: PointerEvent) => {
+      const box = node.getBoundingClientRect();
+      px = ((event.clientX - box.left) / box.width - 0.5) * 11;
+      py = (0.5 - (event.clientY - box.top) / box.height) * 9;
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+    const reset = () => {
+      px = 0;
+      py = 0;
+      if (!frame) frame = requestAnimationFrame(apply);
+    };
+    node.addEventListener('pointermove', move, { passive: true });
+    node.addEventListener('pointerleave', reset);
+    return () => {
+      node.removeEventListener('pointermove', move);
+      node.removeEventListener('pointerleave', reset);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [spatial, stageMode]);
+
+  const enter = (delay: number) =>
+    animated
+      ? { initial: { opacity: 0, y: 26, filter: 'blur(8px)' }, animate: { opacity: 1, y: 0, filter: 'blur(0px)' }, transition: { duration: 0.85, delay, ease: EASE } }
+      : {};
+
+  const pane = (delay: number, from: { x?: number; y?: number }) =>
+    animated
+      ? { initial: { opacity: 0, y: from.y ?? 0, x: from.x ?? 0, scale: 0.96 }, animate: { opacity: 1, y: 0, x: 0, scale: 1 }, transition: { duration: 0.5, delay: delay * 0.4, ease: EASE } }
+      : {};
 
   return (
-    /*
-     * LAYOUT FIX: flex-col on section so the scroll-cue sits AFTER
-     * the content div in the flex flow. It can NEVER overlap with
-     * the social row regardless of viewport height.
-     */
-    <section
-      ref={ref}
-      id="hero"
-      className="relative flex min-h-[100dvh] flex-col items-center overflow-hidden"
-      style={{ perspective: 1400 }}
-    >
-      {/* Dark scrim over the 3D world */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          background:
-            'radial-gradient(900px 620px at 50% 46%, rgba(10,11,16,0.5), rgba(10,11,16,0.12) 55%, transparent 75%),' +
-            'linear-gradient(180deg, rgba(10,11,16,0.4) 0%, transparent 20%, transparent 80%, rgba(10,11,16,0.5) 100%)',
-        }}
-        aria-hidden
-      />
+    <section id="hero" ref={heroRef} className="hero section-shell spatial-stage">
+      <div className="hero-grid">
+        <div className="hero-copy">
+          <motion.span className="hero-name" {...enter(0.05)}>{personal.name}</motion.span>
+          <h1>
+            <motion.span className="line" {...enter(0.14)}><span>Good ideas.</span></motion.span>
+            <motion.span className="line" {...enter(0.24)}><span className="grad-text">Great software.</span></motion.span>
+          </h1>
+          <motion.p className="hero-description" {...enter(0.36)}>
+            I&apos;m Biswodip — an independent developer who connects design, engineering
+            and business thinking to build products from first idea to final deploy.
+          </motion.p>
+          <motion.div className="hero-meta" {...enter(0.46)}>
+            <span className="hero-chip"><i className="status-dot" /> Available for work</span>
+            <span className="hero-chip">TypeScript</span>
+            <span className="hero-chip">Next.js</span>
+            <span className="hero-chip">Systems &amp; APIs</span>
+          </motion.div>
+          <motion.div className="actions" {...enter(0.56)}>
+            <a className="btn-primary" href="#projects">Explore the work <Icon name="arrowUpRight" /></a>
+            <a className="text-link" href="#contact">Let&apos;s talk <Icon name="arrowUpRight" /></a>
+          </motion.div>
+        </div>
 
-      {/* ── Main content — flex-1 so it fills space above the scroll cue ── */}
-      <motion.div
-        style={{ scale, opacity, y, rotateX, transformStyle: 'preserve-3d' }}
-        className="relative z-10 flex w-full flex-1 flex-col items-center justify-center px-6 pt-28 pb-6 text-center"
-      >
-        <motion.div
-          initial={{ filter: 'blur(20px)', scale: 1.1, opacity: 0, y: 40 }}
-          animate={{ filter: 'blur(0px)', scale: 1, opacity: 1, y: 0 }}
-          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-          className="flex w-full flex-col items-center justify-center"
-        >
-          {/* Profile Pill */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="mb-8 flex items-center gap-3 rounded-full border border-white/10 bg-[#13161e]/80 p-1.5 pr-6 shadow-[0_0_30px_rgba(0,0,0,0.5)] backdrop-blur-md"
-          >
-            <div className="relative h-10 w-10 shrink-0">
-              <RingLight size={58} thickness={3} bulbCount={16} colorA="#22d3ee" colorB="#f472b6" speed={4.5} />
-              <div className="relative z-10 h-10 w-10 overflow-hidden rounded-full border border-white/20">
-                <Image
-                  src="/biswodip.png"
-                  alt="Biswodip Goj"
-                  fill
-                  className="object-cover object-top"
-                />
+        {/* Hero Right Stage: 3D Computer Workstation / Code Stack */}
+        <div className="relative w-full flex flex-col items-center">
+          {/* Stage Mode Switcher */}
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900/80 border border-slate-700/60 backdrop-blur-md mb-2 z-20">
+            <button
+              type="button"
+              onClick={() => setStageMode('3d')}
+              className={`px-3 py-1 text-xs font-mono rounded-lg transition-all ${
+                stageMode === '3d'
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-md shadow-cyan-900/40'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              ✦ Architecture Runtime
+            </button>
+            <button
+              type="button"
+              onClick={() => setStageMode('code')}
+              className={`px-3 py-1 text-xs font-mono rounded-lg transition-all ${
+                stageMode === 'code'
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-md shadow-cyan-900/40'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              {'// Source Architecture'}
+            </button>
+          </div>
+
+          {stageMode === '3d' ? (
+            <div className="w-full relative">
+              <Computer3D />
+              <div className="text-center mt-[-10px] text-xs font-mono text-cyan-400/80">
+                <span>Interactive Systems Kernel · Hardware accelerated · Real-time telemetry</span>
               </div>
             </div>
-            <div className="flex flex-col items-start justify-center">
-              <span className="text-[0.65rem] font-bold uppercase tracking-widest text-white/90">
-                Biswodip Goj
-              </span>
-              <span className="flex items-center gap-1.5 text-[0.6rem] font-medium text-slate-400">
-                <span className="h-1.5 w-1.5 rounded-full bg-aurora-emerald animate-pulse shadow-[0_0_8px_#34d399]" />
-                {personal.role}
-              </span>
+          ) : (
+            <div ref={stack} className="code-stack w-full max-w-[580px]" role="img" aria-label="A layered software workspace: a code editor compiling a deployment function, a terminal streaming a passing build and deploy log, and a module breakdown panel.">
+              <svg className="flow-svg" viewBox="0 0 400 560" fill="none" aria-hidden="true" preserveAspectRatio="none">
+                <path className="flow-path" d="M 70 210 C 70 300, 250 250, 250 330" />
+                <path className="flow-pulse" d="M 70 210 C 70 300, 250 250, 250 330" />
+                <path className="flow-path" d="M 300 120 C 300 190, 120 170, 120 232" />
+                <path className="flow-pulse" style={{ animationDelay: '-1.7s' }} d="M 300 120 C 300 190, 120 170, 120 232" />
+              </svg>
+
+              <motion.div className="pane pane-graph" {...pane(0.5, { y: -26 })}>
+                <div className="pane-head"><span>architecture.map</span><span>4 modules</span></div>
+                <div className="graph-body">
+                  {MODULES.map((module, i) => (
+                    <div className="dep-node" key={module.name}>
+                      <i style={{ background: module.color }} />
+                      {module.name}
+                      <span className="dep-bar">
+                        <span style={{ width: module.width, animationDelay: `${0.9 + i * 0.14}s`, background: `linear-gradient(90deg, ${module.color}, var(--accent-2))` }} />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              <motion.div className="pane pane-editor" {...pane(0.3, { x: -30 })}>
+                <div className="pane-head">
+                  <span className="pane-dots"><i /><i /><i /></span>
+                  <span>ship.ts</span>
+                  <span>TypeScript</span>
+                </div>
+                <div className="code-body">
+                  {CODE.map((line, i) => (
+                    <motion.div
+                      className="code-line"
+                      key={i}
+                      initial={animated ? { opacity: 0, x: -10 } : false}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.45, delay: 0.6 + i * 0.09, ease: EASE }}
+                    >
+                      <span className="code-num">{i + 1}</span>
+                      <span>
+                        {line.map(([cls, text], j) => <span className={cls} key={j}>{text}</span>)}
+                        {i === CODE.length - 1 && <span className="caret" />}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              <motion.div className="pane pane-terminal" {...pane(0.68, { x: 30, y: 22 })}>
+                <div className="pane-head">
+                  <span>zsh — deploy</span>
+                  <span>{lines >= TERMINAL.length ? 'done' : 'running'}</span>
+                </div>
+                <div className="term-body">
+                  {TERMINAL.slice(0, lines).map(line => (
+                    <span className={`term-line ${line.cls}`} key={line.text}>{line.text}</span>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Unique Glassmorphic Computer Science Software Telemetry Elements */}
+              <motion.div
+                className="absolute -right-3 top-48 z-10 px-3 py-1.5 rounded-xl bg-slate-950/85 border border-cyan-400/40 backdrop-blur-xl shadow-[0_0_25px_rgba(56,189,248,0.25)] flex items-center gap-2 font-mono text-[0.68rem] text-cyan-300 pointer-events-none"
+                {...pane(0.95, { y: 18 })}
+              >
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                <span>AST_PARSER: ROOT → EMIT</span>
+              </motion.div>
+
+              <motion.div
+                className="absolute -left-5 bottom-20 z-10 px-3 py-1.5 rounded-xl bg-slate-950/85 border border-emerald-400/40 backdrop-blur-xl shadow-[0_0_25px_rgba(52,211,153,0.25)] flex items-center gap-2 font-mono text-[0.68rem] text-emerald-300 pointer-events-none"
+                {...pane(1.05, { y: -14 })}
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>MICROTASK_TICK: 0.08ms</span>
+              </motion.div>
+
+              <motion.div
+                className="absolute left-1/3 -top-4 z-10 px-3 py-1.5 rounded-xl bg-slate-950/85 border border-violet-400/40 backdrop-blur-xl shadow-[0_0_25px_rgba(139,92,246,0.25)] flex items-center gap-2 font-mono text-[0.68rem] text-violet-300 pointer-events-none"
+                {...pane(1.15, { y: 14 })}
+              >
+                <span className="w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
+                <span>RAFT_QUORUM: 3/3 NODES</span>
+              </motion.div>
             </div>
-          </motion.div>
+          )}
+        </div>
+      </div>
 
-        {/* Headline — floats with pointer */}
-        <motion.h1
-          style={{ x: headX, y: headY }}
-          className="font-display text-[clamp(2.6rem,8.5vw,6.2rem)] font-extrabold leading-[0.98] tracking-tight"
-        >
-          {headline.map((line, li) => (
-            <span key={li} className="block">
-              {line.words.map((word) => {
-                const i = wordIndex++;
-                return (
-                  <motion.span
-                    key={word + i}
-                    initial={{ opacity: 0, y: 60, rotateX: -70, z: -120 }}
-                    animate={{ opacity: 1, y: 0, rotateX: 0, z: 0 }}
-                    transition={{ duration: 0.8, delay: 0.15 + i * 0.09, ease: [0.22, 1, 0.36, 1] }}
-                    className={`mr-[0.28em] inline-block last:mr-0 ${line.gradient ? 'text-gradient' : 'text-ink'}`}
-                    style={{ transformStyle: 'preserve-3d' }}
-                  >
-                    {word}
-                  </motion.span>
-                );
-              })}
-            </span>
-          ))}
-        </motion.h1>
-
-        {/* Intro */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.75 }}
-          className="mx-auto mt-7 max-w-2xl text-base leading-relaxed text-slate-500 sm:text-lg"
-        >
-          {personal.intro}
-        </motion.p>
-
-        {/* CTA buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.95 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-4"
-        >
-          <MagneticButton onClick={() => scrollToSection('projects')}>
-            Step into the work
-            <span aria-hidden>→</span>
-          </MagneticButton>
-          <MagneticButton variant="ghost" onClick={() => scrollToSection('contact')}>
-            Let&apos;s talk
-          </MagneticButton>
-        </motion.div>
-
-        {/* Social links */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.1 }}
-          className="mt-8 flex flex-wrap items-center justify-center gap-3"
-        >
-          {socials.map((s) => (
-            <a
-              key={s.label}
-              href={s.url}
-              target={s.url.startsWith('http') ? '_blank' : undefined}
-              rel={s.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-              className="group inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#13161e] px-4 py-2 text-xs font-medium text-slate-500 transition-all duration-300 hover:-translate-y-0.5 hover:border-aurora-cyan/40 hover:text-ink"
-              aria-label={s.label}
-            >
-              <span className="text-aurora-cyan transition-colors group-hover:text-aurora-violet">
-                <SocialIcon label={s.label} />
-              </span>
-              {s.handle}
-            </a>
-          ))}
-        </motion.div>
-
-        {/* Unified Glass Stats Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.25 }}
-          className="mx-auto mt-16 grid w-full max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4"
-        >
-          {facts.map((f, i) => (
-            <div key={f.label} className="glass card-glow flex flex-col items-center justify-center rounded-2xl p-4 sm:p-6 text-center">
-              <span className="font-display text-2xl font-extrabold text-gradient sm:text-3xl">{f.figure}</span>
-              <span className="mt-1.5 text-[0.6rem] font-medium uppercase tracking-[0.12em] text-slate-400">
-                {f.label}
-              </span>
-            </div>
-          ))}
-        </motion.div>
-        </motion.div>
-      </motion.div>
-
-      {/* ── Scroll cue ── AFTER content in flex column = ZERO overlap possible */}
-      <motion.button
-        onClick={() => scrollToSection('about')}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
-        className="relative z-10 mb-6 hidden flex-col items-center gap-1.5 text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-slate-500/60 transition-all duration-300 hover:text-white/90 sm:flex"
-        aria-label="Begin the journey"
-      >
-        <span>Begin the journey</span>
-        <span className="flex h-7 w-3.5 items-start justify-center rounded-full border border-slate-600/50 p-px">
-          <motion.span
-            className="h-[3px] w-[3px] rounded-full bg-aurora-violet"
-            animate={{ y: [0, 14, 0] }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: [0.45, 0, 0.55, 1] }}
-          />
-        </span>
-      </motion.button>
+      <div className="hero-rail">
+        <span>Design · Build · Deploy · Deliver</span>
+        <a href="#about">A little context <Icon name="arrowDown" /></a>
+      </div>
     </section>
   );
 }

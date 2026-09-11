@@ -1,135 +1,40 @@
 'use client';
+import Icon from './ui/Icon';
 
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { nav, personal } from '@/lib/data';
-import { scrollToSection } from '@/components/SmoothScroll';
+import { useExperience } from './ExperienceProvider';
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState('hero');
   const [open, setOpen] = useState(false);
-
+  const [active, setActive] = useState('hero');
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
+  const { paused, toggle } = useExperience();
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(e.target.id);
-        });
-      },
-      { rootMargin: '-45% 0px -50% 0px' },
-    );
-    nav.forEach((n) => {
-      const el = document.getElementById(n.id);
-      if (el) observer.observe(el);
-    });
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if (entry.isIntersecting) setActive(entry.target.id); });
+    }, { rootMargin: '-20% 0px -55% 0px' });
+    nav.forEach(link => { const section = document.getElementById(link.id); if (section) observer.observe(section); });
     return () => observer.disconnect();
   }, []);
-
-  function go(id: string) {
-    setOpen(false);
-    scrollToSection(id);
-  }
-
-  return (
-    <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.7, delay: 0.2 }}
-      className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4"
-    >
-      <nav
-        className={`flex w-full max-w-5xl items-center justify-between rounded-full px-4 py-2.5 transition-all duration-500 ${
-          scrolled ? 'glass-strong' : 'glass'
-        }`}
-      >
-        <button
-          onClick={() => go('hero')}
-          className="group flex items-center gap-2.5 pl-1 pr-3"
-          aria-label="Back to top"
-        >
-          <span className="relative grid h-9 w-9 place-items-center rounded-xl text-white">
-            <span
-              className="absolute inset-0 rounded-xl animate-gradient-pan"
-              style={{
-                backgroundImage: 'linear-gradient(135deg,#22d3ee,#8b5cf6,#f472b6)',
-                backgroundSize: '200% 200%',
-              }}
-            />
-            <span className="relative font-display text-sm font-extrabold">BG</span>
-          </span>
-          <span className="hidden font-display text-sm font-bold tracking-tight text-ink sm:block">
-            {personal.firstName}
-            <span className="text-gradient"> Goj</span>
-          </span>
-        </button>
-
-        <div className="hidden items-center gap-1 md:flex">
-          {nav.map((n) => (
-            <button
-              key={n.id}
-              onClick={() => go(n.id)}
-              className="relative rounded-full px-3.5 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:text-ink"
-            >
-              {active === n.id && (
-                <motion.span
-                  layoutId="nav-active"
-                  className="absolute inset-0 -z-10 rounded-full"
-                  style={{ background: 'rgba(139,92,246,0.14)' }}
-                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                />
-              )}
-              {n.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => go('contact')}
-            className="hidden rounded-full px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/30 sm:block"
-            style={{ background: 'linear-gradient(110deg,#6366f1,#8b5cf6,#ec4899)' }}
-          >
-            Get in touch
-          </button>
-          <button
-            onClick={() => setOpen((o) => !o)}
-            className="grid h-9 w-9 place-items-center rounded-full glass-strong md:hidden"
-            aria-label="Toggle menu"
-            aria-expanded={open}
-          >
-            <span className="text-lg">{open ? '✕' : '☰'}</span>
-          </button>
-        </div>
-      </nav>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute top-20 w-[92%] max-w-sm rounded-3xl glass-strong p-3 md:hidden"
-          >
-            {nav.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => go(n.id)}
-                className="block w-full rounded-2xl px-4 py-3 text-left text-base font-medium text-slate-700 hover:bg-white/5"
-              >
-                {n.label}
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.header>
-  );
+  useEffect(() => {
+    if (!open) return;
+    const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(false); toggleRef.current?.focus(); } };
+    const outside = (event: PointerEvent) => { if (!headerRef.current?.contains(event.target as Node)) setOpen(false); };
+    window.addEventListener('keydown', escape); window.addEventListener('pointerdown', outside);
+    return () => { window.removeEventListener('keydown', escape); window.removeEventListener('pointerdown', outside); };
+  }, [open]);
+  return <header className="site-header" ref={headerRef}>
+    <div className="header-inner">
+      <a href="#hero" className="wordmark" aria-label={`${personal.firstName.toLowerCase()}. Home`}><span className="brand-mark" aria-hidden="true">b.</span><span>biswodip<span className="brand-period">.</span></span></a>
+      <nav className="desktop-nav" aria-label="Main navigation">{nav.filter(link => ['projects', 'about', 'skills', 'github'].includes(link.id)).map(link => <a key={link.id} href={`#${link.id}`} aria-current={active === link.id ? 'location' : undefined}>{link.label}</a>)}</nav>
+      <div className="header-actions">
+        <button type="button" className="motion-switch" onClick={toggle} aria-pressed={paused} aria-label={paused ? 'Enable motion (respects system preference)' : 'Pause motion'}><Icon name={paused ? 'play' : 'pause'} /><span>Motion</span></button>
+        <a className="header-contact" href="#contact">Let’s talk <Icon name="arrowUpRight" /></a>
+        <button ref={toggleRef} type="button" className="menu-toggle" onClick={() => setOpen(value => !value)} aria-expanded={open} aria-controls="mobile-nav">{open ? 'Close' : 'Menu'} <Icon name={open ? 'close' : 'menu'} /></button>
+      </div>
+    </div>
+    {open && <nav id="mobile-nav" aria-label="Mobile navigation">{nav.map((link, i) => <a key={link.id} href={`#${link.id}`} style={{ '--i': i } as React.CSSProperties} aria-current={active === link.id ? 'location' : undefined} onClick={() => setOpen(false)}>{link.label}<Icon name="arrowUpRight" /></a>)}</nav>}
+  </header>;
 }
