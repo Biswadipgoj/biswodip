@@ -1,8 +1,6 @@
 'use client';
 
-import { useRef, useMemo, useState, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Float } from '@react-three/drei';
+import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 
 // -----------------------------------------------------------------------------
@@ -124,509 +122,459 @@ const ACTIONS_LIST = [
   { tag: '120FPS', msg: 'Frame time locked at 8.33ms (120 FPS buttery smooth playback)', color: '#22d3ee' },
 ];
 
-// -----------------------------------------------------------------------------
-// PROCEDURAL CANVAS TEXTURE: Living IDE + 120 FPS Telemetry & 100+ Live Actions
-// -----------------------------------------------------------------------------
-function useLivingScreenTexture() {
-  return useMemo(() => {
-    if (typeof document === 'undefined') return null;
-    const canvas = document.createElement('canvas');
-    canvas.width = 1280;
-    canvas.height = 800;
-    const ctx = canvas.getContext('2d')!;
+function createLivingScreenTexture() {
+  if (typeof document === 'undefined') return null;
+  const canvas = document.createElement('canvas');
+  canvas.width = 1280;
+  canvas.height = 800;
+  const ctx = canvas.getContext('2d')!;
 
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
 
-    let tick = 0;
+  let tick = 0;
 
-    // Rich IDE code lines (Systems architecture & distributed consensus)
-    const codeLines = [
-      '// Biswodip Goj — Distributed Architecture Kernel v3.0',
-      'import { RaftCluster, MicrotaskEngine } from "@biswodip/core";',
-      'import { RowLevelSecurity, BTreeIndex } from "@biswodip/db";',
-      '',
-      'export class ArchitectureKernel implements IProductionRuntime {',
-      '  private readonly cluster = new RaftCluster({ quorum: 3 });',
-      '  private readonly v8Queue = new MicrotaskEngine({ targetFps: 120 });',
-      '',
-      '  public async boot(): Promise<RuntimeStatus> {',
-      '    // 1. Establish Raft Consensus across distributed nodes',
-      '    const consensus = await this.cluster.verifyConsensus({',
-      '      heartbeatMs: 15,',
-      '      faultTolerance: "Byzantine-Fault-Tolerant",',
-      '      persistence: "NVMe Write-Ahead Log"',
-      '    });',
-      '',
-      '    // 2. Hydrate multi-tenant Row-Level Security barriers',
-      '    await RowLevelSecurity.enforceStrictIsolation();',
-      '',
-      '    // 3. Lock event loop timing to 120 FPS invariant',
-      '    this.v8Queue.onTick((latency) => {',
-      '      assert(latency < 8.33, "Frame budget preserved at 120 FPS");',
-      '    });',
-      '',
-      '    return { status: "ONLINE", modules: 48, buildHealth: "100%" };',
-      '  }',
-      '}',
-      '// Kernel initialization initiated at 120 FPS...'
-    ];
+  const codeLines = [
+    '// Biswodip Goj — Distributed Architecture Kernel v3.0',
+    'import { RaftCluster, MicrotaskEngine } from "@biswodip/core";',
+    'import { RowLevelSecurity, BTreeIndex } from "@biswodip/db";',
+    '',
+    'export class ArchitectureKernel implements IProductionRuntime {',
+    '  private readonly cluster = new RaftCluster({ quorum: 3 });',
+    '  private readonly v8Queue = new MicrotaskEngine({ targetFps: 120 });',
+    '',
+    '  public async boot(): Promise<RuntimeStatus> {',
+    '    // 1. Establish Raft Consensus across distributed nodes',
+    '    const consensus = await this.cluster.verifyConsensus({',
+    '      heartbeatMs: 15,',
+    '      faultTolerance: "Byzantine-Fault-Tolerant",',
+    '      persistence: "NVMe Write-Ahead Log"',
+    '    });',
+    '',
+    '    // 2. Hydrate multi-tenant Row-Level Security barriers',
+    '    await RowLevelSecurity.enforceStrictIsolation();',
+    '',
+    '    // 3. Lock event loop timing to 120 FPS invariant',
+    '    this.v8Queue.onTick((latency) => {',
+    '      assert(latency < 8.33, "Frame budget preserved at 120 FPS");',
+    '    });',
+    '',
+    '    return { status: "ONLINE", modules: 48, buildHealth: "100%" };',
+    '  }',
+    '}',
+    '// Kernel initialization initiated at 120 FPS...'
+  ];
 
-    const update = () => {
-      tick++;
+  const update = () => {
+    tick++;
+    ctx.fillStyle = '#050814';
+    ctx.fillRect(0, 0, 1280, 800);
 
-      // 1. Main Background: Deep obsidian glass
-      ctx.fillStyle = '#050814';
-      ctx.fillRect(0, 0, 1280, 800);
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.04)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < 1280; x += 40) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, 800);
+      ctx.stroke();
+    }
+    for (let y = 0; y < 800; y += 40) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(1280, y);
+      ctx.stroke();
+    }
 
-      // Subtle cyber grid
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.04)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x < 1280; x += 40) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, 800);
-        ctx.stroke();
+    ctx.fillStyle = '#080d22';
+    ctx.fillRect(0, 0, 1280, 52);
+
+    ctx.fillStyle = '#ef4444';
+    ctx.beginPath(); ctx.arc(28, 26, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#f59e0b';
+    ctx.beginPath(); ctx.arc(50, 26, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#10b981';
+    ctx.beginPath(); ctx.arc(72, 26, 7, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 16px monospace';
+    ctx.fillText('⚡ BISWODIP GOJ — DISTRIBUTED CS WORKBENCH [120 FPS ACTIVE]', 120, 32);
+
+    ctx.fillStyle = '#34d399';
+    ctx.font = 'bold 14px monospace';
+    ctx.fillText('NODE: ULUBERIA (22.4735° N, 88.1077° E)', 890, 32);
+
+    const splitX = 660;
+
+    ctx.fillStyle = '#0a102b';
+    ctx.fillRect(0, 52, splitX, 748);
+
+    ctx.fillStyle = '#131b3d';
+    ctx.fillRect(0, 52, splitX, 36);
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText('📁 ARCHITECTURE_KERNEL.TS [SYSTEMS ENGINE]', 24, 75);
+
+    ctx.font = '14px monospace';
+    codeLines.forEach((line, idx) => {
+      const y = 120 + idx * 26;
+      ctx.fillStyle = '#475569';
+      ctx.fillText(String(idx + 1).padStart(2, '0'), 18, y);
+
+      if (line.startsWith('//')) {
+        ctx.fillStyle = '#38bdf8';
+      } else if (line.includes('import') || line.includes('export') || line.includes('class') || line.includes('private') || line.includes('public') || line.includes('const') || line.includes('await') || line.includes('return')) {
+        ctx.fillStyle = '#c084fc';
+      } else if (line.includes('"') || line.includes("'")) {
+        ctx.fillStyle = '#34d399';
+      } else {
+        ctx.fillStyle = '#f1f5f9';
       }
-      for (let y = 0; y < 800; y += 40) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(1280, y);
-        ctx.stroke();
-      }
+      ctx.fillText(line, 52, y);
+    });
 
-      // 2. Global Top App Bar (macOS Chrome)
-      ctx.fillStyle = '#080d22';
-      ctx.fillRect(0, 0, 1280, 52);
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
-      ctx.strokeRect(0, 0, 1280, 52);
+    ctx.strokeStyle = '#1e293b';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(splitX, 52);
+    ctx.lineTo(splitX, 800);
+    ctx.stroke();
 
-      // Window Control Dots
-      ctx.fillStyle = '#ef4444';
-      ctx.beginPath();
-      ctx.arc(28, 26, 8, 0, Math.PI * 2);
-      ctx.fill();
+    ctx.fillStyle = '#060a1d';
+    ctx.fillRect(splitX, 52, 1280 - splitX, 748);
 
-      ctx.fillStyle = '#eab308';
-      ctx.beginPath();
-      ctx.arc(52, 26, 8, 0, Math.PI * 2);
-      ctx.fill();
+    ctx.fillStyle = '#0f1738';
+    ctx.fillRect(splitX, 52, 1280 - splitX, 36);
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText('📊 LIVE KERNEL TELEMETRY & 120+ SYSTEM EVENTS', splitX + 24, 75);
 
-      ctx.fillStyle = '#22c55e';
-      ctx.beginPath();
-      ctx.arc(76, 26, 8, 0, Math.PI * 2);
-      ctx.fill();
+    ctx.fillStyle = '#34d399';
+    ctx.font = 'bold 13px monospace';
+    ctx.fillText('120.0 FPS · JITTER 0.02ms', splitX + 410, 75);
 
-      // Top Tab Titles
-      ctx.font = 'bold 16px monospace';
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillText('kernel.ts [120 FPS STREAM]', 120, 32);
+    const activeActionsCount = 11;
+    const baseActionIndex = Math.floor(tick / 18) % ACTIONS_LIST.length;
+
+    for (let i = 0; i < activeActionsCount; i++) {
+      const actIdx = (baseActionIndex + i) % ACTIONS_LIST.length;
+      const act = ACTIONS_LIST[actIdx];
+      const rowY = 126 + i * 58;
+
+      ctx.fillStyle = i % 2 === 0 ? 'rgba(15, 23, 42, 0.6)' : 'rgba(30, 41, 59, 0.4)';
+      ctx.fillRect(splitX + 16, rowY - 24, 1280 - splitX - 32, 48);
 
       ctx.fillStyle = '#64748b';
-      ctx.fillText('raft_consensus.rs', 380, 32);
-      ctx.fillText('distributed_queue.go', 560, 32);
+      ctx.font = '12px monospace';
+      const timeOffset = (activeActionsCount - i) * 12;
+      ctx.fillText(`+${timeOffset}ms`, splitX + 24, rowY);
 
-      // Top Right Status Badges
-      ctx.font = 'bold 14px monospace';
-      ctx.fillStyle = '#34d399';
-      ctx.fillText('● 120 FPS VERIFIED', 1080, 32);
+      ctx.fillStyle = act.color;
+      ctx.fillRect(splitX + 62, rowY - 15, 68, 20);
+      ctx.fillStyle = '#020617';
+      ctx.font = 'bold 12px monospace';
+      ctx.fillText(act.tag.padEnd(6, ' '), splitX + 70, rowY - 1);
 
-      // 3. Vertical Divider separating Left (Code IDE) from Right (Telemetry & Actions)
-      const splitX = 680;
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
-      ctx.beginPath();
-      ctx.moveTo(splitX, 52);
-      ctx.lineTo(splitX, 800);
-      ctx.stroke();
-
-      // -----------------------------------------------------------------------
-      // LEFT PANE: Systems Architecture Code Editor
-      // -----------------------------------------------------------------------
-      ctx.font = '18px monospace';
-      const visibleLines = Math.min(codeLines.length, 25);
-      const activeExecutingLine = Math.floor(tick / 24) % codeLines.length;
-
-      for (let i = 0; i < visibleLines; i++) {
-        const y = 92 + i * 27;
-
-        // Line number
-        ctx.fillStyle = i === activeExecutingLine ? '#38bdf8' : '#334155';
-        ctx.fillText(String(i + 1).padStart(2, '0'), 20, y);
-
-        // Active line execution highlight bar
-        if (i === activeExecutingLine) {
-          ctx.fillStyle = 'rgba(56, 189, 248, 0.12)';
-          ctx.fillRect(52, y - 20, splitX - 60, 26);
-          ctx.fillStyle = '#38bdf8';
-          ctx.fillRect(52, y - 20, 3, 26);
-        }
-
-        // Code text with syntax coloring
-        const line = codeLines[i];
-        if (line.startsWith('//')) {
-          ctx.fillStyle = '#64748b';
-        } else if (line.includes('class') || line.includes('export') || line.includes('import') || line.includes('return') || line.includes('async')) {
-          ctx.fillStyle = '#c084fc';
-        } else if (line.includes('private') || line.includes('public') || line.includes('readonly') || line.includes('const')) {
-          ctx.fillStyle = '#818cf8';
-        } else if (line.includes('"') || line.includes("'")) {
-          ctx.fillStyle = '#34d399';
-        } else if (line.includes('new ') || line.includes('RaftCluster') || line.includes('MicrotaskEngine')) {
-          ctx.fillStyle = '#38bdf8';
-        } else {
-          ctx.fillStyle = '#e2e8f0';
-        }
-        ctx.fillText(line, 64, y);
-      }
-
-      // Smooth blinking caret
-      if (Math.floor(tick / 20) % 2 === 0) {
-        const caretY = 92 + (activeExecutingLine % visibleLines) * 27;
-        ctx.fillStyle = '#38bdf8';
-        ctx.fillRect(64 + (codeLines[activeExecutingLine]?.length || 0) * 10.8, caretY - 18, 10, 22);
-      }
-
-      // -----------------------------------------------------------------------
-      // RIGHT PANE: 120 FPS System Telemetry & 100+ Live Streaming Actions
-      // -----------------------------------------------------------------------
-      // Telemetry Header
-      ctx.fillStyle = '#080e26';
-      ctx.fillRect(splitX, 52, 1280 - splitX, 42);
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.2)';
-      ctx.strokeRect(splitX, 52, 1280 - splitX, 42);
-
-      ctx.font = 'bold 15px monospace';
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillText('LIVE EXECUTION TELEMETRY · 100+ CS ACTIONS', splitX + 18, 78);
-
-      // Oscilloscope / Real-time Undulating Waveform (120 FPS Harmonic Wave)
-      ctx.fillStyle = '#060a1c';
-      ctx.fillRect(splitX + 16, 106, 568, 74);
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
-      ctx.strokeRect(splitX + 16, 106, 568, 74);
-
-      ctx.beginPath();
-      ctx.strokeStyle = '#22d3ee';
-      ctx.lineWidth = 2;
-      for (let x = 0; x < 568; x += 3) {
-        const waveY =
-          143 +
-          Math.sin((x + tick * 6) * 0.035) * 16 +
-          Math.sin((x * 2 - tick * 4) * 0.02) * 8;
-        if (x === 0) ctx.moveTo(splitX + 16 + x, waveY);
-        else ctx.lineTo(splitX + 16 + x, waveY);
-      }
-      ctx.stroke();
-
-      // Wave overlay metrics
-      ctx.font = 'bold 13px monospace';
-      ctx.fillStyle = '#34d399';
-      ctx.fillText('THROUGHPUT: 1.4M msg/sec', splitX + 28, 126);
-      ctx.fillStyle = '#c084fc';
-      ctx.fillText('V8 TICK: 0.08ms', splitX + 240, 126);
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillText('HEAP: 42.4MB', splitX + 410, 126);
-
-      // Action Stream Header
-      const actionCount = ACTIONS_LIST.length;
-      const currentActionIndex = Math.floor(tick / 4); // Advances rapidly (action rolls continuously)
-      ctx.fillStyle = '#09102c';
-      ctx.fillRect(splitX + 16, 192, 568, 32);
-      ctx.font = 'bold 13px monospace';
-      ctx.fillStyle = '#f8fafc';
-      ctx.fillText(
-        `ACTION STREAM · #${String((currentActionIndex % 9999) + 1).padStart(4, '0')} (${actionCount} UNIQUE ACTIONS)`,
-        splitX + 26,
-        213
-      );
-
-      // Streaming Actions List (Displays 14 rows rolling upwards smoothly)
-      const visibleActionRows = 14;
-      ctx.font = '14px monospace';
-
-      for (let r = 0; r < visibleActionRows; r++) {
-        const idx = (currentActionIndex + r) % actionCount;
-        const act = ACTIONS_LIST[idx];
-        const rowY = 250 + r * 37;
-
-        // Subtle row striping
-        ctx.fillStyle = r % 2 === 0 ? 'rgba(15, 23, 42, 0.45)' : 'rgba(30, 41, 59, 0.25)';
-        ctx.fillRect(splitX + 16, rowY - 20, 568, 30);
-
-        // Action ID
-        ctx.fillStyle = '#64748b';
-        ctx.fillText(String(idx + 1).padStart(3, '0'), splitX + 24, rowY);
-
-        // Category Tag Badge
-        ctx.fillStyle = act.color;
-        ctx.fillRect(splitX + 62, rowY - 15, 68, 20);
-        ctx.fillStyle = '#020617';
-        ctx.font = 'bold 12px monospace';
-        ctx.fillText(act.tag.padEnd(6, ' '), splitX + 70, rowY - 1);
-
-        // Action Message
-        ctx.font = '13px monospace';
-        ctx.fillStyle = '#e2e8f0';
-        const truncatedMsg = act.msg.length > 44 ? act.msg.slice(0, 42) + '…' : act.msg;
-        ctx.fillText(truncatedMsg, splitX + 140, rowY);
-      }
-
-      // Bottom Status Footer in screen
-      ctx.fillStyle = '#080d22';
-      ctx.fillRect(0, 764, 1280, 36);
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
-      ctx.strokeRect(0, 764, 1280, 36);
       ctx.font = '13px monospace';
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillText('● BISWODIP ARCHITECTURE RUNTIME · ULUBERIA NODE · ZERO MEMORY LEAKS · 120 FPS FLUID', 24, 787);
+      ctx.fillStyle = '#e2e8f0';
+      const truncatedMsg = act.msg.length > 44 ? act.msg.slice(0, 42) + '…' : act.msg;
+      ctx.fillText(truncatedMsg, splitX + 140, rowY);
+    }
 
-      // CRT Scanline sheen sweeping down
-      ctx.fillStyle = 'rgba(56, 189, 248, 0.04)';
-      const scanY = (tick * 5) % 800;
-      ctx.fillRect(0, scanY, 1280, 45);
+    ctx.fillStyle = '#080d22';
+    ctx.fillRect(0, 764, 1280, 36);
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+    ctx.strokeRect(0, 764, 1280, 36);
+    ctx.font = '13px monospace';
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillText('● BISWODIP ARCHITECTURE RUNTIME · ULUBERIA NODE · ZERO MEMORY LEAKS · 120 FPS FLUID', 24, 787);
 
-      texture.needsUpdate = true;
-    };
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.04)';
+    const scanY = (tick * 5) % 800;
+    ctx.fillRect(0, scanY, 1280, 45);
 
-    return { texture, update };
-  }, []);
+    texture.needsUpdate = true;
+  };
+
+  return { texture, update, dispose: () => texture.dispose() };
 }
 
-// -----------------------------------------------------------------------------
-// 3D COMPUTER HARDWARE MESH ASSEMBLY
-// Sleek Studio Display, RGB Wave Keyboard, Stand Halo, and 4 Orbiting CS Objects
-// -----------------------------------------------------------------------------
-function ComputerMesh() {
-  const groupRef = useRef<THREE.Group>(null);
-  const screenMesh = useRef<THREE.Mesh>(null);
-  const haloRef = useRef<THREE.Mesh>(null);
-  const keyLightRef = useRef<THREE.PointLight>(null);
-  const screenData = useLivingScreenTexture();
-
-  // Floating Computer Science Software Objects orbiting the workstation
-  const csSoftwareObjects = useMemo(
-    () => [
-      { pos: [-3.3, 1.8, 0.9], color: '#38bdf8', label: 'AST_NODE', geom: 'octahedron' },
-      { pos: [3.4, 1.4, -0.6], color: '#818cf8', label: 'RING_BUFFER', geom: 'torus' },
-      { pos: [-3.0, -1.2, -0.5], color: '#34d399', label: 'CONSENSUS', geom: 'icosahedron' },
-      { pos: [3.2, -1.3, 0.8], color: '#f43f5e', label: 'EVENT_LOOP', geom: 'ring' },
-    ],
-    []
-  );
-
-  useFrame((state) => {
-    if (screenData) screenData.update();
-
-    if (groupRef.current) {
-      // Fluid pointer-driven perspective tilt
-      const targetRotY = state.pointer.x * 0.32;
-      const targetRotX = -state.pointer.y * 0.22;
-
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.06);
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotX, 0.06);
-
-      // 120 FPS smooth levitation
-      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.6) * 0.08;
-    }
-
-    // Pulsing illuminated stand halo
-    if (haloRef.current) {
-      haloRef.current.rotation.z += 0.015;
-    }
-
-    // Pulsing RGB keyboard illumination wave
-    if (keyLightRef.current) {
-      keyLightRef.current.intensity = 3 + Math.sin(state.clock.elapsedTime * 3) * 1.2;
-    }
-  });
-
-  return (
-    <group ref={groupRef} position={[0, 0, 0]}>
-      {/* -------------------------------------------------------------------
-          1. SLEEK STUDIO DISPLAY MONITOR
-         ------------------------------------------------------------------- */}
-      {/* Dark Titanium Monitor Chassis */}
-      <mesh position={[0, 0.65, 0]}>
-        <boxGeometry args={[4.9, 3.15, 0.16]} />
-        <meshStandardMaterial color="#0c1021" metalness={0.92} roughness={0.15} />
-      </mesh>
-
-      {/* Monitor Chamfered Outer Bezel Rim */}
-      <mesh position={[0, 0.65, -0.01]}>
-        <boxGeometry args={[4.98, 3.23, 0.12]} />
-        <meshStandardMaterial color="#1e293b" metalness={0.88} roughness={0.25} />
-      </mesh>
-
-      {/* The Active Glowing Monitor Screen (Living Canvas Texture) */}
-      {screenData && (
-        <mesh ref={screenMesh} position={[0, 0.65, 0.088]}>
-          <planeGeometry args={[4.74, 2.98]} />
-          <meshBasicMaterial map={screenData.texture} toneMapped={false} />
-        </mesh>
-      )}
-
-      {/* Monitor Glass Specular Sheen Layer */}
-      <mesh position={[0, 0.65, 0.092]}>
-        <planeGeometry args={[4.74, 2.98]} />
-        <meshBasicMaterial color="#38bdf8" transparent opacity={0.06} />
-      </mesh>
-
-      {/* Outer Cyan Screen Accent Glow Wire */}
-      <mesh position={[0, 0.65, 0.082]}>
-        <planeGeometry args={[4.8, 3.04]} />
-        <meshBasicMaterial color="#0284c7" transparent opacity={0.25} />
-      </mesh>
-
-      {/* -------------------------------------------------------------------
-          2. STAND NECK & ILLUMINATED BASEPLATE
-         ------------------------------------------------------------------- */}
-      {/* Precision Stand Neck */}
-      <mesh position={[0, -1.0, -0.18]} rotation={[0.12, 0, 0]}>
-        <cylinderGeometry args={[0.15, 0.18, 1.35, 24]} />
-        <meshStandardMaterial color="#334155" metalness={0.95} roughness={0.1} />
-      </mesh>
-
-      {/* Baseplate Solid Metallic Chassis */}
-      <mesh position={[0, -1.72, 0]}>
-        <boxGeometry args={[1.9, 0.06, 1.4]} />
-        <meshStandardMaterial color="#0f172a" metalness={0.9} roughness={0.2} />
-      </mesh>
-
-      {/* Baseplate Ambient Illuminated Halo Ring */}
-      <mesh ref={haloRef} position={[0, -1.68, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[0.65, 0.02, 16, 48]} />
-        <meshBasicMaterial color="#38bdf8" />
-      </mesh>
-
-      {/* -------------------------------------------------------------------
-          3. MECHANICAL RGB KEYBOARD
-         ------------------------------------------------------------------- */}
-      <group position={[0, -1.68, 1.15]} rotation={[-0.12, 0, 0]}>
-        {/* Keyboard Chassis */}
-        <mesh>
-          <boxGeometry args={[3.3, 0.14, 1.25]} />
-          <meshStandardMaterial color="#070b16" metalness={0.8} roughness={0.25} />
-        </mesh>
-
-        {/* Backlit Keybed Glow */}
-        <mesh position={[0, 0.08, 0]}>
-          <boxGeometry args={[3.1, 0.05, 1.08]} />
-          <meshStandardMaterial
-            color="#0284c7"
-            emissive="#0ea5e9"
-            emissiveIntensity={0.8}
-            roughness={0.15}
-          />
-        </mesh>
-
-        {/* Individual Key Rows (Simulated Mechanical Matrix) */}
-        {[-0.36, -0.18, 0, 0.18, 0.36].map((rowZ, r) => (
-          <mesh key={r} position={[0, 0.11, rowZ]}>
-            <boxGeometry args={[2.98, 0.04, 0.12]} />
-            <meshStandardMaterial color="#1e293b" metalness={0.7} roughness={0.3} />
-          </mesh>
-        ))}
-
-        {/* Dynamic Light above Keyboard */}
-        <pointLight
-          ref={keyLightRef}
-          position={[0, 0.35, 0]}
-          intensity={3}
-          color="#38bdf8"
-          distance={1.8}
-          decay={2}
-        />
-      </group>
-
-      {/* -------------------------------------------------------------------
-          4. PRECISION HAPTIC GLASS TRACKPAD
-         ------------------------------------------------------------------- */}
-      <mesh position={[1.98, -1.68, 1.1]} rotation={[-0.12, 0, 0]}>
-        <boxGeometry args={[0.75, 0.04, 0.95]} />
-        <meshStandardMaterial color="#1e293b" metalness={0.9} roughness={0.1} />
-      </mesh>
-      {/* Trackpad Glow Edge */}
-      <mesh position={[1.98, -1.65, 1.1]} rotation={[-0.12, 0, 0]}>
-        <boxGeometry args={[0.77, 0.02, 0.97]} />
-        <meshBasicMaterial color="#38bdf8" transparent opacity={0.3} />
-      </mesh>
-
-      {/* -------------------------------------------------------------------
-          5. ORBITING 3D COMPUTER SCIENCE SOFTWARE OBJECTS
-         ------------------------------------------------------------------- */}
-      {csSoftwareObjects.map((obj, i) => (
-        <Float key={i} speed={2.2 + i * 0.5} rotationIntensity={0.8} floatIntensity={1.0}>
-          <group position={obj.pos as [number, number, number]}>
-            {obj.geom === 'octahedron' && (
-              <mesh>
-                <octahedronGeometry args={[0.32, 0]} />
-                <meshStandardMaterial
-                  color={obj.color}
-                  emissive={obj.color}
-                  emissiveIntensity={1.4}
-                  metalness={0.8}
-                  roughness={0.1}
-                />
-              </mesh>
-            )}
-            {obj.geom === 'torus' && (
-              <mesh rotation={[Math.PI / 4, 0, 0]}>
-                <torusGeometry args={[0.26, 0.08, 16, 32]} />
-                <meshStandardMaterial
-                  color={obj.color}
-                  emissive={obj.color}
-                  emissiveIntensity={1.2}
-                  metalness={0.85}
-                  roughness={0.1}
-                />
-              </mesh>
-            )}
-            {obj.geom === 'icosahedron' && (
-              <mesh>
-                <icosahedronGeometry args={[0.28, 0]} />
-                <meshStandardMaterial
-                  color={obj.color}
-                  emissive={obj.color}
-                  emissiveIntensity={1.5}
-                  metalness={0.9}
-                  roughness={0.1}
-                />
-              </mesh>
-            )}
-            {obj.geom === 'ring' && (
-              <mesh rotation={[0.4, 0.4, 0]}>
-                <torusGeometry args={[0.3, 0.04, 16, 32]} />
-                <meshStandardMaterial
-                  color={obj.color}
-                  emissive={obj.color}
-                  emissiveIntensity={1.8}
-                  metalness={0.9}
-                  roughness={0.1}
-                />
-              </mesh>
-            )}
-          </group>
-        </Float>
-      ))}
-
-      {/* -------------------------------------------------------------------
-          6. DUAL ATMOSPHERIC BACKLIGHT GLOWS (Cyan & Violet)
-         ------------------------------------------------------------------- */}
-      <pointLight position={[0, 0.9, -0.7]} intensity={22} color="#38bdf8" distance={7} decay={2} />
-      <pointLight position={[0, -1.0, 1.4]} intensity={10} color="#c084fc" distance={4} decay={2} />
-    </group>
-  );
-}
-
-// -----------------------------------------------------------------------------
-// EXPORT DEFAULT COMPUTER3D COMPONENT
-// -----------------------------------------------------------------------------
 export default function Computer3D() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
+
+    let width = container.clientWidth || 600;
+    let height = container.clientHeight || 530;
+
+    // 1. Scene, Camera, Renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 100);
+    camera.position.set(0, 0, 6.2);
+
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance',
+      });
+      renderer.setSize(width, height, false);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    } catch (e) {
+      console.warn('WebGL not supported or initialization failed in Computer3D:', e);
+      return;
+    }
+
+    // 2. Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+    scene.add(ambientLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.6);
+    dirLight1.position.set(4, 6, 5);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0x0284c7, 1.3);
+    dirLight2.position.set(-4, -2, -2);
+    scene.add(dirLight2);
+
+    const pointLight1 = new THREE.PointLight(0x38bdf8, 22, 7, 2);
+    pointLight1.position.set(0, 0.9, -0.7);
+    scene.add(pointLight1);
+
+    const pointLight2 = new THREE.PointLight(0xc084fc, 10, 4, 2);
+    pointLight2.position.set(0, -1.0, 1.4);
+    scene.add(pointLight2);
+
+    // 3. Workstation Hardware Assembly Group
+    const workstationGroup = new THREE.Group();
+    scene.add(workstationGroup);
+
+    // Monitor Chassis
+    const monitorChassis = new THREE.Mesh(
+      new THREE.BoxGeometry(4.9, 3.15, 0.16),
+      new THREE.MeshStandardMaterial({ color: 0x0c1021, metalness: 0.92, roughness: 0.15 })
+    );
+    monitorChassis.position.set(0, 0.65, 0);
+    workstationGroup.add(monitorChassis);
+
+    // Monitor Outer Bezel Rim
+    const bezelRim = new THREE.Mesh(
+      new THREE.BoxGeometry(4.98, 3.23, 0.12),
+      new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.88, roughness: 0.25 })
+    );
+    bezelRim.position.set(0, 0.65, -0.01);
+    workstationGroup.add(bezelRim);
+
+    // Active Screen Texture
+    const screenData = createLivingScreenTexture();
+    if (screenData) {
+      const screenMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(4.74, 2.98),
+        new THREE.MeshBasicMaterial({ map: screenData.texture, toneMapped: false })
+      );
+      screenMesh.position.set(0, 0.65, 0.088);
+      workstationGroup.add(screenMesh);
+    }
+
+    // Glass Specular Sheen
+    const sheen = new THREE.Mesh(
+      new THREE.PlaneGeometry(4.74, 2.98),
+      new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.06 })
+    );
+    sheen.position.set(0, 0.65, 0.092);
+    workstationGroup.add(sheen);
+
+    // Accent Glow
+    const glow = new THREE.Mesh(
+      new THREE.PlaneGeometry(4.8, 3.04),
+      new THREE.MeshBasicMaterial({ color: 0x0284c7, transparent: true, opacity: 0.25 })
+    );
+    glow.position.set(0, 0.65, 0.082);
+    workstationGroup.add(glow);
+
+    // Stand Neck
+    const standNeck = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.15, 0.18, 1.35, 24),
+      new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.95, roughness: 0.1 })
+    );
+    standNeck.position.set(0, -1.0, -0.18);
+    standNeck.rotation.x = 0.12;
+    workstationGroup.add(standNeck);
+
+    // Baseplate Chassis
+    const baseplate = new THREE.Mesh(
+      new THREE.BoxGeometry(1.9, 0.06, 1.4),
+      new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.2 })
+    );
+    baseplate.position.set(0, -1.72, 0);
+    workstationGroup.add(baseplate);
+
+    // Baseplate Halo Ring
+    const halo = new THREE.Mesh(
+      new THREE.TorusGeometry(0.65, 0.02, 16, 48),
+      new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+    );
+    halo.position.set(0, -1.68, 0);
+    halo.rotation.x = -Math.PI / 2;
+    workstationGroup.add(halo);
+
+    // Mechanical Keyboard Group
+    const kbGroup = new THREE.Group();
+    kbGroup.position.set(0, -1.68, 1.15);
+    kbGroup.rotation.x = -0.12;
+    workstationGroup.add(kbGroup);
+
+    const kbChassis = new THREE.Mesh(
+      new THREE.BoxGeometry(3.3, 0.14, 1.25),
+      new THREE.MeshStandardMaterial({ color: 0x070b16, metalness: 0.8, roughness: 0.25 })
+    );
+    kbGroup.add(kbChassis);
+
+    const kbGlow = new THREE.Mesh(
+      new THREE.BoxGeometry(3.1, 0.05, 1.08),
+      new THREE.MeshStandardMaterial({
+        color: 0x0284c7,
+        emissive: 0x0ea5e9,
+        emissiveIntensity: 0.8,
+        roughness: 0.15,
+      })
+    );
+    kbGlow.position.y = 0.08;
+    kbGroup.add(kbGlow);
+
+    [-0.36, -0.18, 0, 0.18, 0.36].forEach((rowZ) => {
+      const row = new THREE.Mesh(
+        new THREE.BoxGeometry(2.98, 0.04, 0.12),
+        new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.7, roughness: 0.3 })
+      );
+      row.position.set(0, 0.11, rowZ);
+      kbGroup.add(row);
+    });
+
+    const keyLight = new THREE.PointLight(0x38bdf8, 3, 1.8, 2);
+    keyLight.position.set(0, 0.35, 0);
+    kbGroup.add(keyLight);
+
+    // Trackpad
+    const trackpad = new THREE.Mesh(
+      new THREE.BoxGeometry(0.75, 0.04, 0.95),
+      new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.1 })
+    );
+    trackpad.position.set(1.98, -1.68, 1.1);
+    trackpad.rotation.x = -0.12;
+    workstationGroup.add(trackpad);
+
+    const trackpadGlow = new THREE.Mesh(
+      new THREE.BoxGeometry(0.77, 0.02, 0.97),
+      new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.3 })
+    );
+    trackpadGlow.position.set(1.98, -1.65, 1.1);
+    trackpadGlow.rotation.x = -0.12;
+    workstationGroup.add(trackpadGlow);
+
+    // Floating CS Objects
+    const csGroup = new THREE.Group();
+    workstationGroup.add(csGroup);
+
+    const cs1 = new THREE.Mesh(
+      new THREE.OctahedronGeometry(0.32, 0),
+      new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x38bdf8, emissiveIntensity: 1.4, metalness: 0.8, roughness: 0.1 })
+    );
+    cs1.position.set(-3.3, 1.8, 0.9);
+    csGroup.add(cs1);
+
+    const cs2 = new THREE.Mesh(
+      new THREE.TorusGeometry(0.26, 0.08, 16, 32),
+      new THREE.MeshStandardMaterial({ color: 0x818cf8, emissive: 0x818cf8, emissiveIntensity: 1.2, metalness: 0.85, roughness: 0.1 })
+    );
+    cs2.position.set(3.4, 1.4, -0.6);
+    csGroup.add(cs2);
+
+    const cs3 = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.28, 0),
+      new THREE.MeshStandardMaterial({ color: 0x34d399, emissive: 0x34d399, emissiveIntensity: 1.5, metalness: 0.9, roughness: 0.1 })
+    );
+    cs3.position.set(-3.0, -1.2, -0.5);
+    csGroup.add(cs3);
+
+    const cs4 = new THREE.Mesh(
+      new THREE.TorusGeometry(0.3, 0.04, 16, 32),
+      new THREE.MeshStandardMaterial({ color: 0xf43f5e, emissive: 0xf43f5e, emissiveIntensity: 1.8, metalness: 0.9, roughness: 0.1 })
+    );
+    cs4.position.set(3.2, -1.3, 0.8);
+    csGroup.add(cs4);
+
+    // Mouse pointer listener
+    let pointerX = 0;
+    let pointerY = 0;
+    const onPointerMove = (e: MouseEvent) => {
+      const rect = container.getBoundingClientRect();
+      pointerX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      pointerY = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+    };
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+
+    // Resize Observer
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        width = entry.contentRect.width;
+        height = entry.contentRect.height;
+        if (width > 0 && height > 0) {
+          camera.aspect = width / height;
+          camera.updateProjectionMatrix();
+          renderer.setSize(width, height, false);
+        }
+      }
+    });
+    resizeObserver.observe(container);
+
+    // Animation Loop
+    let animId: number;
+    let clock = new THREE.Clock();
+
+    const animate = () => {
+      animId = requestAnimationFrame(animate);
+      const elapsed = clock.getElapsedTime();
+
+      if (screenData) screenData.update();
+
+      const targetRotY = pointerX * 0.32;
+      const targetRotX = -pointerY * 0.22;
+      workstationGroup.rotation.y = THREE.MathUtils.lerp(workstationGroup.rotation.y, targetRotY, 0.06);
+      workstationGroup.rotation.x = THREE.MathUtils.lerp(workstationGroup.rotation.x, targetRotX, 0.06);
+      workstationGroup.position.y = Math.sin(elapsed * 1.6) * 0.08;
+
+      halo.rotation.z += 0.015;
+      keyLight.intensity = 3 + Math.sin(elapsed * 3) * 1.2;
+
+      cs1.rotation.y += 0.02;
+      cs2.rotation.x += 0.025;
+      cs3.rotation.z += 0.018;
+      cs4.rotation.x += 0.02;
+
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('pointermove', onPointerMove);
+      resizeObserver.disconnect();
+      screenData?.dispose();
+      renderer.dispose();
+    };
+  }, [mounted]);
 
   if (!mounted) {
     return (
@@ -640,18 +588,8 @@ export default function Computer3D() {
   }
 
   return (
-    <div className="w-full h-[470px] sm:h-[530px] lg:h-[590px] relative">
-      <Canvas
-        camera={{ position: [0, 0, 6.2], fov: 46 }}
-        dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-      >
-        <ambientLight intensity={0.75} />
-        <directionalLight position={[4, 6, 5]} intensity={1.6} color="#ffffff" />
-        <directionalLight position={[-4, -2, -2]} intensity={1.3} color="#0284c7" />
-
-        <ComputerMesh />
-      </Canvas>
+    <div ref={containerRef} className="w-full h-[470px] sm:h-[530px] lg:h-[590px] relative">
+      <canvas ref={canvasRef} className="w-full h-full block" />
     </div>
   );
 }

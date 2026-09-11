@@ -109,8 +109,8 @@ export default function Footer() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
             </span>
-            <span className="text-slate-200 font-bold tracking-wider uppercase">
-              SYSTEM STATUS: ALL ARCHITECTURES OPERATIONAL
+            <span className="text-slate-200 font-bold tracking-wide">
+              System Status: All Architectures Operational
             </span>
           </div>
 
@@ -200,31 +200,31 @@ export default function Footer() {
             <ul className="space-y-2.5 text-xs font-mono">
               <li>
                 <a href="#hero" onMouseEnter={AudioEngine.playClick} className="hover:text-cyan-400 transition-colors flex items-center gap-2">
-                  <span className="text-slate-600">01</span>
+                  <span className="text-slate-400">01</span>
                   <span>Architecture Runtime Stage</span>
                 </a>
               </li>
               <li>
                 <a href="#about" onMouseEnter={AudioEngine.playClick} className="hover:text-cyan-400 transition-colors flex items-center gap-2">
-                  <span className="text-slate-600">02</span>
+                  <span className="text-slate-400">02</span>
                   <span>Engineering Philosophy</span>
                 </a>
               </li>
               <li>
                 <a href="#skills" onMouseEnter={AudioEngine.playClick} className="hover:text-cyan-400 transition-colors flex items-center gap-2">
-                  <span className="text-slate-600">03</span>
+                  <span className="text-slate-400">03</span>
                   <span>System Layers &amp; Tech Arsenal</span>
                 </a>
               </li>
               <li>
                 <a href="#projects" onMouseEnter={AudioEngine.playClick} className="hover:text-cyan-400 transition-colors flex items-center gap-2">
-                  <span className="text-slate-600">04</span>
+                  <span className="text-slate-400">04</span>
                   <span>3D Curved Builds Fleet</span>
                 </a>
               </li>
               <li>
                 <a href="#contact" onMouseEnter={AudioEngine.playClick} className="hover:text-cyan-400 transition-colors flex items-center gap-2">
-                  <span className="text-slate-600">05</span>
+                  <span className="text-slate-400">05</span>
                   <span>Signal Transmission Deck</span>
                 </a>
               </li>
@@ -237,22 +237,22 @@ export default function Footer() {
               <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-slate-400 mb-4">
                 {'// SYSTEM TELEMETRY'}
               </h4>
-              <div className="space-y-2 text-xs font-mono text-slate-400">
+              <div className="space-y-2 text-xs font-mono text-slate-300">
                 <div className="flex justify-between py-1 border-b border-slate-900">
-                  <span className="text-slate-500">Framework:</span>
-                  <span className="text-slate-300">Next.js 14 App Router</span>
+                  <span className="text-slate-400">Framework:</span>
+                  <span className="text-slate-200">Next.js 14 App Router</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-900">
-                  <span className="text-slate-500">Acceleration:</span>
-                  <span className="text-emerald-400">WebGL / Three.js</span>
+                  <span className="text-slate-400">Acceleration:</span>
+                  <span className="text-emerald-400 font-semibold">WebGL / Three.js</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-900">
-                  <span className="text-slate-500">DOM Nodes:</span>
-                  <span className="text-cyan-400">{domNodes || 380} elements</span>
+                  <span className="text-slate-400">DOM Nodes:</span>
+                  <span className="text-cyan-400 font-semibold">{domNodes || 380} elements</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-900">
-                  <span className="text-slate-500">Security:</span>
-                  <span className="text-slate-300">Postgres RLS Clean</span>
+                  <span className="text-slate-400">Security:</span>
+                  <span className="text-slate-200">Postgres RLS Clean</span>
                 </div>
               </div>
             </div>
@@ -278,14 +278,14 @@ export default function Footer() {
           className="pt-14 pb-10 text-center overflow-hidden relative cursor-default"
         >
           {/* Background subtle ticker tape */}
-          <div className="mb-4 text-[0.65rem] sm:text-xs font-mono tracking-widest text-slate-600 uppercase flex items-center justify-center gap-3">
-            <span>✦ SCALABLE DISTRIBUTED SYSTEMS</span>
+          <div className="mb-4 text-xs font-mono tracking-wider text-slate-400 flex flex-wrap items-center justify-center gap-3">
+            <span>✦ Scalable Distributed Systems</span>
             <span>·</span>
-            <span>60–120 FPS RUNTIME</span>
+            <span>60–120 FPS Runtime</span>
             <span>·</span>
-            <span>ROW-LEVEL SECURITY</span>
+            <span>Row-Level Security</span>
             <span>·</span>
-            <span>ULUBERIA NODE</span>
+            <span>Uluberia Node</span>
           </div>
 
           <motion.div
@@ -328,8 +328,8 @@ export default function Footer() {
               ))}
             </h2>
 
-            <div className="mt-4 text-[0.65rem] sm:text-xs font-mono tracking-widest text-slate-400 uppercase">
-              DISTRIBUTED SYSTEMS · FULL STACK ARCHITECTURE · CREATIVE COMPUTATION
+            <div className="mt-4 text-xs font-mono tracking-wider text-slate-300">
+              Distributed Systems · Full Stack Architecture · Creative Computation
             </div>
           </motion.div>
         </div>
@@ -337,13 +337,13 @@ export default function Footer() {
         {/* =========================================================================
             ROW 4: Copyright & Commit Hash Verification
            ========================================================================= */}
-        <div className="pt-6 border-t border-slate-900 flex flex-wrap items-center justify-between gap-4 text-[0.7rem] font-mono text-slate-400">
+        <div className="pt-6 border-t border-slate-900 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-slate-300">
           <div>
             © {new Date().getFullYear()} {personal.name}. All rights reserved.
           </div>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-            <span>SHA-256 VERIFIED BUILD · DEPLOYED AT EDGE</span>
+            <span>SHA-256 Verified Build · Deployed at Edge</span>
           </div>
         </div>
       </div>

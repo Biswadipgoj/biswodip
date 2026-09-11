@@ -28,31 +28,31 @@ const PROJECT_THEMES: Record<
     gradientStyle: 'linear-gradient(90deg, #22d3ee 0%, #67e8f9 50%, #34d399 100%)',
     accent: '#22d3ee',
     accentSoft: 'rgba(34, 211, 238, 0.3)',
-    category: 'ENTERPRISE ERP PLATFORM',
+    category: 'Enterprise ERP Platform',
   },
   TelePoint: {
     gradientStyle: 'linear-gradient(90deg, #818cf8 0%, #a78bfa 50%, #f472b6 100%)',
     accent: '#818cf8',
     accentSoft: 'rgba(129, 140, 248, 0.3)',
-    category: 'REAL-TIME WEBSOCKET HUB',
+    category: 'Real-Time WebSocket Hub',
   },
   Tripmate: {
     gradientStyle: 'linear-gradient(90deg, #f472b6 0%, #fb7185 50%, #fbbf24 100%)',
     accent: '#f472b6',
     accentSoft: 'rgba(244, 114, 182, 0.3)',
-    category: 'DYNAMIC TRAVEL ENGINE',
+    category: 'Dynamic Travel Engine',
   },
   NanoLink: {
     gradientStyle: 'linear-gradient(90deg, #34d399 0%, #2dd4bf 50%, #38bdf8 100%)',
     accent: '#34d399',
     accentSoft: 'rgba(52, 211, 153, 0.3)',
-    category: 'EDGE ANALYTICS SHORTENER',
+    category: 'Edge Analytics Shortener',
   },
   Nexora: {
     gradientStyle: 'linear-gradient(90deg, #fbbf24 0%, #f59e0b 50%, #fb7185 100%)',
     accent: '#fbbf24',
     accentSoft: 'rgba(251, 191, 36, 0.3)',
-    category: 'COLLABORATIVE WORKSPACE',
+    category: 'Collaborative Workspace',
   },
 };
 
@@ -224,8 +224,8 @@ export default function Projects() {
                 className="w-2.5 h-2.5 rounded-full animate-ping"
                 style={{ background: activeTheme.accent }}
               />
-              <span className="text-[0.68rem] sm:text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase">
-                03 / SELECTED BUILDS · EXPERIMENTAL 3D CURVED SLIDER
+              <span className="text-xs font-mono font-bold tracking-widest text-cyan-400">
+                03 / Selected Builds · 3D Spatial Deployments
               </span>
             </div>
             <h2 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight flex items-center gap-2 sm:gap-3">
@@ -323,7 +323,7 @@ export default function Projects() {
         >
           {/* Orbital Horizon Arc Line */}
           <div
-            className="pointer-events-none absolute w-[140%] h-[520px] rounded-[100%] border-t border-cyan-400/20 -top-8 left-1/2 -translate-x-1/2 -z-10 blur-[1px]"
+            className="pointer-events-none absolute w-[140%] h-[520px] rounded-full border-t border-cyan-400/20 -top-8 left-1/2 -translate-x-1/2 -z-10 blur-[1px]"
             style={{
               maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)',
             }}
@@ -398,8 +398,8 @@ export default function Projects() {
 
                     <div className="flex items-center gap-2">
                       {transform.isCenter && (
-                        <span className="px-2 py-0.5 rounded-full text-[0.65rem] sm:text-[0.68rem] font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-400/40 animate-pulse font-semibold">
-                          ● FOCAL ACTIVE
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-400/40 animate-pulse font-semibold">
+                          ● Focal Active
                         </span>
                       )}
                       <span className="text-xs font-mono font-bold text-slate-400">0{index + 1}</span>
@@ -414,15 +414,16 @@ export default function Projects() {
                         src={`/previews/${slug}.webp`}
                         alt={project.name}
                         fill
+                        priority={index === 0}
                         className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, 460px"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#030612]/90 via-transparent to-transparent pointer-events-none" />
 
                       {/* Live Indicator Pill on Preview */}
-                      <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md border border-white/20 text-[0.65rem] font-mono text-white flex items-center gap-1.5">
+                      <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-black/70 backdrop-blur-md border border-white/20 text-xs font-mono text-white flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        <span>LIVE DEPLOYMENT</span>
+                        <span>Live Deployment</span>
                       </div>
                     </div>
 
@@ -430,7 +431,7 @@ export default function Projects() {
                     <div className="md:col-span-5 flex flex-col justify-between h-full space-y-2.5 sm:space-y-3">
                       <div>
                         <div
-                          className="text-[0.68rem] font-mono uppercase tracking-widest font-bold mb-1"
+                          className="text-xs font-mono tracking-widest font-bold mb-1"
                           style={{ color: theme.accent }}
                         >
                           {theme.category}
@@ -467,7 +468,7 @@ export default function Projects() {
                         {stack.slice(0, 4).map((tech) => (
                           <span
                             key={tech}
-                            className="px-2.5 py-0.5 rounded-md bg-[#0c1328] border border-cyan-500/30 text-[0.68rem] font-mono text-cyan-200 font-medium shadow-sm"
+                            className="px-2.5 py-0.5 rounded-lg bg-[#0c1328] border border-cyan-500/30 text-xs font-mono text-cyan-200 font-medium shadow-sm"
                           >
                             {tech}
                           </span>
@@ -505,13 +506,13 @@ export default function Projects() {
                   {/* Card Footer Status */}
                   <div
                     style={{ backgroundColor: '#030612' }}
-                    className="px-4 sm:px-5 py-2.5 border-t border-slate-800 flex items-center justify-between text-[0.68rem] font-mono text-slate-300"
+                    className="px-4 sm:px-5 py-2.5 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300"
                   >
                     <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
-                      POSTGRES RLS · PROD VERIFIED
+                      Postgres RLS · Prod Verified
                     </span>
-                    <span className="text-slate-400 hidden sm:inline">100% INDEPENDENT BUILD</span>
+                    <span className="text-slate-300 hidden sm:inline">100% Independent Build</span>
                   </div>
                 </motion.div>
               );
@@ -522,18 +523,18 @@ export default function Projects() {
         {/* -------------------------------------------------------------------------
             BOTTOM ROW: Trajectory Telemetry & Scrub Bar
            ------------------------------------------------------------------------- */}
-        <div className="relative z-30 max-w-7xl mx-auto w-full pt-2 sm:pt-3 border-t border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-[0.7rem] sm:text-[0.72rem] font-mono text-slate-300">
+        <div className="relative z-30 max-w-7xl mx-auto w-full pt-2 sm:pt-3 border-t border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-300">
           <div className="flex items-center gap-3">
-            <span className="text-cyan-400 font-bold">● 05 FLAGSHIP SYSTEMS IN 3D ORBIT</span>
-            <span className="hidden sm:inline text-slate-600">|</span>
-            <span className="hidden sm:inline text-slate-400">
-              GPU ACCELERATED ELLIPTICAL PERSPECTIVE TRAJECTORY
+            <span className="text-cyan-400 font-bold">● 05 Flagship Systems in 3D Orbit</span>
+            <span className="hidden sm:inline text-slate-400">|</span>
+            <span className="hidden sm:inline text-slate-300">
+              GPU Accelerated 3D Perspective Trajectory
             </span>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-slate-400 hidden sm:inline">
-              SCROLL DOWN OR USE ARROWS (← →) TO NAVIGATE FLEET
+            <span className="text-slate-300 hidden sm:inline">
+              Scroll down or use arrows (← →) to navigate fleet
             </span>
             <span className="text-cyan-400 font-bold animate-bounce">↓</span>
           </div>

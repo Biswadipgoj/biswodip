@@ -210,15 +210,15 @@ function SoftwareArchitectureTelemetry({ activeLayer }: { activeLayer: number })
     <div className="w-full rounded-2xl bg-[#070c22]/90 border border-slate-700/80 p-3 sm:p-4 backdrop-blur-xl shadow-lg">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
-          <span className="text-cyan-400 font-mono text-xs font-bold">λ COMPUTER SCIENCE SOFTWARE OBJECTS</span>
-          <span className="text-slate-600">·</span>
-          <span className="text-[0.68rem] font-mono text-slate-400 uppercase">
+          <span className="text-cyan-400 font-mono text-xs font-bold">λ Computer Science Software Objects</span>
+          <span className="text-slate-400">·</span>
+          <span className="text-xs font-mono text-slate-300">
             Abstract Syntax Tree (AST) &amp; Reactive Event Loop
           </span>
         </div>
-        <div className="flex items-center gap-2 text-[0.68rem] font-mono text-emerald-400">
+        <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span>V8 MICROTASK QUEUE: 0.12ms TICK</span>
+          <span>V8 Microtask Queue: 0.12ms Tick</span>
         </div>
       </div>
 
@@ -242,11 +242,11 @@ function SoftwareArchitectureTelemetry({ activeLayer }: { activeLayer: number })
                   : 'bg-slate-900/50 border-slate-800 hover:border-slate-700 text-slate-400'
               }`}
             >
-              <div className="flex items-center justify-between text-[0.65rem] font-mono mb-1">
+              <div className="flex items-center justify-between text-xs font-mono mb-1">
                 <span style={{ color: node.color }} className="font-bold">
                   {node.type}
                 </span>
-                <span className="text-slate-500">O(1)</span>
+                <span className="text-slate-400">O(1)</span>
               </div>
               <div className="text-xs font-mono font-semibold text-slate-200 line-clamp-1">
                 {node.label}
@@ -487,7 +487,7 @@ function SpatialSkillCard({
         <div style={{ transform: 'translateZ(20px)' }} className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <span
-              className="text-[0.68rem] font-mono font-bold tracking-wider px-2 py-0.5 rounded-md border"
+              className="text-xs font-mono font-bold tracking-wider px-2 py-0.5 rounded-lg border"
               style={{
                 color,
                 borderColor: `${color}55`,
@@ -523,7 +523,7 @@ function SpatialSkillCard({
         {/* Card Body */}
         <div style={{ transform: 'translateZ(24px)' }} className="my-1">
           <div className="flex items-center justify-between gap-1 mb-0.5">
-            <h4
+            <h3
               style={{
                 background: `linear-gradient(90deg, #ffffff 0%, ${color} 70%, #67e8f9 100%)`,
                 WebkitBackgroundClip: 'text',
@@ -533,10 +533,10 @@ function SpatialSkillCard({
               className="font-sans font-black text-sm sm:text-base tracking-tight"
             >
               {craft.name}
-            </h4>
+            </h3>
             <span
               style={{ color, borderColor: `${color}40`, background: `${color}15` }}
-              className="text-[0.62rem] font-mono font-bold px-1.5 py-0.5 rounded border shrink-0"
+              className="text-xs font-mono font-bold px-1.5 py-0.5 rounded border shrink-0"
             >
               {spec.complexity.split(' ')[0]}
             </span>
@@ -552,10 +552,10 @@ function SpatialSkillCard({
         {/* Card Footer: Algorithmic Complexity & Live Metric */}
         <div
           style={{ transform: 'translateZ(16px)' }}
-          className="mt-2 pt-2 border-t border-slate-700/60 flex items-center justify-between text-[0.65rem] font-mono"
+          className="mt-2 pt-2 border-t border-slate-700/60 flex items-center justify-between text-xs font-mono"
         >
           <span
-            className="px-2 py-0.5 rounded-md bg-slate-900/90 border border-slate-700/80 text-cyan-300 font-mono text-[0.62rem] truncate max-w-[150px] flex items-center gap-1 shadow-inner"
+            className="px-2 py-0.5 rounded-lg bg-slate-900/90 border border-slate-700/80 text-cyan-300 font-mono text-xs truncate max-w-[160px] flex items-center gap-1 shadow-inner"
             title={spec.metric}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
@@ -688,8 +688,8 @@ export default function Skills() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="w-2.5 h-2.5 rounded-full animate-ping" style={{ background: activeTheme.accent }} />
-              <span className="text-[0.68rem] sm:text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase">
-                02 / ARCHITECTURAL SYSTEM LAYERS · DISTRIBUTED CS TOPOLOGY
+              <span className="text-xs font-mono font-bold tracking-widest text-cyan-400">
+                02 / Architectural System Layers · Distributed CS Topology
               </span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white flex items-center gap-2 sm:gap-3">
@@ -796,7 +796,7 @@ export default function Skills() {
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span
-                      className="text-xs font-mono font-bold px-2 py-0.5 rounded-md"
+                      className="text-xs font-mono font-bold px-2 py-0.5 rounded-lg"
                       style={{
                         background: isSelected ? `${theme.accent}25` : 'rgba(255,255,255,0.06)',
                         color: isSelected ? theme.accent : '#94a3b8',
@@ -822,7 +822,7 @@ export default function Skills() {
                     <div className="text-xs sm:text-sm font-bold tracking-tight text-white line-clamp-1">
                       {theme.shortName}
                     </div>
-                    <div className="text-[0.65rem] font-mono text-slate-400 mt-0.5 hidden sm:block">
+                    <div className="text-xs font-mono text-slate-300 mt-0.5 hidden sm:block">
                       {theme.nodeSpec}
                     </div>
                   </div>
@@ -879,17 +879,17 @@ export default function Skills() {
         {/* -------------------------------------------------------------------------
             BOTTOM ROW: Live Telemetry & Fluid Continuation
            ------------------------------------------------------------------------- */}
-        <div className="pt-4 border-t border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-[0.7rem] sm:text-[0.72rem] font-mono text-slate-300">
+        <div className="pt-4 border-t border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-300">
           <div className="flex items-center gap-3">
-            <span className="text-emerald-400 font-bold">● 48 RECRUITER-VERIFIED CSE MODULES</span>
-            <span className="hidden sm:inline text-slate-600">|</span>
-            <span className="hidden sm:inline text-slate-400">
-              LAYER {active + 1} OF 4 · {activeOrbit.ring.toUpperCase()} · CLICK ANY CARD TO INSPECT ARCHITECTURE
+            <span className="text-emerald-400 font-bold">● 48 Recruiter-Verified CSE Modules</span>
+            <span className="hidden sm:inline text-slate-400">|</span>
+            <span className="hidden sm:inline text-slate-300">
+              Layer {active + 1} of 4 · {activeOrbit.ring} · Click any card to inspect architecture
             </span>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-slate-400 hidden sm:inline">CONTINUE SCROLLING DOWN FOR PROCESS &amp; WORK</span>
+            <span className="text-slate-300 hidden sm:inline">Continue scrolling down for process &amp; work</span>
             <span className="text-cyan-400 font-bold animate-bounce">↓</span>
           </div>
         </div>

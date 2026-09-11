@@ -142,9 +142,9 @@ export default function TerminalDispatch() {
           type: 'output',
           content: (
             <div className="space-y-1 text-xs font-mono text-slate-300">
-              <p className="text-cyan-400 font-bold">PING blr-edge-gateway (12.9716° N, 77.5946° E): 56 data bytes</p>
-              <p className="text-slate-400">64 bytes from blr-edge-01: icmp_seq=1 ttl=58 time={duration}ms</p>
-              <p className="text-slate-400">64 bytes from blr-edge-01: icmp_seq=2 ttl=58 time={Math.max(9, duration - 2)}ms</p>
+              <p className="text-cyan-400 font-bold">PING uluberia-edge-gateway (22.4735° N, 88.1077° E): 56 data bytes</p>
+              <p className="text-slate-400">64 bytes from uluberia-edge-01: icmp_seq=1 ttl=58 time={duration}ms</p>
+              <p className="text-slate-400">64 bytes from uluberia-edge-01: icmp_seq=2 ttl=58 time={Math.max(9, duration - 2)}ms</p>
               <p className="text-emerald-400 font-semibold mt-1">
                 --- 2 packets transmitted, 2 received, 0% packet loss, avg = {duration}ms ---
               </p>
@@ -310,21 +310,21 @@ export default function TerminalDispatch() {
             <span className="w-3 h-3 rounded-full bg-rose-500/90 inline-block border border-rose-600 shadow-inner" />
             <span className="w-3 h-3 rounded-full bg-amber-500/90 inline-block border border-amber-600 shadow-inner" />
             <span className="w-3 h-3 rounded-full bg-emerald-500/90 inline-block border border-emerald-600 shadow-inner" />
-            <span className="ml-3 text-xs font-mono font-medium text-slate-400 flex items-center gap-1.5">
-              <span className="text-slate-600">terminal@</span>
+            <span className="ml-3 text-xs font-mono font-medium text-slate-300 flex items-center gap-1.5">
+              <span className="text-slate-400">terminal@</span>
               <span className="text-cyan-400">biswodip-kernel</span>
-              <span className="text-slate-600">:</span>
+              <span className="text-slate-400">:</span>
               <span className="text-purple-400">~/dispatch</span>
             </span>
           </div>
 
           {/* Right side telemetry */}
-          <div className="flex items-center gap-3 text-[0.7rem] font-mono text-slate-400">
+          <div className="flex items-center gap-3 text-xs font-mono text-slate-300">
             <div className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>TLS 1.3 ACTIVE</span>
+              <span>TLS 1.3 Active</span>
             </div>
-            <div className="flex items-center gap-1 text-cyan-400">
+            <div className="flex items-center gap-1 text-cyan-400 font-semibold">
               <span>⚡</span>
               <span>{pingLatency}ms LATENCY</span>
             </div>
@@ -342,7 +342,7 @@ export default function TerminalDispatch() {
             <div key={line.id} className="leading-relaxed">
               {line.type === 'input' ? (
                 <div className="flex items-center gap-2 text-cyan-300 text-xs font-bold">
-                  <span className="text-slate-500 select-none">➜</span>
+                  <span className="text-slate-400 select-none">➜</span>
                   <span>{line.content}</span>
                 </div>
               ) : (
@@ -364,7 +364,7 @@ export default function TerminalDispatch() {
                 AudioEngine.playKey();
               }}
               placeholder="Type 'help', 'status', 'ping', 'sudo hire'..."
-              className="flex-1 bg-transparent border-none outline-none text-white font-mono text-xs placeholder:text-slate-600 focus:ring-0 p-0"
+              className="flex-1 bg-transparent border-none outline-none text-white font-mono text-xs placeholder:text-slate-400 focus:ring-0 p-0"
               autoComplete="off"
               spellCheck="false"
             />
@@ -374,7 +374,7 @@ export default function TerminalDispatch() {
         {/* Quick Protocol Action Chips */}
         <div className="px-4 py-3 bg-slate-900/60 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[0.7rem] font-mono text-slate-500 uppercase tracking-wider mr-1">
+            <span className="text-xs font-mono text-slate-400 tracking-wider mr-1">
               Protocols:
             </span>
             {PRESET_COMMANDS.map((item) => (
@@ -382,7 +382,7 @@ export default function TerminalDispatch() {
                 key={item.cmd}
                 type="button"
                 onClick={() => executeCommand(item.cmd)}
-                className="px-3 py-1.5 min-h-[36px] rounded-md bg-slate-800/90 hover:bg-cyan-950/60 border border-slate-700 hover:border-cyan-500/50 text-[0.72rem] font-mono text-slate-300 hover:text-cyan-300 transition-all duration-150 inline-flex items-center gap-1 shadow-sm"
+                className="px-3 py-1.5 min-h-[36px] rounded-lg bg-slate-800/90 hover:bg-cyan-950/60 border border-slate-700 hover:border-cyan-500/50 text-xs font-mono text-slate-200 hover:text-cyan-300 transition-all duration-150 inline-flex items-center gap-1 shadow-sm"
               >
                 <span className="text-cyan-400 font-bold">$</span>
                 <span>{item.label}</span>
@@ -390,7 +390,7 @@ export default function TerminalDispatch() {
             ))}
           </div>
 
-          <div className="text-[0.68rem] font-mono text-slate-500 hidden md:block">
+          <div className="text-xs font-mono text-slate-400 hidden md:block">
             <span>Press Enter ↵ to dispatch</span>
           </div>
         </div>

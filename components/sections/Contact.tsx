@@ -128,7 +128,7 @@ export default function Contact() {
                       <span className="block text-xs font-mono font-bold text-slate-800 dark:text-slate-200">
                         ULUBERIA NODE · 22.4735° N, 88.1077° E
                       </span>
-                      <span className="block text-[0.68rem] font-mono text-slate-500">
+                      <span className="block text-xs font-mono text-slate-400">
                         WEST BENGAL, INDIA · {solarStatus.icon} {solarStatus.text}
                       </span>
                     </div>
@@ -139,14 +139,14 @@ export default function Contact() {
                   </div>
                 </div>
 
-                <div className="pt-3 grid grid-cols-2 gap-2 text-[0.7rem] font-mono text-slate-600 dark:text-slate-400">
+                <div className="pt-3 grid grid-cols-2 gap-2 text-xs font-mono text-slate-300">
                   <div className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    <span>CARRIER: 99.99% ONLINE</span>
+                    <span>Carrier: 99.99% Online</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-cyan-500">⚡</span>
-                    <span>TURNAROUND: &lt; 4 HOURS</span>
+                    <span className="text-cyan-400">⚡</span>
+                    <span>Turnaround: &lt; 4 Hours</span>
                   </div>
                 </div>
               </div>
