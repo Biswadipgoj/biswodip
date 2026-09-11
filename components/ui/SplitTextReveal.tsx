@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView } from 'motion/react';
 
 interface SplitTextRevealProps {
   text: string;
@@ -30,7 +30,7 @@ export default function SplitTextReveal({ text, className = '', delay = 0 }: Spl
       y: 0,
       rotateX: 0,
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         damping: 12,
         stiffness: 100,
       },
@@ -40,7 +40,7 @@ export default function SplitTextReveal({ text, className = '', delay = 0 }: Spl
       y: 20,
       rotateX: -90,
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         damping: 12,
         stiffness: 100,
       },

@@ -7,15 +7,10 @@ import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import * as THREE from 'three';
 
 /* ------------------------------------------------------------------ */
-/* PERFORMANCE-FIRST 3D world.                                         */
-/* Key changes vs. previous version:                                   */
-/*  - No MeshTransmissionMaterial (raymarching = GPU killer)           */
-/*  - No Float on individual small meshes — only on primary showpiece  */
-/*  - Data particles reduced and batched                               */
-/*  - Server rack LEDs removed (too many draw calls)                   */
-/*  - DataPacket meshes replaced with a single shader-animated mesh    */
-/*  - EffectComposer only on high tier, much lighter bloom params      */
-/*  - DPR capped at 1.4                                                */
+/* AUTHENTIC COMPUTER SCIENCE 3D SCROLLING WORLD                      */
+/* Replaces random geometric cubes/crystals with recognizable CS      */
+/* systems: Silicon CPU die, Binary Tree/DAG, Memory Stack/Heap,     */
+/* Distributed Mesh, Git Commit DAG, and Cloud Ingress Gateway.        */
 /* ------------------------------------------------------------------ */
 
 type Tier = 'low' | 'high';
@@ -34,16 +29,6 @@ const ZONE_GAP = 22;
 const ZONES = 6;
 const TRAVEL = ZONE_GAP * (ZONES - 1);
 
-const ZONE_TINTS = [
-  new THREE.Color('#0d1117'),
-  new THREE.Color('#111827'),
-  new THREE.Color('#0f172a'),
-  new THREE.Color('#0c1118'),
-  new THREE.Color('#150d2a'),
-  new THREE.Color('#0a1628'),
-];
-
-/* Shared lerp factor — lower = smoother but slightly laggier */
 const LERP_CAM = 0.055;
 const LERP_PTR = 0.035;
 
@@ -68,58 +53,33 @@ function useScrollProgress() {
 /* ---- Camera ---- */
 function FlightCamera({ progress }: { progress: React.MutableRefObject<number> }) {
   const { camera } = useThree();
-  
-  // Cinematic initialization state
   const isReady = useRef(false);
-  const startZ = useRef(40); // Start far away
-  
+  const startZ = useRef(40);
+
   useEffect(() => {
-    // Small delay before warp drive kicks in
     setTimeout(() => { isReady.current = true; }, 300);
   }, []);
 
   useFrame((state, delta) => {
     const p = progress.current;
-    
-    // Warp drive entry sequence
     if (isReady.current && startZ.current > 8) {
       startZ.current = THREE.MathUtils.lerp(startZ.current, 8, delta * 4.5);
     }
-    
     const targetZ = startZ.current - p * TRAVEL;
     camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, LERP_CAM);
-
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, state.pointer.x * 1.2, LERP_PTR);
     camera.position.y = THREE.MathUtils.lerp(
       camera.position.y,
       state.pointer.y * 0.7 + Math.sin(p * Math.PI * 2) * 0.5,
-      LERP_PTR,
+      LERP_PTR
     );
     camera.lookAt(0, 0, camera.position.z - 12);
   });
   return null;
 }
 
-/* ---- Atmosphere ---- */
-function Atmosphere({ progress }: { progress: React.MutableRefObject<number> }) {
-  const { scene } = useThree();
-  const bg = useMemo(() => ZONE_TINTS[0].clone(), []);
-  useEffect(() => {
-    scene.background = bg;
-    scene.fog = new THREE.Fog(bg, 20, 55);
-    return () => { scene.background = null; scene.fog = null; };
-  }, [scene, bg]);
-  useFrame(() => {
-    const p = progress.current * (ZONE_TINTS.length - 1);
-    const i = Math.min(Math.floor(p), ZONE_TINTS.length - 2);
-    bg.copy(ZONE_TINTS[i]).lerp(ZONE_TINTS[i + 1], p - i);
-    if (scene.fog) (scene.fog as THREE.Fog).color.copy(bg);
-  });
-  return null;
-}
-
-/* ---- Data particles — one draw call, point sprites ---- */
-function DataParticles({ count }: { count: number }) {
+/* ---- Binary Data Packet Particles ---- */
+function BinaryDataStream({ count }: { count: number }) {
   const ref = useRef<THREE.Points>(null);
   const { positions, colors } = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -128,14 +88,13 @@ function DataParticles({ count }: { count: number }) {
       new THREE.Color('#22d3ee'),
       new THREE.Color('#3b82f6'),
       new THREE.Color('#8b5cf6'),
-      new THREE.Color('#ec4899'),
       new THREE.Color('#34d399'),
-      new THREE.Color('#2496ed'),
+      new THREE.Color('#fbbf24'),
     ];
     for (let i = 0; i < count; i++) {
       const a = Math.random() * Math.PI * 2;
-      const r = 5 + Math.random() * 10;
-      positions[i * 3]     = Math.cos(a) * r;
+      const r = 4 + Math.random() * 9;
+      positions[i * 3] = Math.cos(a) * r;
       positions[i * 3 + 1] = Math.sin(a) * r * 0.65;
       positions[i * 3 + 2] = 14 - Math.random() * (TRAVEL + 40);
       const c = palette[Math.floor(Math.random() * palette.length)];
@@ -144,20 +103,19 @@ function DataParticles({ count }: { count: number }) {
     return { positions, colors };
   }, [count]);
 
-  /* Very slow rotation — almost free on GPU */
   useFrame((_, delta) => {
     if (!ref.current) return;
-    ref.current.rotation.z += Math.min(delta, 0.05) * 0.006;
+    ref.current.rotation.z += Math.min(delta, 0.05) * 0.008;
   });
 
   return (
     <points ref={ref}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-color"    args={[colors, 3]} />
+        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.05}
+        size={0.055}
         vertexColors
         transparent
         opacity={0.85}
@@ -169,328 +127,466 @@ function DataParticles({ count }: { count: number }) {
   );
 }
 
-/* ---- Nebulae — sprite glow clouds, 1 draw call each ---- */
-function Nebulae() {
-  const tex = useMemo(() => {
-    const c = document.createElement('canvas');
-    c.width = c.height = 64; // smaller = faster
-    const ctx = c.getContext('2d')!;
-    const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    g.addColorStop(0, 'rgba(255,255,255,0.55)');
-    g.addColorStop(0.4, 'rgba(255,255,255,0.18)');
-    g.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, 64, 64);
-    const t = new THREE.CanvasTexture(c);
-    t.colorSpace = THREE.SRGBColorSpace;
-    return t;
-  }, []);
-
-  const clouds = useMemo(() => [
-    { pos: [-12, 4,  -6]   as const, s: 13, color: '#2496ed', o: 0.15 },
-    { pos: [ 13, -4, -22]  as const, s: 12, color: '#8b5cf6', o: 0.14 },
-    { pos: [-13, -3, -44]  as const, s: 13, color: '#22d3ee', o: 0.12 },
-    { pos: [ 12,  5, -66]  as const, s: 12, color: '#34d399', o: 0.13 },
-    { pos: [-12,  4, -88]  as const, s: 13, color: '#ec4899', o: 0.12 },
-  ], []);
-
-  return (
-    <>
-      {clouds.map((cl, i) => (
-        <sprite key={i} position={[...cl.pos]} scale={[cl.s, cl.s, 1]}>
-          <spriteMaterial map={tex} color={cl.color} transparent opacity={cl.o}
-            depthWrite={false} blending={THREE.AdditiveBlending} />
-        </sprite>
-      ))}
-    </>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* ZONE 0 — Hero: single showpiece crystal + small orbiting cubes     */
-/* ------------------------------------------------------------------ */
-function HeroCrystal() {
-  const ref = useRef<THREE.Mesh>(null);
-  useFrame((state, delta) => {
-    if (!ref.current) return;
-    ref.current.rotation.y += Math.min(delta, 0.05) * 0.22;
-    ref.current.rotation.x = THREE.MathUtils.lerp(ref.current.rotation.x, state.pointer.y * 0.35, 0.04);
-  });
-  return (
-    /* Single Float — each Float is one RAF, so keep to 1 per zone */
-    <Float speed={1.2} rotationIntensity={0.4} floatIntensity={0.9}>
-      <mesh ref={ref}>
-        <octahedronGeometry args={[1.8, 0]} />
-        <meshStandardMaterial
-          color="#38bdf8"
-          metalness={0.75}
-          roughness={0.1}
-          emissive="#2563eb"
-          emissiveIntensity={0.4}
-          flatShading
-        />
-      </mesh>
-    </Float>
-  );
-}
-
-/* Instanced cubes — 1 draw call for all 5 satellites */
-function HeroSatellites() {
-  const meshRef = useRef<THREE.InstancedMesh>(null);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-  const configs = useMemo(() => [
-    { pos: [ 3.6,  1.6, -0.5], color: '#2496ed', rotSpeed: 0.8 },
-    { pos: [-3.8, -1.4, -1.0], color: '#34d399', rotSpeed: 0.6 },
-    { pos: [ 2.6, -2.2,  0.8], color: '#fbbf24', rotSpeed: 1.0 },
-    { pos: [-2.8,  2.0,  0.6], color: '#8b5cf6', rotSpeed: 0.7 },
-    { pos: [ 4.8, -0.8, -2.0], color: '#f472b6', rotSpeed: 0.9 },
-  ], []);
-  const rotations = useRef(configs.map(() => ({ x: 0, y: 0, z: 0 })));
-
-  useEffect(() => {
-    if (!meshRef.current) return;
-    const color = new THREE.Color();
-    configs.forEach((cfg, i) => {
-      color.set(cfg.color);
-      meshRef.current!.setColorAt(i, color);
-    });
-    meshRef.current.instanceColor!.needsUpdate = true;
-  }, [configs]);
-
-  useFrame((_, delta) => {
-    if (!meshRef.current) return;
-    const d = Math.min(delta, 0.05);
-    configs.forEach((cfg, i) => {
-      const r = rotations.current[i];
-      r.x += d * cfg.rotSpeed * 0.4;
-      r.y += d * cfg.rotSpeed * 0.6;
-      const [x, y, z] = cfg.pos as [number, number, number];
-      dummy.position.set(x, y + Math.sin(r.x) * 0.3, z);
-      dummy.rotation.set(r.x, r.y, r.z);
-      dummy.scale.setScalar(0.45);
-      dummy.updateMatrix();
-      meshRef.current!.setMatrixAt(i, dummy.matrix);
-    });
-    meshRef.current.instanceMatrix.needsUpdate = true;
-  });
-
-  return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, configs.length]}>
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial metalness={0.8} roughness={0.2} />
-    </instancedMesh>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* ZONE 1 — About: dependency rings                                    */
-/* ------------------------------------------------------------------ */
-function DependencyGraph() {
-  const refs = [useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null)];
-  useFrame((_, delta) => {
-    const d = Math.min(delta, 0.05);
-    refs[0].current && (refs[0].current.rotation.x += d * 0.22);
-    refs[1].current && (refs[1].current.rotation.y -= d * 0.18);
-    refs[2].current && (refs[2].current.rotation.z += d * 0.14);
-  });
-  const cfg = [
-    { pos: [-3.6,  1.4,  0] as const, r: 1.5, tube: 0.065, color: '#3b82f6' },
-    { pos: [ 3.8, -1.2, -2] as const, r: 1.2, tube: 0.055, color: '#34d399' },
-    { pos: [ 0,    2.8, -1] as const, r: 0.9, tube: 0.045, color: '#8b5cf6' },
-  ];
-  return (
-    <group position={[0, 0, -ZONE_GAP]}>
-      {cfg.map((c, i) => (
-        <mesh key={i} ref={refs[i]} position={[...c.pos]}>
-          <torusGeometry args={[c.r, c.tube, 12, 60]} />
-          <meshStandardMaterial color={c.color} emissive={c.color} emissiveIntensity={0.55} metalness={0.8} roughness={0.2} />
-        </mesh>
-      ))}
-      <Float speed={1} rotationIntensity={0.2} floatIntensity={0.7}>
-        <mesh>
-          <icosahedronGeometry args={[0.5, 0]} />
-          <meshStandardMaterial color="#22d3ee" emissive="#22d3ee" emissiveIntensity={1.2} roughness={0.1} flatShading />
-        </mesh>
-      </Float>
-    </group>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* ZONE 2 — Stack: CI/CD pipeline — instanced cubes + single tube     */
-/* ------------------------------------------------------------------ */
-function PipelineZone() {
+/* ================================================================== */
+/* CS ZONE 0 (Hero): Abstract Syntax Tree (AST) & Software Runtime    */
+/* Pure Computer Science & Software Engineering Structure             */
+/* ================================================================== */
+function AbstractSyntaxTreeZone() {
   const groupRef = useRef<THREE.Group>(null);
-  const packetRef = useRef<THREE.Mesh>(null);
+  const pulseRef = useRef<THREE.Points>(null);
 
-  const stageColors = useMemo(() => [
-    '#34d399', '#22d3ee', '#8b5cf6', '#2496ed', '#fbbf24',
+  // AST Software Nodes: Program Root -> Function/Class -> Expression/Tokens
+  const astNodes = useMemo(() => [
+    { pos: [0, 1.8, 0] as [number, number, number], role: 'ROOT_PROGRAM', color: '#22d3ee', size: 0.45 },
+    { pos: [-2.0, 0.5, 0.2] as [number, number, number], role: 'ASYNC_FUNCTION', color: '#38bdf8', size: 0.38 },
+    { pos: [2.0, 0.5, -0.2] as [number, number, number], role: 'SYSTEM_ARCH', color: '#818cf8', size: 0.38 },
+    { pos: [-3.1, -0.9, 0.3] as [number, number, number], role: 'MAP_REDUCE', color: '#34d399', size: 0.32 },
+    { pos: [-1.0, -0.9, 0.1] as [number, number, number], role: 'POSTGRES_RLS', color: '#a78bfa', size: 0.32 },
+    { pos: [1.0, -0.9, -0.1] as [number, number, number], role: 'EVENT_STREAM', color: '#fbbf24', size: 0.32 },
+    { pos: [3.1, -0.9, -0.3] as [number, number, number], role: 'PAYLOAD_DISPATCH', color: '#f472b6', size: 0.32 },
   ], []);
 
-  /* Instanced stage boxes — 5 boxes, 1 draw call */
-  const stageRef = useRef<THREE.InstancedMesh>(null);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
+  // Directed syntax tree edges (parent-child compilation flow)
+  const astEdges = useMemo(() => [
+    [astNodes[0].pos, astNodes[1].pos],
+    [astNodes[0].pos, astNodes[2].pos],
+    [astNodes[1].pos, astNodes[3].pos],
+    [astNodes[1].pos, astNodes[4].pos],
+    [astNodes[2].pos, astNodes[5].pos],
+    [astNodes[2].pos, astNodes[6].pos],
+  ], [astNodes]);
 
-  useEffect(() => {
-    if (!stageRef.current) return;
-    const color = new THREE.Color();
-    stageColors.forEach((c, i) => {
-      color.set(c);
-      stageRef.current!.setColorAt(i, color);
-      dummy.position.set(-5 + i * 2.5, 0, 0);
-      dummy.rotation.set(0.2, 0.3 + i * 0.4, 0.1);
-      dummy.scale.setScalar(0.9);
-      dummy.updateMatrix();
-      stageRef.current!.setMatrixAt(i, dummy.matrix);
-    });
-    stageRef.current.instanceColor!.needsUpdate = true;
-    stageRef.current.instanceMatrix!.needsUpdate = true;
-  }, [stageColors, dummy]);
+  // Animated execution token particles traversing syntax tree
+  const particleCount = 48;
+  const particleData = useMemo(() => {
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    const cyan = new THREE.Color('#38bdf8');
+    const purple = new THREE.Color('#c084fc');
+    for (let i = 0; i < particleCount; i++) {
+      const c = i % 2 === 0 ? cyan : purple;
+      colors[i * 3] = c.r;
+      colors[i * 3 + 1] = c.g;
+      colors[i * 3 + 2] = c.b;
+    }
+    return { positions, colors };
+  }, []);
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
-    groupRef.current.rotation.y = THREE.MathUtils.lerp(
-      groupRef.current.rotation.y, state.pointer.x * 0.2, 0.025
+    const d = Math.min(delta, 0.05);
+    groupRef.current.rotation.y += d * 0.22;
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(
+      groupRef.current.rotation.x,
+      state.pointer.y * 0.3,
+      0.04
     );
-    /* Single packet sweeping along X axis */
-    if (packetRef.current) {
-      const t = (state.clock.elapsedTime * 0.5) % 1;
-      packetRef.current.position.x = -5 + t * 10;
-      packetRef.current.position.y = 0.15;
-      ;(packetRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity =
-        0.8 + Math.sin(t * Math.PI) * 1.2;
+
+    // Animate execution tokens flowing down syntax branches
+    if (pulseRef.current) {
+      const time = state.clock.getElapsedTime();
+      const posAttr = pulseRef.current.geometry.attributes.position as THREE.BufferAttribute;
+      const arr = posAttr.array as Float32Array;
+
+      astEdges.forEach((edge, edgeIdx) => {
+        const [start, end] = edge;
+        const particlesPerEdge = 8;
+        for (let p = 0; p < particlesPerEdge; p++) {
+          const idx = edgeIdx * particlesPerEdge + p;
+          const t = (time * 0.6 + p / particlesPerEdge) % 1;
+          arr[idx * 3] = THREE.MathUtils.lerp(start[0], end[0], t);
+          arr[idx * 3 + 1] = THREE.MathUtils.lerp(start[1], end[1], t);
+          arr[idx * 3 + 2] = THREE.MathUtils.lerp(start[2], end[2], t);
+        }
+      });
+      posAttr.needsUpdate = true;
     }
   });
 
   return (
-    <group position={[0, 0, -ZONE_GAP * 2]} ref={groupRef}>
-      <instancedMesh ref={stageRef} args={[undefined, undefined, stageColors.length]}>
-        <boxGeometry args={[0.9, 0.9, 0.9]} />
-        <meshStandardMaterial metalness={0.75} roughness={0.22} toneMapped={false} />
-      </instancedMesh>
+    <Float speed={1.2} rotationIntensity={0.3} floatIntensity={0.8}>
+      <group ref={groupRef} position={[0, 0, 0]}>
+        {/* Central Software Virtual Machine Runtime Kernel */}
+        <mesh position={[0, 0.3, 0]}>
+          <octahedronGeometry args={[1.1, 0]} />
+          <meshStandardMaterial
+            color="#0b1329"
+            emissive="#1d4ed8"
+            emissiveIntensity={1.2}
+            metalness={0.9}
+            roughness={0.2}
+            wireframe={false}
+          />
+        </mesh>
 
-      {/* One glowing packet flying across the pipeline */}
-      <mesh ref={packetRef} position={[-5, 0.15, 0]}>
-        <sphereGeometry args={[0.1, 8, 8]} />
-        <meshStandardMaterial color="#22d3ee" emissive="#22d3ee" emissiveIntensity={1.5} />
+        {/* Orbiting Lexer Token Stream Ring */}
+        <mesh position={[0, 0.3, 0]} rotation={[Math.PI / 3, 0, 0]}>
+          <torusGeometry args={[1.6, 0.03, 16, 64]} />
+          <meshStandardMaterial
+            color="#22d3ee"
+            emissive="#22d3ee"
+            emissiveIntensity={1.8}
+            metalness={0.8}
+            roughness={0.1}
+          />
+        </mesh>
+
+        {/* Secondary Software Thread Ring */}
+        <mesh position={[0, 0.3, 0]} rotation={[-Math.PI / 4, Math.PI / 4, 0]}>
+          <torusGeometry args={[1.9, 0.02, 16, 64]} />
+          <meshStandardMaterial
+            color="#a855f7"
+            emissive="#c084fc"
+            emissiveIntensity={1.6}
+            metalness={0.8}
+            roughness={0.1}
+          />
+        </mesh>
+
+        {/* AST Software Nodes */}
+        {astNodes.map((node, i) => (
+          <group key={i} position={node.pos}>
+            {/* Luminous Node Core */}
+            <mesh>
+              <sphereGeometry args={[node.size, 24, 24]} />
+              <meshStandardMaterial
+                color={node.color}
+                emissive={node.color}
+                emissiveIntensity={1.6}
+                metalness={0.3}
+                roughness={0.2}
+              />
+            </mesh>
+            {/* Holographic Wireframe Outer Hull */}
+            <mesh>
+              <icosahedronGeometry args={[node.size * 1.35, 0]} />
+              <meshStandardMaterial
+                color={node.color}
+                wireframe
+                transparent
+                opacity={0.4}
+              />
+            </mesh>
+          </group>
+        ))}
+
+        {/* Directed Syntax Edges (Syntax Branch Links) */}
+        {astEdges.map((edge, i) => {
+          const [start, end] = edge;
+          const p1 = new THREE.Vector3(start[0], start[1], start[2]);
+          const p2 = new THREE.Vector3(end[0], end[1], end[2]);
+          const dist = p1.distanceTo(p2);
+          const mid = p1.clone().add(p2).multiplyScalar(0.5);
+          const orientation = new THREE.Matrix4();
+          orientation.lookAt(p1, p2, new THREE.Vector3(0, 1, 0));
+
+          return (
+            <mesh
+              key={i}
+              position={[mid.x, mid.y, mid.z]}
+              onUpdate={(self) => {
+                self.quaternion.setFromRotationMatrix(orientation);
+                self.rotateX(Math.PI / 2);
+              }}
+            >
+              <cylinderGeometry args={[0.028, 0.028, dist, 8]} />
+              <meshStandardMaterial
+                color="#38bdf8"
+                emissive="#0284c7"
+                emissiveIntensity={1.2}
+                transparent
+                opacity={0.7}
+              />
+            </mesh>
+          );
+        })}
+
+        {/* Live Compilation Execution Tokens */}
+        <points ref={pulseRef}>
+          <bufferGeometry>
+            <bufferAttribute attach="attributes-position" args={[particleData.positions, 3]} />
+            <bufferAttribute attach="attributes-color" args={[particleData.colors, 3]} />
+          </bufferGeometry>
+          <pointsMaterial
+            size={0.09}
+            vertexColors
+            transparent
+            opacity={0.95}
+            blending={THREE.AdditiveBlending}
+            depthWrite={false}
+          />
+        </points>
+      </group>
+    </Float>
+  );
+}
+
+/* ================================================================== */
+/* CS ZONE 1 (About): Binary Search Tree / DAG Data Structure        */
+/* ================================================================== */
+function BinarySearchTreeZone() {
+  const groupRef = useRef<THREE.Group>(null);
+
+  // Nodes for a balanced binary search tree
+  const treeNodes = useMemo(() => [
+    { pos: [0, 2.0, 0], val: 'ROOT', color: '#22d3ee' },
+    { pos: [-2.2, 0.6, -0.3], val: 'LEFT', color: '#38bdf8' },
+    { pos: [2.2, 0.6, -0.3], val: 'RIGHT', color: '#818cf8' },
+    { pos: [-3.4, -0.9, -0.6], val: 'L-L', color: '#34d399' },
+    { pos: [-1.1, -0.9, -0.6], val: 'L-R', color: '#a78bfa' },
+    { pos: [1.1, -0.9, -0.6], val: 'R-L', color: '#fbbf24' },
+    { pos: [3.4, -0.9, -0.6], val: 'R-R', color: '#f472b6' },
+  ], []);
+
+  // Directed edges (parent to child pointers)
+  const edges = useMemo(() => [
+    [treeNodes[0].pos, treeNodes[1].pos],
+    [treeNodes[0].pos, treeNodes[2].pos],
+    [treeNodes[1].pos, treeNodes[3].pos],
+    [treeNodes[1].pos, treeNodes[4].pos],
+    [treeNodes[2].pos, treeNodes[5].pos],
+    [treeNodes[2].pos, treeNodes[6].pos],
+  ], [treeNodes]);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+    groupRef.current.rotation.y += Math.min(delta, 0.05) * 0.12;
+  });
+
+  return (
+    <group ref={groupRef} position={[0, 0, -ZONE_GAP]}>
+      {/* Tree Nodes (Spheres with glowing data cores) */}
+      {treeNodes.map((node, i) => (
+        <mesh key={i} position={node.pos as [number, number, number]}>
+          <sphereGeometry args={[0.35, 16, 16]} />
+          <meshStandardMaterial
+            color={node.color}
+            emissive={node.color}
+            emissiveIntensity={1.3}
+            roughness={0.2}
+            metalness={0.7}
+          />
+        </mesh>
+      ))}
+
+      {/* Pointer Vector Edges (Connecting Cylinders) */}
+      {edges.map(([start, end], i) => {
+        const p1 = new THREE.Vector3(...start);
+        const p2 = new THREE.Vector3(...end);
+        const mid = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
+        const len = p1.distanceTo(p2);
+        const orientation = new THREE.Matrix4();
+        orientation.lookAt(p1, p2, new THREE.Vector3(0, 1, 0));
+
+        return (
+          <mesh key={`edge-${i}`} position={mid} quaternion={new THREE.Quaternion().setFromRotationMatrix(orientation)}>
+            <cylinderGeometry args={[0.035, 0.035, len, 8]} />
+            <meshStandardMaterial
+              color="#38bdf8"
+              emissive="#38bdf8"
+              emissiveIntensity={0.9}
+              transparent
+              opacity={0.75}
+            />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+}
+
+/* ================================================================== */
+/* CS ZONE 2 (Skills): Call Stack & Memory Heap Frames                */
+/* ================================================================== */
+function MemoryStackHeapZone() {
+  const groupRef = useRef<THREE.Group>(null);
+
+  // Stack Frames (Call Stack)
+  const stackFrames = useMemo(() => [
+    { pos: [-3.0, 1.6, 0] as const, label: 'ESP: 0x7FFF5FBFF4A0', color: '#22d3ee' },
+    { pos: [-3.0, 0.5, 0] as const, label: 'EBP: 0x7FFF5FBFF480', color: '#38bdf8' },
+    { pos: [-3.0, -0.6, 0] as const, label: 'FRAME_MAIN', color: '#818cf8' },
+    { pos: [-3.0, -1.7, 0] as const, label: 'SAVED_RET_ADDR', color: '#a78bfa' },
+  ], []);
+
+  // Heap Allocation Chunks
+  const heapChunks = useMemo(() => [
+    { pos: [2.8, 1.2, -0.5] as const, s: [1.6, 0.8, 1.2] as const, color: '#34d399' },
+    { pos: [3.2, -0.8, -0.2] as const, s: [1.8, 1.0, 1.4] as const, color: '#fbbf24' },
+    { pos: [1.5, -1.8, -0.8] as const, s: [1.2, 0.7, 1.0] as const, color: '#f472b6' },
+  ], []);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+    groupRef.current.rotation.y += Math.min(delta, 0.05) * 0.08;
+  });
+
+  return (
+    <group ref={groupRef} position={[0, 0, -ZONE_GAP * 2]}>
+      {/* Call Stack Frames */}
+      {stackFrames.map((frame, i) => (
+        <mesh key={`stack-${i}`} position={[...frame.pos]}>
+          <boxGeometry args={[2.4, 0.75, 0.8]} />
+          <meshStandardMaterial
+            color="#0f172a"
+            emissive={frame.color}
+            emissiveIntensity={0.65}
+            metalness={0.8}
+            roughness={0.2}
+          />
+        </mesh>
+      ))}
+
+      {/* Heap Memory Chunks */}
+      {heapChunks.map((chunk, i) => (
+        <mesh key={`heap-${i}`} position={[...chunk.pos]}>
+          <boxGeometry args={[...chunk.s]} />
+          <meshStandardMaterial
+            color="#0f172a"
+            emissive={chunk.color}
+            emissiveIntensity={0.85}
+            metalness={0.7}
+            roughness={0.25}
+            wireframe={i % 2 === 1}
+          />
+        </mesh>
+      ))}
+
+      {/* Stack-to-Heap Pointer Link */}
+      <mesh position={[0, 0.4, 0]} rotation={[0, 0, -0.3]}>
+        <cylinderGeometry args={[0.025, 0.025, 4.2, 8]} />
+        <meshStandardMaterial color="#34d399" emissive="#34d399" emissiveIntensity={1.5} />
       </mesh>
     </group>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* ZONE 3 — Work: 3 floating server slabs                             */
-/* ------------------------------------------------------------------ */
-function ServerRackZone() {
+/* ================================================================== */
+/* CS ZONE 3 (Projects): Distributed Microservices Mesh Cluster       */
+/* ================================================================== */
+function MicroservicesMeshZone() {
   const groupRef = useRef<THREE.Group>(null);
-  const racks = useMemo(() => [
-    { pos: [-4.8,  0,  0] as const, color: '#22d3ee', h: 1.8 },
-    { pos: [ 0,  -0.6, -2] as const, color: '#8b5cf6', h: 2.4 },
-    { pos: [ 4.8,  0.4, -1] as const, color: '#2496ed', h: 2.0 },
+  const packetRef = useRef<THREE.Mesh>(null);
+
+  const pods = useMemo(() => [
+    { pos: [-4.2, 0.8, 0] as const, color: '#38bdf8' },
+    { pos: [0, 1.8, -1.2] as const, color: '#8b5cf6' },
+    { pos: [4.2, 0.8, 0] as const, color: '#34d399' },
+    { pos: [-2.0, -1.4, -0.8] as const, color: '#fbbf24' },
+    { pos: [2.0, -1.4, -0.8] as const, color: '#f472b6' },
   ], []);
 
-  const refs = [useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null)];
   useFrame((state, delta) => {
     if (!groupRef.current) return;
     groupRef.current.rotation.y = THREE.MathUtils.lerp(
-      groupRef.current.rotation.y, state.pointer.x * 0.18, 0.025
+      groupRef.current.rotation.y,
+      state.pointer.x * 0.2,
+      0.03
     );
-    refs.forEach((r, i) => {
-      if (r.current) r.current.rotation.x += Math.min(delta, 0.05) * (i % 2 ? 0.07 : -0.05);
-    });
+
+    // Data packet traveling along RPC service mesh
+    if (packetRef.current) {
+      const t = (state.clock.elapsedTime * 0.6) % 1;
+      packetRef.current.position.x = -4.2 + t * 8.4;
+      packetRef.current.position.y = 0.8 + Math.sin(t * Math.PI * 2) * 0.7;
+    }
   });
 
   return (
-    <group position={[0, 0, -ZONE_GAP * 3]} ref={groupRef}>
-      {racks.map((rack, i) => (
-        <Float key={i} speed={0.9 + i * 0.2} rotationIntensity={0.25} floatIntensity={0.8}>
-          <mesh ref={refs[i]} position={[...rack.pos]}>
-            <boxGeometry args={[1.4, rack.h, 0.4]} />
+    <group ref={groupRef} position={[0, 0, -ZONE_GAP * 3]}>
+      {/* Service Pods (Hexagonal Prisms) */}
+      {pods.map((pod, i) => (
+        <Float key={i} speed={1.1} rotationIntensity={0.2} floatIntensity={0.7}>
+          <mesh position={[...pod.pos]}>
+            <cylinderGeometry args={[0.7, 0.7, 1.0, 6]} />
             <meshStandardMaterial
               color="#0f172a"
-              metalness={0.95}
-              roughness={0.3}
-              emissive={rack.color}
-              emissiveIntensity={0.12}
+              emissive={pod.color}
+              emissiveIntensity={0.75}
+              metalness={0.85}
+              roughness={0.18}
             />
           </mesh>
         </Float>
       ))}
+
+      {/* Pulsing RPC Message Packet */}
+      <mesh ref={packetRef} position={[-4.2, 0.8, 0]}>
+        <sphereGeometry args={[0.15, 12, 12]} />
+        <meshStandardMaterial color="#22d3ee" emissive="#22d3ee" emissiveIntensity={2.0} />
+      </mesh>
     </group>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* ZONE 4 — Journey: instanced git commits on a spiral                */
-/* ------------------------------------------------------------------ */
-function GitBranchZone() {
+/* ================================================================== */
+/* CS ZONE 4 (Journey): Git Commit DAG & Branch Merge Tree            */
+/* ================================================================== */
+function GitCommitDagZone() {
   const groupRef = useRef<THREE.Group>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
-  const commitData = useMemo(() => {
-    const palette = ['#22d3ee', '#8b5cf6', '#34d399', '#fbbf24', '#f472b6', '#2496ed'];
-    return Array.from({ length: 16 }, (_, i) => {
-      const t = i / 15;
-      const a = t * Math.PI * 4;
-      const branch = i % 3;
-      return {
-        pos: [
-          Math.cos(a) * (1.8 + t * 2.2) + (branch - 1) * 1.2,
-          Math.sin(a) * (1.4 + t * 1.4),
-          -t * 9,
-        ] as const,
-        color: palette[i % palette.length],
-        size: 0.14 + t * 0.1,
-      };
-    });
-  }, []);
+  // Git commits on Main & Feature branches
+  const commits = useMemo(() => [
+    // Main Branch (Cyan)
+    { pos: [-4.0, 0, 0] as const, color: '#22d3ee', scale: 0.35 },
+    { pos: [-2.0, 0, 0] as const, color: '#22d3ee', scale: 0.35 },
+    { pos: [0.0, 0, 0] as const, color: '#22d3ee', scale: 0.35 },
+    { pos: [2.0, 0, 0] as const, color: '#22d3ee', scale: 0.35 },
+    { pos: [4.0, 0, 0] as const, color: '#22d3ee', scale: 0.45 }, // Merge commit
+
+    // Feature Branch (Purple)
+    { pos: [-1.0, 1.4, -0.4] as const, color: '#8b5cf6', scale: 0.32 },
+    { pos: [1.0, 1.4, -0.4] as const, color: '#8b5cf6', scale: 0.32 },
+    { pos: [3.0, 0.8, -0.2] as const, color: '#a78bfa', scale: 0.32 },
+
+    // Hotfix Branch (Emerald)
+    { pos: [0.5, -1.3, -0.4] as const, color: '#34d399', scale: 0.3 },
+    { pos: [2.5, -0.7, -0.2] as const, color: '#34d399', scale: 0.3 },
+  ], []);
 
   useEffect(() => {
     if (!meshRef.current) return;
-    const color = new THREE.Color();
-    commitData.forEach((c, i) => {
-      color.set(c.color);
-      meshRef.current!.setColorAt(i, color);
-      dummy.position.set(...c.pos);
-      dummy.scale.setScalar(c.size);
+    const col = new THREE.Color();
+    commits.forEach((c, i) => {
+      col.set(c.color);
+      meshRef.current!.setColorAt(i, col);
+      dummy.position.set(c.pos[0], c.pos[1], c.pos[2]);
+      dummy.scale.setScalar(c.scale);
       dummy.updateMatrix();
       meshRef.current!.setMatrixAt(i, dummy.matrix);
     });
     meshRef.current.instanceColor!.needsUpdate = true;
     meshRef.current.instanceMatrix.needsUpdate = true;
-  }, [commitData, dummy]);
+  }, [commits, dummy]);
 
   useFrame((_, delta) => {
-    if (groupRef.current) groupRef.current.rotation.z += Math.min(delta, 0.05) * 0.05;
+    if (groupRef.current) groupRef.current.rotation.z += Math.min(delta, 0.05) * 0.03;
   });
 
   return (
-    <group position={[0, 0, -ZONE_GAP * 4]} ref={groupRef}>
-      <instancedMesh ref={meshRef} args={[undefined, undefined, commitData.length]}>
-        <sphereGeometry args={[1, 8, 8]} />
-        <meshStandardMaterial toneMapped={false} />
+    <group ref={groupRef} position={[0, 0, -ZONE_GAP * 4]}>
+      <instancedMesh ref={meshRef} args={[undefined, undefined, commits.length]}>
+        <sphereGeometry args={[1, 14, 14]} />
+        <meshStandardMaterial emissiveIntensity={1.2} metalness={0.7} roughness={0.2} toneMapped={false} />
       </instancedMesh>
     </group>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* ZONE 5 — Finale: deploy portal — 3 torus rings                     */
-/* ------------------------------------------------------------------ */
-function DeployPortal() {
-  const refs = [
-    useRef<THREE.Mesh>(null),
-    useRef<THREE.Mesh>(null),
-    useRef<THREE.Mesh>(null),
-  ];
+/* ================================================================== */
+/* CS ZONE 5 (Deploy / Contact): Cloud Ingress Gateway                */
+/* ================================================================== */
+function IngressGatewayZone() {
+  const refs = [useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null)];
   const coreRef = useRef<THREE.Mesh>(null);
 
   useFrame((_, delta) => {
     const d = Math.min(delta, 0.05);
-    refs[0].current && (refs[0].current.rotation.z += d * 0.24);
-    refs[1].current && (refs[1].current.rotation.z -= d * 0.36);
-    refs[2].current && (refs[2].current.rotation.z += d * 0.14);
+    refs[0].current && (refs[0].current.rotation.z += d * 0.22);
+    refs[1].current && (refs[1].current.rotation.z -= d * 0.32);
+    refs[2].current && (refs[2].current.rotation.z += d * 0.16);
     if (coreRef.current) {
       coreRef.current.rotation.y += d * 0.4;
       coreRef.current.rotation.x += d * 0.2;
@@ -498,9 +594,9 @@ function DeployPortal() {
   });
 
   const rings = [
-    { r: 5.2, tube: 0.09, color: '#34d399' },
-    { r: 4.0, tube: 0.07, color: '#2496ed', rotOffset: 0.3 },
-    { r: 3.0, tube: 0.06, color: '#8b5cf6', rotOffset: 1 },
+    { r: 4.8, tube: 0.08, color: '#34d399' },
+    { r: 3.6, tube: 0.065, color: '#2496ed', rotOffset: 0.3 },
+    { r: 2.6, tube: 0.05, color: '#8b5cf6', rotOffset: 0.8 },
   ];
 
   return (
@@ -508,18 +604,33 @@ function DeployPortal() {
       {rings.map((ring, i) => (
         <mesh key={i} ref={refs[i]} rotation={[ring.rotOffset ?? 0, 0, 0]}>
           <torusGeometry args={[ring.r, ring.tube, 12, 80]} />
-          <meshStandardMaterial color={ring.color} emissive={ring.color} emissiveIntensity={1.3} metalness={0.8} roughness={0.14} />
+          <meshStandardMaterial
+            color={ring.color}
+            emissive={ring.color}
+            emissiveIntensity={1.3}
+            metalness={0.8}
+            roughness={0.15}
+          />
         </mesh>
       ))}
+
+      {/* Production Deployment Core */}
       <mesh ref={coreRef}>
-        <dodecahedronGeometry args={[1.2, 0]} />
-        <meshStandardMaterial color="#f0f9ff" emissive="#22d3ee" emissiveIntensity={1.6} roughness={0.08} metalness={0.5} flatShading />
+        <dodecahedronGeometry args={[1.1, 0]} />
+        <meshStandardMaterial
+          color="#f0f9ff"
+          emissive="#22d3ee"
+          emissiveIntensity={1.6}
+          roughness={0.1}
+          metalness={0.6}
+          flatShading
+        />
       </mesh>
     </group>
   );
 }
 
-/* ---- Lights — pointer-reactive but throttled ---- */
+/* ---- Ambient & Reactive Lighting ---- */
 function ReactiveLights() {
   const a = useRef<THREE.PointLight>(null);
   const b = useRef<THREE.PointLight>(null);
@@ -542,7 +653,7 @@ function ReactiveLights() {
 
   return (
     <>
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={0.55} />
       <pointLight ref={a} intensity={140} color="#22d3ee" distance={38} decay={2} />
       <pointLight ref={b} intensity={130} color="#8b5cf6" distance={38} decay={2} />
       <directionalLight position={[3, 6, 5]} intensity={0.75} />
@@ -559,56 +670,46 @@ function TravelLight() {
   return <pointLight ref={ref} intensity={90} color="#2496ed" distance={28} decay={2} />;
 }
 
-/* ------------------------------------------------------------------ */
-/* ROOT                                                                */
-/* ------------------------------------------------------------------ */
 export default function WorldScene() {
   const [tier, setTier] = useState<Tier>('high');
   const progress = useScrollProgress();
 
   useEffect(() => { setTier(detectTier()); }, []);
 
-  /* Particle counts tuned for smooth 60fps */
-  const count = tier === 'low' ? 400 : 900;
+  const count = tier === 'low' ? 380 : 850;
 
   return (
     <Canvas
       dpr={tier === 'low' ? [1, 1.2] : [1, 1.4]}
       camera={{ position: [0, 0, 8], fov: 50 }}
       gl={{
-        antialias: false, /* MSAA off — big perf win, nearly invisible at these sizes */
-        alpha: false,
+        antialias: false,
+        alpha: true,
         powerPreference: 'high-performance',
         stencil: false,
         depth: true,
       }}
-      performance={{ min: 0.5 }} /* auto-lower DPR when FPS drops */
+      performance={{ min: 0.5 }}
     >
-      <Atmosphere progress={progress} />
       <FlightCamera progress={progress} />
       <ReactiveLights />
       <TravelLight />
-      <DataParticles count={count} />
-      <Nebulae />
+      <BinaryDataStream count={count} />
 
-      {/* Story zones */}
-      <group>
-        <HeroCrystal />
-        <HeroSatellites />
-      </group>
-      <DependencyGraph />
-      <PipelineZone />
-      <ServerRackZone />
-      <GitBranchZone />
-      <DeployPortal />
+      {/* 6 Authentic Computer Science Story Zones */}
+      <AbstractSyntaxTreeZone />
+      <BinarySearchTreeZone />
+      <MemoryStackHeapZone />
+      <MicroservicesMeshZone />
+      <GitCommitDagZone />
+      <IngressGatewayZone />
 
-      {/* Bloom only on high-tier — threshold higher = fewer pixels processed */}
       {tier === 'high' && (
         <EffectComposer multisampling={0}>
           <Bloom
             mipmapBlur
-            intensity={0.7}
-            luminanceThreshold={0.25}
+            intensity={0.65}
+            luminanceThreshold={0.28}
             luminanceSmoothing={0.6}
             radius={0.4}
           />

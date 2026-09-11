@@ -1,64 +1,42 @@
 'use client';
 
-import { motion, type HTMLMotionProps } from 'framer-motion';
+import { motion } from 'motion/react';
+import type { ReactNode } from 'react';
+import { useExperience } from '../ExperienceProvider';
 
-const EASE = [0.22, 1, 0.36, 1] as const;
-
-type RevealProps = HTMLMotionProps<'div'> & {
-  /** entry delay in seconds (use for manual staggering) */
+type Props = {
+  children: ReactNode;
+  className?: string;
   delay?: number;
-  /** travel distance on the Y axis */
-  y?: number;
-  /** start slightly scaled-down for a premium "settle" feel */
-  scale?: boolean;
+  /** Entrance direction — 'up' by default, or a 3D tilt-in from -Z. */
+  variant?: 'up' | 'depth' | 'left' | 'right';
+  style?: React.CSSProperties;
 };
+
+const offsets = {
+  up: { y: 26, x: 0, z: 0, rotateX: 0, rotateY: 0 },
+  depth: { y: 18, x: 0, z: -70, rotateX: 9, rotateY: 0 },
+  left: { y: 0, x: -30, z: 0, rotateX: 0, rotateY: 8 },
+  right: { y: 0, x: 30, z: 0, rotateX: 0, rotateY: -8 },
+} as const;
 
 /**
- * A reusable scroll-reveal wrapper — fades + lifts (and optionally settles
- * from a small scale) when it enters the viewport. The single building block
- * behind the site's cinematic, scene-by-scene reveals.
+ * Scroll-triggered entrance with a premium settle. Uses transform + opacity +
+ * a brief blur only; `once` keeps it cheap after the first reveal.
  */
-export default function Reveal({
-  children,
-  delay = 0,
-  y = 28,
-  scale = false,
-  ...rest
-}: RevealProps) {
+export default function Reveal({ children, className = '', delay = 0, variant = 'up', style }: Props) {
+  const { animated } = useExperience();
+  const from = offsets[variant];
   return (
     <motion.div
-      initial={{ opacity: 0, y, scale: scale ? 0.96 : 1 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.75, delay, ease: EASE }}
-      {...rest}
+      className={`reveal ${className}`}
+      initial={animated ? { opacity: 0, filter: 'blur(10px)', ...from } : false}
+      whileInView={{ opacity: 1, filter: 'blur(0px)', x: 0, y: 0, z: 0, rotateX: 0, rotateY: 0 }}
+      viewport={{ once: true, margin: '0px 0px -60px 0px' }}
+      transition={{ duration: 0.9, delay, ease: [0.16, 1, 0.3, 1] }}
+      style={{ transformStyle: 'preserve-3d', ...style }}
     >
       {children}
     </motion.div>
   );
 }
-
-/** Parent that staggers any direct <motion> children using the shared variants. */
-export function RevealGroup({
-  children,
-  stagger = 0.1,
-  ...rest
-}: HTMLMotionProps<'div'> & { stagger?: number }) {
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: '-70px' }}
-      variants={{ show: { transition: { staggerChildren: stagger } } }}
-      {...rest}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-/** Child item for use inside <RevealGroup>. */
-export const revealItem = {
-  hidden: { opacity: 0, y: 30, scale: 0.97 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, ease: EASE } },
-};

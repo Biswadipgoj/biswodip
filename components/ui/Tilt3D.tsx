@@ -1,79 +1,27 @@
 'use client';
-
-import { useRef, type ReactNode } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-
-/**
- * Tilt3D — the interaction primitive of the whole site.
- *
- * Wraps any block in a pointer-tracked 3D tilt with a travelling glare
- * highlight, so every card on the page responds to the visitor like an
- * object floating in the world rather than ink on a flat page.
- */
-export default function Tilt3D({
-  children,
-  className = '',
-  maxTilt = 8,
-  glare = true,
-  lift = true,
-}: {
-  children: ReactNode;
-  className?: string;
-  /** max degrees of rotation toward the pointer */
-  maxTilt?: number;
-  /** show the moving light reflection */
-  glare?: boolean;
-  /** raise slightly on hover */
-  lift?: boolean;
-}) {
+import { useEffect, useRef, type ReactNode, type PointerEvent } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import { useExperience } from '../ExperienceProvider';
+export default function Tilt3D({ children, className = '', maxTilt = 5, glare = true, lift = false }: { children: ReactNode; className?: string; maxTilt?: number; glare?: boolean; lift?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
-
-  const px = useMotionValue(0);
-  const py = useMotionValue(0);
-  const sx = useSpring(px, { stiffness: 180, damping: 20, mass: 0.35 });
-  const sy = useSpring(py, { stiffness: 180, damping: 20, mass: 0.35 });
-
-  const rotateY = useTransform(sx, [-0.5, 0.5], [-maxTilt, maxTilt]);
-  const rotateX = useTransform(sy, [-0.5, 0.5], [maxTilt, -maxTilt]);
-  const glareX = useTransform(sx, [-0.5, 0.5], ['20%', '80%']);
-  const glareY = useTransform(sy, [-0.5, 0.5], ['20%', '80%']);
-  const glareBg = useTransform([glareX, glareY], ([gx, gy]) =>
-    `radial-gradient(320px circle at ${gx} ${gy}, rgba(255,255,255,0.14), transparent 65%)`,
-  );
-
-  function onMove(e: React.MouseEvent) {
-    const el = ref.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    px.set((e.clientX - rect.left) / rect.width - 0.5);
-    py.set((e.clientY - rect.top) / rect.height - 0.5);
+  const { spatial } = useExperience();
+  const x = useMotionValue(0); const y = useMotionValue(0);
+  const rotateX = useSpring(y, { stiffness: 140, damping: 24 });
+  const rotateY = useSpring(x, { stiffness: 140, damping: 24 });
+  const shine = useTransform(rotateY, [-6, 6], ['translate3d(-20%,0,0)', 'translate3d(20%,0,0)']);
+  useEffect(() => { if (!spatial) { x.jump(0); y.jump(0); } }, [spatial, x, y]);
+  const reset = () => { x.set(0); y.set(0); };
+  function move(event: PointerEvent<HTMLDivElement>) {
+    if (!spatial || event.pointerType !== 'mouse' || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const limit = Math.min(6, Math.abs(maxTilt));
+    const clamp = (value: number) => Math.max(-limit, Math.min(limit, value));
+    x.set(clamp(((event.clientX - rect.left) / rect.width - 0.5) * limit * 2));
+    y.set(clamp(-((event.clientY - rect.top) / rect.height - 0.5) * limit * 2));
   }
-
-  function onLeave() {
-    px.set(0);
-    py.set(0);
-  }
-
-  return (
-    <div style={{ perspective: 1100 }} className={className}>
-      <motion.div
-        ref={ref}
-        onMouseMove={onMove}
-        onMouseLeave={onLeave}
-        whileHover={lift ? { y: -6 } : undefined}
-        style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-        transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-        className="relative h-full"
-      >
-        {children}
-        {glare && (
-          <motion.span
-            aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-[inherit]"
-            style={{ background: glareBg }}
-          />
-        )}
-      </motion.div>
-    </div>
-  );
+  return <div ref={ref} className={`tilt-anchor ${className}`} onPointerMove={move} onPointerLeave={reset} onPointerCancel={reset} onBlur={reset}>
+    <motion.div className="tilt-surface spatial-layer" style={{ rotateX: spatial ? rotateX : 0, rotateY: spatial ? rotateY : 0 }} whileHover={spatial && lift ? { y: -3 } : undefined}>
+      {children}{glare && <motion.span className="surface-shine" aria-hidden="true" style={{ transform: spatial ? shine : 'none' }} />}
+    </motion.div>
+  </div>;
 }

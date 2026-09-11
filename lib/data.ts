@@ -195,6 +195,8 @@ export type Project = {
   tags: string[];
   features: string[];
   previewImage?: string;
+  embedAllowed?: boolean;
+  techStack?: string[];
 };
 
 export const projects: Project[] = [
@@ -207,6 +209,7 @@ export const projects: Project[] = [
     repo: 'https://github.com/Biswadipgoj/Erpixa',
     accent: '#8b5cf6',
     accentSoft: 'rgba(139,92,246,0.16)',
+    previewImage: '/previews/erpixa.webp',
     tags: ['Modular by design', 'Enterprise-grade security', 'Live on the internet'],
     features: [
       '9 business modules activated per business type',
@@ -223,6 +226,7 @@ export const projects: Project[] = [
     url: 'https://telepoint-topaz.vercel.app/',
     accent: '#22d3ee',
     accentSoft: 'rgba(34,211,238,0.16)',
+    previewImage: '/previews/telepoint.webp',
     tags: ['Instant by design', 'Feels native everywhere', 'Live on the internet'],
     features: [
       'Instant, low-latency interactions',
@@ -246,7 +250,7 @@ export const projects: Project[] = [
       'Smooth, considered transitions',
       'Deployed & live right now',
     ],
-    previewImage: '/trip-preview.png',
+    previewImage: '/previews/tripmate.webp',
   },
   {
     name: 'NanoLink',
@@ -257,6 +261,7 @@ export const projects: Project[] = [
     repo: 'https://github.com/Biswadipgoj/nl',
     accent: '#34d399',
     accentSoft: 'rgba(52,211,153,0.16)',
+    previewImage: '/previews/nanolink.webp',
     tags: ['Privacy-first links', 'Analytics built in', 'Live on the internet'],
     features: [
       'Password protection, expiry & burn-after-read',
@@ -275,6 +280,7 @@ export const projects: Project[] = [
     repo: 'https://github.com/Biswadipgoj/nexora',
     accent: '#fbbf24',
     accentSoft: 'rgba(251,191,36,0.16)',
+    previewImage: '/previews/nexora.webp',
     tags: ['Kanban that moves fast', 'Keyboard-first', 'Live on the internet'],
     features: [
       'Board, list and personal task views',
@@ -333,3 +339,45 @@ export const github = {
   url: 'https://github.com/Biswadipgoj',
   blurb: 'Open source, experiments and the projects behind the products. Everything I build lives here.',
 };
+
+export const experienceCopy = {
+  about: {
+    title: 'Context, discipline and how I think about software.',
+  },
+  skills: {
+    title: 'The right tools. The whole picture.',
+    description:
+      'From the interface you touch to the systems you don’t see. A toolkit for taking ownership of the whole product.',
+  },
+  projects: {
+    title: 'Built with intent. Out in the world.',
+    description:
+      'Five independent builds. Five different problems. Explore the products, the details, and the code behind them.',
+  },
+  github: {
+    title: 'Code is open by default. The work speaks for itself.',
+    link: 'Explore my GitHub',
+  },
+  journey: {
+    title: 'From diploma fundamentals to production builds.',
+    description: 'A timeline of deliberate practice, continuous shipping, and technical depth.',
+  },
+  impact: {
+    title: 'Principles that guide every deployment.',
+    description: 'Measurable outcomes over aesthetic prototypes.',
+  },
+  contact: {
+    title: 'Let’s build something real together.',
+    description:
+      'Have a project in mind, need a full-stack engineer, or want to talk systems architecture?',
+    formNote: 'I typically respond within 24 hours.',
+  },
+  boot: [
+    'Initializing spatial engine...',
+    'Calibrating 3D depth buffers...',
+    'Loading technology constellation...',
+    'Establishing production pipelines...',
+    'Ready.',
+  ],
+};
+

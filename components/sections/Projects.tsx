@@ -1,333 +1,526 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion';
+import { useRef, useState, useEffect, useCallback } from 'react';
+import { motion, useScroll, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react';
 import { projects, type Project } from '@/lib/data';
-import SectionHeading from '@/components/ui/SectionHeading';
+import Image from 'next/image';
+import Icon from '../ui/Icon';
+import { AudioEngine } from '../ui/AudioFeedback';
 
-/* ------------------------------------------------------------------ */
-/* Mock Telemetry Data Component                                      */
-/* ------------------------------------------------------------------ */
-function TelemetryOverlay({ accent, name }: { accent: string, name: string }) {
-  const [logs, setLogs] = useState<string[]>([`> INIT SYSTEM [${name.toUpperCase()}]`]);
-  
-  useEffect(() => {
-    const commands = [
-      `> FETCHING METRICS...`,
-      `> COMPILING BUNDLE...`,
-      `> DEPLOYMENT SUCCESS`,
-      `> LATENCY: 24ms`,
-      `> ALL SYSTEMS GO.`
-    ];
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < commands.length) {
-        setLogs(prev => [...prev.slice(-3), commands[i]]);
-        i++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 1500);
-    return () => clearInterval(interval);
-  }, [name]);
+const PROJECT_STACKS: Record<string, string[]> = {
+  Erpixa: ['React', 'TypeScript', 'PostgreSQL', 'Tailwind CSS', 'Supabase'],
+  TelePoint: ['Next.js', 'WebSockets', 'TypeScript', 'Tailwind CSS'],
+  Tripmate: ['React', 'Next.js', 'TypeScript', 'Framer Motion', 'Tailwind CSS'],
+  NanoLink: ['Next.js', 'Prisma', 'PostgreSQL', 'TypeScript', 'Tailwind CSS'],
+  Nexora: ['Next.js', 'TypeScript', 'Supabase', 'Tailwind CSS'],
+};
 
-  return (
-    <div className="absolute right-4 bottom-4 z-30 w-48 rounded-lg border border-white/10 bg-[#0d1018]/90 p-3 backdrop-blur-md shadow-2xl overflow-hidden hidden sm:block">
-      <div className="flex items-center justify-between mb-2 pb-2 border-b border-white/5">
-        <span className="font-mono text-[0.55rem] text-slate-400 uppercase tracking-widest">SYS.MONITOR</span>
-        <span className="flex h-1.5 w-1.5 rounded-full bg-aurora-emerald animate-pulse" />
-      </div>
-      <div className="space-y-1">
-        {logs.map((log, idx) => (
-          <motion.div 
-            key={idx}
-            initial={{ opacity: 0, x: -5 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="font-mono text-[0.6rem] text-white/70"
-            style={{ color: idx === logs.length - 1 ? accent : 'rgba(255,255,255,0.5)' }}
-          >
-            {log}
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
+const PROJECT_THEMES: Record<
+  string,
+  {
+    gradientStyle: string;
+    accent: string;
+    accentSoft: string;
+    category: string;
+  }
+> = {
+  Erpixa: {
+    gradientStyle: 'linear-gradient(90deg, #22d3ee 0%, #67e8f9 50%, #34d399 100%)',
+    accent: '#22d3ee',
+    accentSoft: 'rgba(34, 211, 238, 0.3)',
+    category: 'ENTERPRISE ERP PLATFORM',
+  },
+  TelePoint: {
+    gradientStyle: 'linear-gradient(90deg, #818cf8 0%, #a78bfa 50%, #f472b6 100%)',
+    accent: '#818cf8',
+    accentSoft: 'rgba(129, 140, 248, 0.3)',
+    category: 'REAL-TIME WEBSOCKET HUB',
+  },
+  Tripmate: {
+    gradientStyle: 'linear-gradient(90deg, #f472b6 0%, #fb7185 50%, #fbbf24 100%)',
+    accent: '#f472b6',
+    accentSoft: 'rgba(244, 114, 182, 0.3)',
+    category: 'DYNAMIC TRAVEL ENGINE',
+  },
+  NanoLink: {
+    gradientStyle: 'linear-gradient(90deg, #34d399 0%, #2dd4bf 50%, #38bdf8 100%)',
+    accent: '#34d399',
+    accentSoft: 'rgba(52, 211, 153, 0.3)',
+    category: 'EDGE ANALYTICS SHORTENER',
+  },
+  Nexora: {
+    gradientStyle: 'linear-gradient(90deg, #fbbf24 0%, #f59e0b 50%, #fb7185 100%)',
+    accent: '#fbbf24',
+    accentSoft: 'rgba(251, 191, 36, 0.3)',
+    category: 'COLLABORATIVE WORKSPACE',
+  },
+};
 
-/* ------------------------------------------------------------------ */
-/* Holographic Preview Interface                                      */
-/* ------------------------------------------------------------------ */
-function LivePreview({ project }: { project: Project }) {
-  const [loaded, setLoaded] = useState(false);
-  const ref = useRef<HTMLAnchorElement>(null);
-  
-  // Smooth 3D mouse tracking
+export default function Projects() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(1200);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const prefersReduced = useReducedMotion();
+
+  // Mouse tilt on center card
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
-  const isHovered = useMotionValue(0);
+  const tiltX = useSpring(useTransform(mouseY, [0, 1], [5, -5]), { stiffness: 260, damping: 22 });
+  const tiltY = useSpring(useTransform(mouseX, [0, 1], [-5, 5]), { stiffness: 260, damping: 22 });
+  const glareX = useTransform(mouseX, [0, 1], [0, 100]);
+  const glareY = useTransform(mouseY, [0, 1], [0, 100]);
 
-  const springConfig = { damping: 20, stiffness: 150, mass: 0.5 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
-  const smoothHover = useSpring(isHovered, springConfig);
+  const activeProject = projects[currentIndex];
+  const activeTheme = PROJECT_THEMES[activeProject.name] || PROJECT_THEMES.Erpixa;
 
-  // Subtle tilts
-  const rotateX = useTransform(smoothY, [0, 1], [2, -2]);
-  const rotateY = useTransform(smoothX, [0, 1], [-2, 2]);
-  // Glare movement
-  const glareX = useTransform(smoothX, [0, 1], [-20, 120]);
-  const glareY = useTransform(smoothY, [0, 1], [-20, 120]);
-  const glareOpacity = useTransform(smoothHover, [0, 1], [0, 0.08]);
-  // Smooth scale inner
-  const scale = useTransform(smoothHover, [0, 1], [1, 1.02]);
+  // Scroll tracking across the 380vh scroll track
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  });
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!ref.current) return;
-    const { left, top, width, height } = ref.current.getBoundingClientRect();
-    const x = (e.clientX - left) / width;
-    const y = (e.clientY - top) / height;
-    mouseX.set(x);
-    mouseY.set(y);
-  };
+  // Map scroll progress (0..1) to 5 discrete projects
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on('change', (latest) => {
+      const N = projects.length;
+      const nextIndex = Math.min(N - 1, Math.floor(latest * N));
+      if (nextIndex !== currentIndex) {
+        AudioEngine.playClick();
+        setCurrentIndex(nextIndex);
+      }
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress, currentIndex]);
 
-  const handleMouseEnter = () => {
-    isHovered.set(1);
-  };
+  // Measure stage width dynamically for responsive 3D trajectory
+  useEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
 
-  const handleMouseLeave = () => {
-    isHovered.set(0);
-    mouseX.set(0.5);
-    mouseY.set(0.5);
-  };
+    const updateWidth = () => {
+      if (el) setContainerWidth(el.clientWidth);
+    };
+
+    updateWidth();
+    const ro = new ResizeObserver(updateWidth);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Continuous auto-advancing cycle when explicitly enabled
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % projects.length);
+    }, 6500);
+    return () => clearInterval(timer);
+  }, [isAutoPlaying]);
+
+  const handleNext = useCallback(() => {
+    AudioEngine.playClick();
+    setCurrentIndex((prev) => (prev + 1) % projects.length);
+  }, []);
+
+  const handlePrev = useCallback(() => {
+    AudioEngine.playClick();
+    setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
+  }, []);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === 'ArrowLeft') handlePrev();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleNext, handlePrev]);
+
+  // Calculate 3D curved elliptical trajectory coordinates
+  const getCardTransform = useCallback(
+    (index: number) => {
+      const N = projects.length;
+      let p = index - currentIndex;
+      while (p > N / 2) p -= N;
+      while (p < -N / 2) p += N;
+
+      const W = containerWidth;
+      const isMobile = W < 768;
+
+      const spreadX = isMobile ? W * 0.44 : W * 0.32;
+      const arcY = isMobile ? 26 : 40;
+
+      const x = p * spreadX;
+      // Parabolic upward curve: side cards sit higher and turned in
+      const y = -Math.pow(Math.abs(p) / 2, 1.35) * arcY;
+
+      // Scale: 1.0 at center, drops to ~0.76 at p=1, ~0.52 at p=2
+      const scale = Math.max(0.48, 1 - Math.abs(p) * 0.22);
+
+      // Inward rotation along elliptical perimeter
+      const rotZ = p * (isMobile ? 7 : 9.5);
+      const rotY = -p * (isMobile ? 10 : 14); // Inward perspective angle!
+      const z = -Math.abs(p) * 120;
+      const opacity = Math.abs(p) > 2.2 ? 0 : Math.max(0.35, 1 - Math.abs(p) * 0.28);
+      const zIndex = Math.round((4 - Math.abs(p)) * 10);
+
+      return {
+        x,
+        y,
+        z,
+        scale,
+        rotZ,
+        rotY,
+        opacity,
+        zIndex,
+        isCenter: Math.abs(p) < 0.1,
+      };
+    },
+    [currentIndex, containerWidth]
+  );
 
   return (
-    <motion.a
-      ref={ref}
-      href={project.url}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={{ rotateX, rotateY, transformPerspective: 1200 }}
-      className="group/preview relative block aspect-[16/10] w-full overflow-hidden rounded-xl border border-white/10 bg-[#080a10] shadow-[0_0_40px_rgba(0,0,0,0.6)] hover:border-white/20 transition-colors duration-500 will-change-transform"
-      aria-label={`Open ${project.name} live site`}
-      data-cursor="View Live"
+    <section
+      id="projects"
+      ref={containerRef}
+      className="relative w-full min-h-[380vh] bg-[#020617] text-white select-none"
     >
-      {/* Sci-fi UI Chrome */}
-      <div className="absolute inset-x-0 top-0 z-20 flex h-9 items-center justify-between border-b border-white/10 bg-[#0d1018]/95 px-4 backdrop-blur">
-        <div className="flex items-center gap-3">
-          <div className="flex gap-1.5">
-            <span className="h-2.5 w-8 rounded-sm bg-white/10 group-hover/preview:bg-white/20 transition-colors duration-500" />
-            <span className="h-2.5 w-2.5 rounded-sm bg-white/10 group-hover/preview:bg-white/20 transition-colors duration-500" />
-          </div>
-          <span className="font-mono text-[0.65rem] font-semibold tracking-widest text-white/70 uppercase">
-            {project.name} // LIVE_ENV
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full animate-ping" style={{ backgroundColor: project.accent }} />
-          <span className="font-mono text-[0.55rem] tracking-[0.2em]" style={{ color: project.accent }}>ONLINE</span>
-        </div>
-      </div>
-
-      {/* Crosshairs & Borders */}
-      <div className="absolute top-9 left-0 w-2 h-2 border-t-2 border-l-2 border-white/20 z-20 transition-all duration-500 group-hover/preview:border-white/40 group-hover/preview:-translate-x-1 group-hover/preview:-translate-y-1" />
-      <div className="absolute top-9 right-0 w-2 h-2 border-t-2 border-r-2 border-white/20 z-20 transition-all duration-500 group-hover/preview:border-white/40 group-hover/preview:translate-x-1 group-hover/preview:-translate-y-1" />
-      <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-white/20 z-20 transition-all duration-500 group-hover/preview:border-white/40 group-hover/preview:-translate-x-1 group-hover/preview:translate-y-1" />
-      <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-white/20 z-20 transition-all duration-500 group-hover/preview:border-white/40 group-hover/preview:translate-x-1 group-hover/preview:translate-y-1" />
-
-      {/* Loading shimmer */}
-      {!loaded && (
+      {/* =========================================================================
+          STICKY FULL-PAGE THEATRE STAGE (Pinned 100vh)
+          The user stays in the full-page experience throughout the 380vh scroll!
+         ========================================================================= */}
+      <div
+        ref={stageRef}
+        className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between pt-16 sm:pt-20 pb-5 px-3 sm:px-8 lg:px-12 z-20 bg-gradient-to-b from-[#020617] via-[#050c20] to-[#020617]"
+      >
+        {/* Dynamic ambient caustics that match active project */}
         <div
-          className="absolute inset-0 z-10 animate-pulse"
-          style={{ background: `radial-gradient(circle at center, ${project.accentSoft} 0%, transparent 70%)` }}
+          className="pointer-events-none absolute top-1/4 right-1/4 w-[650px] h-[650px] rounded-full blur-[170px] transition-colors duration-700 opacity-25"
+          style={{ background: activeTheme.accent }}
         />
-      )}
+        <div
+          className="pointer-events-none absolute bottom-1/4 left-1/4 w-[650px] h-[650px] rounded-full blur-[170px] transition-colors duration-700 opacity-20"
+          style={{ background: activeTheme.accent }}
+        />
 
-      {/* The actual live site or image fallback */}
-      <motion.div 
-        style={{ scale }}
-        className="absolute inset-0 top-9 origin-center overflow-hidden"
-      >
-        {project.previewImage ? (
-          <img
-            src={project.previewImage}
-            alt={`${project.name} live preview`}
-            onLoad={() => setLoaded(true)}
-            className="w-full h-full object-cover object-top opacity-90 transition-opacity duration-700 group-hover/preview:opacity-100"
-          />
-        ) : (
-          <iframe
-            src={project.url}
-            title={`${project.name} live preview`}
-            loading="lazy"
-            onLoad={() => setLoaded(true)}
-            referrerPolicy="no-referrer"
-            sandbox="allow-scripts allow-same-origin"
-            className="pointer-events-none h-[200%] w-[200%] origin-top-left scale-[0.5] border-0 filter opacity-90 transition-opacity duration-700 group-hover/preview:opacity-100"
-          />
-        )}
-      </motion.div>
-
-      {/* Dynamic Glare Overlay */}
-      <motion.div 
-        className="absolute inset-0 z-30 pointer-events-none mix-blend-overlay"
-        style={{ 
-          opacity: glareOpacity,
-          background: useMotionTemplate`radial-gradient(circle at ${glareX}% ${glareY}%, white 0%, transparent 40%)`
-        }} 
-      />
-
-      {/* Holographic Scanline Overlay */}
-      <div className="absolute inset-0 z-10 pointer-events-none opacity-20 transition-opacity duration-500 group-hover/preview:opacity-30"
-           style={{ background: 'linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.1) 51%, transparent 51%)', backgroundSize: '100% 4px' }} />
-
-      {/* Dynamic Telemetry Widget */}
-      <TelemetryOverlay accent={project.accent} name={project.name} />
-
-      {/* Hover action veil */}
-      <div className="absolute inset-0 top-9 z-40 flex items-center justify-center bg-[#05070a]/40 opacity-0 backdrop-blur-[2px] transition-all duration-500 group-hover/preview:opacity-100 pointer-events-none">
-        <div className="translate-y-4 scale-95 transition-all duration-500 group-hover/preview:translate-y-0 group-hover/preview:scale-100">
-          <span className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-[#0d1018]/90 px-6 py-3 text-sm font-bold text-white shadow-[0_0_30px_rgba(0,0,0,0.8)] backdrop-blur-md"
-                style={{ boxShadow: `0 0 20px ${project.accentSoft}, inset 0 0 0 1px ${project.accent}55` }}>
-            <span className="font-mono tracking-widest text-[0.65rem] uppercase text-aurora-cyan">Execute Launch</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-aurora-cyan">
-               <path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path>
-            </svg>
-          </span>
-        </div>
-      </div>
-    </motion.a>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Project Panel — Immersive Data Card                                */
-/* ------------------------------------------------------------------ */
-function ProjectPanel({ project, index, total }: { project: Project; index: number; total: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-
-  const isLast = index === total - 1;
-  const scale = useTransform(scrollYProgress, [0, 1], [1, isLast ? 1 : 0.9]);
-  const rotateX = useTransform(scrollYProgress, [0, 1], [0, isLast ? 0 : 7]);
-  const brightness = useTransform(scrollYProgress, [0, 1], [1, isLast ? 1 : 0.55]);
-  const filter = useTransform(brightness, (b) => `brightness(${b})`);
-
-  const reversed = index % 2 === 1;
-
-  return (
-    <div ref={ref} className={isLast ? 'relative' : 'relative mb-[12vh]'}>
-      <motion.div
-        style={{ scale, rotateX, filter, transformPerspective: 1400 }}
-        className="sticky top-24"
-      >
-        <div className="relative overflow-hidden rounded-[2.2rem] border border-white/10 bg-[#0a0c12]/95 p-6 sm:p-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,1)] backdrop-blur-2xl">
-          
-          {/* Accent nebula inside the panel */}
-          <div
-            className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full opacity-[0.15] blur-[80px]"
-            style={{ background: `radial-gradient(circle, ${project.accent}, transparent 70%)` }}
-            aria-hidden
-          />
-
-          {/* Grid pattern background */}
-          <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-               style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-
-          <div className={`relative z-10 grid items-center gap-12 lg:grid-cols-2 ${reversed ? 'lg:grid-flow-col-dense' : ''}`}>
-            
-            {/* ── Content side ── */}
-            <div className={reversed ? 'lg:col-start-2' : ''}>
-              
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 backdrop-blur-md">
-                <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: project.accent }} />
-                <span className="font-mono text-[0.6rem] font-bold uppercase tracking-widest text-white/70">
-                  Project_0{index + 1}
-                </span>
-              </div>
-
-              <h3 className="mb-4 font-display text-4xl font-extrabold text-white sm:text-5xl tracking-tight">
-                {project.name}
-              </h3>
-              
-              <p className="mb-6 text-lg font-medium text-white/80 leading-snug">
-                {project.blurb}
-              </p>
-              
-              {/* Terminal-style description */}
-              <div className="mb-8 rounded-xl border border-white/5 bg-[#080a0e] p-4 font-mono text-[0.75rem] leading-relaxed text-slate-400 shadow-inner">
-                <div className="flex items-center gap-2 mb-2 pb-2 border-b border-white/5">
-                  <span className="h-2 w-2 bg-slate-600 rounded-full" />
-                  <span className="text-[0.5rem] uppercase tracking-widest text-slate-500">ReadMe.txt</span>
-                </div>
-                <p>{project.description} <span className="inline-block h-3 w-1.5 bg-aurora-cyan animate-pulse align-middle ml-1" /></p>
-              </div>
-
-              {/* Tags & Features */}
-              <div className="space-y-6">
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span key={tag} className="rounded border border-white/10 bg-white/5 px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-wider text-white/70">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <ul className="space-y-2 border-l border-white/10 pl-4">
-                  {project.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-3 text-sm text-slate-400 font-medium">
-                      <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full" style={{ backgroundColor: project.accent }} />
-                      <span className="leading-tight">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {project.repo && (
-                <div className="mt-10">
-                  <a
-                    href={project.repo}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group inline-flex items-center gap-2 font-mono text-xs font-bold tracking-widest text-white transition-colors hover:text-aurora-cyan"
-                  >
-                    <span>[ View Source ]</span>
-                    <span className="transition-transform group-hover:translate-x-1">→</span>
-                  </a>
-                </div>
-              )}
+        {/* -------------------------------------------------------------------------
+            HEADER ROW: Project Index & Orbital Controls
+           ------------------------------------------------------------------------- */}
+        <div className="relative z-30 max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 pb-3 border-b border-slate-700/80">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span
+                className="w-2.5 h-2.5 rounded-full animate-ping"
+                style={{ background: activeTheme.accent }}
+              />
+              <span className="text-[0.68rem] sm:text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase">
+                03 / SELECTED BUILDS · EXPERIMENTAL 3D CURVED SLIDER
+              </span>
             </div>
+            <h2 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight flex items-center gap-2 sm:gap-3">
+              <span style={{ color: activeTheme.accent }}>0{currentIndex + 1}</span>
+              <span className="text-slate-600 font-light">/</span>
+              <span
+                className="bg-clip-text text-transparent font-black"
+                style={{
+                  backgroundImage: activeTheme.gradientStyle,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                {activeProject.name}
+              </span>
+            </h2>
+          </div>
 
-            {/* ── Holographic Preview side ── */}
-            <div className={reversed ? 'lg:col-start-1' : ''}>
-              <LivePreview project={project} />
-            </div>
+          {/* Interactive Project Indicators & Controls */}
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+            <button
+              id="project-btn-prev"
+              onClick={handlePrev}
+              type="button"
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition-colors flex items-center gap-1 shadow-sm"
+              title="Previous project (←)"
+            >
+              <span>←</span>
+              <span className="hidden sm:inline">Prev</span>
+            </button>
+
+            {/* Direct Project Indicators */}
+            {projects.map((p, i) => {
+              const isSelected = currentIndex === i;
+              const pTheme = PROJECT_THEMES[p.name] || PROJECT_THEMES.Erpixa;
+              return (
+                <button
+                  key={p.name}
+                  id={`project-tab-${i}`}
+                  type="button"
+                  onClick={() => {
+                    AudioEngine.playClick();
+                    setCurrentIndex(i);
+                  }}
+                  className={`px-2.5 py-1.5 rounded-xl text-xs font-mono transition-all duration-200 border flex items-center gap-1.5 ${
+                    isSelected
+                      ? 'bg-slate-800 text-white shadow-lg'
+                      : 'bg-slate-900/80 text-slate-300 hover:text-white border-slate-700'
+                  }`}
+                  style={{
+                    borderColor: isSelected ? pTheme.accent : undefined,
+                    boxShadow: isSelected ? `0 0 18px ${pTheme.accent}55` : undefined,
+                  }}
+                >
+                  <span className="font-bold" style={{ color: isSelected ? pTheme.accent : undefined }}>
+                    0{i + 1}
+                  </span>
+                  <span className="hidden md:inline">{p.name}</span>
+                </button>
+              );
+            })}
+
+            <button
+              id="project-btn-next"
+              onClick={handleNext}
+              type="button"
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition-colors flex items-center gap-1 shadow-sm"
+              title="Next project (→)"
+            >
+              <span className="hidden sm:inline">Next</span>
+              <span>→</span>
+            </button>
+
+            <button
+              onClick={() => setIsAutoPlaying((p) => !p)}
+              type="button"
+              className="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono transition-colors"
+              title="Toggle auto cycle"
+            >
+              {isAutoPlaying ? '⏸' : '▶'}
+            </button>
           </div>
         </div>
-      </motion.div>
-    </div>
-  );
-}
 
-/* ------------------------------------------------------------------ */
-/* Main Section                                                       */
-/* ------------------------------------------------------------------ */
-export default function Projects() {
-  return (
-    <section id="projects" className="relative mx-auto max-w-7xl px-6 py-28 md:py-36">
-      <SectionHeading eyebrow="Deployed Systems" title="Software that" highlight="actually exists">
-        No mockups. No placeholders. Every project here is live on the internet and used by real people.
-      </SectionHeading>
-
-      <div className="mt-20">
-        {projects.map((project, index) => (
-          <ProjectPanel
-            key={project.name}
-            project={project}
-            index={index}
-            total={projects.length}
+        {/* -------------------------------------------------------------------------
+            MIDDLE STAGE: The 3D Curved Elliptical Horizon
+            Smooth orbital trajectory, zero overlap over active card, high gradient text
+           ------------------------------------------------------------------------- */}
+        <div
+          className="relative w-full flex-1 flex items-center justify-center my-auto overflow-visible"
+          style={{
+            perspective: '1300px',
+            perspectiveOrigin: '50% 50%',
+          }}
+        >
+          {/* Orbital Horizon Arc Line */}
+          <div
+            className="pointer-events-none absolute w-[140%] h-[520px] rounded-[100%] border-t border-cyan-400/20 -top-8 left-1/2 -translate-x-1/2 -z-10 blur-[1px]"
+            style={{
+              maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)',
+            }}
           />
-        ))}
+
+          {/* Cards along the 3D curved elliptical trajectory */}
+          <div className="relative w-full h-[470px] sm:h-[510px] flex items-center justify-center">
+            {projects.map((project, index) => {
+              const transform = getCardTransform(index);
+              const stack = PROJECT_STACKS[project.name] || project.tags || ['Next.js', 'TypeScript', 'Tailwind CSS'];
+              const slug = project.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+              const theme = PROJECT_THEMES[project.name] || PROJECT_THEMES.Erpixa;
+
+              return (
+                <motion.div
+                  key={project.name}
+                  animate={{
+                    x: transform.x,
+                    y: transform.y,
+                    z: transform.z,
+                    scale: transform.scale,
+                    rotateZ: transform.rotZ,
+                    rotateY: transform.rotY,
+                    opacity: transform.opacity,
+                  }}
+                  transition={{
+                    duration: 0.7,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  style={{
+                    position: 'absolute',
+                    zIndex: transform.zIndex,
+                    width: 'min(92vw, 800px)',
+                    transformStyle: 'preserve-3d',
+                    backgroundColor: '#070b1a', // Solid luxury dark card canvas: NEVER white!
+                    borderColor: transform.isCenter ? theme.accent : 'rgba(255, 255, 255, 0.12)',
+                    boxShadow: transform.isCenter
+                      ? `0 24px 60px -15px ${theme.accent}44, 0 0 0 1px ${theme.accent}66, inset 0 1px 1px rgba(255, 255, 255, 0.2)`
+                      : '0 12px 30px -10px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05)',
+                  }}
+                  onClick={() => {
+                    if (!transform.isCenter) {
+                      AudioEngine.playClick();
+                      setCurrentIndex(index);
+                    }
+                  }}
+                  className={`rounded-2xl sm:rounded-3xl border backdrop-blur-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between ${
+                    transform.isCenter ? 'cursor-default ring-1 ring-white/10' : 'cursor-pointer hover:opacity-90'
+                  }`}
+                >
+                  {/* Card macOS Browser Chrome Header */}
+                  <div
+                    style={{ backgroundColor: '#030612' }}
+                    className="px-4 sm:px-5 py-3 border-b border-slate-800 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-rose-500 inline-block border border-rose-600" />
+                      <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-500 inline-block border border-amber-600" />
+                      <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500 inline-block border border-emerald-600" />
+                      <span className="ml-2 sm:ml-3 text-[0.7rem] sm:text-xs font-mono text-cyan-300 bg-cyan-950/40 px-2.5 py-0.5 rounded-full border border-cyan-500/25">
+                        https://{project.name.toLowerCase()}.biswodip.dev
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {transform.isCenter && (
+                        <span className="px-2 py-0.5 rounded-full text-[0.65rem] sm:text-[0.68rem] font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-400/40 animate-pulse font-semibold">
+                          ● FOCAL ACTIVE
+                        </span>
+                      )}
+                      <span className="text-xs font-mono font-bold text-slate-400">0{index + 1}</span>
+                    </div>
+                  </div>
+
+                  {/* Card Content: Screenshot & Architectural Details */}
+                  <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center">
+                    {/* Visual Preview Screenshot (7 cols) */}
+                    <div className="md:col-span-7 relative h-44 sm:h-56 rounded-xl sm:rounded-2xl overflow-hidden border border-slate-700/80 bg-[#020510] group">
+                      <Image
+                        src={`/previews/${slug}.webp`}
+                        alt={project.name}
+                        fill
+                        className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 460px"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#030612]/90 via-transparent to-transparent pointer-events-none" />
+
+                      {/* Live Indicator Pill on Preview */}
+                      <div className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md border border-white/20 text-[0.65rem] font-mono text-white flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>LIVE DEPLOYMENT</span>
+                      </div>
+                    </div>
+
+                    {/* Meta Specifications (5 cols) */}
+                    <div className="md:col-span-5 flex flex-col justify-between h-full space-y-2.5 sm:space-y-3">
+                      <div>
+                        <div
+                          className="text-[0.68rem] font-mono uppercase tracking-widest font-bold mb-1"
+                          style={{ color: theme.accent }}
+                        >
+                          {theme.category}
+                        </div>
+                        {/* High Gradient Project Title */}
+                        <h3
+                          style={{
+                            background: theme.gradientStyle,
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            color: theme.accent,
+                          }}
+                          className="text-2xl sm:text-3xl font-black tracking-tight"
+                        >
+                          {project.name}
+                        </h3>
+                        {/* High Contrast Crisp Copy */}
+                        <p
+                          style={{ color: '#ffffff' }}
+                          className="text-xs sm:text-sm font-medium leading-relaxed mt-1"
+                        >
+                          {project.blurb}
+                        </p>
+                        <p
+                          style={{ color: '#cbd5e1' }}
+                          className="text-xs font-sans leading-relaxed mt-1 line-clamp-2"
+                        >
+                          {project.description}
+                        </p>
+                      </div>
+
+                      {/* Tech Stack Badges */}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {stack.slice(0, 4).map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-2.5 py-0.5 rounded-md bg-[#0c1328] border border-cyan-500/30 text-[0.68rem] font-mono text-cyan-200 font-medium shadow-sm"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Direct Interactive Action Links */}
+                      {transform.isCenter && (
+                        <div className="pt-2 flex items-center gap-2">
+                          <a
+                            href={project.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-mono text-xs font-bold transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.4)]"
+                          >
+                            <span>Live System</span>
+                            <Icon name="arrowUpRight" />
+                          </a>
+                          {project.repo && (
+                            <a
+                              href={project.repo}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3.5 py-2 rounded-xl bg-[#0f1730] hover:bg-[#162142] text-slate-200 font-mono text-xs transition-colors flex items-center gap-1.5 border border-slate-700"
+                            >
+                              <span>Source</span>
+                              <Icon name="arrowUpRight" />
+                            </a>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Card Footer Status */}
+                  <div
+                    style={{ backgroundColor: '#030612' }}
+                    className="px-4 sm:px-5 py-2.5 border-t border-slate-800 flex items-center justify-between text-[0.68rem] font-mono text-slate-300"
+                  >
+                    <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+                      POSTGRES RLS · PROD VERIFIED
+                    </span>
+                    <span className="text-slate-400 hidden sm:inline">100% INDEPENDENT BUILD</span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* -------------------------------------------------------------------------
+            BOTTOM ROW: Trajectory Telemetry & Scrub Bar
+           ------------------------------------------------------------------------- */}
+        <div className="relative z-30 max-w-7xl mx-auto w-full pt-2 sm:pt-3 border-t border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-[0.7rem] sm:text-[0.72rem] font-mono text-slate-300">
+          <div className="flex items-center gap-3">
+            <span className="text-cyan-400 font-bold">● 05 FLAGSHIP SYSTEMS IN 3D ORBIT</span>
+            <span className="hidden sm:inline text-slate-600">|</span>
+            <span className="hidden sm:inline text-slate-400">
+              GPU ACCELERATED ELLIPTICAL PERSPECTIVE TRAJECTORY
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <span className="text-slate-400 hidden sm:inline">
+              SCROLL DOWN OR USE ARROWS (← →) TO NAVIGATE FLEET
+            </span>
+            <span className="text-cyan-400 font-bold animate-bounce">↓</span>
+          </div>
+        </div>
       </div>
     </section>
   );
