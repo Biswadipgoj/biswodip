@@ -136,7 +136,7 @@
 .tinted-section { position: relative; }
 .spatial-stage { perspective: 1400px; perspective-origin: 50% 45%; }
 
-.eyebrow { display: inline-flex; align-items: center; gap: 9px; font: 600 .75rem/1.6 ui-monospace, SFMono-Regular, monospace; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; padding: 7px 14px; border-radius: 9999px; background: rgba(255,255,255,.55); border: 1px solid var(--edge); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.eyebrow { display: inline-flex; align-items: center; gap: 9px; font: 600 .75rem/1.6 ui-monospace, SFMono-Regular, monospace; letter-spacing: .08em; color: var(--accent); margin-bottom: 20px; padding: 7px 14px; border-radius: 9999px; background: rgba(255,255,255,.55); border: 1px solid var(--edge); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .section-heading { max-width: 800px; margin-bottom: 56px; }
 .section-heading > p:last-child { max-width: 640px; margin-top: 20px; font-size: 1.06rem; }
 .body-lg { font-size: 1.12rem; color: var(--ink-2); }
@@ -203,7 +203,7 @@
 .hero-meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
 .hero-chip { display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 9999px; font: 500 .74rem/1.5 ui-monospace, monospace; color: var(--ink-2); background: rgba(255,255,255,.5); border: 1px solid var(--edge); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: transform .4s var(--ease), background .3s; }
 .hero-chip:hover { transform: translateY(-3px); background: rgba(255,255,255,.75); }
-.hero-rail { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 18px; padding: 22px 0 0; margin-top: 56px; border-top: 1px solid var(--edge-2); font: 600 .75rem/1.6 ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.hero-rail { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 18px; padding: 22px 0 0; margin-top: 56px; border-top: 1px solid var(--edge-2); font: 600 .75rem/1.6 ui-monospace, monospace; letter-spacing: .08em; color: var(--ink-3); }
 .hero-rail a { display: inline-flex; gap: 9px; align-items: center; color: var(--accent); }
 .hero-rail svg { width: 15px; height: 15px; }
 
@@ -368,7 +368,7 @@
 
 /* ---------------- Pipeline (sticky scroll sequence) ---------------- */
 .pipeline-section { position: relative; }
-.pipeline-track { position: relative; height: 340vh; }
+.pipeline-track { position: relative; height: 180vh; }
 .pipeline-sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; }
 .pipeline-inner { width: 100%; }
 .pipeline-head { text-align: center; margin-bottom: 42px; }
@@ -521,7 +521,7 @@
   .profile { max-width: 400px; }
   .skill-tabs { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .pipeline-rail { grid-template-columns: repeat(2, minmax(0,1fr)); }
-  .pipeline-track { height: 300vh; }
+  .pipeline-track { height: 170vh; }
   .project-body { grid-template-columns: 1fr; gap: 30px; }
   .project-copy { max-width: 720px; }
   .github-strip { flex-direction: column; align-items: flex-start; padding: 34px; }
@@ -556,7 +556,7 @@
   .skill-tabs { gap: 8px; }
   .skill-tabs button { min-height: 62px; padding: 13px 14px; font-size: .78rem; gap: 9px; }
   .pipeline-rail { grid-template-columns: 1fr; gap: 12px; }
-  .pipeline-track { height: 260vh; }
+  .pipeline-track { height: 150vh; }
   .stage { padding: 20px 18px; }
   .stage h3 { font-size: .98rem; }
   .project { grid-template-columns: 1fr; gap: 18px; padding-block: 42px; }

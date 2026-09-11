@@ -194,8 +194,8 @@ export default function Footer() {
 
           {/* Col 6-8: Navigation Matrix */}
           <div className="md:col-span-4">
-            <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-slate-400 mb-4">
-              {'// ARCHITECTURAL DIRECTORY'}
+            <h4 className="text-xs font-mono font-bold tracking-widest text-slate-400 mb-4">
+              {'// Architectural Directory'}
             </h4>
             <ul className="space-y-2.5 text-xs font-mono">
               <li>
@@ -234,8 +234,8 @@ export default function Footer() {
           {/* Col 9-12: System Spec & Cryptographic Verification */}
           <div className="md:col-span-3 flex flex-col justify-between">
             <div>
-              <h4 className="text-xs font-mono font-bold uppercase tracking-widest text-slate-400 mb-4">
-                {'// SYSTEM TELEMETRY'}
+              <h4 className="text-xs font-mono font-bold tracking-widest text-slate-400 mb-4">
+                {'// System Telemetry'}
               </h4>
               <div className="space-y-2 text-xs font-mono text-slate-300">
                 <div className="flex justify-between py-1 border-b border-slate-900">
