@@ -382,7 +382,7 @@ export default function TerminalDispatch() {
                 key={item.cmd}
                 type="button"
                 onClick={() => executeCommand(item.cmd)}
-                className="px-2.5 py-1 rounded-md bg-slate-800/90 hover:bg-cyan-950/60 border border-slate-700 hover:border-cyan-500/50 text-[0.72rem] font-mono text-slate-300 hover:text-cyan-300 transition-all duration-150 flex items-center gap-1 shadow-sm"
+                className="px-3 py-1.5 min-h-[36px] rounded-md bg-slate-800/90 hover:bg-cyan-950/60 border border-slate-700 hover:border-cyan-500/50 text-[0.72rem] font-mono text-slate-300 hover:text-cyan-300 transition-all duration-150 inline-flex items-center gap-1 shadow-sm"
               >
                 <span className="text-cyan-400 font-bold">$</span>
                 <span>{item.label}</span>

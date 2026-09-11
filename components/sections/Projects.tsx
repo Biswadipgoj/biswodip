@@ -149,22 +149,30 @@ export default function Projects() {
       const W = containerWidth;
       const isMobile = W < 768;
 
-      const spreadX = isMobile ? W * 0.44 : W * 0.32;
-      const arcY = isMobile ? 26 : 40;
+      // Generous spread: on mobile cards slide offstage cleanly (W * 1.05); on desktop spreadX clears the center card
+      const spreadX = isMobile ? W * 1.05 : W * 0.48;
+      const arcY = isMobile ? 0 : 40;
 
       const x = p * spreadX;
-      // Parabolic upward curve: side cards sit higher and turned in
-      const y = -Math.pow(Math.abs(p) / 2, 1.35) * arcY;
+      // Parabolic upward curve: side cards sit higher and turned in on desktop
+      const y = isMobile ? 0 : -Math.pow(Math.abs(p) / 2, 1.35) * arcY;
 
-      // Scale: 1.0 at center, drops to ~0.76 at p=1, ~0.52 at p=2
-      const scale = Math.max(0.48, 1 - Math.abs(p) * 0.22);
+      // Scale: 1.0 at center, clean drop for side cards
+      const scale = isMobile
+        ? (Math.abs(p) < 0.1 ? 1 : 0.92)
+        : Math.max(0.48, 1 - Math.abs(p) * 0.22);
 
-      // Inward rotation along elliptical perimeter
-      const rotZ = p * (isMobile ? 7 : 9.5);
-      const rotY = -p * (isMobile ? 10 : 14); // Inward perspective angle!
-      const z = -Math.abs(p) * 120;
-      const opacity = Math.abs(p) > 2.2 ? 0 : Math.max(0.35, 1 - Math.abs(p) * 0.28);
+      // Inward horizontal yaw along elliptical perimeter; minimal roll to maintain crisp horizontal typography
+      const rotZ = isMobile ? 0 : p * 1.5;
+      const rotY = isMobile ? 0 : -p * 12; // Inward perspective yaw angle!
+      const z = isMobile ? (Math.abs(p) < 0.1 ? 0 : -80) : -Math.abs(p) * 120;
+      
+      // Strict opacity gating: on mobile, non-center cards fade to 0 so no heading collisions occur!
+      const opacity = isMobile
+        ? (Math.abs(p) < 0.1 ? 1 : Math.max(0, 1 - Math.abs(p) * 2))
+        : (Math.abs(p) > 2.2 ? 0 : Math.max(0.35, 1 - Math.abs(p) * 0.28));
       const zIndex = Math.round((4 - Math.abs(p)) * 10);
+      const isCenter = Math.abs(p) < 0.1;
 
       return {
         x,
@@ -175,7 +183,8 @@ export default function Projects() {
         rotY,
         opacity,
         zIndex,
-        isCenter: Math.abs(p) < 0.1,
+        isCenter,
+        isMobile,
       };
     },
     [currentIndex, containerWidth]
@@ -347,13 +356,15 @@ export default function Projects() {
                   style={{
                     position: 'absolute',
                     zIndex: transform.zIndex,
-                    width: 'min(92vw, 800px)',
+                    width: 'min(92vw, 760px)',
                     transformStyle: 'preserve-3d',
                     backgroundColor: '#070b1a', // Solid luxury dark card canvas: NEVER white!
                     borderColor: transform.isCenter ? theme.accent : 'rgba(255, 255, 255, 0.12)',
                     boxShadow: transform.isCenter
                       ? `0 24px 60px -15px ${theme.accent}44, 0 0 0 1px ${theme.accent}66, inset 0 1px 1px rgba(255, 255, 255, 0.2)`
                       : '0 12px 30px -10px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05)',
+                    pointerEvents: transform.isMobile && !transform.isCenter ? 'none' : 'auto',
+                    visibility: transform.opacity <= 0.04 ? 'hidden' : 'visible',
                   }}
                   onClick={() => {
                     if (!transform.isCenter) {
@@ -365,6 +376,12 @@ export default function Projects() {
                     transform.isCenter ? 'cursor-default ring-1 ring-white/10' : 'cursor-pointer hover:opacity-90'
                   }`}
                 >
+                  {/* Non-focal background card dimming overlay */}
+                  <div
+                    className={`absolute inset-0 bg-[#020617]/50 pointer-events-none z-20 rounded-2xl sm:rounded-3xl transition-opacity duration-300 ${
+                      transform.isCenter ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                    }`}
+                  />
                   {/* Card macOS Browser Chrome Header */}
                   <div
                     style={{ backgroundColor: '#030612' }}

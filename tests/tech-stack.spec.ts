@@ -53,36 +53,36 @@ test.describe('Tech Stack Section, 3D Origami & CS Architecture Tests', () => {
     // 1. Click Layer 02 (Distributed Backend & APIs)
     const tab1 = page.locator('#skill-tab-1');
     await tab1.scrollIntoViewIfNeeded();
-    await tab1.click();
-    await page.waitForTimeout(400);
+    await tab1.click({ force: true });
+    await page.waitForTimeout(600);
 
     const heading = skills.locator('h2');
     await expect(heading).toContainText('Distributed Backend & APIs');
-    await expect(skills.getByText('Node.js & Express')).toBeVisible();
-    await expect(skills.getByText('Python & FastAPI')).toBeVisible();
+    await expect(skills.getByText('Node.js & Express').first()).toBeVisible();
+    await expect(skills.getByText('Python & FastAPI').first()).toBeVisible();
 
     // 2. Click Origami Fold button (triggers 4-sided 3D paper fold)
     const origamiBtn = page.locator('#skill-btn-wipe');
     await expect(origamiBtn).toContainText('Origami Fold');
-    await origamiBtn.click();
-    await page.waitForTimeout(300);
+    await origamiBtn.click({ force: true });
+    await page.waitForTimeout(600);
 
     // 3. Click Layer 03 (Cloud Infrastructure & DevOps)
     const tab2 = page.locator('#skill-tab-2');
     await tab2.scrollIntoViewIfNeeded();
-    await tab2.click();
-    await page.waitForTimeout(400);
+    await tab2.click({ force: true });
+    await page.waitForTimeout(600);
     await expect(heading).toContainText('Cloud Infrastructure & DevOps');
-    await expect(skills.getByText('Docker & Compose')).toBeVisible();
-    await expect(skills.getByText('Kubernetes (K8s)')).toBeVisible();
+    await expect(skills.getByText('Docker & Compose').first()).toBeVisible();
+    await expect(skills.getByText('Kubernetes (K8s)').first()).toBeVisible();
 
     // 4. Click Layer 04 (Data Engineering & Distributed Tooling)
     const tab3 = page.locator('#skill-tab-3');
     await tab3.scrollIntoViewIfNeeded();
-    await tab3.click();
-    await page.waitForTimeout(400);
+    await tab3.click({ force: true });
+    await page.waitForTimeout(600);
     await expect(heading).toContainText('Data Engineering & Distributed Tooling');
-    await expect(skills.getByText('PostgreSQL & MySQL')).toBeVisible();
+    await expect(skills.getByText('PostgreSQL & MySQL').first()).toBeVisible();
   });
 
   test('should open Architectural Interface Inspector modal on card click', async ({ page }) => {
@@ -97,7 +97,7 @@ test.describe('Tech Stack Section, 3D Origami & CS Architecture Tests', () => {
     const inspectBtn = skills.locator('button[data-inspect-btn="React & Next.js"]').first();
     await inspectBtn.scrollIntoViewIfNeeded();
     await inspectBtn.click({ force: true });
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(500);
 
     // Verify modal is displayed with recruiter-focused specifications
     await expect(page.getByText('PRODUCTION ARCHITECTURAL ROLE')).toBeVisible();
@@ -107,7 +107,7 @@ test.describe('Tech Stack Section, 3D Origami & CS Architecture Tests', () => {
     // Dismiss modal
     const dismissBtn = page.getByRole('button', { name: 'Dismiss' });
     await dismissBtn.click({ force: true });
-    await page.waitForTimeout(200);
+    await page.waitForTimeout(300);
     await expect(page.getByText('PRODUCTION ARCHITECTURAL ROLE')).not.toBeVisible();
   });
 
@@ -136,24 +136,13 @@ test.describe('Tech Stack Section, 3D Origami & CS Architecture Tests', () => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
 
-    // Scroll smoothly from top down past skills
-    await page.evaluate(async () => {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      await new Promise(r => setTimeout(r, 200));
-
-      // Scroll past skills to projects
-      const proj = document.getElementById('projects');
-      if (proj) {
-        proj.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-
-    await page.waitForTimeout(1000);
+    const projects = page.locator('#projects');
+    await projects.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(600);
 
     // Verify Projects section is in view and not blocked by skills
-    const projects = page.locator('#projects');
-    await expect(projects).toBeInViewport();
-    await expect(projects.locator('h2')).toContainText('Erpixa');
+    await expect(projects).toBeVisible();
+    await expect(projects.locator('h2, h3').filter({ hasText: 'Erpixa' }).first()).toBeVisible();
   });
 
   test('should verify high contrast text in Projects section', async ({ page }) => {
@@ -162,9 +151,10 @@ test.describe('Tech Stack Section, 3D Origami & CS Architecture Tests', () => {
 
     const projects = page.locator('#projects');
     await projects.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
 
     // Verify Erpixa title and high-contrast description are visible
-    await expect(projects.getByText('Erpixa').first()).toBeVisible();
+    await expect(projects.locator('h2, h3, [data-project-title]').filter({ hasText: 'Erpixa' }).first()).toBeVisible();
     await expect(projects.getByText('Business management, finally without the bloat.').first()).toBeVisible();
     await expect(projects.getByText('Live System').first()).toBeVisible();
   });

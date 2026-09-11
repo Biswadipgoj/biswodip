@@ -568,7 +568,7 @@ function SpatialSkillCard({
               e.stopPropagation();
               onInspect(craft);
             }}
-            className="text-cyan-400 group-hover:text-cyan-300 font-bold flex items-center gap-1 hover:underline cursor-pointer"
+            className="text-cyan-400 group-hover:text-cyan-300 font-bold px-2 py-1 min-h-[32px] inline-flex items-center gap-1 rounded bg-cyan-950/40 border border-cyan-500/20 hover:border-cyan-400/50 hover:underline cursor-pointer"
           >
             <span>Inspect</span>
             <span>↗</span>
@@ -658,7 +658,7 @@ export default function Skills() {
     <section
       id="skills"
       data-hydrated={isMounted ? 'true' : 'false'}
-      className="relative w-full min-h-screen py-16 sm:py-24 px-3 sm:px-8 lg:px-12 bg-[#020617] text-white select-none overflow-hidden transition-colors duration-700"
+      className="relative w-full min-h-screen py-20 sm:py-28 px-3 sm:px-8 lg:px-12 bg-[#020617] text-white select-none overflow-hidden transition-colors duration-700"
       style={{
         background: activeTheme.bgGradient,
       }}
@@ -714,7 +714,7 @@ export default function Skills() {
               id="skill-btn-prev"
               onClick={handleStepPrev}
               type="button"
-              className="px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition-colors flex items-center gap-1 shadow-sm"
+              className="px-3 py-1.5 min-h-[36px] min-w-[36px] justify-center rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition-colors inline-flex items-center gap-1 shadow-sm"
               title="Previous Layer"
             >
               <span>←</span>
@@ -726,7 +726,7 @@ export default function Skills() {
               id="skill-btn-wipe"
               onClick={triggerManualWipe}
               type="button"
-              className="px-3.5 py-1.5 rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-400/50 text-cyan-300 text-xs font-mono transition-colors flex items-center gap-1.5 shadow-sm"
+              className="px-3.5 py-1.5 min-h-[36px] rounded-xl bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-400/50 text-cyan-300 text-xs font-mono transition-colors inline-flex items-center gap-1.5 shadow-sm"
               title="Trigger 4-sided 3D origami paper fold"
             >
               <span>Origami Fold</span>
@@ -737,7 +737,7 @@ export default function Skills() {
               id="skill-btn-autoplay"
               onClick={() => setIsAutoPlaying((p) => !p)}
               type="button"
-              className={`px-3 py-1.5 rounded-xl border text-xs font-mono transition-all flex items-center gap-1.5 shadow-sm ${
+              className={`px-3 py-1.5 min-h-[36px] rounded-xl border text-xs font-mono transition-all inline-flex items-center gap-1.5 shadow-sm ${
                 isAutoPlaying
                   ? 'bg-cyan-500 text-slate-950 font-bold border-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.6)] animate-pulse'
                   : 'bg-slate-900/90 hover:bg-slate-800 border-slate-700 text-slate-300'
@@ -751,7 +751,7 @@ export default function Skills() {
               id="skill-btn-next"
               onClick={handleStepNext}
               type="button"
-              className="px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition-colors flex items-center gap-1 shadow-sm"
+              className="px-3 py-1.5 min-h-[36px] min-w-[36px] justify-center rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition-colors inline-flex items-center gap-1 shadow-sm"
               title="Next Layer"
             >
               <span className="hidden sm:inline">Next</span>

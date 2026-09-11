@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Component, useEffect, useState, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
 
 /* The universe is heavy and browser-only — stream it in after first paint.
@@ -10,6 +10,26 @@ const WorldScene = dynamic(() => import('@/components/scene/WorldScene'), {
   ssr: false,
   loading: () => null,
 });
+
+class SceneErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: unknown) {
+    console.warn('WorldScene canvas caught error, gracefully falling back to CSS aurora:', error);
+  }
+
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children;
+  }
+}
 
 /**
  * Mounts the persistent 3D world as a fixed layer behind the entire page.
@@ -31,7 +51,9 @@ export default function WorldCanvas() {
     // z-0 (not negative) so the canvas layer composites reliably everywhere;
     // the page content mounts after it in the DOM and therefore paints above.
     <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
-      <WorldScene />
+      <SceneErrorBoundary>
+        <WorldScene />
+      </SceneErrorBoundary>
     </div>
   );
 }

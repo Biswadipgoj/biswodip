@@ -27,7 +27,7 @@ export default function Pipeline() {
     <section id="process" className="pipeline-section">
       <div ref={track} className="pipeline-track">
         <div className="pipeline-sticky">
-          <div className="pipeline-inner section-shell spatial-stage">
+          <div className="pipeline-inner section-shell spatial-stage py-16 sm:py-24">
             <div className="pipeline-head">
               <p className="eyebrow">How the work moves</p>
               <h2>From question to production.</h2>

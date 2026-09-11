@@ -7,7 +7,19 @@ import { useExperience } from '../ExperienceProvider';
 import Icon from '../ui/Icon';
 import Sticker from '../ui/Sticker';
 
-import Computer3D from '../ui/Computer3D';
+import dynamic from 'next/dynamic';
+
+const Computer3D = dynamic(() => import('../ui/Computer3D'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full min-h-[480px] flex items-center justify-center bg-obsidian-950/40 rounded-2xl border border-cyan-500/20 backdrop-blur-md">
+      <div className="flex flex-col items-center gap-3 text-cyan-400/80 font-mono text-xs">
+        <div className="w-8 h-8 rounded-full border-2 border-cyan-400/30 border-t-cyan-400 animate-spin" />
+        <span>INITIALIZING SPATIAL 3D RUNTIME...</span>
+      </div>
+    </div>
+  ),
+});
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -144,7 +156,7 @@ export default function Hero() {
             <button
               type="button"
               onClick={() => setStageMode('3d')}
-              className={`px-3 py-1 text-xs font-mono rounded-lg transition-all ${
+              className={`px-3.5 py-1.5 min-h-[36px] inline-flex items-center text-xs font-mono rounded-lg transition-all ${
                 stageMode === '3d'
                   ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-md shadow-cyan-900/40'
                   : 'text-slate-400 hover:text-white'
@@ -155,7 +167,7 @@ export default function Hero() {
             <button
               type="button"
               onClick={() => setStageMode('code')}
-              className={`px-3 py-1 text-xs font-mono rounded-lg transition-all ${
+              className={`px-3.5 py-1.5 min-h-[36px] inline-flex items-center text-xs font-mono rounded-lg transition-all ${
                 stageMode === 'code'
                   ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold shadow-md shadow-cyan-900/40'
                   : 'text-slate-400 hover:text-white'
