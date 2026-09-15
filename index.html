@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biswadip — Software Engineer & Systems Architect</title>
+  <meta name="description" content="Portfolio of Biswadip: Systems architecture, high-performance web software, and interactive computing." />
+  
+  <!-- Typography: Fraunces, Inter, IBM Plex Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* -------------------------------------------------------------
+       1. DESIGN TOKENS & RESET
+       ------------------------------------------------------------- */
+    :root {
+      --paper: #F8F7F4;
+      --paper-2: #F1EFEA;
+      --paper-3: #EAE7E0;
+      --ink: #14171F;
+      --ink-soft: #4B4F58;
+      --muted: #8A8F98;
+      --line: #E3E1DA;
+      --line-strong: #C8C5BD;
+      --accent: #2F5DEE;
+      --accent-ink: #1D3FBF;
+      --accent-2: #00A38C;
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --gutter-width: 64px;
+      --content-max-width: 1080px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--paper);
+      color: var(--ink);
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+
+    /* Accessibility Skip Link */
+    .skip-link {
+      position: fixed;
+      top: 1rem;
+      left: calc(var(--gutter-width) + 1rem);
+      background: var(--ink);
+      color: var(--paper);
+      padding: 0.5rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      z-index: 1000;
+      transform: translateY(-200%);
+      transition: transform 0.2s ease;
+    }
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    /* -------------------------------------------------------------
+       2. PERSISTENT IDE GUTTER (001 - 008)
+       ------------------------------------------------------------- */
+    .ide-gutter {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--gutter-width);
+      height: 100vh;
+      border-right: 1px solid var(--line);
+      background-color: var(--paper);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2rem 0;
+      z-index: 90;
+      user-select: none;
+    }
+
+    .gutter-brand {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--ink);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      letter-spacing: 0.1em;
+      opacity: 0.6;
+    }
+
+    .gutter-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      align-items: center;
+    }
+
+    .gutter-item {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      transition: color 0.2s ease, transform 0.2s ease;
+      position: relative;
+      display: block;
+      padding: 0.2rem 0;
+    }
+
+    .gutter-item:hover {
+      color: var(--ink);
+      transform: translateX(2px);
+    }
+
+    .gutter-item.active {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .gutter-item.active::before {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: var(--accent);
+    }
+
+    .gutter-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(0, 163, 140, 0.15);
+      animation: pulseDot 3s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* -------------------------------------------------------------
+       3. SITE CONTAINER & SECTION COMMON
+       ------------------------------------------------------------- */
+    .site-main {
+      margin-left: var(--gutter-width);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    .section-wrap {
+      padding: 7rem 4rem;
+      max-width: var(--content-max-width);
+      margin: 0 auto;
+      position: relative;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-header {
+      margin-bottom: 3.5rem;
+      position: relative;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--accent-ink);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-tag::before {
+      content: '//';
+      color: var(--muted);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--ink);
+      max-width: 26ch;
+    }
+
+    .section-subtitle {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      color: var(--ink-soft);
+      max-width: 60ch;
+      line-height: 1.6;
+    }
+
+    /* -------------------------------------------------------------
+       001: CINEMATIC HERO (FIBONACCI NETWORK SPHERE)
+       ------------------------------------------------------------- */
+    #sec-001 {
+      min-height: 95vh;
+      display: flex;
+      align-items: center;
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 3rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-text {
+      z-index: 2;
+    }
+
+    .hero-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.35rem 0.85rem;
+      border: 1px solid var(--line);
+      background-color: var(--paper-2);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+      margin-bottom: 2rem;
+    }
+
+    .hero-status-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: var(--accent-2);
+    }
+
+    .hero-headline {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+      font-weight: 500;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-headline em {
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+
+    .hero-lead {
+      font-size: 1.18rem;
+      line-height: 1.65;
+      color: var(--ink-soft);
+      max-width: 50ch;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.75rem;
+      background-color: var(--ink);
+      color: var(--paper);
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 500;
+      border: 1px solid var(--ink);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.85rem 1.75rem;
+      background-color: transparent;
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 500;
+      border: 1px solid var(--line-strong);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--paper-2);
+      border-color: var(--ink);
+      transform: translateY(-2px);
+    }
+
+    .hero-canvas-wrap {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #hero-network-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+
+    #hero-network-canvas:active {
+      cursor: grabbing;
+    }
+
+    .canvas-caption {
+      position: absolute;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    /* -------------------------------------------------------------
+       002: ABOUT & SPACE TRANSITION
+       ------------------------------------------------------------- */
+    #sec-002 {
+      position: relative;
+      background-color: var(--paper);
+    }
+
+    .space-warp-canvas-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+    }
+
+    .about-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-bio-text {
+      font-size: 1.22rem;
+      line-height: 1.75;
+      color: var(--ink);
+    }
+
+    .about-bio-text p + p {
+      margin-top: 1.5rem;
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+    }
+
+    .facts-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .fact-card {
+      border: 1px solid var(--line);
+      background-color: var(--paper-2);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .fact-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .fact-value {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1.4;
+    }
+
+    /* -------------------------------------------------------------
+       003: SELECTED WORK (HEATMAP TILE REVEAL ON HOVER)
+       ------------------------------------------------------------- */
+    #sec-003 {
+      background-color: var(--paper);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+
+    .project-card {
+      border: 1px solid var(--line);
+      background-color: var(--paper);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: border-color 0.2s ease;
+    }
+
+    .project-card:hover {
+      border-color: var(--line-strong);
+    }
+
+    .card-top-bar {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--line);
+      background-color: var(--paper-2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--ink-soft);
+    }
+
+    .card-status {
+      font-size: 0.7rem;
+      color: var(--accent-2);
+    }
+
+    /* Object Reveal Stage */
+    .card-preview-stage {
+      position: relative;
+      height: 240px;
+      overflow: hidden;
+      background-color: var(--paper-3);
+      cursor: pointer;
+    }
+
+    .card-under-art {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card-mosaic-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 2px;
+      padding: 2px;
+      background-color: var(--paper-2);
+      z-index: 2;
+    }
+
+    .mosaic-tile {
+      background-color: #E2DFD6;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, background-color 0.2s;
+    }
+
+    .mosaic-tile.active-1 { background-color: #D3CFBE; }
+    .mosaic-tile.active-2 { background-color: #BAC2B8; }
+    .mosaic-tile.active-3 { background-color: #92B4A7; }
+    .mosaic-tile.cleared {
+      opacity: 0;
+      transform: scale(0.6) rotate(6deg);
+      pointer-events: none;
+    }
+
+    .card-info {
+      padding: 1.75rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 0.6rem;
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      line-height: 1.55;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+    }
+
+    .card-tag {
+      padding: 0.2rem 0.5rem;
+      background-color: var(--paper-2);
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+    }
+
+    /* -------------------------------------------------------------
+       004: FEATURED PROJECT (PORTAL & 3D PRODUCT DEMO)
+       ------------------------------------------------------------- */
+    #sec-004 {
+      background-color: var(--paper);
+      position: relative;
+    }
+
+    .portal-stage {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      margin-bottom: 2rem;
+      border: 1px solid var(--line);
+      background-color: #12141A;
+      overflow: hidden;
+    }
+
+    #portal-tunnel-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .portal-label {
+      position: absolute;
+      bottom: 0.75rem;
+      left: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #A0A5B5;
+    }
+
+    /* 3D Browser Window Mockup */
+    .mockup-3d-wrapper {
+      perspective: 1200px;
+      width: 100%;
+      padding: 2rem 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .mockup-3d-window {
+      width: 100%;
+      max-width: 860px;
+      border: 1px solid var(--line-strong);
+      background-color: var(--paper);
+      box-shadow: 0 20px 40px -15px rgba(20, 23, 31, 0.08);
+      transform-style: preserve-3d;
+      transition: transform 0.15s ease-out;
+      position: relative;
+    }
+
+    .mockup-header {
+      padding: 0.75rem 1.25rem;
+      background-color: var(--paper-2);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .mockup-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--line-strong);
+    }
+
+    .mockup-address {
+      flex-grow: 1;
+      max-width: 420px;
+      background-color: var(--paper);
+      border: 1px solid var(--line);
+      padding: 0.25rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      border-radius: 2px;
+    }
+
+    .mockup-content {
+      padding: 2.5rem;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 2.5rem;
+      align-items: center;
+      background: linear-gradient(135deg, var(--paper) 0%, var(--paper-2) 100%);
+    }
+
+    .mockup-body-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+
+    .mockup-body-text {
+      font-size: 0.95rem;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .floating-chip {
+      transform: translateZ(45px);
+      background-color: var(--paper);
+      border: 1px solid var(--accent);
+      padding: 0.85rem 1.2rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--ink);
+      box-shadow: 0 10px 25px rgba(47, 93, 238, 0.12);
+      margin-bottom: 1rem;
+    }
+
+    .floating-chip strong {
+      color: var(--accent-ink);
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    /* -------------------------------------------------------------
+       005: CRAFT & PARTICLE TRANSFORMATION
+       ------------------------------------------------------------- */
+    #sec-005 {
+      background-color: var(--paper);
+    }
+
+    .craft-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .craft-particle-stage {
+      position: relative;
+      height: 380px;
+      border: 1px solid var(--line);
+      background-color: var(--paper-2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #particle-morph-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .particle-controls {
+      position: absolute;
+      bottom: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 5;
+    }
+
+    .btn-morph {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--line-strong);
+      background-color: var(--paper);
+      color: var(--ink);
+      transition: all 0.2s ease;
+    }
+
+    .btn-morph.active, .btn-morph:hover {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .craft-spec-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .craft-group-title {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent-ink);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .craft-group-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .craft-badge {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+      border: 1px solid var(--line);
+      background-color: var(--paper-2);
+      color: var(--ink);
+    }
+
+    /* -------------------------------------------------------------
+       006: 3D FIELD NOTES & ORBIT GALLERY
+       ------------------------------------------------------------- */
+    #sec-006 {
+      background-color: var(--paper);
+      overflow: hidden;
+    }
+
+    .orbit-stage-viewport {
+      perspective: 1100px;
+      height: 420px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .orbit-carousel {
+      width: 280px;
+      height: 220px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .orbit-card {
+      position: absolute;
+      width: 280px;
+      height: 220px;
+      border: 1px solid var(--line-strong);
+      background-color: var(--paper);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      backface-visibility: hidden;
+      box-shadow: 0 10px 30px rgba(20, 23, 31, 0.05);
+    }
+
+    .orbit-card-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent-ink);
+    }
+
+    .orbit-card-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .orbit-card-desc {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+
+    .orbit-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .btn-orbit-nav {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--line-strong);
+      background-color: var(--paper-2);
+      color: var(--ink);
+      transition: all 0.2s;
+    }
+
+    .btn-orbit-nav:hover {
+      background-color: var(--ink);
+      color: var(--paper);
+    }
+
+    /* -------------------------------------------------------------
+       007: RESTRAINED JOURNEY TIMELINE
+       ------------------------------------------------------------- */
+    #sec-007 {
+      background-color: var(--paper);
+    }
+
+    .timeline-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      max-width: 760px;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 2rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .timeline-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .timeline-year {
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .timeline-role {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-company {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      margin-bottom: 0.75rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.98rem;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+
+    /* -------------------------------------------------------------
+       008: CONTACT & BREAKING THE 4TH WALL
+       ------------------------------------------------------------- */
+    #sec-008 {
+      background-color: var(--paper-2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .interactive-caret {
+      position: fixed;
+      width: 10px;
+      height: 18px;
+      background-color: var(--accent);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      z-index: 9999;
+      animation: caretBlink 1s infinite steps(2, start);
+    }
+
+    @keyframes caretBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .contact-links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .contact-card-link {
+      border: 1px solid var(--line);
+      background-color: var(--paper);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .contact-card-link:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .contact-link-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .scramble-text {
+      font-family: var(--font-mono);
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--ink);
+      word-break: break-all;
+    }
+
+    .site-footer {
+      margin-top: 6rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* -------------------------------------------------------------
+       RESPONSIVE DESIGN & ACCESSIBILITY
+       ------------------------------------------------------------- */
+    @media (max-width: 900px) {
+      :root {
+        --gutter-width: 0px;
+      }
+
+      .ide-gutter {
+        display: none;
+      }
+
+      .site-main {
+        margin-left: 0;
+      }
+
+      .section-wrap {
+        padding: 5rem 1.5rem;
+      }
+
+      .hero-grid,
+      .about-grid,
+      .projects-grid,
+      .craft-layout,
+      .mockup-content {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .hero-canvas-wrap {
+        height: 340px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      .mosaic-tile.cleared {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip link -->
+  <a href="#sec-001" class="skip-link">Skip to content</a>
+
+  <!-- Fixed Left Gutter Rail (001 - 008) -->
+  <aside class="ide-gutter" aria-label="Editor Gutter Navigation">
+    <div class="gutter-brand">BISWADIP.IN</div>
+    <nav class="gutter-rail">
+      <a href="#sec-001" class="gutter-item active" data-sec="sec-001" title="001: Hero">001</a>
+      <a href="#sec-002" class="gutter-item" data-sec="sec-002" title="002: About">002</a>
+      <a href="#sec-003" class="gutter-item" data-sec="sec-003" title="003: Work">003</a>
+      <a href="#sec-004" class="gutter-item" data-sec="sec-004" title="004: Featured">004</a>
+      <a href="#sec-005" class="gutter-item" data-sec="sec-005" title="005: Craft">005</a>
+      <a href="#sec-006" class="gutter-item" data-sec="sec-006" title="006: Notes">006</a>
+      <a href="#sec-007" class="gutter-item" data-sec="sec-007" title="007: Journey">007</a>
+      <a href="#sec-008" class="gutter-item" data-sec="sec-008" title="008: Contact">008</a>
+    </nav>
+    <div class="gutter-status" title="Status: Online & Ready">
+      <div class="status-dot"></div>
+    </div>
+  </aside>
+
+  <!-- Interactive Monospace Caret for Contact Section -->
+  <div id="cursor-caret" class="interactive-caret" aria-hidden="true"></div>
+
+  <!-- Main Site Body -->
+  <main class="site-main">
+
+    <!-- =========================================================
+         001: CINEMATIC HERO (NETWORK SPHERE)
+         ========================================================= -->
+    <section id="sec-001" class="section-wrap" aria-label="Introduction">
+      <div class="hero-grid">
+        <div class="hero-text">
+          <div class="hero-status-pill">
+            <span class="hero-status-indicator"></span>
+            <span>SYSTEMS // DISTRIBUTED ARCHITECTURE // WEB CRAFT</span>
+          </div>
+          <h1 class="hero-headline">
+            Architecting robust software with <em>uncompromising</em> craft.
+          </h1>
+          <p class="hero-lead">
+            I'm Biswadip — a software engineer building distributed systems, high-throughput cloud services, and tactile, high-performance web experiences.
+          </p>
+          <div class="hero-actions">
+            <a href="#sec-003" class="btn-primary">Explore Selected Work</a>
+            <a href="#sec-008" class="btn-outline">Initiate Contact</a>
+          </div>
+        </div>
+        
+        <div class="hero-canvas-wrap">
+          <canvas id="hero-network-canvas" width="600" height="600" aria-label="3D Network Topology Sphere"></canvas>
+          <div class="canvas-caption">// fibonacci-sphere-v2.9 [interactive]</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         002: ABOUT & SPACE TRANSITION
+         ========================================================= -->
+    <section id="sec-002" class="section-wrap" aria-label="About Biswadip">
+      <canvas id="space-warp-canvas" class="space-warp-canvas-overlay" aria-hidden="true"></canvas>
+      
+      <header class="section-header">
+        <div class="section-tag">002 // BIO & ETHOS</div>
+        <h2 class="section-title">Bridging algorithmic rigor with humanist interface design.</h2>
+      </header>
+
+      <div class="about-grid">
+        <div class="about-bio-text">
+          <p>
+            Software is most impactful when it marries deep infrastructural stability with intentional, fluid interaction. Over the past five years, I have engineered backend backbones, real-time message routers, and precision-tuned frontends.
+          </p>
+          <p>
+            I reject generic AI templates, black-with-neon hacker clichés, and bloated software stacks. Every system I build is founded on clean domain modeling, predictable state flows, and meticulous performance profiling.
+          </p>
+        </div>
+
+        <div class="facts-column">
+          <div class="fact-card">
+            <div class="fact-label">// CORE DOMAIN</div>
+            <div class="fact-value">Distributed Systems, Event Streaming & Modern Web Architecture</div>
+          </div>
+          <div class="fact-card">
+            <div class="fact-label">// LOCATION & WORK</div>
+            <div class="fact-value">India (UTC+5:30) · Available for High-Impact Roles Globally</div>
+          </div>
+          <div class="fact-card">
+            <div class="fact-label">// OBSESSION</div>
+            <div class="fact-value">Sub-50ms latency, zero-jank frame pacing & clean code ergonomics</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         003: SELECTED WORK (OBJECT REVEAL ON HOVER)
+         ========================================================= -->
+    <section id="sec-003" class="section-wrap" aria-label="Selected Engineering Work">
+      <header class="section-header">
+        <div class="section-tag">003 // PORTFOLIO</div>
+        <h2 class="section-title">Selected production systems and open infrastructure.</h2>
+        <p class="section-subtitle">Hover across the contribution matrix on any card to reveal architectural blueprints.</p>
+      </header>
+
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <article class="project-card">
+          <div class="card-top-bar">
+            <span>// src/systems/kestrel-mesh.rs</span>
+            <span class="card-status">● LIVE PRODUCTION</span>
+          </div>
+          <div class="card-preview-stage" data-mosaic="true">
+            <div class="card-under-art">
+              <svg width="240" height="140" viewBox="0 0 240 140" fill="none">
+                <rect x="10" y="10" width="220" height="120" stroke="#2F5DEE" stroke-width="1.5" stroke-dasharray="4 4" />
+                <circle cx="50" cy="50" r="18" fill="#F1EFEA" stroke="#14171F" stroke-width="2" />
+                <circle cx="190" cy="50" r="18" fill="#F1EFEA" stroke="#14171F" stroke-width="2" />
+                <circle cx="120" cy="100" r="22" fill="#2F5DEE" />
+                <line x1="68" y1="50" x2="172" y2="50" stroke="#14171F" stroke-width="1.5" />
+                <line x1="62" y1="62" x2="105" y2="88" stroke="#2F5DEE" stroke-width="1.5" />
+                <line x1="178" y1="62" x2="135" y2="88" stroke="#2F5DEE" stroke-width="1.5" />
+                <text x="120" y="105" fill="#FFF" font-family="monospace" font-size="10" text-anchor="middle">RPS: 42K</text>
+              </svg>
+            </div>
+            <div class="card-mosaic-overlay"></div>
+          </div>
+          <div class="card-info">
+            <div>
+              <h3 class="card-title">Kestrel Distributed Key-Value Store</h3>
+              <p class="card-desc">Raft-consensus multi-region cache engine achieving sub-millisecond p99 latency with zero-copy deserialization.</p>
+            </div>
+            <div class="card-tags">
+              <span class="card-tag">Rust</span>
+              <span class="card-tag">Raft</span>
+              <span class="card-tag">gRPC</span>
+              <span class="card-tag">Tokio</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="project-card">
+          <div class="card-top-bar">
+            <span>// src/compute/hyperion-query.ts</span>
+            <span class="card-status">● OPEN SOURCE</span>
+          </div>
+          <div class="card-preview-stage" data-mosaic="true">
+            <div class="card-under-art">
+              <svg width="240" height="140" viewBox="0 0 240 140" fill="none">
+                <path d="M20 120 C 60 40, 100 80, 140 30 C 180 80, 200 40, 220 20" stroke="#00A38C" stroke-width="2.5" />
+                <line x1="20" y1="125" x2="220" y2="125" stroke="#C8C5BD" stroke-width="1" />
+                <circle cx="140" cy="30" r="5" fill="#00A38C" />
+                <circle cx="60" cy="40" r="4" fill="#2F5DEE" />
+                <text x="145" y="24" fill="#14171F" font-family="monospace" font-size="9">p99: 14ms</text>
+              </svg>
+            </div>
+            <div class="card-mosaic-overlay"></div>
+          </div>
+          <div class="card-info">
+            <div>
+              <h3 class="card-title">Hyperion Columnar Engine</h3>
+              <p class="card-desc">In-memory analytical query compiler that transforms AST expressions into SIMD-accelerated array passes.</p>
+            </div>
+            <div class="card-tags">
+              <span class="card-tag">TypeScript</span>
+              <span class="card-tag">WebAssembly</span>
+              <span class="card-tag">SIMD</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="project-card">
+          <div class="card-top-bar">
+            <span>// src/telemetry/aegis-stream.go</span>
+            <span class="card-status">● PRODUCTION</span>
+          </div>
+          <div class="card-preview-stage" data-mosaic="true">
+            <div class="card-under-art">
+              <svg width="240" height="140" viewBox="0 0 240 140" fill="none">
+                <circle cx="120" cy="70" r="50" stroke="#E3E1DA" stroke-width="2" />
+                <circle cx="120" cy="70" r="32" stroke="#2F5DEE" stroke-width="1.5" stroke-dasharray="6 4" />
+                <circle cx="120" cy="70" r="10" fill="#14171F" />
+                <line x1="120" y1="20" x2="120" y2="120" stroke="#C8C5BD" stroke-width="1" />
+                <line x1="70" y1="70" x2="170" y2="70" stroke="#C8C5BD" stroke-width="1" />
+              </svg>
+            </div>
+            <div class="card-mosaic-overlay"></div>
+          </div>
+          <div class="card-info">
+            <div>
+              <h3 class="card-title">Aegis Realtime Telemetry Bus</h3>
+              <p class="card-desc">High-concurrency event gateway handling 100K+ concurrent WebSockets with adaptive backpressure management.</p>
+            </div>
+            <div class="card-tags">
+              <span class="card-tag">Go</span>
+              <span class="card-tag">Kafka</span>
+              <span class="card-tag">WebSockets</span>
+              <span class="card-tag">Prometheus</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 4 -->
+        <article class="project-card">
+          <div class="card-top-bar">
+            <span>// src/motion/quantum-canvas.js</span>
+            <span class="card-status">● EXPERIMENTAL</span>
+          </div>
+          <div class="card-preview-stage" data-mosaic="true">
+            <div class="card-under-art">
+              <svg width="240" height="140" viewBox="0 0 240 140" fill="none">
+                <rect x="30" y="30" width="80" height="80" stroke="#14171F" stroke-width="1.5" />
+                <rect x="130" y="30" width="80" height="80" stroke="#2F5DEE" stroke-width="1.5" />
+                <path d="M70 70 L 170 70" stroke="#00A38C" stroke-width="2" marker-end="url(#arrow)" />
+                <text x="120" y="62" fill="#14171F" font-family="monospace" font-size="9" text-anchor="middle">60 FPS SPRINGS</text>
+              </svg>
+            </div>
+            <div class="card-mosaic-overlay"></div>
+          </div>
+          <div class="card-info">
+            <div>
+              <h3 class="card-title">Quantum Motion Choreographer</h3>
+              <p class="card-desc">Physics-based gesture engine synchronizing fluid canvas simulations with interruptible DOM springs.</p>
+            </div>
+            <div class="card-tags">
+              <span class="card-tag">Vanilla JS</span>
+              <span class="card-tag">Canvas 2D</span>
+              <span class="card-tag">Spring Physics</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         004: FEATURED PROJECT (PORTAL & 3D PRODUCT DEMO)
+         ========================================================= -->
+    <section id="sec-004" class="section-wrap" aria-label="Flagship Project Deep Dive">
+      <header class="section-header">
+        <div class="section-tag">004 // ARCHITECTURAL FLAGSHIP</div>
+        <h2 class="section-title">Nexus: Autonomous Micro-Execution Workspace.</h2>
+        <p class="section-subtitle">Passing through the code token portal into an interactive 3D browser product inspection.</p>
+      </header>
+
+      <!-- Token Portal Tunnel -->
+      <div class="portal-stage">
+        <canvas id="portal-tunnel-canvas" width="1000" height="180" aria-label="Streaming Code Token Tunnel"></canvas>
+        <div class="portal-label">// STREAMING AST PORTAL [SCROLL ACCELERATED]</div>
+      </div>
+
+      <!-- 3D Browser Window Mockup -->
+      <div class="mockup-3d-wrapper">
+        <div id="product-mockup" class="mockup-3d-window">
+          <div class="mockup-header">
+            <div class="mockup-dots">
+              <div class="mockup-dot"></div>
+              <div class="mockup-dot"></div>
+              <div class="mockup-dot"></div>
+            </div>
+            <div class="mockup-address">https://nexus-systems.internal/v2/clusters/prod-east</div>
+          </div>
+          
+          <div class="mockup-content">
+            <div>
+              <h3 class="mockup-body-title">Dynamic Orchestration Core</h3>
+              <p class="mockup-body-text">
+                Nexus decouples distributed compute jobs into verifiable micro-closures, scheduling them across ephemeral WASM isolates with deterministic memory quotas.
+              </p>
+              <div class="card-tags">
+                <span class="card-tag">Rust Core</span>
+                <span class="card-tag">WASM Micro-Runtimes</span>
+                <span class="card-tag">BFT Consensus</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="floating-chip">
+                <strong>// METRIC 01</strong>
+                99.999% Service Level Objective
+              </div>
+              <div class="floating-chip">
+                <strong>// METRIC 02</strong>
+                &lt; 3.2ms Cold-Start Execution
+              </div>
+              <div class="floating-chip">
+                <strong>// METRIC 03</strong>
+                Zero Unhandled Panics in 18M Runs
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         005: CRAFT (PARTICLE TRANSFORMATION)
+         ========================================================= -->
+    <section id="sec-005" class="section-wrap" aria-label="Technical Craft and Competencies">
+      <header class="section-header">
+        <div class="section-tag">005 // CRAFT & SPECIFICATIONS</div>
+        <h2 class="section-title">Technologies, protocols, and architectural disciplines.</h2>
+      </header>
+
+      <div class="craft-layout">
+        <div class="craft-particle-stage">
+          <canvas id="particle-morph-canvas" width="450" height="340" aria-label="Transforming Particle Morph"></canvas>
+          <div class="particle-controls">
+            <button class="btn-morph active" data-target="code">&lt;/&gt;</button>
+            <button class="btn-morph" data-target="brackets">{ }</button>
+            <button class="btn-morph" data-target="terminal">&gt;_</button>
+            <button class="btn-morph" data-target="infinity">∞</button>
+          </div>
+        </div>
+
+        <div class="craft-spec-list">
+          <div>
+            <div class="craft-group-title">// 01: CORE LANGUAGES</div>
+            <div class="craft-group-items">
+              <span class="craft-badge">TypeScript</span>
+              <span class="craft-badge">Rust</span>
+              <span class="craft-badge">Go</span>
+              <span class="craft-badge">Python</span>
+              <span class="craft-badge">SQL</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="craft-group-title">// 02: DISTRIBUTED INFRASTRUCTURE</div>
+            <div class="craft-group-items">
+              <span class="craft-badge">Docker & K8s</span>
+              <span class="craft-badge">Kafka / Redpanda</span>
+              <span class="craft-badge">PostgreSQL</span>
+              <span class="craft-badge">Redis</span>
+              <span class="craft-badge">gRPC / Protobuf</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="craft-group-title">// 03: INTERACTION & FRONTEND</div>
+            <div class="craft-group-items">
+              <span class="craft-badge">React & Next.js</span>
+              <span class="craft-badge">Canvas 2D / WebGL</span>
+              <span class="craft-badge">GSAP Motion</span>
+              <span class="craft-badge">Tailwind CSS</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="craft-group-title">// 04: PRACTICES</div>
+            <div class="craft-group-items">
+              <span class="craft-badge">Property-based Testing</span>
+              <span class="craft-badge">CI/CD Pipelines</span>
+              <span class="craft-badge">Observability (OpenTelemetry)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         006: 3D FIELD NOTES & ORBIT GALLERY
+         ========================================================= -->
+    <section id="sec-006" class="section-wrap" aria-label="Field Notes & Experiments">
+      <header class="section-header">
+        <div class="section-tag">006 // FIELD NOTES & EXPERIMENTS</div>
+        <h2 class="section-title">Open source modules, essays, and architectural spikes.</h2>
+        <p class="section-subtitle">Rotate through recent findings and explorations orbiting in 3D space.</p>
+      </header>
+
+      <div class="orbit-stage-viewport">
+        <div id="orbit-carousel" class="orbit-carousel">
+          <!-- Card 1 -->
+          <div class="orbit-card" style="transform: rotateY(0deg) translateZ(280px);">
+            <div class="orbit-card-tag">// NOTE-84</div>
+            <h3 class="orbit-card-title">Zero-Copy Buffer Deserialization</h3>
+            <p class="orbit-card-desc">Analyzing FlatBuffers memory-mapping over standard JSON parsing on gigabit telemetry links.</p>
+          </div>
+          <!-- Card 2 -->
+          <div class="orbit-card" style="transform: rotateY(72deg) translateZ(280px);">
+            <div class="orbit-card-tag">// EXP-12</div>
+            <h3 class="orbit-card-title">WASM Sandbox Limits</h3>
+            <p class="orbit-card-desc">Benchmarking instruction traps and memory isolation overhead across v8 and Wasmtime runtimes.</p>
+          </div>
+          <!-- Card 3 -->
+          <div class="orbit-card" style="transform: rotateY(144deg) translateZ(280px);">
+            <div class="orbit-card-tag">// OSS-03</div>
+            <h3 class="orbit-card-title">Micro-Spring Dispatcher</h3>
+            <p class="orbit-card-desc">A 1.4kb standalone spring physics loop for vanilla DOM and Canvas interactive widgets.</p>
+          </div>
+          <!-- Card 4 -->
+          <div class="orbit-card" style="transform: rotateY(216deg) translateZ(280px);">
+            <div class="orbit-card-tag">// ARCH-99</div>
+            <h3 class="orbit-card-title">Distributed Clock Skew</h3>
+            <p class="orbit-card-desc">Practical mitigation patterns for hybrid logical clocks (HLC) in multi-region CockroachDB clusters.</p>
+          </div>
+          <!-- Card 5 -->
+          <div class="orbit-card" style="transform: rotateY(288deg) translateZ(280px);">
+            <div class="orbit-card-tag">// ESSAY-07</div>
+            <h3 class="orbit-card-title">Against The Dark-Mode Cliché</h3>
+            <p class="orbit-card-desc">Why editorial warmth, crisp hairline contrast, and humanist type outperform generic dark cyberpunk UI.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="orbit-controls">
+        <button id="btn-orbit-prev" class="btn-orbit-nav">← PREV EXPERIMENT</button>
+        <button id="btn-orbit-next" class="btn-orbit-nav">NEXT EXPERIMENT →</button>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         007: RESTRAINED JOURNEY TIMELINE
+         ========================================================= -->
+    <section id="sec-007" class="section-wrap" aria-label="Career Journey">
+      <header class="section-header">
+        <div class="section-tag">007 // CHRONOLOGY</div>
+        <h2 class="section-title">Timeline & engineering trajectory.</h2>
+        <p class="section-subtitle">A calm sequence of milestones, architecture mandates, and systems delivery.</p>
+      </header>
+
+      <div class="timeline-wrap">
+        <div class="timeline-row">
+          <div class="timeline-year">2024 — PRESENT</div>
+          <div>
+            <h3 class="timeline-role">Lead Systems & Frontend Architect</h3>
+            <div class="timeline-company">// Core Infrastructure & Interactive Labs</div>
+            <p class="timeline-desc">
+              Directing the architectural rewrite of flagship enterprise client applications, migrating brittle monorepos to typed micro-frontends and high-performance streaming pipelines.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-row">
+          <div class="timeline-year">2022 — 2024</div>
+          <div>
+            <h3 class="timeline-role">Senior Software Engineer</h3>
+            <div class="timeline-company">// Distributed Cloud Services</div>
+            <p class="timeline-desc">
+              Engineered resilient event-driven microservices handling 25M daily transactions. Cut p99 latency by 38% through query compilation and optimized database indexing.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-row">
+          <div class="timeline-year">2020 — 2022</div>
+          <div>
+            <h3 class="timeline-role">Full-Stack Engineer</h3>
+            <div class="timeline-company">// Interactive Systems & Applications</div>
+            <p class="timeline-desc">
+              Built end-to-end web applications, custom internal tools, and developer platforms. Pioneered automated testing suites that brought deployment failure rates below 0.1%.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         008: CONTACT & BREAKING THE 4TH WALL
+         ========================================================= -->
+    <section id="sec-008" class="section-wrap" aria-label="Contact & Inquiries">
+      <div class="contact-container">
+        <header class="section-header">
+          <div class="section-tag">008 // TRANSMISSION</div>
+          <h2 class="section-title">Initiate a dialogue.</h2>
+          <p class="section-subtitle">Hover over the channels below to decrypt communication endpoints.</p>
+        </header>
+
+        <div class="contact-links-grid">
+          <!-- Email -->
+          <a href="mailto:biswadip.goj@gmail.com" class="contact-card-link">
+            <span class="contact-link-label">// DIRECT DISPATCH</span>
+            <span class="scramble-text" data-original="biswadip.goj@gmail.com">biswadip.goj@gmail.com</span>
+          </a>
+
+          <!-- GitHub -->
+          <a href="https://github.com/biswadip" target="_blank" rel="noopener noreferrer" class="contact-card-link">
+            <span class="contact-link-label">// VERSION CONTROL</span>
+            <span class="scramble-text" data-original="github.com/biswadip">github.com/biswadip</span>
+          </a>
+
+          <!-- LinkedIn -->
+          <a href="https://linkedin.com/in/biswadip" target="_blank" rel="noopener noreferrer" class="contact-card-link">
+            <span class="contact-link-label">// NETWORK PROFILE</span>
+            <span class="scramble-text" data-original="linkedin.com/in/biswadip">linkedin.com/in/biswadip</span>
+          </a>
+        </div>
+
+        <footer class="site-footer">
+          <div>© 2026 Biswadip · biswadip.in</div>
+          <div>BUILT WITH GSAP & CANVAS 2D · LIGHT THEME CRAFT</div>
+        </footer>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================
+       4. INTERACTIVE SCRIPT ENGINES
+       ========================================================= -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      gsap.registerPlugin(ScrollTrigger);
+
+      /* ---------------------------------------------------------
+         A. Gutter Active Section Highlighting
+         --------------------------------------------------------- */
+      const sections = document.querySelectorAll('.section-wrap');
+      const gutterItems = document.querySelectorAll('.gutter-item');
+
+      sections.forEach((sec) => {
+        ScrollTrigger.create({
+          trigger: sec,
+          start: 'top 40%',
+          end: 'bottom 40%',
+          onEnter: () => updateGutter(sec.id),
+          onEnterBack: () => updateGutter(sec.id),
+        });
+      });
+
+      function updateGutter(activeId) {
+        gutterItems.forEach((item) => {
+          if (item.getAttribute('data-sec') === activeId) {
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
+      }
+
+      /* ---------------------------------------------------------
+         B. Technique 1: Fibonacci Network Sphere (Canvas 2D)
+         --------------------------------------------------------- */
+      const sphereCanvas = document.getElementById('hero-network-canvas');
+      if (sphereCanvas) {
+        const ctx = sphereCanvas.getContext('2d');
+        const numPoints = 120;
+        const radius = 170;
+        let points = [];
+        let rotX = 0.2;
+        let rotY = 0;
+        let targetRotX = 0.2;
+        let targetRotY = 0;
+
+        // Generate Fibonacci distribution on sphere
+        const phi = Math.PI * (3 - Math.sqrt(5));
+        for (let i = 0; i < numPoints; i++) {
+          const y = 1 - (i / (numPoints - 1)) * 2;
+          const r = Math.sqrt(1 - y * y);
+          const theta = phi * i;
+          const x = Math.cos(theta) * r;
+          const z = Math.sin(theta) * r;
+          points.push({ x: x * radius, y: y * radius, z: z * radius });
+        }
+
+        // Mouse move parallax
+        window.addEventListener('mousemove', (e) => {
+          const normX = (e.clientX / window.innerWidth) - 0.5;
+          const normY = (e.clientY / window.innerHeight) - 0.5;
+          targetRotY = normX * 0.9;
+          targetRotX = normY * 0.9 + 0.2;
+        });
+
+        function renderSphere() {
+          ctx.clearRect(0, 0, sphereCanvas.width, sphereCanvas.height);
+          const cx = sphereCanvas.width / 2;
+          const cy = sphereCanvas.height / 2;
+
+          rotY += (targetRotY - rotY) * 0.05 + 0.003;
+          rotX += (targetRotX - rotX) * 0.05;
+
+          const cosY = Math.cos(rotY);
+          const sinY = Math.sin(rotY);
+          const cosX = Math.cos(rotX);
+          const sinX = Math.sin(rotX);
+
+          // Projected points
+          let projected = points.map((p) => {
+            // Rotate Y
+            let x1 = p.x * cosY - p.z * sinY;
+            let z1 = p.z * cosY + p.x * sinY;
+            // Rotate X
+            let y2 = p.y * cosX - z1 * sinX;
+            let z2 = z1 * cosX + p.y * sinX;
+
+            const scale = 360 / (360 + z2);
+            return {
+              x: cx + x1 * scale,
+              y: cy + y2 * scale,
+              z: z2,
+              scale: scale,
+            };
+          });
+
+          // Draw filaments between nearby points
+          ctx.lineWidth = 0.8;
+          for (let i = 0; i < projected.length; i++) {
+            for (let j = i + 1; j < projected.length; j++) {
+              const dx = projected[i].x - projected[j].x;
+              const dy = projected[i].y - projected[j].y;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              if (dist < 48) {
+                const alpha = (1 - dist / 48) * 0.35 * Math.min(projected[i].scale, projected[j].scale);
+                ctx.strokeStyle = `rgba(47, 93, 238, ${alpha})`;
+                ctx.beginPath();
+                ctx.moveTo(projected[i].x, projected[i].y);
+                ctx.lineTo(projected[j].x, projected[j].y);
+                ctx.stroke();
+              }
+            }
+          }
+
+          // Draw Nodes
+          projected.forEach((p, idx) => {
+            const alpha = Math.max(0.15, (p.z + radius) / (2 * radius));
+            const isHighlight = idx % 9 === 0;
+            ctx.fillStyle = isHighlight
+              ? `rgba(47, 93, 238, ${alpha * 0.95})`
+              : `rgba(20, 23, 31, ${alpha * 0.75})`;
+            const size = isHighlight ? 3.5 * p.scale : 2.2 * p.scale;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+            ctx.fill();
+          });
+
+          requestAnimationFrame(renderSphere);
+        }
+        renderSphere();
+      }
+
+      /* ---------------------------------------------------------
+         C. Technique 2: Space Warp Transition (ScrollTrigger)
+         --------------------------------------------------------- */
+      const warpCanvas = document.getElementById('space-warp-canvas');
+      if (warpCanvas) {
+        const wCtx = warpCanvas.getContext('2d');
+        function resizeWarp() {
+          warpCanvas.width = warpCanvas.offsetWidth;
+          warpCanvas.height = warpCanvas.offsetHeight;
+        }
+        resizeWarp();
+        window.addEventListener('resize', resizeWarp);
+
+        let warpBurst = { radius: 0, alpha: 0 };
+        ScrollTrigger.create({
+          trigger: '#sec-002',
+          start: 'top bottom',
+          end: 'top center',
+          scrub: 1,
+          onUpdate: (self) => {
+            warpBurst.radius = self.progress * (warpCanvas.width * 0.7);
+            warpBurst.alpha = Math.sin(self.progress * Math.PI) * 0.6;
+            renderWarp();
+          },
+        });
+
+        function renderWarp() {
+          wCtx.clearRect(0, 0, warpCanvas.width, warpCanvas.height);
+          if (warpBurst.alpha <= 0.01) return;
+          const cx = warpCanvas.width * 0.75;
+          const cy = warpCanvas.height * 0.25;
+          const grad = wCtx.createRadialGradient(cx, cy, 0, cx, cy, warpBurst.radius);
+          grad.addColorStop(0, `rgba(47, 93, 238, ${warpBurst.alpha * 0.7})`);
+          grad.addColorStop(0.5, `rgba(0, 163, 140, ${warpBurst.alpha * 0.4})`);
+          grad.addColorStop(1, 'rgba(248, 247, 244, 0)');
+          wCtx.fillStyle = grad;
+          wCtx.beginPath();
+          wCtx.arc(cx, cy, warpBurst.radius, 0, Math.PI * 2);
+          wCtx.fill();
+        }
+      }
+
+      /* ---------------------------------------------------------
+         D. Technique 3: Contribution Mosaic Reveal on Hover
+         --------------------------------------------------------- */
+      const mosaicStages = document.querySelectorAll('[data-mosaic="true"]');
+      mosaicStages.forEach((stage) => {
+        const overlay = stage.querySelector('.card-mosaic-overlay');
+        if (!overlay) return;
+
+        // Generate 96 tiles (12 cols x 8 rows)
+        for (let i = 0; i < 96; i++) {
+          const tile = document.createElement('div');
+          tile.classList.add('mosaic-tile');
+          const rand = Math.random();
+          if (rand > 0.75) tile.classList.add('active-1');
+          if (rand > 0.88) tile.classList.add('active-2');
+          if (rand > 0.96) tile.classList.add('active-3');
+          overlay.appendChild(tile);
+        }
+
+        const tiles = overlay.querySelectorAll('.mosaic-tile');
+
+        stage.addEventListener('mousemove', (e) => {
+          const rect = stage.getBoundingClientRect();
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+
+          tiles.forEach((t) => {
+            const tRect = t.getBoundingClientRect();
+            const tx = tRect.left - rect.left + tRect.width / 2;
+            const ty = tRect.top - rect.top + tRect.height / 2;
+            const d = Math.hypot(mouseX - tx, mouseY - ty);
+            if (d < 50) {
+              t.classList.add('cleared');
+            }
+          });
+        });
+
+        stage.addEventListener('mouseleave', () => {
+          setTimeout(() => {
+            tiles.forEach((t, i) => {
+              setTimeout(() => {
+                t.classList.remove('cleared');
+              }, i * 3);
+            });
+          }, 400);
+        });
+      });
+
+      /* ---------------------------------------------------------
+         E. Technique 4: Streaming Code Token Portal Tunnel
+         --------------------------------------------------------- */
+      const tunnelCanvas = document.getElementById('portal-tunnel-canvas');
+      if (tunnelCanvas) {
+        const tCtx = tunnelCanvas.getContext('2d');
+        const tokens = ['async', 'Promise<T>', '0x8F', 'WASM', 'Raft', 'gRPC', 'Mutex', 'yield*', 'Stream', 'p99 < 1ms', 'Tokio'];
+        let stars = [];
+        for (let i = 0; i < 50; i++) {
+          stars.push({
+            x: (Math.random() - 0.5) * tunnelCanvas.width * 2,
+            y: (Math.random() - 0.5) * tunnelCanvas.height * 2,
+            z: Math.random() * 1000,
+            text: tokens[i % tokens.length],
+          });
+        }
+
+        function renderTunnel() {
+          tCtx.fillStyle = 'rgba(18, 20, 26, 0.25)';
+          tCtx.fillRect(0, 0, tunnelCanvas.width, tunnelCanvas.height);
+
+          const cx = tunnelCanvas.width / 2;
+          const cy = tunnelCanvas.height / 2;
+
+          stars.forEach((s) => {
+            s.z -= 4.5;
+            if (s.z <= 0) {
+              s.z = 1000;
+              s.x = (Math.random() - 0.5) * tunnelCanvas.width * 2;
+              s.y = (Math.random() - 0.5) * tunnelCanvas.height * 2;
+            }
+
+            const k = 220 / s.z;
+            const px = cx + s.x * k;
+            const py = cy + s.y * k;
+
+            if (px >= 0 && px <= tunnelCanvas.width && py >= 0 && py <= tunnelCanvas.height) {
+              const alpha = (1 - s.z / 1000);
+              tCtx.font = `${Math.max(9, 13 * k)}px "IBM Plex Mono", monospace`;
+              tCtx.fillStyle = `rgba(160, 190, 255, ${alpha})`;
+              tCtx.fillText(s.text, px, py);
+            }
+          });
+
+          requestAnimationFrame(renderTunnel);
+        }
+        renderTunnel();
+      }
+
+      /* ---------------------------------------------------------
+         F. Technique 4: 3D Product Mockup Mouse Tilt
+         --------------------------------------------------------- */
+      const mockup = document.getElementById('product-mockup');
+      if (mockup) {
+        window.addEventListener('mousemove', (e) => {
+          const rect = mockup.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const deltaX = (e.clientX - centerX) / (window.innerWidth / 2);
+          const deltaY = (e.clientY - centerY) / (window.innerHeight / 2);
+
+          const rotateX = -deltaY * 9;
+          const rotateY = deltaX * 12;
+
+          mockup.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+      }
+
+      /* ---------------------------------------------------------
+         G. Technique 5: Particle Transformation Simulation
+         --------------------------------------------------------- */
+      const pCanvas = document.getElementById('particle-morph-canvas');
+      if (pCanvas) {
+        const pCtx = pCanvas.getContext('2d');
+        const numParticles = 480;
+        let particles = [];
+
+        for (let i = 0; i < numParticles; i++) {
+          particles.push({
+            x: Math.random() * pCanvas.width,
+            y: Math.random() * pCanvas.height,
+            tx: pCanvas.width / 2,
+            ty: pCanvas.height / 2,
+            vx: 0,
+            vy: 0,
+          });
+        }
+
+        function sampleGlyphCoordinates(text) {
+          const offCanvas = document.createElement('canvas');
+          offCanvas.width = pCanvas.width;
+          offCanvas.height = pCanvas.height;
+          const offCtx = offCanvas.getContext('2d');
+          offCtx.fillStyle = '#000';
+          offCtx.font = 'bold 150px "IBM Plex Mono", monospace';
+          offCtx.textAlign = 'center';
+          offCtx.textBaseline = 'middle';
+          offCtx.fillText(text, offCanvas.width / 2, offCanvas.height / 2);
+
+          const imgData = offCtx.getImageData(0, 0, offCanvas.width, offCanvas.height).data;
+          const validCoords = [];
+          for (let y = 0; y < offCanvas.height; y += 7) {
+            for (let x = 0; x < offCanvas.width; x += 7) {
+              const alpha = imgData[(y * offCanvas.width + x) * 4 + 3];
+              if (alpha > 128) {
+                validCoords.push({ x, y });
+              }
+            }
+          }
+          return validCoords;
+        }
+
+        let currentCoords = sampleGlyphCoordinates('</>');
+
+        function applyTarget(coords) {
+          particles.forEach((p, idx) => {
+            const target = coords[idx % coords.length];
+            p.tx = target.x;
+            p.ty = target.y;
+          });
+        }
+        applyTarget(currentCoords);
+
+        // Buttons
+        const morphBtns = document.querySelectorAll('.btn-morph');
+        morphBtns.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            morphBtns.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            const targetType = btn.getAttribute('data-target');
+            let symbol = '</>';
+            if (targetType === 'brackets') symbol = '{ }';
+            if (targetType === 'terminal') symbol = '>_';
+            if (targetType === 'infinity') symbol = '∞';
+            const coords = sampleGlyphCoordinates(symbol);
+            applyTarget(coords);
+          });
+        });
+
+        function renderParticles() {
+          pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+          pCtx.fillStyle = '#2F5DEE';
+
+          particles.forEach((p) => {
+            const dx = p.tx - p.x;
+            const dy = p.ty - p.y;
+            p.vx = (p.vx + dx * 0.05) * 0.85;
+            p.vy = (p.vy + dy * 0.05) * 0.85;
+            p.x += p.vx;
+            p.y += p.vy;
+
+            pCtx.fillRect(p.x, p.y, 2.5, 2.5);
+          });
+
+          requestAnimationFrame(renderParticles);
+        }
+        renderParticles();
+      }
+
+      /* ---------------------------------------------------------
+         H. Technique 6: 3D Orbit Carousel
+         --------------------------------------------------------- */
+      const orbitCarousel = document.getElementById('orbit-carousel');
+      const btnOrbitPrev = document.getElementById('btn-orbit-prev');
+      const btnOrbitNext = document.getElementById('btn-orbit-next');
+      let currentOrbitAngle = 0;
+
+      function updateOrbit() {
+        if (orbitCarousel) {
+          orbitCarousel.style.transform = `rotateY(${currentOrbitAngle}deg)`;
+        }
+      }
+
+      if (btnOrbitPrev && btnOrbitNext) {
+        btnOrbitPrev.addEventListener('click', () => {
+          currentOrbitAngle += 72;
+          updateOrbit();
+        });
+        btnOrbitNext.addEventListener('click', () => {
+          currentOrbitAngle -= 72;
+          updateOrbit();
+        });
+      }
+
+      /* ---------------------------------------------------------
+         I. Technique 8: Breaking the 4th Wall (Caret & Scramble)
+         --------------------------------------------------------- */
+      const caret = document.getElementById('cursor-caret');
+      const contactSection = document.getElementById('sec-008');
+
+      if (caret && contactSection) {
+        contactSection.addEventListener('mouseenter', () => {
+          caret.style.opacity = '1';
+        });
+        contactSection.addEventListener('mouseleave', () => {
+          caret.style.opacity = '0';
+        });
+        contactSection.addEventListener('mousemove', (e) => {
+          caret.style.left = `${e.clientX + 10}px`;
+          caret.style.top = `${e.clientY - 8}px`;
+        });
+      }
+
+      // Text Scramble Effect on Hover
+      const scrambleElements = document.querySelectorAll('.scramble-text');
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_<>{}';
+
+      scrambleElements.forEach((el) => {
+        const originalText = el.getAttribute('data-original');
+        let interval = null;
+
+        el.addEventListener('mouseenter', () => {
+          let iteration = 0;
+          clearInterval(interval);
+
+          interval = setInterval(() => {
+            el.innerText = originalText
+              .split('')
+              .map((char, index) => {
+                if (index < iteration) {
+                  return originalText[index];
+                }
+                return letters[Math.floor(Math.random() * letters.length)];
+              })
+              .join('');
+
+            if (iteration >= originalText.length) {
+              clearInterval(interval);
+            }
+            iteration += 1 / 2;
+          }, 25);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
