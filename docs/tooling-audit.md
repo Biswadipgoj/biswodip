@@ -1,50 +1,42 @@
-# Tooling & Dependency Audit
+# Tooling Audit
 
-**Project**: Biswodip Goj — Full-Stack & Systems Engineering Portfolio  
-**Audit Date**: September 2026  
-**Environment**: Windows 11 / Node.js v20.16.0 / PowerShell / Google Antigravity IDE  
+Status: rewritten 2026-09-11 to describe what is actually installed and what was actually run.
 
----
+## Present and verified
 
-## 1. Upstream Ralph Integration (`snarktank/ralph`)
-- **Repository Source**: `https://github.com/snarktank/ralph` (main branch)
-- **Local Directory**: `scripts/ralph/`
-- **Installation Method**: Direct archive extraction of upstream `main` branch into `scripts/ralph/`.
-- **Verified Upstream Assets**:
-  - `ralph.sh`: Present (supports `--tool amp|claude`, iterations, branch archiving, and `<promise>COMPLETE</promise>` stop condition).
-  - `prompt.md`: Present (full autonomous coding instructions, progress log formatting, AGENTS.md conventions).
-  - `CLAUDE.md`: Present (commands for building, linting, testing, and branch handling).
-  - `AGENTS.md`: Present (system instructions for autonomous loops).
-  - `prd.json.example`: Present (defines schema with `project`, `branchName`, `userStories` array).
-  - `skills/prd/SKILL.md`: Present (PRD generation skill).
-  - `skills/ralph/SKILL.md`: Present (Ralph loop execution skill).
-- **Tooling Verification**:
-  - **jq**: Not present in system PATH on Windows. Upstream `ralph.sh` relies on `jq` for bash parsing. **Remediation**: Built project-local Windows adapter `scripts/ralph/antigravity/ralph-antigravity.ps1` utilizing native PowerShell `ConvertFrom-Json` and Node.js JSON capabilities.
-  - **Git Repository**: Available and active on feature branch `feat/portfolio-verified-refinement`.
-  - **Antigravity CLI**: Verified at `C:\Users\biswa\AppData\Local\agy\bin\agy.exe`. Tested with `--help`, confirming `-p` / `--print` non-interactive execution mode.
-  - **Antigravity Adapter**: Installed at `scripts/ralph/antigravity/` with `ANTIGRAVITY.md`, `ralph-antigravity.ps1`, and `ralph-antigravity.sh`.
+| Tool | Location | Notes |
+|---|---|---|
+| Next.js 15 (App Router) | `package.json` | Build and dev server verified |
+| React 18 | `package.json` | — |
+| TypeScript 5.6 (strict) | `tsconfig.json` | `npm run typecheck` passes |
+| Motion (framer-motion v13) | `package.json` (`motion`) | Used for section transitions |
+| GSAP | `package.json` (`gsap`) | Present; used in existing scene code |
+| Three.js + React Three Fiber + drei | `package.json` | Used by `Computer3D` / scene components |
+| Lenis | `package.json` | Smooth scroll, scoped to fine-pointer desktop |
+| Tailwind CSS 3.4 | `package.json` | Utility styling |
+| Puppeteer Core + @axe-core/puppeteer | `devDependencies` | Used for layout + accessibility checks in `scripts/verify-refactor.mjs` |
+| Playwright | `devDependencies` | `tests/tech-stack.spec.ts`, 14 tests, desktop + mobile |
+| Lighthouse | `devDependencies` | `scripts/audit-performance.mjs` (not run this session) |
+| Ralph | `scripts/ralph/` | Upstream files present (`ralph.sh`, `prompt.md`, `prd.json.example`, `skills/`, `AGENTS.md`, `progress.txt`) |
+| Antigravity adapter | `scripts/ralph/antigravity/` | `ANTIGRAVITY.md`, `ralph-antigravity.sh`, `ralph-antigravity.ps1`, `README.md` |
 
----
+The Playwright config now accepts `PLAYWRIGHT_BASE_URL`, so the suite can target any
+running server instead of a hardcoded port.
 
-## 2. Requested Libraries & Visual Frameworks Audit
+## Known stale content to treat with caution
 
-| Tool / Resource | Status | Version / Path | Assessment & Integration |
-|---|---|---|---|
-| **Motion** (`motion.dev`) | **Installed & Active** | `motion@^13.2.0` | Primary declarative animation engine for layout transitions, scroll progress, and spring physics across Hero, Skills, and Projects. |
-| **GSAP** | **Installed & Active** | `gsap@^3.12.5` | Utilized for high-precision timeline scrubbing and continuous micro-interactions without conflict. |
-| **Three.js** | **Installed & Active** | `three@^0.169.0` | Core WebGL rendering engine. Powers the 3D Computer terminal, floating AST nodes, and ambient perspective scenes. |
-| **React Three Fiber** | **Installed & Active** | `@react-three/fiber@^8.17.10` | React wrapper for Three.js. Verified in `components/ui/Computer3D.tsx` with capped DPR (`[1, 1.5]`) and offscreen lifecycle pause. |
-| **Drei / Postprocessing** | **Installed & Active** | `@react-three/drei@^9.114.0`, `@react-three/postprocessing@^2.16.3` | Spatial camera controls, Float, Html overlays, and chromatic aberration effects. |
-| **Skiper UI** (`@skiper-ui/skiper40`) | **Installed & Integrated** | `components/ui/skiper-ui/skiper40.tsx` | Installed component providing 3D interactive magnetic link shaders and typography hover physics. Referenced in `components.json`. |
-| **Playwright** | **Installed & Active** | `@playwright/test@^1.63.0` | End-to-end browser test runner. Configured in `playwright.config.ts`. Verified with 14/14 automated assertions passing on desktop and mobile. |
-| **open-gsd/gsd-core** | **Audited & Active** | Loaded in `.gemini/config/skills/` | Full suite of 30+ GSD engineering lifecycle skills available to Antigravity. |
-| **piakaus/impeccable** | **Audited & Active** | `.agents/skills/impeccable/` | Anti-slop frontend design system, typography hierarchy, micro-interactions, and contrast governance. |
-| **Leonxlnx/taste-skill** | **Audited & Active** | `.agents/skills/design-taste-frontend/` | Editorial and high-end design taste skill preventing generic AI templates and slop patterns. |
-| **Panniantong/agent-reach** | **Audited** | Documented in `promt.md` | External browser automation utility. Playwright and Antigravity Browser Subagents provide direct, native browser interaction without redundant external daemons. |
-| **Kilo / animmasterlib.dev** | **Audited** | Reference concepts in `promt.md` | Architectural inspiration for continuous 120 FPS frame pacing, 3D perspective layering, and fluid multi-axis card transforms. |
+- `scripts/ralph/prd.json` and older `docs/*` entries were written by earlier iterations and
+  reference projects and features that do not exist in the current source (for example
+  "AgentForge", "StreamPulse", "OmniScale", "DevGraph", "CodeOrbit", and a "120 FPS reel").
+  The real project list is the five entries in `lib/data.ts`.
+- `scripts/verify-workbench.mjs` is pre-existing and stale (it queries selectors such as
+  `#github` and `.skill-tabs` that are not in the current app). It was not updated this session;
+  `scripts/verify-refactor.mjs` is the maintained check.
+- `tests/tech-stack.spec.ts` was rewritten this session to match the current UI and passes
+  14/14 across both configured viewports.
 
----
+## Not verified this session
 
-## 3. Dependency Bloat & Conflict Mitigation
-- **Animation Framework Harmony**: Motion handles component-level layout springs and exit transitions; GSAP handles deterministic timeline interpolation; R3F handles 3D canvases. All three run on decoupled requestAnimationFrame loops with hardware acceleration (`transform`, `opacity`, `translate3d`).
-- **WebGL Memory Management**: Canvas rendering is constrained to capped DPR (`1.5x`), uses `<AdaptiveDpr />`, and disposes geometry and textures when components unmount or exit the viewport.
+- Headless Antigravity execution (`agy -p`) — the local executable was not available to probe,
+  so no autonomous headless loop was run. The Ralph PRD/progress model was followed manually.
+- Lighthouse performance scoring (`npm run test:lighthouse`) — not executed.

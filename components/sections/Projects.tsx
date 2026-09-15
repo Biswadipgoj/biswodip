@@ -1,543 +1,275 @@
 'use client';
 
-import { useRef, useState, useEffect, useCallback } from 'react';
-import { motion, useScroll, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react';
-import { projects, type Project } from '@/lib/data';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useMotionValueEvent, useScroll, useTransform, type MotionValue } from 'motion/react';
 import Image from 'next/image';
-import Icon from '../ui/Icon';
-import { AudioEngine } from '../ui/AudioFeedback';
+import Link from 'next/link';
+import { projects, type Project } from '@/lib/data';
+import { useExperience } from '../ExperienceProvider';
+import styles from './Projects.module.css';
 
-const PROJECT_STACKS: Record<string, string[]> = {
-  Erpixa: ['React', 'TypeScript', 'PostgreSQL', 'Tailwind CSS', 'Supabase'],
-  TelePoint: ['Next.js', 'WebSockets', 'TypeScript', 'Tailwind CSS'],
-  Tripmate: ['React', 'Next.js', 'TypeScript', 'Framer Motion', 'Tailwind CSS'],
-  NanoLink: ['Next.js', 'Prisma', 'PostgreSQL', 'TypeScript', 'Tailwind CSS'],
-  Nexora: ['Next.js', 'TypeScript', 'Supabase', 'Tailwind CSS'],
-};
+const bookend = '/previews/showcase-bookend.webp';
+const storyOrder = ['Erpixa', 'TelePoint', 'Tripmate', 'NanoLink', 'Nexora'];
+const blurDataURL = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSI5Ij48cGF0aCBmaWxsPSIjNDQ0IiBkPSJNMCAwaDE2djlIMHoiLz48L3N2Zz4=';
+const stories = [
+  ['BUSINESS MANAGEMENT, FINALLY WITHOUT THE BLOAT.', 'Erpixa — a modular ERP platform that activates only what your business actually needs.'],
+  ['REAL-TIME COMMUNICATION, REIMAGINED.', 'TelePoint — instant, friction-free connection built for speed.'],
+  ['PLAN JOURNEYS THAT FEEL EFFORTLESS.', 'Tripmate — turning scattered ideas into a clear, beautiful itinerary.'],
+  ['SHORTEN ANY LINK. SHARE IT ANYWHERE.', 'NanoLink — password protection, expiry, burn-after-read, and real click analytics.'],
+  ['PLAN THE WORK. WATCH IT MOVE. FINISH IT TOGETHER.', 'Nexora — a calm command center for planning, tracking, and shipping work together.'],
+];
 
-const PROJECT_THEMES: Record<
-  string,
-  {
-    gradientStyle: string;
-    accent: string;
-    accentSoft: string;
-    category: string;
-  }
-> = {
-  Erpixa: {
-    gradientStyle: 'linear-gradient(90deg, #22d3ee 0%, #67e8f9 50%, #34d399 100%)',
-    accent: '#22d3ee',
-    accentSoft: 'rgba(34, 211, 238, 0.3)',
-    category: 'Enterprise ERP Platform',
-  },
-  TelePoint: {
-    gradientStyle: 'linear-gradient(90deg, #818cf8 0%, #a78bfa 50%, #f472b6 100%)',
-    accent: '#818cf8',
-    accentSoft: 'rgba(129, 140, 248, 0.3)',
-    category: 'Real-Time WebSocket Hub',
-  },
-  Tripmate: {
-    gradientStyle: 'linear-gradient(90deg, #f472b6 0%, #fb7185 50%, #fbbf24 100%)',
-    accent: '#f472b6',
-    accentSoft: 'rgba(244, 114, 182, 0.3)',
-    category: 'Dynamic Travel Engine',
-  },
-  NanoLink: {
-    gradientStyle: 'linear-gradient(90deg, #34d399 0%, #2dd4bf 50%, #38bdf8 100%)',
-    accent: '#34d399',
-    accentSoft: 'rgba(52, 211, 153, 0.3)',
-    category: 'Edge Analytics Shortener',
-  },
-  Nexora: {
-    gradientStyle: 'linear-gradient(90deg, #fbbf24 0%, #f59e0b 50%, #fb7185 100%)',
-    accent: '#fbbf24',
-    accentSoft: 'rgba(251, 191, 36, 0.3)',
-    category: 'Collaborative Workspace',
-  },
-};
+type Panel = { headline: string; subtext: string; image: string; project?: Project };
+const panels: Panel[] = [
+  { headline: 'GOOD IDEAS. GREAT SOFTWARE.', subtext: 'I build products end to end — from the first wireframe to a deployed, used-in-the-wild application.', image: bookend },
+  ...storyOrder.map((name, i) => {
+    const project = projects.find(p => p.name === name)!;
+    return { headline: stories[i][0], subtext: stories[i][1], image: project.previewImage!, project };
+  }),
+  { headline: 'THE BEST STORIES START WHEN YOU SHIP.', subtext: "Have an idea worth building? Let's take it all the way.", image: bookend },
+];
 
-export default function Projects() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(1200);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
-  const prefersReduced = useReducedMotion();
+// Equal holds with a shared crossfade window on either side of each boundary.
+function panelOpacity(progress: number, index: number) {
+  const position = progress * panels.length;
+  const enter = index === 0 ? 1 : (position - index + 0.25) / 0.5;
+  const exit = index === panels.length - 1 ? 1 : (index + 1 + 0.25 - position) / 0.5;
+  return Math.max(0, Math.min(1, enter, exit));
+}
 
-  // Mouse tilt on center card
-  const mouseX = useMotionValue(0.5);
-  const mouseY = useMotionValue(0.5);
-  const tiltX = useSpring(useTransform(mouseY, [0, 1], [5, -5]), { stiffness: 260, damping: 22 });
-  const tiltY = useSpring(useTransform(mouseX, [0, 1], [-5, 5]), { stiffness: 260, damping: 22 });
-  const glareX = useTransform(mouseX, [0, 1], [0, 100]);
-  const glareY = useTransform(mouseY, [0, 1], [0, 100]);
+function StoryPanel({ panel, index, progress, pinned, active, animated, inView }: {
+  panel: Panel; index: number; progress: MotionValue<number>; pinned: boolean;
+  active: number; animated: boolean; inView: boolean;
+}) {
+  const articleRef = useRef<HTMLElement>(null);
+  const opacity = useTransform(progress, value => panelOpacity(value, index));
+  const y = useTransform(opacity, [0, 1], [24, 0]);
+  const captionOpacity = useTransform(opacity, [0, 0.1, 1], [0, 0, 1]);
+  const [visible, setVisible] = useState(index === 0);
+  useMotionValueEvent(opacity, 'change', value => setVisible(value > 0));
+  const inactive = pinned && active !== index;
+  const tabIndex = inactive ? -1 : undefined;
+  const project = panel.project;
 
-  const activeProject = projects[currentIndex];
-  const activeTheme = PROJECT_THEMES[activeProject.name] || PROJECT_THEMES.Erpixa;
-
-  // Scroll tracking across the 380vh scroll track
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
-
-  // Map scroll progress (0..1) to 5 discrete projects
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on('change', (latest) => {
-      const N = projects.length;
-      const nextIndex = Math.min(N - 1, Math.floor(latest * N));
-      if (nextIndex !== currentIndex) {
-        AudioEngine.playClick();
-        setCurrentIndex(nextIndex);
-      }
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress, currentIndex]);
-
-  // Measure stage width dynamically for responsive 3D trajectory
-  useEffect(() => {
-    const el = stageRef.current;
-    if (!el) return;
-
-    const updateWidth = () => {
-      if (el) setContainerWidth(el.clientWidth);
-    };
-
-    updateWidth();
-    const ro = new ResizeObserver(updateWidth);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  // Continuous auto-advancing cycle when explicitly enabled
-  useEffect(() => {
-    if (!isAutoPlaying) return;
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % projects.length);
-    }, 6500);
-    return () => clearInterval(timer);
-  }, [isAutoPlaying]);
-
-  const handleNext = useCallback(() => {
-    AudioEngine.playClick();
-    setCurrentIndex((prev) => (prev + 1) % projects.length);
-  }, []);
-
-  const handlePrev = useCallback(() => {
-    AudioEngine.playClick();
-    setCurrentIndex((prev) => (prev - 1 + projects.length) % projects.length);
-  }, []);
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') handleNext();
-      if (e.key === 'ArrowLeft') handlePrev();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNext, handlePrev]);
-
-  // Calculate 3D curved elliptical trajectory coordinates
-  const getCardTransform = useCallback(
-    (index: number) => {
-      const N = projects.length;
-      let p = index - currentIndex;
-      while (p > N / 2) p -= N;
-      while (p < -N / 2) p += N;
-
-      const W = containerWidth;
-      const isMobile = W < 768;
-
-      // Generous spread: on mobile cards slide offstage cleanly (W * 1.05); on desktop spreadX clears the center card
-      const spreadX = isMobile ? W * 1.05 : W * 0.48;
-      const arcY = isMobile ? 0 : 40;
-
-      const x = p * spreadX;
-      // Parabolic upward curve: side cards sit higher and turned in on desktop
-      const y = isMobile ? 0 : -Math.pow(Math.abs(p) / 2, 1.35) * arcY;
-
-      // Scale: 1.0 at center, clean drop for side cards
-      const scale = isMobile
-        ? (Math.abs(p) < 0.1 ? 1 : 0.92)
-        : Math.max(0.48, 1 - Math.abs(p) * 0.22);
-
-      // Inward horizontal yaw along elliptical perimeter; minimal roll to maintain crisp horizontal typography
-      const rotZ = isMobile ? 0 : p * 1.5;
-      const rotY = isMobile ? 0 : -p * 12; // Inward perspective yaw angle!
-      const z = isMobile ? (Math.abs(p) < 0.1 ? 0 : -80) : -Math.abs(p) * 120;
-      
-      // Strict opacity gating: on mobile, non-center cards fade to 0 so no heading collisions occur!
-      const opacity = isMobile
-        ? (Math.abs(p) < 0.1 ? 1 : Math.max(0, 1 - Math.abs(p) * 2))
-        : (Math.abs(p) > 2.2 ? 0 : Math.max(0.35, 1 - Math.abs(p) * 0.28));
-      const zIndex = Math.round((4 - Math.abs(p)) * 10);
-      const isCenter = Math.abs(p) < 0.1;
-
-      return {
-        x,
-        y,
-        z,
-        scale,
-        rotZ,
-        rotY,
-        opacity,
-        zIndex,
-        isCenter,
-        isMobile,
-      };
-    },
-    [currentIndex, containerWidth]
-  );
+    if (inactive && articleRef.current?.contains(document.activeElement)) {
+      document.getElementById('projects')?.focus({ preventScroll: true });
+    }
+  }, [inactive]);
 
   return (
-    <section
-      id="projects"
-      ref={containerRef}
-      className="relative w-full min-h-[380vh] bg-[#020617] text-white select-none"
+    <motion.article
+      ref={articleRef}
+      className={styles.panel}
+      data-panel={index + 1}
+      aria-labelledby={`showcase-title-${index}`}
+      aria-hidden={inactive || undefined}
+      style={{ opacity: pinned ? opacity : 1, pointerEvents: inactive ? 'none' : 'auto' }}
     >
-      {/* =========================================================================
-          STICKY FULL-PAGE THEATRE STAGE (Pinned 100vh)
-          The user stays in the full-page experience throughout the 380vh scroll!
-         ========================================================================= */}
-      <div
-        ref={stageRef}
-        className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between pt-16 sm:pt-20 pb-5 px-3 sm:px-8 lg:px-12 z-20 bg-gradient-to-b from-[#020617] via-[#050c20] to-[#020617]"
-      >
-        {/* Dynamic ambient caustics that match active project */}
-        <div
-          className="pointer-events-none absolute top-1/4 right-1/4 w-[650px] h-[650px] rounded-full blur-[170px] transition-colors duration-700 opacity-25"
-          style={{ background: activeTheme.accent }}
-        />
-        <div
-          className="pointer-events-none absolute bottom-1/4 left-1/4 w-[650px] h-[650px] rounded-full blur-[170px] transition-colors duration-700 opacity-20"
-          style={{ background: activeTheme.accent }}
-        />
-
-        {/* -------------------------------------------------------------------------
-            HEADER ROW: Project Index & Orbital Controls
-           ------------------------------------------------------------------------- */}
-        <div className="relative z-30 max-w-7xl mx-auto w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 pb-3 border-b border-slate-700/80">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span
-                className="w-2.5 h-2.5 rounded-full animate-ping"
-                style={{ background: activeTheme.accent }}
-              />
-              <span className="text-xs font-mono font-bold tracking-widest text-cyan-400">
-                03 / Selected Builds · 3D Spatial Deployments
-              </span>
-            </div>
-            <h2 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight flex items-center gap-2 sm:gap-3">
-              <span style={{ color: activeTheme.accent }}>0{currentIndex + 1}</span>
-              <span className="text-slate-600 font-light">/</span>
-              <span
-                className="bg-clip-text text-transparent font-black"
-                style={{
-                  backgroundImage: activeTheme.gradientStyle,
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                {activeProject.name}
-              </span>
-            </h2>
+      {/* Background ambient layer for bookends only */}
+      {!project && (
+        <>
+          <div className={styles.image} aria-hidden="true" data-playing={pinned && visible && animated && inView}>
+            <Image
+              src={panel.image}
+              alt=""
+              fill
+              sizes="100vw"
+              placeholder="blur"
+              blurDataURL={blurDataURL}
+              priority={index === 0}
+              loading={index === 0 ? undefined : pinned && inView && index <= active + 1 ? 'eager' : 'lazy'}
+            />
           </div>
+          <div className={styles.scrim} aria-hidden="true" />
+        </>
+      )}
 
-          {/* Interactive Project Indicators & Controls */}
-          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-            <button
-              id="project-btn-prev"
-              onClick={handlePrev}
-              type="button"
-              className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition-colors flex items-center gap-1 shadow-sm"
-              title="Previous project (←)"
-            >
-              <span>←</span>
-              <span className="hidden sm:inline">Prev</span>
-            </button>
+      {/* Main Editorial Container */}
+      <motion.div
+        className={styles.copy}
+        data-layout={project ? 'split' : 'statement'}
+        style={{ y: pinned ? y : 0 }}
+        initial={false}
+        whileInView={!pinned && animated ? { opacity: [0.4, 1], y: [20, 0] } : undefined}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {project ? (
+          <div className={styles.splitGrid}>
+            {/* Left Column: Typography & Action cluster */}
+            <div className={styles.contentCol}>
+              <div className={styles.metaRow}>
+                <span className={styles.panelBadge}>CASE STUDY {String(index).padStart(2, '0')}</span>
+                <span className={styles.dotSeparator} aria-hidden="true">·</span>
+                <span className={styles.projectName}>{project.name}</span>
+              </div>
+              <h3 id={`showcase-title-${index}`}>{panel.headline}</h3>
+              <motion.p className={styles.subtext} style={pinned ? { opacity: captionOpacity } : { opacity: 1 }}>
+                {panel.subtext}
+              </motion.p>
+              <ul className={styles.tags} aria-label={`${project.name} technology stack`}>
+                {(project.techStack?.length ? project.techStack : project.tags).map(tech => (
+                  <li key={tech}>{tech}</li>
+                ))}
+              </ul>
+              <div className={styles.links}>
+                <Link
+                  href={`/project/${project.name.toLowerCase().replace(/ /g, '-')}`}
+                  tabIndex={tabIndex}
+                  aria-label={`Explore Details: ${project.name}`}
+                  className={styles.primaryLink}
+                >
+                  Explore Details <span aria-hidden="true">→</span>
+                </Link>
+                <a
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  tabIndex={tabIndex}
+                  aria-label={`View live: ${project.name} (opens in a new tab)`}
+                  className={styles.secondaryLink}
+                >
+                  View live <span aria-hidden="true">↗</span>
+                </a>
+                {project.repo && (
+                  <a
+                    href={project.repo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    tabIndex={tabIndex}
+                    aria-label={`View source: ${project.name} (opens in a new tab)`}
+                    className={styles.secondaryLink}
+                  >
+                    View source <span aria-hidden="true">↗</span>
+                  </a>
+                )}
+              </div>
+            </div>
 
-            {/* Direct Project Indicators */}
-            {projects.map((p, i) => {
-              const isSelected = currentIndex === i;
-              const pTheme = PROJECT_THEMES[p.name] || PROJECT_THEMES.Erpixa;
-              return (
+            {/* Right Column: Machined Browser Window Canvas (Zero collision) */}
+            <div className={styles.mockupCol} aria-hidden="true">
+              <div className={styles.browserWindow}>
+                <div className={styles.browserHeader}>
+                  <div className={styles.trafficControls}>
+                    <span className={styles.trafficRed} />
+                    <span className={styles.trafficYellow} />
+                    <span className={styles.trafficGreen} />
+                  </div>
+                  <div className={styles.browserAddress}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <span>{project.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+                  </div>
+                  <span className={styles.browserPill}>PRODUCTION</span>
+                </div>
+                <div className={styles.browserCanvas} data-playing={pinned && visible && animated && inView}>
+                  <Image
+                    src={panel.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 55vw"
+                    placeholder="blur"
+                    blurDataURL={blurDataURL}
+                    priority={index === 1}
+                    loading={index === 1 ? undefined : pinned && inView && index <= active + 1 ? 'eager' : 'lazy'}
+                    className={styles.screenshotImg}
+                  />
+                  <div className={styles.canvasGlassShine} />
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Statement Panels (1: Intro, 7: Outro) */
+          <div className={styles.statementBox}>
+            <span className={styles.statementEyebrow}>
+              {index === 0 ? '01 / 07 — PHILOSOPHY' : '07 / 07 — THE INVITATION'}
+            </span>
+            <h3 id={`showcase-title-${index}`}>{panel.headline}</h3>
+            <motion.p className={styles.subtext} style={pinned ? { opacity: captionOpacity } : { opacity: 1 }}>
+              {panel.subtext}
+            </motion.p>
+            {index === panels.length - 1 && (
+              <div className={styles.statementActions}>
+                <a className={styles.cta} href="#contact" tabIndex={tabIndex}>
+                  Let&apos;s talk <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            )}
+          </div>
+        )}
+      </motion.div>
+    </motion.article>
+  );
+}
+
+export default function Projects() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const { animated, paused } = useExperience();
+  const [desktop, setDesktop] = useState(false);
+  const [reading, setReading] = useState(false);
+  const [active, setActive] = useState(0);
+  const [inView, setInView] = useState(false);
+  const pinned = desktop && !paused && !reading;
+  const { scrollYProgress } = useScroll({ target: trackRef, offset: ['start start', 'end end'] });
+  useMotionValueEvent(scrollYProgress, 'change', value => setActive(Math.min(panels.length - 1, Math.floor(value * panels.length))));
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 1024px) and (min-height: 760px) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
+    const update = () => setDesktop(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting));
+    if (trackRef.current) observer.observe(trackRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section id="projects" tabIndex={-1} aria-labelledby="projects-title" className={styles.showcase} data-pinned={pinned}>
+      <div ref={trackRef} className={styles.track}>
+        <div className={styles.stage}>
+          <header className={styles.heading}>
+            <h2 id="projects-title">03 / Selected Builds</h2>
+            <div>
+              {pinned && (
                 <button
-                  key={p.name}
-                  id={`project-tab-${i}`}
                   type="button"
                   onClick={() => {
-                    AudioEngine.playClick();
-                    setCurrentIndex(i);
-                  }}
-                  className={`px-2.5 py-1.5 rounded-xl text-xs font-mono transition-all duration-200 border flex items-center gap-1.5 ${
-                    isSelected
-                      ? 'bg-slate-800 text-white shadow-lg'
-                      : 'bg-slate-900/80 text-slate-300 hover:text-white border-slate-700'
-                  }`}
-                  style={{
-                    borderColor: isSelected ? pTheme.accent : undefined,
-                    boxShadow: isSelected ? `0 0 18px ${pTheme.accent}55` : undefined,
+                    setReading(true);
+                    requestAnimationFrame(() => {
+                      const section = document.getElementById('projects');
+                      section?.focus({ preventScroll: true });
+                      section?.scrollIntoView({ block: 'start', behavior: 'instant' });
+                    });
                   }}
                 >
-                  <span className="font-bold" style={{ color: isSelected ? pTheme.accent : undefined }}>
-                    0{i + 1}
-                  </span>
-                  <span className="hidden md:inline">{p.name}</span>
+                  Read without motion
                 </button>
-              );
-            })}
+              )}
+              <a href="#journey" data-skip>Skip section</a>
+            </div>
+          </header>
 
-            <button
-              id="project-btn-next"
-              onClick={handleNext}
-              type="button"
-              className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-200 transition-colors flex items-center gap-1 shadow-sm"
-              title="Next project (→)"
-            >
-              <span className="hidden sm:inline">Next</span>
-              <span>→</span>
-            </button>
+          {panels.map((panel, index) => (
+            <StoryPanel
+              key={panel.headline}
+              {...{ panel, index, pinned, active, inView }}
+              animated={animated && !reading}
+              progress={scrollYProgress}
+            />
+          ))}
 
-            <button
-              onClick={() => setIsAutoPlaying((p) => !p)}
-              type="button"
-              className="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono transition-colors"
-              title="Toggle auto cycle"
-            >
-              {isAutoPlaying ? '⏸' : '▶'}
-            </button>
-          </div>
-        </div>
-
-        {/* -------------------------------------------------------------------------
-            MIDDLE STAGE: The 3D Curved Elliptical Horizon
-            Smooth orbital trajectory, zero overlap over active card, high gradient text
-           ------------------------------------------------------------------------- */}
-        <div
-          className="relative w-full flex-1 flex items-center justify-center my-auto overflow-visible"
-          style={{
-            perspective: '1300px',
-            perspectiveOrigin: '50% 50%',
-          }}
-        >
-          {/* Orbital Horizon Arc Line */}
-          <div
-            className="pointer-events-none absolute w-[140%] h-[520px] rounded-full border-t border-cyan-400/20 -top-8 left-1/2 -translate-x-1/2 -z-10 blur-[1px]"
-            style={{
-              maskImage: 'linear-gradient(to bottom, black 30%, transparent 100%)',
-            }}
-          />
-
-          {/* Cards along the 3D curved elliptical trajectory */}
-          <div className="relative w-full h-[470px] sm:h-[510px] flex items-center justify-center">
-            {projects.map((project, index) => {
-              const transform = getCardTransform(index);
-              const stack = PROJECT_STACKS[project.name] || project.tags || ['Next.js', 'TypeScript', 'Tailwind CSS'];
-              const slug = project.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-              const theme = PROJECT_THEMES[project.name] || PROJECT_THEMES.Erpixa;
-
-              return (
-                <motion.div
-                  key={project.name}
-                  animate={{
-                    x: transform.x,
-                    y: transform.y,
-                    z: transform.z,
-                    scale: transform.scale,
-                    rotateZ: transform.rotZ,
-                    rotateY: transform.rotY,
-                    opacity: transform.opacity,
-                  }}
-                  transition={{
-                    duration: 0.7,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  style={{
-                    position: 'absolute',
-                    zIndex: transform.zIndex,
-                    width: 'min(92vw, 760px)',
-                    transformStyle: 'preserve-3d',
-                    backgroundColor: '#070b1a', // Solid luxury dark card canvas: NEVER white!
-                    borderColor: transform.isCenter ? theme.accent : 'rgba(255, 255, 255, 0.12)',
-                    boxShadow: transform.isCenter
-                      ? `0 24px 60px -15px ${theme.accent}44, 0 0 0 1px ${theme.accent}66, inset 0 1px 1px rgba(255, 255, 255, 0.2)`
-                      : '0 12px 30px -10px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.05)',
-                    pointerEvents: transform.isMobile && !transform.isCenter ? 'none' : 'auto',
-                    visibility: transform.opacity <= 0.04 ? 'hidden' : 'visible',
-                  }}
-                  onClick={() => {
-                    if (!transform.isCenter) {
-                      AudioEngine.playClick();
-                      setCurrentIndex(index);
-                    }
-                  }}
-                  className={`rounded-2xl sm:rounded-3xl border backdrop-blur-2xl transition-all duration-300 overflow-hidden flex flex-col justify-between ${
-                    transform.isCenter ? 'cursor-default ring-1 ring-white/10' : 'cursor-pointer hover:opacity-90'
-                  }`}
-                >
-                  {/* Non-focal background card dimming overlay */}
-                  <div
-                    className={`absolute inset-0 bg-[#020617]/50 pointer-events-none z-20 rounded-2xl sm:rounded-3xl transition-opacity duration-300 ${
-                      transform.isCenter ? 'opacity-0 pointer-events-none' : 'opacity-100'
-                    }`}
-                  />
-                  {/* Card macOS Browser Chrome Header */}
-                  <div
-                    style={{ backgroundColor: '#030612' }}
-                    className="px-4 sm:px-5 py-3 border-b border-slate-800 flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-rose-500 inline-block border border-rose-600" />
-                      <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-500 inline-block border border-amber-600" />
-                      <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500 inline-block border border-emerald-600" />
-                      <span className="ml-2 sm:ml-3 text-[0.7rem] sm:text-xs font-mono text-cyan-300 bg-cyan-950/40 px-2.5 py-0.5 rounded-full border border-cyan-500/25">
-                        https://{project.name.toLowerCase()}.biswodip.dev
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      {transform.isCenter && (
-                        <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-cyan-500/15 text-cyan-300 border border-cyan-400/40 animate-pulse font-semibold">
-                          ● Focal Active
-                        </span>
-                      )}
-                      <span className="text-xs font-mono font-bold text-slate-400">0{index + 1}</span>
-                    </div>
-                  </div>
-
-                  {/* Card Content: Screenshot & Architectural Details */}
-                  <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-center">
-                    {/* Visual Preview Screenshot (7 cols) */}
-                    <div className="md:col-span-7 relative h-44 sm:h-56 rounded-xl sm:rounded-2xl overflow-hidden border border-slate-700/80 bg-[#020510] group">
-                      <Image
-                        src={`/previews/${slug}.webp`}
-                        alt={project.name}
-                        fill
-                        priority={index === 0}
-                        className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, 460px"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#030612]/90 via-transparent to-transparent pointer-events-none" />
-
-                      {/* Live Indicator Pill on Preview */}
-                      <div className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-lg bg-black/70 backdrop-blur-md border border-white/20 text-xs font-mono text-white flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        <span>Live Deployment</span>
-                      </div>
-                    </div>
-
-                    {/* Meta Specifications (5 cols) */}
-                    <div className="md:col-span-5 flex flex-col justify-between h-full space-y-2.5 sm:space-y-3">
-                      <div>
-                        <div
-                          className="text-xs font-mono tracking-widest font-bold mb-1"
-                          style={{ color: theme.accent }}
-                        >
-                          {theme.category}
-                        </div>
-                        {/* High Gradient Project Title */}
-                        <h3
-                          style={{
-                            background: theme.gradientStyle,
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            color: theme.accent,
-                          }}
-                          className="text-2xl sm:text-3xl font-black tracking-tight"
-                        >
-                          {project.name}
-                        </h3>
-                        {/* High Contrast Crisp Copy */}
-                        <p
-                          style={{ color: '#ffffff' }}
-                          className="text-xs sm:text-sm font-medium leading-relaxed mt-1"
-                        >
-                          {project.blurb}
-                        </p>
-                        <p
-                          style={{ color: '#cbd5e1' }}
-                          className="text-xs font-sans leading-relaxed mt-1 line-clamp-2"
-                        >
-                          {project.description}
-                        </p>
-                      </div>
-
-                      {/* Tech Stack Badges */}
-                      <div className="flex flex-wrap gap-1.5 pt-1">
-                        {stack.slice(0, 4).map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2.5 py-0.5 rounded-lg bg-[#0c1328] border border-cyan-500/30 text-xs font-mono text-cyan-200 font-medium shadow-sm"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* Direct Interactive Action Links */}
-                      {transform.isCenter && (
-                        <div className="pt-2 flex items-center gap-2">
-                          <a
-                            href={project.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-mono text-xs font-bold transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(6,182,212,0.4)]"
-                          >
-                            <span>Live System</span>
-                            <Icon name="arrowUpRight" />
-                          </a>
-                          {project.repo && (
-                            <a
-                              href={project.repo}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-3.5 py-2 rounded-xl bg-[#0f1730] hover:bg-[#162142] text-slate-200 font-mono text-xs transition-colors flex items-center gap-1.5 border border-slate-700"
-                            >
-                              <span>Source</span>
-                              <Icon name="arrowUpRight" />
-                            </a>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Card Footer Status */}
-                  <div
-                    style={{ backgroundColor: '#030612' }}
-                    className="px-4 sm:px-5 py-2.5 border-t border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300"
-                  >
-                    <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
-                      Postgres RLS · Prod Verified
-                    </span>
-                    <span className="text-slate-300 hidden sm:inline">100% Independent Build</span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* -------------------------------------------------------------------------
-            BOTTOM ROW: Trajectory Telemetry & Scrub Bar
-           ------------------------------------------------------------------------- */}
-        <div className="relative z-30 max-w-7xl mx-auto w-full pt-2 sm:pt-3 border-t border-slate-700/80 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-300">
-          <div className="flex items-center gap-3">
-            <span className="text-cyan-400 font-bold">● 05 Flagship Systems in 3D Orbit</span>
-            <span className="hidden sm:inline text-slate-400">|</span>
-            <span className="hidden sm:inline text-slate-300">
-              GPU Accelerated 3D Perspective Trajectory
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 sm:gap-3">
-            <span className="text-slate-300 hidden sm:inline">
-              Scroll down or use arrows (← →) to navigate fleet
-            </span>
-            <span className="text-cyan-400 font-bold animate-bounce">↓</span>
-          </div>
+          {pinned && (
+            <div className={styles.progress} aria-hidden="true">
+              <span>{String(active + 1).padStart(2, '0')} / 07</span>
+              <div><motion.div style={{ scaleX: scrollYProgress }} /></div>
+              <span>Scroll to explore</span>
+            </div>
+          )}
         </div>
       </div>
     </section>

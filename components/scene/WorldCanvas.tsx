@@ -2,6 +2,7 @@
 
 import { Component, useEffect, useState, type ReactNode } from 'react';
 import dynamic from 'next/dynamic';
+import { useExperience } from '../ExperienceProvider';
 
 /* The universe is heavy and browser-only — stream it in after first paint.
    Until it arrives (and forever, under reduced motion) the CSS aurora
@@ -37,22 +38,28 @@ class SceneErrorBoundary extends Component<{ children: ReactNode }, { hasError: 
  * travels through it as you scroll, so the site never reads as flat pages.
  */
 export default function WorldCanvas() {
+  const { animated } = useExperience();
   const [ready, setReady] = useState(false);
-  const [reduced, setReduced] = useState(false);
 
   useEffect(() => {
-    setReady(true);
-    setReduced(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false);
-  }, []);
+    if (!animated || ready) return;
+    // Defer WebGL setup, but keep the mounted scene when motion is paused.
+    if ('requestIdleCallback' in window) {
+      const idle = window.requestIdleCallback(() => setReady(true), { timeout: 1500 });
+      return () => window.cancelIdleCallback(idle);
+    }
+    const timer = setTimeout(() => setReady(true), 200);
+    return () => clearTimeout(timer);
+  }, [animated, ready]);
 
-  if (!ready || reduced) return null;
+  if (!ready) return null;
 
   return (
     // z-0 (not negative) so the canvas layer composites reliably everywhere;
     // the page content mounts after it in the DOM and therefore paints above.
-    <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
+    <div className="world-canvas pointer-events-none fixed inset-0 z-0" aria-hidden="true">
       <SceneErrorBoundary>
-        <WorldScene />
+        <WorldScene active={animated} />
       </SceneErrorBoundary>
     </div>
   );

@@ -13,13 +13,60 @@ export const personal = {
   email: 'biswadipgoj@gmail.com',
   location: 'Uluberia, West Bengal, India',
   education: 'B.Tech CSE (2021–2024) · Diploma in CSE (2018–2021)',
-  role: 'Independent Software Developer',
-  aspiration: 'Aspiring Business Analyst',
-  tagline: 'I design, build, deploy & deliver real software.',
+  role: 'Full-Stack Software Engineer',
+  aspiration: 'Business-analysis aware',
+  tagline: 'Full-stack software, designed and shipped.',
   intro:
-    'Independent software developer and aspiring business analyst from West Bengal, India. I turn ambiguous ideas into shipped products — from the first wireframe to a deployed, used-in-the-wild application.',
+    'Full-stack software engineer from West Bengal, India. I build and ship web applications end to end — interfaces, APIs, databases and deployment — with a working interest in the business problems behind them.',
   about:
-    'I work end to end: research, design, engineering and delivery. Across every real solution I have shipped, I have learned that great software is equal parts crisp interface, solid engineering and a clear understanding of the business problem underneath. That bridge — between code and outcomes — is exactly where I want to keep building.',
+    'I work across the whole stack: interface, application logic, API and database, then the deployment that puts it in front of people. Across Erpixa, NanoLink, Nexora and the rest of the work here, I have built business tooling, real-time features and data-backed products. I care about clear architecture, typed code and interfaces that hold up under real use, and I am steadily deepening my business-analysis skills alongside engineering.',
+} as const;
+
+export const heroCopy = {
+  headline: ['Full-stack software,', 'built to ship.'],
+  description: personal.intro,
+  chips: ['Frontend', 'Backend & APIs', 'Databases', 'Cloud & DevOps'],
+  projectCta: 'View the work',
+  contactCta: 'Get in touch',
+  skipCta: 'Skip to projects',
+  rail: 'Frontend · Backend · Data · Infrastructure',
+  illustrationNote: 'Illustrative software architecture demo. Not live project telemetry.',
+  sceneLabel: 'Architecture demo',
+  sourceLabel: 'Example module',
+  sourceFile: 'service.ts',
+  code: [
+    [['tok-com', '// Illustrative architecture example, not project source']],
+    [['tok-key', 'async function '], ['tok-fn', 'handleRequest'], ['tok-punc', '(input: '], ['tok-var', 'Request'], ['tok-punc', ') {']],
+    [['tok-key', '  const '], ['tok-var', 'data'], ['tok-punc', ' = '], ['tok-fn', 'validate'], ['tok-punc', '('], ['tok-var', 'input'], ['tok-punc', ');']],
+    [['tok-key', '  const '], ['tok-var', 'saved'], ['tok-punc', ' = '], ['tok-key', 'await '], ['tok-fn', 'persist'], ['tok-punc', '('], ['tok-var', 'data'], ['tok-punc', ');']],
+    [['tok-key', '  return '], ['tok-fn', 'respond'], ['tok-punc', '('], ['tok-var', 'saved'], ['tok-punc', ');']],
+    [['tok-punc', '}']],
+  ],
+  terminal: [
+    { text: '$ run service --check', cls: '' },
+    { text: 'demo: validate incoming payload', cls: 'term-hi' },
+    { text: 'demo: persist to database', cls: '' },
+    { text: 'demo: return typed response', cls: '' },
+    { text: 'Illustration only; no live service executed.', cls: '' },
+  ],
+  modules: [
+    { name: 'interface', width: '88%', color: '#7c3aed' },
+    { name: 'api', width: '76%', color: '#0f766e' },
+    { name: 'database', width: '68%', color: '#9d174d' },
+    { name: 'deploy', width: '84%', color: '#1d4ed8' },
+  ],
+} as const;
+
+export const processCopy = {
+  eyebrow: 'How I approach a build',
+  title: 'From requirement to running software.',
+  note: 'A working engineering approach, described honestly.',
+  stages: [
+    { title: 'Understand', body: 'Start from the requirement and the people who will use it. Pin down what the system must actually do.', code: 'requirement -> scope' },
+    { title: 'Architect', body: 'Decide the data model, the API surface and the boundaries between client, server and storage.', code: 'scope -> design' },
+    { title: 'Build', body: 'Implement with typed code, reviewable components and tests on the paths that matter most.', code: 'design -> implementation' },
+    { title: 'Ship', body: 'Deploy, watch how it behaves in real use, and iterate on what the users and the data tell you.', code: 'build -> deploy -> iterate' },
+  ],
 } as const;
 
 /**
@@ -27,10 +74,10 @@ export const personal = {
  * (no dry percentages, no spec-sheet stats).
  */
 export const facts = [
-  { figure: '15+', label: 'Ideas turned real', detail: 'researched, designed, built & delivered' },
-  { figure: '0', label: 'Builds left unfinished', detail: 'everything I start reaches its users' },
-  { figure: '2', label: 'Journeys through CSE', detail: 'diploma, then a B.Tech on top' },
-  { figure: '∞', label: 'Curiosity on tap', detail: 'the one resource that never runs out' },
+  { figure: '5', label: 'Shipped projects', detail: 'full-stack web applications, deployed and live' },
+  { figure: '3', label: 'Full-stack layers', detail: 'frontend, backend and databases, plus deployment' },
+  { figure: '2', label: 'CSE qualifications', detail: 'a diploma, then a B.Tech on top' },
+  { figure: '5', label: 'Live deployments', detail: 'every project here runs in production' },
 ] as const;
 
 export const nav = [
@@ -40,7 +87,7 @@ export const nav = [
   { id: 'projects', label: 'Work' },
   { id: 'impact', label: 'Impact' },
   { id: 'journey', label: 'Journey' },
-  { id: 'github', label: 'GitHub' },
+  { id: 'pipeline', label: 'Process' },
   { id: 'contact', label: 'Contact' },
 ] as const;
 
@@ -54,21 +101,21 @@ export type Impact = {
 
 export const impacts: Impact[] = [
   {
-    metric: 'End to end',
-    title: 'Idea → shipped',
-    body: 'I take products the whole distance — research, design, build and deploy — so nothing stalls in a half-finished prototype.',
+    metric: 'Architecture',
+    title: 'Design before code',
+    body: 'Decide the data model, the API boundaries and the component structure before reaching for a library.',
     accent: '#22d3ee',
   },
   {
-    metric: 'Battle-tested',
-    title: 'Built for production',
-    body: 'Clean, typed, maintainable engineering that survives real users, real traffic and real change requests.',
+    metric: 'Reliability',
+    title: 'Typed, tested, reviewable',
+    body: 'TypeScript across the stack, tests on the paths that matter, and code another engineer can pick up.',
     accent: '#8b5cf6',
   },
   {
-    metric: 'Zero ghosts',
-    title: 'Outcome-first',
-    body: 'Every interface choice traces back to a business goal. No abandoned repos, no half-built demos — if I start it, it ships.',
+    metric: 'Delivery',
+    title: 'Ship, then iterate',
+    body: 'Deploy it, watch how real usage behaves, and improve from evidence rather than assumptions.',
     accent: '#f472b6',
   },
 ];
@@ -91,7 +138,7 @@ export type Orbit = {
   crafts: Craft[];
 };
 
-export const constellation: Orbit[] = [
+const skillCatalogue: Orbit[] = [
   {
     ring: 'Frontend',
     caption: 'Pixel-perfect interfaces, reactive UIs, and immersive 3D experiences',
@@ -170,18 +217,19 @@ export const constellation: Orbit[] = [
   },
 ];
 
-/** The marquee ribbon — things I ship, not a parts list. */
+// Narrative order: Frontend -> Backend & APIs -> DevOps & Cloud -> Data & Tooling.
+export const constellation: Orbit[] = [skillCatalogue[0], skillCatalogue[1], skillCatalogue[2], skillCatalogue[3]];
+
+/** Areas represented in the portfolio. */
 export const shipped = [
   'Interfaces',
+  'APIs',
+  'Databases',
+  'Real-time features',
   'Dashboards',
-  'Storefronts',
-  'Prototypes',
-  'Pipelines',
-  'Portals',
-  'Experiences',
-  'Products',
-  'Ideas',
-  'Outcomes',
+  'Deployment',
+  'Design systems',
+  'Testing',
 ];
 
 export type Project = {
@@ -199,7 +247,7 @@ export type Project = {
   techStack?: string[];
 };
 
-export const projects: Project[] = [
+const projectCatalogue: Project[] = [
   {
     name: 'Erpixa',
     blurb: 'Business management, finally without the bloat.',
@@ -210,13 +258,14 @@ export const projects: Project[] = [
     accent: '#8b5cf6',
     accentSoft: 'rgba(139,92,246,0.16)',
     previewImage: '/previews/erpixa.webp',
-    tags: ['Modular by design', 'Enterprise-grade security', 'Live on the internet'],
+    tags: ['Modular by design', 'Tenant-safe data', 'Live on the internet'],
     features: [
       '9 business modules activated per business type',
       'Postgres RLS — tenant isolation at the database layer',
-      'Live KPI engine computed from real aggregates',
+      'KPI engine computed from stored records',
       'React 19 + TypeScript + Supabase serverless stack',
     ],
+    techStack: ['React', 'TypeScript', 'PostgreSQL', 'Supabase', 'Tailwind CSS'],
   },
   {
     name: 'TelePoint',
@@ -232,8 +281,9 @@ export const projects: Project[] = [
       'Instant, low-latency interactions',
       'Modern reactive component architecture',
       'Mobile-first responsive layout',
-      'Deployed & live right now',
+      'Live deployment you can try',
     ],
+    techStack: ['Next.js', 'WebSockets', 'TypeScript', 'Tailwind CSS'],
   },
   {
     name: 'Tripmate',
@@ -248,9 +298,10 @@ export const projects: Project[] = [
       'Guided, friction-free planning flow',
       'Clean, content-first interface',
       'Smooth, considered transitions',
-      'Deployed & live right now',
+      'Live deployment you can try',
     ],
     previewImage: '/previews/tripmate.webp',
+    techStack: ['React', 'Next.js', 'TypeScript', 'Framer Motion', 'Tailwind CSS'],
   },
   {
     name: 'NanoLink',
@@ -270,6 +321,7 @@ export const projects: Project[] = [
       'Free, no account needed to start',
       'Next.js + Prisma + PostgreSQL stack',
     ],
+    techStack: ['Next.js', 'Prisma', 'PostgreSQL', 'TypeScript', 'Tailwind CSS'],
   },
   {
     name: 'Nexora',
@@ -290,7 +342,17 @@ export const projects: Project[] = [
       'Next.js + TypeScript + Supabase stack',
       'Electron for Windows; Capacitor for Android',
     ],
+    techStack: ['Next.js', 'TypeScript', 'Supabase', 'Tailwind CSS'],
   },
+];
+
+// Business-data work leads the list; interface-led projects follow.
+export const projects: Project[] = [
+  projectCatalogue[0], // Erpixa
+  projectCatalogue[3], // NanoLink
+  projectCatalogue[4], // Nexora
+  projectCatalogue[1], // TelePoint
+  projectCatalogue[2], // Tripmate
 ];
 
 
@@ -345,39 +407,37 @@ export const experienceCopy = {
     title: 'Context, discipline and how I think about software.',
   },
   skills: {
-    title: 'The right tools. The whole picture.',
+    title: 'Frontend, backend, data and infrastructure.',
     description:
-      'From the interface you touch to the systems you don’t see. A toolkit for taking ownership of the whole product.',
+      'The full stack I work across — the interfaces, APIs, databases and deployment tooling behind the applications on this page.',
   },
   projects: {
-    title: 'Built with intent. Out in the world.',
+    title: 'Selected builds, shipped and live.',
     description:
-      'Five independent builds. Five different problems. Explore the products, the details, and the code behind them.',
+      'Five independent applications. Each one is deployed and each one solved a different kind of problem.',
   },
   github: {
     title: 'Code is open by default. The work speaks for itself.',
     link: 'Explore my GitHub',
   },
   journey: {
-    title: 'From diploma fundamentals to production builds.',
-    description: 'A timeline of deliberate practice, continuous shipping, and technical depth.',
+    title: 'From diploma fundamentals to real builds.',
+    description: 'A timeline of deliberate practice, continuous learning, and hands-on delivery.',
   },
   impact: {
-    title: 'Principles that guide every deployment.',
-    description: 'Measurable outcomes over aesthetic prototypes.',
+    title: 'How I engineer.',
+    description: 'The principles that shape how the software gets designed, built and shipped.',
   },
   contact: {
-    title: 'Let’s build something real together.',
+    title: 'Let’s build something that ships.',
     description:
-      'Have a project in mind, need a full-stack engineer, or want to talk systems architecture?',
+      'A full-stack build, a frontend problem, an API, a database-backed application or an internal tool — tell me what you are trying to build.',
     formNote: 'I typically respond within 24 hours.',
   },
   boot: [
-    'Initializing spatial engine...',
-    'Calibrating 3D depth buffers...',
-    'Loading technology constellation...',
-    'Establishing production pipelines...',
-    'Ready.',
+    'Loading portfolio...',
+    'Preparing projects...',
+    'Almost ready...',
   ],
 };
 

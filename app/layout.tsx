@@ -28,9 +28,12 @@ export const metadata: Metadata = {
     "Biswodip Goj",
     "Software Developer",
     "Business Analyst",
+    "Business Data",
+    "Dashboards",
+    "Databases",
+    "Analytics",
     "Next.js",
-    "Three.js",
-    "Portfolio",
+    "PostgreSQL",
     "West Bengal",
     "India",
   ],
@@ -50,7 +53,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#a3aaf0",
+  themeColor: "#243e54",
   width: "device-width",
   initialScale: 1,
 };

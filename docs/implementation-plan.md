@@ -1,87 +1,76 @@
-# Implementation Plan: Autonomous Portfolio Reconstruction & Verification
+# Implementation Plan
 
-**Project**: Biswodip Goj — Full-Stack & Systems Engineering Portfolio  
-**Branch**: `feat/portfolio-verified-refinement`  
-**Target Milestone**: 120 FPS Spatial Web Experience, Ralph Loop Integration, and Rigorous Browser QA  
+Status: rewritten 2026-09-11. This describes the plan actually executed and what remains.
 
----
+## Objectives
 
-## 1. Product & Engineering Objectives
-1. **Full-Stack Engineering Positioning**: Showcase Biswodip Goj as a Full-Stack / Software Engineer with a Computer Science foundation (B.Tech CSE), distributed systems understanding, API design capability, DevOps/cloud tooling, and product/business-analysis awareness. Strictly avoid framing as a UI/UX designer.
-2. **Authentic Computer Science Visual Metaphors**: Replace generic glowing sci-fi hardware, random cubes, or CPU chips with genuine software engineering concepts: Abstract Syntax Tree (AST) nodes, circular ring buffers, distributed consensus states, event loops, and bidirectional network telemetry.
-3. **Continuous Spatial Motion (120 FPS Target)**: Deliver continuous spatial fluid motion without scroll-hijacking bugs, skipping sequences, or trapped containers.
-4. **4-Sided 3D Origami Fold Tech Stack**: Re-engineer the Tech Stack ("System Layers") into an interactive 4-stage folded paper atlas (Frontend → Backend & APIs → DevOps & Cloud → Data & Tooling) with high-contrast chromatic card surfaces and zero text overlap.
-5. **Spatial Curved 3D Project Showcase**: Elevate project storytelling with center-item dominance, visible adjacent project depth, real architectural context (e.g. Erpixa multi-tenant PostgreSQL RLS), deep links, and live preview frames.
-6. **Geographic Invariant**: Ensure location is accurately maintained as **Uluberia Node, Howrah, West Bengal (22.4735° N, 88.1077° E)** with zero references to Bangalore.
+1. Keep the portfolio focused on the real projects and the owner's full-stack engineering profile.
+2. Give the tech-stack section an editorial page-transition treatment (folded sheets).
+3. Present projects as a curved spatial slider without overlap, clipping or scroll hijacking.
+4. Enforce one 1000 px desktop content width and a genuinely responsive mobile layout.
+5. Fix all scrolling: anchors, skip controls, and the removal of pinned layouts that clipped content.
 
----
+## Executed
 
-## 2. Ralph Loop Autonomous Strategy
-- **Upstream Source**: `https://github.com/snarktank/ralph` extracted to `scripts/ralph/`.
-- **Project-Local Adapter**: `scripts/ralph/antigravity/` containing `ANTIGRAVITY.md`, `ralph-antigravity.ps1`, and `ralph-antigravity.sh`.
-- **Granular PRD**: `scripts/ralph/prd.json` defining 12 discrete user stories (`US-001` to `US-012`) with rigorous acceptance criteria and automated verification steps.
-- **Append-Only Progress**: `scripts/ralph/progress.txt` maintaining codebase patterns, iteration logs, and learnings.
+### Content and positioning
+- `lib/data.ts`: role set to "Full-Stack Software Engineer"; hero, process, facts, impact and
+  contact copy rewritten around full-stack engineering with business-analysis awareness.
+- Tech-stack narrative order restored: Frontend -> Backend & APIs -> DevOps & Cloud -> Data & Tooling.
+- Projects reordered to lead with the data-backed builds (Erpixa, NanoLink, Nexora, TelePoint, Tripmate)
+  and each now carries a `techStack`.
+- Removed unsupported claims (no fabricated metrics, no "recruiter-verified", no fake telemetry).
 
----
+### Tech stack — page transitions (`components/sections/Skills.tsx`)
+- Desktop uses a pinned track (`lg:h-[360vh]`) with a sticky stage; scroll progress selects the layer.
+- Each layer enters as a folded sheet from a deterministic edge (right, bottom, left, top) using
+  `rotateX/rotateY` plus a `clip-path` reveal; `AnimatePresence mode="wait"` prevents cross-fade overlap.
+- Tabs, Prev/Next, auto-play and Arrow/Home/End keys all drive the same state.
+- The 12 cards per layer were compacted so a full layer fits the stage at 1440x900, 1920x1080,
+  768x1024 and 390x844; only the shortest desktop (1024x768) uses the internal-scroll safety valve.
+- Controls scroll the page through a Lenis-aware helper so the pinned track stays in sync.
 
-## 3. Detailed Component Plan & File Architecture
+### Projects — curved slider (`components/sections/Projects.tsx`)
+- Desktop: perspective + transform-only coverflow. Center card forward and full size; neighbours
+  arc down, rotate away and scale; they stay fully legible (depth from scale/rotation, not opacity).
+- Pointer drag, arrow keys, dots and prev/next buttons; a shared section-level `useScroll` drives
+  only decorative depth (no per-card scroll hooks).
+- Mobile and reduced-motion: native horizontal scroll-snap row, no transforms, all links reachable.
 
-### A. Hero & 3D Terminal Environment
-- **Target Files**: `components/sections/Hero.tsx`, `components/ui/Computer3D.tsx`, `app/globals.css`
-- **Design & Architecture**:
-  - `Computer3D.tsx`: Three.js / R3F spatial desktop terminal running split-screen IDE and streaming 120+ authentic CS operations (`AST_ANALYZER`, `PAGE_CACHE_ALLOC`, `EPOLL_WAIT`, `TCP_SYN_ACK`, `CONSENSUS_VOTE`, `JIT_DEOPT_GUARD`).
-  - 4 Orbiting CS Software Primitives: `AST_NODE` (hierarchical syntax node), `RING_BUFFER` (lockless circular queue), `CONSENSUS` (Raft quorum ballot), `EVENT_LOOP` (microtask phase indicator).
-  - Ambient mechanical RGB keyboard with reactive key-switch actuation.
-  - Capped DPR (`[1, 1.5]`) and offscreen rendering pause via `useInView` / `IntersectionObserver`.
+### Layout, scrolling, responsiveness
+- `app/globals.css`: `.section-shell` and `.header-inner` both cap at 1000 px; removed the
+  `#projects` dark-stage override now that Projects is a light surface; natural-flow pipeline;
+  reserved journey-card padding; decorative-sticker overflow fixed.
+- `components/ui/SmoothScrollProvider.tsx`: single delegated handler for same-page anchors with
+  header offset, focus management, instant skip, popstate/hashchange restore and a Lenis-aware
+  programmatic scroll helper. Lenis is limited to fine-pointer desktop.
+- `components/Navbar.tsx`: IntersectionObserver replaced with a single-rect-read scrollspy.
 
-### B. Tech Stack & 4-Sided 3D Origami Fold
-- **Target Files**: `components/sections/Skills.tsx`, `tests/tech-stack.spec.ts`
-- **Design & Architecture**:
-  - Ordered progression: `01 Frontend` → `02 Backend & APIs` → `03 DevOps & Cloud` → `04 Data & Tooling`.
-  - `FoldedPaperTransition`: 3D multi-axis origami fold (`rotateX`, `rotateY`, `perspective: 1400px`, dynamic crease lighting and shadow gradients).
-  - Telemetry HUD: Real-time active AST parsing rate, throughput metric (e.g. `94.2k ops/sec`), and deterministic directional geometry.
-  - Continuous 120 FPS Reel: Autoplay toggle (`▶ 120 FPS Reel` / `⏸ Pause Reel`) with pause-on-hover and keyboard navigation (`1`, `2`, `3`, `4`).
-  - High-gradient card typography with verified WCAG AAA contrast against obsidian-slate surfaces.
+### QA
+- `scripts/verify-refactor.mjs` (new): 320 px overflow scan, anchor/skip landing checks, project
+  route checks, axe-core at 1440 and 390.
+- `tests/tech-stack.spec.ts` rewritten; 14/14 pass on desktop and mobile.
 
-### C. Projects Spatial Presentation & Routes
-- **Target Files**: `data/projects.ts`, `components/sections/Projects.tsx`, `app/projects/[id]/page.tsx`
-- **Design & Architecture**:
-  - Comprehensive project dataset: Erpixa, AgentForge, StreamPulse, OmniScale, DevGraph, CodeOrbit.
-  - Erpixa deep dive: Enterprise ERP/CRM architecture, PostgreSQL Row-Level Security (RLS), Supabase Auth, multi-tenant isolation, KPI metrics.
-  - Spatial 3D Curved Slider: Perspective track with center-project focus, smooth rotation, and interactive controls.
-  - Dedicated route `/projects/[id]` with browser history preservation.
+## Remaining
 
-### D. Architecture & System Thinking
-- **Target Files**: `components/sections/Architecture.tsx`
-- **Design & Architecture**:
-  - Interactive distributed systems topology diagram: Client UI Edge → API Gateway → Microservices Mesh → PostgreSQL & Redis Cluster → Cloud Observability.
-  - Interactive nodes demonstrating bidirectional message passing, retry logic, and latency SLAs.
+- 1024x768 desktop is the one viewport where a layer's card grid needs a few pixels of internal
+  scroll inside the pinned stage. Documented rather than hidden.
+- Homepage first-load JS is 2.25 MB (Three.js/R3F). Code-splitting the 3D scene was not attempted.
+- `scripts/verify-workbench.mjs` is pre-existing and stale; `scripts/verify-refactor.mjs` is the
+  maintained browser check and now resolves the browser portably.
 
-### E. Page Bottom Sequence & Terminal Deck
-- **Target Files**: `components/sections/Contact.tsx`, `components/sections/Footer.tsx`
-- **Design & Architecture**:
-  - Interactive Collaboration Handshake Terminal: Supports commands `status`, `ping`, `hire`, `skills`, and `clear`.
-  - Transmission Deck with intent pills (`Full-Time Engineering`, `Architecture Consulting`, `Distributed Systems`).
-  - Specular typography wordmark and verified Uluberia Node coordinates.
+## Review follow-ups applied
 
----
+A post-implementation review flagged and these were fixed in the same change:
 
-## 4. Verification & QA Protocol
+- `tests/tech-stack.spec.ts` asserted layer-0 content after navigating to layer 3; it now scopes
+  assertions to `#skill-panel-${layer}` and returns to layer 0 before checking `React & Next.js`.
+- Projects drag now coalesces pointer events to one state update per frame, and `hostname` is
+  computed with `useMemo` instead of on every render.
+- Tech-stack background gradients now cross-fade by opacity and orb colours are static (no
+  per-frame `background` interpolation or `scale` on heavily-blurred elements).
+- The panel transition no longer animates `clip-path` and no longer sets a permanent `will-change`.
+- `scripts/verify-refactor.mjs` resolves Edge/Chrome portably, defaults to port 3000 and throws a
+  clear error when no browser is found.
+- Removed the dead `CraftSpec.metric` field and values, and the orphaned `.tok-str`, `.tok-num`
+  and `.term-ok` CSS rules.
 
-### Automated Verification Gate
-1. **TypeScript Typecheck**: `npm run typecheck` (`tsc --noEmit`) must exit with code 0.
-2. **ESLint**: `npm run lint` must pass with zero fatal lint errors.
-3. **Playwright E2E Suite**: `npx playwright test tests/tech-stack.spec.ts` must pass all test assertions across Desktop and Mobile viewports.
-4. **Location Invariant**: Grep verification ensuring zero occurrences of Bangalore/Bengaluru across all source files.
-
-### Visual & Browser Verification
-- Multi-viewport screenshot captures across 8 standard breakpoints:
-  - 375px (iPhone SE)
-  - 390px / 393px (iPhone 14/15/16)
-  - 768px (iPad Mini / Tablet Portrait)
-  - 1024px (iPad Pro / Small Laptop)
-  - 1280px (Standard Desktop)
-  - 1440px (MacBook / High-Res Laptop)
-  - 1920px (Full HD Desktop)
-  - 2000px (Ultrawide Desktop)
-- Validation of zero horizontal overflow (`scrollWidth === innerWidth`), visible text contrast, zero card collision, and smooth motion response.

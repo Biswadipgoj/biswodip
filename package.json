@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .js,.mjs,.ts,.tsx --ignore-pattern scripts/ralph/upstream --ignore-pattern .next-dev --ignore-pattern .next-verify",
     "typecheck": "tsc --noEmit",
     "test:browser": "node scripts/verify-workbench.mjs",
+    "test:refactor": "node scripts/verify-refactor.mjs",
     "test:lighthouse": "node scripts/audit-performance.mjs",
     "test:e2e": "playwright test"
   },

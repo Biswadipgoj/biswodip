@@ -1,6 +1,5 @@
 export interface CraftSpec {
   complexity: string;
-  metric: string;
   category: string;
   role: string;
   tradeoff: string;
@@ -11,7 +10,6 @@ export const CRAFT_SPECS: Record<string, CraftSpec> = {
   // Layer 01: Client Runtime
   'React & Next.js': {
     complexity: 'O(1) Virtual DOM Reconciliation',
-    metric: '<0.4ms Server Render (RSC)',
     category: 'Client Runtime Architecture',
     role: 'Server-Side Rendering (SSR) & Streaming Server Components (RSC)',
     tradeoff: 'Hydration boundary overhead vs immediate First Contentful Paint (FCP)',
@@ -23,7 +21,6 @@ export default async function SystemsPage() {
   },
   'TypeScript': {
     complexity: 'O(V+E) Type Graph Invariant Check',
-    metric: 'Zero Runtime Overhead · Strict: true',
     category: 'Compiler & Type Safety',
     role: 'Compile-Time Invariant Verification & Zero Undefined Exceptions',
     tradeoff: 'Marginal build step delay vs elimination of production runtime null-pointer faults',
@@ -34,7 +31,6 @@ type Transition<Current extends InvariantState, Next extends InvariantState> =
   },
   'Tailwind CSS': {
     complexity: 'O(1) Utility Class Lookup (JIT)',
-    metric: '0.02ms Build Parse · 12KB Gzip CSS',
     category: 'Design System Engineering',
     role: 'Atomic CSS Generation & Zero Runtime Layout Recalculation',
     tradeoff: 'HTML markup density vs complete elimination of global CSS specificity clashes',
@@ -48,7 +44,6 @@ type Transition<Current extends InvariantState, Next extends InvariantState> =
   },
   'Three.js / WebGL': {
     complexity: 'O(1) Hardware GPU Draw Call Queue',
-    metric: '60–120 FPS Target · WebGL 2.0',
     category: 'Spatial Graphics & GPU Pipeline',
     role: 'Vertex/Fragment Shader Pipelines & 3D Mathematical Projection',
     tradeoff: 'GPU memory consumption vs photorealistic interactive spatial depth',
@@ -60,7 +55,6 @@ const material = new THREE.ShaderMaterial({
   },
   'Framer Motion': {
     complexity: 'O(1) GPU Composited Transforms',
-    metric: 'Zero Layout Reflow · 120 FPS',
     category: 'Parametric Animation Engine',
     role: 'Hardware-Accelerated transform3d Transitions & Physics Springs',
     tradeoff: 'Bundle weight (32KB gzip) vs fluid, non-blocking parametric motion orchestration',
@@ -73,7 +67,6 @@ const spring = useSpring(useTransform(cursorX, [0, 1], [-24, 24]), {
   },
   'Redux & Zustand': {
     complexity: 'O(1) Selector Subscription Memoization',
-    metric: '<0.08ms Action Dispatch',
     category: 'Predictable State Management',
     role: 'Deterministic Unidirectional State Flow & DevTools Time Travel',
     tradeoff: 'State schema boilerplate vs absolute consistency across distributed UI trees',
@@ -87,7 +80,6 @@ export const useTelemetryStore = create<TelemetryState>()(
   },
   'Vue.js & Nuxt': {
     complexity: 'O(1) Proxy-based Dependency Tracking',
-    metric: 'Fine-grained Reactive Re-render',
     category: 'Client Runtime Architecture',
     role: 'Universal SSR & Automatic Code Splitting',
     tradeoff: 'Template compiler constraint vs ultra-intuitive declarative data-binding',
@@ -97,7 +89,6 @@ const { data: nodes } = await useAsyncData('cluster', () => fetchClusterStatus()
   },
   'SvelteKit': {
     complexity: 'O(1) Ahead-of-Time Compile (Zero VDOM)',
-    metric: '1.8KB Tiny Runtime Core',
     category: 'Compiled UI Architecture',
     role: 'Vanishing Runtime with Reactive Suffix Invariants',
     tradeoff: 'Ecosystem size vs unmatched runtime raw execution speed',
@@ -107,7 +98,6 @@ let p99 = $derived(calculateP99(metrics));`,
   },
   'WebSockets & RTC': {
     complexity: 'O(1) Full-Duplex TCP/UDP Socket Frame',
-    metric: '<8ms P99 Live Bidirectional Ping',
     category: 'Real-Time Protocol Engineering',
     role: 'Persistent Low-Overhead Event Streaming (RFC 6455)',
     tradeoff: 'Server stateful connection limits vs sub-millisecond bidirectional reactivity',
@@ -117,7 +107,6 @@ socket.onmessage = (event) => unpackBinaryTelemetry(event.data);`,
   },
   'Micro-frontends': {
     complexity: 'O(1) Module Federation Chunk Resolution',
-    metric: 'Independent Deployability Per Team',
     category: 'Decoupled Enterprise UI Architecture',
     role: 'Runtime Host/Remote Dynamic Loading via Webpack Federation',
     tradeoff: 'Initial shared dependency coordination vs zero-block deploy velocity',
@@ -128,7 +117,6 @@ socket.onmessage = (event) => unpackBinaryTelemetry(event.data);`,
   },
   'Storybook': {
     complexity: 'O(1) Component Isolation Sandbox',
-    metric: '100% Visual Regression Coverage',
     category: 'Component-Driven Development',
     role: 'Isolated Component Sandboxing & Accessibility Compliance',
     tradeoff: 'Setup overhead vs rock-solid cross-browser visual fidelity',
@@ -138,7 +126,6 @@ socket.onmessage = (event) => unpackBinaryTelemetry(event.data);`,
   },
   'GSAP': {
     complexity: 'O(1) RequestAnimationFrame High-Res Tick',
-    metric: 'Sub-pixel Precision Tweening',
     category: 'High-Performance Timeline Engine',
     role: 'Complex Multi-Stage SVG & Canvas Timeline Sequencing',
     tradeoff: 'Imperative syntax vs absolute deterministic tween sequencing',
@@ -149,7 +136,6 @@ tl.from('.origami-flap', { rotateX: 90, stagger: 0.05 });`,
   // Layer 02: Distributed Backend & APIs
   'Node.js & Express': {
     complexity: 'O(1) Event Loop (libuv epoll)',
-    metric: '18k req/sec · 0.12ms Event Tick',
     category: 'Distributed Server Runtime',
     role: 'Non-blocking Asynchronous I/O Microservices',
     tradeoff: 'Single-thread CPU ceiling vs massive high-concurrency connection throughput',
@@ -160,7 +146,6 @@ app.get('/healthz', (req, res) => res.status(200).json({ status: 'UP' }));`,
   },
   'Python & FastAPI': {
     complexity: 'O(1) Asyncio Task Scheduling & Pydantic',
-    metric: 'Native ASGI · <1.2ms Response P99',
     category: 'Asynchronous API Framework',
     role: 'High-Throughput Typed REST & AI Service Endpoints',
     tradeoff: 'Python interpreter GIL vs unparalleled async typed developer velocity',
@@ -172,7 +157,6 @@ async def read_metrics(token: str = Depends(verify_jwt)):
   },
   'REST & GraphQL': {
     complexity: 'O(1) REST Path Lookup / O(N) AST Resolve',
-    metric: 'Strict HTTP Status Contracts · Zero Overfetching',
     category: 'API Contract Design',
     role: 'Declarative Data Fetching & Strict Schema Contracts',
     tradeoff: 'N+1 query resolution risk vs complete frontend query flexibility',
@@ -183,7 +167,6 @@ async def read_metrics(token: str = Depends(verify_jwt)):
   },
   'Kafka & RabbitMQ': {
     complexity: 'O(1) Sequential Disk Write & Offset Read',
-    metric: '1.2M events/sec · Exactly-Once Semantics',
     category: 'Distributed Message Broker',
     role: 'Fault-Tolerant Log Partitioning & Asynchronous Pub/Sub',
     tradeoff: 'Cluster management complexity vs unstoppable horizontal message durability',
@@ -194,7 +177,6 @@ await consumer.run({ eachMessage: async ({ message }) => processTelemetry(messag
   },
   'JWT & OAuth2': {
     complexity: 'O(1) HMAC-SHA256 Cryptographic Verification',
-    metric: 'Stateless Auth · 0.04ms Token Verify',
     category: 'Identity & Access Management',
     role: 'Cryptographically Signed Stateless Bearer Tokens & PKCE Flow',
     tradeoff: 'Token revocation complexity vs zero database lookup on each API request',
@@ -206,7 +188,6 @@ const verified = await jwtVerify(token, publicKey, {
   },
   'Microservices': {
     complexity: 'O(1) Service Mesh RPC Routing',
-    metric: 'Autonomous Boundary Scaling',
     category: 'Distributed Systems Architecture',
     role: 'Decoupled Domain Services & Database-Per-Service Pattern',
     tradeoff: 'Network latency & distributed tracing overhead vs independent deployment teams',
@@ -215,7 +196,6 @@ const client = new TopologyServiceClient('mesh.internal:50051', credentials.crea
   },
   'Go (Golang)': {
     complexity: 'O(1) Goroutine M:N User-Space Scheduling',
-    metric: '2KB Goroutine Footprint · Single Binary',
     category: 'Systems & Concurrency Engineering',
     role: 'Blazing Fast Concurrent Microservices & Network Proxies',
     tradeoff: 'Less expressive type hierarchy vs unmatched memory footprint & binary speed',
@@ -227,7 +207,6 @@ const client = new TopologyServiceClient('mesh.internal:50051', credentials.crea
   },
   'Rust': {
     complexity: 'O(1) Compile-Time Borrow Checker (Zero Cost)',
-    metric: 'Zero Garbage Collection Pauses · C-Speed',
     category: 'Systems & Memory Safety',
     role: 'Memory-Safe High-Throughput Native Engines & WebAssembly Modules',
     tradeoff: 'Steeper compile-time borrow check learning curve vs bulletproof zero memory corruption',
@@ -238,7 +217,6 @@ const client = new TopologyServiceClient('mesh.internal:50051', credentials.crea
   },
   'Spring Boot': {
     complexity: 'O(1) Dependency Injection Container (IoC)',
-    metric: 'Enterprise High-Availability Cluster',
     category: 'Enterprise Backend Engineering',
     role: 'Robust Java Enterprise Services & Distributed Transaction Management',
     tradeoff: 'JVM startup memory baseline vs enterprise mature ecosystem reliability',
@@ -250,7 +228,6 @@ public class ClusterController {
   },
   'gRPC & Protobuf': {
     complexity: 'O(1) Binary Wire Format Serialization',
-    metric: '7–10x Faster Than JSON · HTTP/2 Multiplexing',
     category: 'High-Performance Inter-Service RPC',
     role: 'Strict Typed Protobuf Wire Protocol & Bi-Directional Streaming',
     tradeoff: 'Human-unreadable binary packets vs orders of magnitude lower CPU serialization cost',
@@ -261,7 +238,6 @@ service TelemetryEngine {
   },
   'Serverless / Lambdas': {
     complexity: 'O(1) Cold-Start Ephemeral Container Fork',
-    metric: 'Zero Idle Cost · Elastic Instant Scale',
     category: 'Event-Driven Cloud Compute',
     role: 'Event-Triggered Ephemeral Compute Units & Edge Functions',
     tradeoff: 'Cold start latency (100–300ms) vs zero server maintenance and infinite scalability',
@@ -271,7 +247,6 @@ service TelemetryEngine {
   },
   'Web3 & Contracts': {
     complexity: 'O(1) Cryptographic State Root Merkle Proof',
-    metric: 'Immutable Distributed Ledger Invariant',
     category: 'Decentralized Protocol Engineering',
     role: 'Smart Contract Protocol Integration & Cryptographic Signatures',
     tradeoff: 'Block finality latency vs decentralized zero-counterparty trust',
@@ -283,7 +258,6 @@ service TelemetryEngine {
   // Layer 03: DevOps & Cloud Infrastructure
   'Docker & Compose': {
     complexity: 'O(1) Linux Kernel Namespace & Cgroup Slice',
-    metric: 'Deterministic Reproducibility Across Envs',
     category: 'Containerization & OCI Standard',
     role: 'Immutable Container Packaging & Multi-Stage Layer Caching',
     tradeoff: 'Storage layer duplication vs absolute environment parity from dev to prod',
@@ -296,7 +270,6 @@ RUN npm run build`,
   },
   'CI/CD Pipelines': {
     complexity: 'O(V+E) Directed Acyclic Graph Pipeline',
-    metric: '100% Automated Push-to-Prod Gateways',
     category: 'Continuous Delivery Engineering',
     role: 'Automated Lint, Test, Security Scanning, and Deployment Triggers',
     tradeoff: 'Pipeline execution minutes vs zero broken builds reaching live production',
@@ -311,7 +284,6 @@ jobs:
   },
   'AWS & Cloudflare': {
     complexity: 'O(1) Anycast BGP Routing to Edge PoPs',
-    metric: '<15ms Global Edge Latency · 300+ PoPs',
     category: 'Global Edge & Cloud Infrastructure',
     role: 'Multi-Region Content Delivery & Distributed DDoS Mitigation',
     tradeoff: 'Egress bandwidth costs vs unbeatable global performance and resilience',
@@ -323,7 +295,6 @@ jobs:
   },
   'Kubernetes (K8s)': {
     complexity: 'O(1) Reconciliation Loop Control Loop',
-    metric: 'Declarative Self-Healing & Horizontal Scale',
     category: 'Container Orchestration & Clustering',
     role: 'Automated Pod Scheduling, Rolling Updates, and Service Discovery',
     tradeoff: 'Control plane operational complexity vs bulletproof cluster self-healing',
@@ -338,7 +309,6 @@ spec:
   },
   'Linux & Shell': {
     complexity: 'O(1) POSIX System Calls & Kernel Buffers',
-    metric: 'Bare-Metal OS Control · Bash / Zsh Scripts',
     category: 'Operating System & Kernel Engineering',
     role: 'Host Performance Tuning, Systemd Services, and Shell Automation',
     tradeoff: 'Manual configuration risk vs complete low-level control over CPU/memory bounds',
@@ -348,7 +318,6 @@ ps aux --sort=-%mem | head -n 10`,
   },
   'Nginx & Proxy': {
     complexity: 'O(1) Event-Driven Asynchronous Connection Loop',
-    metric: '50k+ Concurrent Connections per Core',
     category: 'Edge Reverse Proxy & Load Balancer',
     role: 'TLS Termination, Rate Limiting, and Upstream Load Balancing',
     tradeoff: 'Static configuration file reloads vs near-zero proxy latency',
@@ -361,7 +330,6 @@ ps aux --sort=-%mem | head -n 10`,
   },
   'Terraform & IaC': {
     complexity: 'O(V+E) Infrastructure Graph Dependency Resolution',
-    metric: '100% Immutable Infrastructure as Code',
     category: 'Declarative Cloud Provisioning',
     role: 'Reproducible Multi-Cloud Architecture with State Locking',
     tradeoff: 'State file drift management vs completely automated cloud creation',
@@ -373,7 +341,6 @@ ps aux --sort=-%mem | head -n 10`,
   },
   'GCP & Azure': {
     complexity: 'O(1) Multi-Region Cloud Resource Allocation',
-    metric: 'Global Fiber Backbone Interconnect',
     category: 'Enterprise Cloud Infrastructure',
     role: 'Managed BigQuery, GKE, and Cloud Run Enterprise Deployments',
     tradeoff: 'Cloud vendor abstraction vs seamless managed platform velocity',
@@ -381,7 +348,6 @@ ps aux --sort=-%mem | head -n 10`,
   },
   'Grafana & Metrics': {
     complexity: 'O(1) Prometheus Time-Series Vector Lookups',
-    metric: 'Full-Stack Observability & P99 Dashboards',
     category: 'System Observability & Monitoring',
     role: 'Real-Time Metric Aggregation, Distributed Tracing, and Alerting',
     tradeoff: 'Time-series storage ingestion cost vs instant incident detection and resolution',
@@ -389,7 +355,6 @@ ps aux --sort=-%mem | head -n 10`,
   },
   'ArgoCD': {
     complexity: 'O(1) GitOps Reconciliation Controller',
-    metric: 'Zero Manual Cluster Edits · Git as Single Truth',
     category: 'GitOps Continuous Delivery',
     role: 'Declarative Kubernetes Deployment Synced Directly from Git Repositories',
     tradeoff: 'Strict Git approval gates vs complete audit trail and instant rollbacks',
@@ -400,7 +365,6 @@ spec:
   },
   'Jenkins & GitLab': {
     complexity: 'O(V+E) Multi-Branch Pipeline Orchestration',
-    metric: 'Automated Enterprise Release Cycles',
     category: 'Enterprise CI/CD Automation',
     role: 'Robust Pipeline Automation & Security Vulnerability Scanning',
     tradeoff: 'Build server maintenance vs deep enterprise workflow compliance',
@@ -411,7 +375,6 @@ spec:
   },
   'Ansible': {
     complexity: 'O(N) SSH Idempotent Playbook Execution',
-    metric: 'Agentless Configuration Management',
     category: 'Infrastructure Automation',
     role: 'Idempotent Fleet Provisioning & Zero-Agent Server Hardening',
     tradeoff: 'SSH roundtrip execution latency vs zero installed agent daemon overhead',
@@ -425,7 +388,6 @@ spec:
   // Layer 04: Data Engineering & Tooling
   'PostgreSQL & MySQL': {
     complexity: 'O(log n) B-Tree Index Search / ACID',
-    metric: 'Row-Level Security (RLS) · 99.999% Reliability',
     category: 'Relational Database Management (RDBMS)',
     role: 'Multi-Tenant Data Isolation, Foreign Key Integrity, and ACID Transactions',
     tradeoff: 'Vertical scaling constraints vs absolute relational consistency guarantees',
@@ -436,7 +398,6 @@ CREATE POLICY tenant_isolation_policy ON customer_data
   },
   'MongoDB & Redis': {
     complexity: 'O(1) In-Memory Key-Value & Document Hash Map',
-    metric: '<0.2ms In-Memory Cache Read · Sub-millisecond',
     category: 'NoSQL & Distributed Caching',
     role: 'High-Throughput Session Stores, Distributed Locks, and Document Storage',
     tradeoff: 'RAM capacity limits vs blazing 100k+ operations/second throughput',
@@ -446,7 +407,6 @@ if (acquired) { /* execute atomic task */ }`,
   },
   'Prisma & Drizzle': {
     complexity: 'O(1) TypeScript AST Query Generation',
-    metric: '100% Type-Safe Database Queries',
     category: 'Database ORM & Query Builder',
     role: 'Compile-Time Schema Migrations & Auto-Generated Typed Query Clients',
     tradeoff: 'Lightweight query abstraction overhead vs zero SQL injection and syntax errors',
@@ -454,7 +414,6 @@ if (acquired) { /* execute atomic task */ }`,
   },
   'Jest & Vitest': {
     complexity: 'O(N) Parallel Worker Thread Test Runner',
-    metric: '100% Core Domain Unit Test Coverage',
     category: 'Automated Testing Framework',
     role: 'Automated Regression Gates & Isolated Test Mocking',
     tradeoff: 'Test authoring investment vs zero breaking regressions delivered to clients',
@@ -466,7 +425,6 @@ if (acquired) { /* execute atomic task */ }`,
   },
   'Git & Monorepos': {
     complexity: 'O(1) SHA-256 DAG Commit Graph Traversal',
-    metric: 'Atomic Commits · Turborepo Pipeline Caching',
     category: 'Version Control & Monorepo Architecture',
     role: 'Immutable History Tracking & Incremental Monorepo Computation',
     tradeoff: 'Monorepo tooling discipline vs single source of truth and cross-package sharing',
@@ -474,7 +432,6 @@ if (acquired) { /* execute atomic task */ }`,
   },
   'System Architecture': {
     complexity: 'O(1) High-Availability CAP Tradeoff Analysis',
-    metric: '99.99% SLO · Zero Single Points of Failure',
     category: 'Enterprise Architectural Strategy',
     role: 'Distributed Consensus, Fault Tolerance, and Business Requirements Mapping',
     tradeoff: 'Architectural upfront research vs avoiding multimillion-dollar refactoring later',
@@ -483,7 +440,6 @@ if (acquired) { /* execute atomic task */ }`,
   },
   'Elasticsearch': {
     complexity: 'O(1) Inverted Index & Lucene Search Lookups',
-    metric: 'Sub-second Full-Text Search Across Billions',
     category: 'Distributed Search & Analytics Engine',
     role: 'Faceted Full-Text Search, Logstash Aggregations, and Anomaly Detection',
     tradeoff: 'Heavy JVM heap memory footprint vs instantaneous multi-field text queries',
@@ -491,7 +447,6 @@ if (acquired) { /* execute atomic task */ }`,
   },
   'Apache Spark': {
     complexity: 'O(N) Resilient Distributed Datasets (RDD) Graph',
-    metric: 'Petabyte-Scale In-Memory Data Compute',
     category: 'Big Data & Distributed Computing',
     role: 'Batch Processing & Distributed ETL Transformation Pipelines',
     tradeoff: 'Cluster memory overhead vs high-throughput parallel map-reduce processing',
@@ -500,7 +455,6 @@ val p99 = telemetryDF.groupBy("region").agg(expr("percentile_approx(latency, 0.9
   },
   'Snowflake / BigQuery': {
     complexity: 'O(1) Columnar Storage Parquet Vectorization',
-    metric: 'Separated Compute & Storage Architecture',
     category: 'Cloud Data Warehousing & Analytics',
     role: 'Enterprise SQL Analytics & Serverless Large-Scale Data Warehousing',
     tradeoff: 'Query compute scanning costs vs lightning-fast analytical ad-hoc aggregations',
@@ -508,7 +462,6 @@ val p99 = telemetryDF.groupBy("region").agg(expr("percentile_approx(latency, 0.9
   },
   'Playwright & Cypress': {
     complexity: 'O(1) Chromium DevTools Protocol (CDP) Control',
-    metric: 'Cross-Browser Real-World User Verification',
     category: 'End-to-End Test Automation',
     role: 'Full Browser Emulation, Mobile Testing, and Regression Prevention',
     tradeoff: 'End-to-end execution time vs 100% confidence in actual user journeys',
@@ -519,7 +472,6 @@ val p99 = telemetryDF.groupBy("region").agg(expr("percentile_approx(latency, 0.9
   },
   'Neo4j': {
     complexity: 'O(1) Index-Free Adjacency Pointer Hops',
-    metric: 'Millions of Traversal Hops/Sec',
     category: 'Graph Database Management',
     role: 'Complex Connected Data, Fraud Detection, and Knowledge Graph Lookups',
     tradeoff: 'Unsuited for tabular range scans vs unmatched performance in deep relational graphs',
@@ -528,7 +480,6 @@ WHERE u.id = $userId RETURN p.name`,
   },
   'Webpack & Vite': {
     complexity: 'O(1) Native ES Modules (ESM) HMR Update',
-    metric: '<50ms Instant Dev Server Hot Reload',
     category: 'Module Bundler & Build Tooling',
     role: 'Code Splitting, Tree-Shaking, and Asset Optimization Pipeline',
     tradeoff: 'Configuration complexity vs blazing fast local iteration and micro-bundles',
@@ -544,7 +495,6 @@ export function getCraftSpec(name: string): CraftSpec {
   return (
     CRAFT_SPECS[name] || {
       complexity: 'O(1) High-Efficiency Execution',
-      metric: 'Production Ready · Verified',
       category: 'Software Engineering Tooling',
       role: 'Production Architecture Component',
       tradeoff: 'Optimized for high-concurrency enterprise workloads',

@@ -1,12 +1,34 @@
 'use client';
 
-import React from 'react';
-import * as si from 'simple-icons';
+import {
+  siReact, siNextdotjs, siTypescript, siTailwindcss, siThreedotjs, siWebgl,
+  siFramer, siRedux, siVuedotjs, siNuxt, siSvelte, siSocketdotio, siStorybook,
+  siGsap, siNodedotjs, siExpress, siPython, siFastapi, siGraphql, siApachekafka,
+  siRabbitmq, siJsonwebtokens, siKubernetes, siGo, siRust, siSpringboot,
+  siGooglecloud, siEthereum, siDocker, siGithubactions, siCloudflare, siLinux,
+  siGnubash, siNginx, siTerraform, siGrafana, siArgo, siJenkins, siGitlab,
+  siAnsible, siPostgresql, siMysql, siMongodb, siRedis, siPrisma, siDrizzle,
+  siJest, siVitest, siGit, siElasticsearch, siApachespark, siSnowflake,
+  siGooglebigquery, siCypress, siNeo4j, siWebpack, siVite, siSupabase, siTurborepo,
+} from 'simple-icons';
 
 type IconData = {
   path: string;
   hex: string;
   title: string;
+};
+
+// Explicit imports keep the rest of the 3,000+ logo catalogue out of the client.
+const icons: Record<string, IconData> = {
+  siReact, siNextdotjs, siTypescript, siTailwindcss, siThreedotjs, siWebgl,
+  siFramer, siRedux, siVuedotjs, siNuxt, siSvelte, siSocketdotio, siStorybook,
+  siGsap, siNodedotjs, siExpress, siPython, siFastapi, siGraphql, siApachekafka,
+  siRabbitmq, siJsonwebtokens, siKubernetes, siGo, siRust, siSpringboot,
+  siGooglecloud, siEthereum, siDocker, siGithubactions, siCloudflare, siLinux,
+  siGnubash, siNginx, siTerraform, siGrafana, siArgo, siJenkins, siGitlab,
+  siAnsible, siPostgresql, siMysql, siMongodb, siRedis, siPrisma, siDrizzle,
+  siJest, siVitest, siGit, siElasticsearch, siApachespark, siSnowflake,
+  siGooglebigquery, siCypress, siNeo4j, siWebpack, siVite, siSupabase, siTurborepo,
 };
 
 // Custom SVG paths for tools not present in simple-icons or brand-customized
@@ -62,7 +84,7 @@ const TECH_MAP: Record<string, string | IconData> = {
   'websockets & rtc': 'siSocketdotio',
   'micro-frontends': CUSTOM_ICONS.microfrontends,
   'storybook': 'siStorybook',
-  'gsap': 'siGreensock',
+  'gsap': 'siGsap',
 
   // Backend
   'node.js': 'siNodedotjs',
@@ -159,7 +181,7 @@ export function getTechDetails(name: string): { path: string; color: string; tit
     if (typeof entry === 'object') {
       return { path: entry.path, color: '#' + entry.hex, title: entry.title };
     }
-    const icon = (si as unknown as Record<string, { path: string; hex: string; title: string }>)[entry];
+    const icon = icons[entry];
     if (icon) {
       // Fix black hex color on dark mode
       const color = icon.hex === '000000' ? '#ffffff' : '#' + icon.hex;

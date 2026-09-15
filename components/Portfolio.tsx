@@ -13,19 +13,19 @@ import TerminalDispatch from "./sections/TerminalDispatch";
 import Footer from "./Footer";
 import ExperienceProvider from "./ExperienceProvider";
 import SmoothScrollProvider from "./ui/SmoothScrollProvider";
-import AuroraField from "./ui/AuroraField";
 import WorldCanvas from "./scene/WorldCanvas";
+import FPSGauge from "./ui/FPSGauge";
 
 export default function Portfolio() {
   return (
     <ExperienceProvider>
       <SmoothScrollProvider>
         <a className="skip-link" href="#main">Skip to content</a>
-        <AuroraField />
         <WorldCanvas />
+        <FPSGauge />
         <Navbar />
 
-        <main id="main">
+        <main id="main" tabIndex={-1}>
           <Hero />
           <About />
           <Skills />
