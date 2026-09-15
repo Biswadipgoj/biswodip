@@ -66,79 +66,47 @@ export default function AboutSection() {
           </div>
         </div>
 
-        {/* Right: Software Execution Pipeline & System Architecture */}
+        {/* Right: Software Execution Pipeline */}
         <div className="card-volumetric p-6 font-mono flex flex-col justify-between">
           <div className="flex justify-between items-center pb-4 mb-4 border-b border-[var(--line)]">
             <div className="flex items-center gap-2 text-xs font-semibold text-[var(--accent-ink)]">
               <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
-              <span>SOFTWARE ARCHITECTURE & PIPELINE</span>
+              <span>SOFTWARE REQUEST & EXECUTION PIPELINE</span>
             </div>
-            <div className="flex gap-1.5 text-[0.7rem]">
-              <button
-                onClick={() => setActiveTab("pipeline")}
-                className={`px-2 py-0.5 rounded border transition-all ${
-                  activeTab === "pipeline" ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "bg-[var(--paper)] border-[var(--line)] text-[var(--ink-secondary)]"
-                }`}
-              >
-                Runtime Pipeline
-              </button>
-              <button
-                onClick={() => setActiveTab("architecture")}
-                className={`px-2 py-0.5 rounded border transition-all ${
-                  activeTab === "architecture" ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "bg-[var(--paper)] border-[var(--line)] text-[var(--ink-secondary)]"
-                }`}
-              >
-                System Blueprint
-              </button>
+            <div className="text-xs text-[var(--ink-muted)]">
+              CYCLE: #{cycle}
             </div>
           </div>
 
-          {activeTab === "pipeline" ? (
-            <>
-              <div className="space-y-3 mb-6">
-                {pipeline.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3.5 bg-[var(--paper-subtle)] border border-[var(--line)] rounded flex flex-col sm:flex-row justify-between sm:items-center gap-2 text-xs"
-                  >
-                    <div>
-                      <div className="text-[var(--accent-ink)] font-semibold text-[0.7rem] mb-0.5">
-                        {item.stage}
-                      </div>
-                      <div className="text-[var(--ink)] font-medium">
-                        <code>{item.instr}</code>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-[var(--ink-muted)]">
-                      <span className="text-[0.68rem]">{item.context}</span>
-                      <span className="px-2 py-0.5 bg-[var(--paper-elevated)] border border-[var(--line)] rounded text-[0.7rem] text-[var(--accent-emerald)] font-semibold">
-                        {item.status}
-                      </span>
-                    </div>
+          <div className="space-y-3 mb-6">
+            {pipeline.map((item, idx) => (
+              <div
+                key={idx}
+                className="p-3.5 bg-[var(--paper-subtle)] border border-[var(--line)] rounded flex flex-col sm:flex-row justify-between sm:items-center gap-2 text-xs"
+              >
+                <div>
+                  <div className="text-[var(--accent-ink)] font-semibold text-[0.7rem] mb-0.5">
+                    {item.stage}
                   </div>
-                ))}
-              </div>
+                  <div className="text-[var(--ink)] font-medium">
+                    <code>{item.instr}</code>
+                  </div>
+                </div>
 
-              <div className="text-xs text-[var(--ink-muted)] flex justify-between items-center pt-3 border-t border-[var(--line)]">
-                <span>Ingress Rate: ~14,200 req/sec</span>
-                <span className="text-[var(--accent-emerald)]">P99 Latency: 4.8ms</span>
+                <div className="flex items-center gap-3 text-[var(--ink-muted)]">
+                  <span className="text-[0.68rem]">{item.context}</span>
+                  <span className="px-2 py-0.5 bg-[var(--paper-elevated)] border border-[var(--line)] rounded text-[0.7rem] text-[var(--accent-emerald)] font-semibold">
+                    {item.status}
+                  </span>
+                </div>
               </div>
-            </>
-          ) : (
-            <div className="flex flex-col">
-              <div className="relative w-full h-[260px] rounded overflow-hidden bg-[var(--paper-subtle)] border border-[var(--line)] mb-4">
-                <img
-                  src="/images/about_software_systems.jpg"
-                  alt="Modern Software Architecture: Client-Gateway-Consensus-Schema"
-                  className="w-full h-full object-contain p-1"
-                />
-              </div>
-              <div className="text-xs text-[var(--ink-secondary)] leading-relaxed">
-                Clean multi-tier decoupling: Web applications communicate via typed gRPC/REST with distributed consensus engines and PostgreSQL row-isolated storage.
-              </div>
-            </div>
-          )}
+            ))}
+          </div>
+
+          <div className="text-xs text-[var(--ink-muted)] flex justify-between items-center pt-3 border-t border-[var(--line)]">
+            <span>Ingress Rate: ~14,200 req/sec</span>
+            <span className="text-[var(--accent-emerald)]">P99 Latency: 4.8ms</span>
+          </div>
         </div>
       </div>
     </section>

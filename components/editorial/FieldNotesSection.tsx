@@ -114,24 +114,6 @@ export default function FieldNotesSection() {
         </p>
       </header>
 
-      {/* Visual Header: Full-Width Research Notebook & Telemetry Graphic */}
-      <div className="card-volumetric p-4 sm:p-6 mb-10 overflow-hidden">
-        <div className="flex justify-between items-center pb-3 mb-3 border-b border-[var(--line)] font-mono text-xs text-[var(--ink-secondary)]">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
-            <span className="font-semibold text-[var(--ink)]">RESEARCH TELEMETRY: BENCHMARK PROFILING CURVES</span>
-          </div>
-          <span className="text-[var(--accent-emerald)] font-semibold text-[0.7rem]">PEER-VERIFIABLE</span>
-        </div>
-        <div className="relative rounded overflow-hidden bg-[var(--paper-subtle)] border border-[var(--line)]">
-          <img
-            src="/images/research_benchmarks_lab.jpg"
-            alt="CS Research Notebook: Benchmark Telemetry & System Profiling"
-            className="w-full h-auto object-contain max-h-[460px] mx-auto block"
-          />
-        </div>
-      </div>
-
       {/* Interactive Research Note Inspector */}
       <div className="card-volumetric p-6 sm:p-8">
         {/* Note Selector Tabs */}

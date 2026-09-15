@@ -15,7 +15,6 @@ interface GraphNode {
 export default function HeroSection() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string>("BFT Consensus");
-  const [viewMode, setViewMode] = useState<"canvas" | "schematic">("canvas");
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -175,56 +174,23 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Right: Computer Science B-Tree / Graph Topology Simulation & Architectural Schematic */}
-        <div className="relative w-full h-[480px] card-volumetric flex flex-col justify-between p-4 overflow-hidden">
-          <div className="flex justify-between items-center z-10 pb-2 border-b border-[var(--line)]">
-            <div className="font-mono text-xs text-[var(--ink-muted)] flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
-              <span>TOPOLOGY: DISTRIBUTED B-TREE & CLUSTER ROUTING</span>
-            </div>
-            <div className="flex gap-1.5 font-mono text-[0.7rem]">
-              <button
-                onClick={() => setViewMode("canvas")}
-                className={`px-2 py-0.5 rounded border transition-all ${
-                  viewMode === "canvas" ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "bg-[var(--paper)] border-[var(--line)] text-[var(--ink-secondary)]"
-                }`}
-              >
-                Interactive Canvas
-              </button>
-              <button
-                onClick={() => setViewMode("schematic")}
-                className={`px-2 py-0.5 rounded border transition-all ${
-                  viewMode === "schematic" ? "bg-[var(--accent)] text-white border-[var(--accent)]" : "bg-[var(--paper)] border-[var(--line)] text-[var(--ink-secondary)]"
-                }`}
-              >
-                System Schematic
-              </button>
-            </div>
+        {/* Right: Computer Science B-Tree / Graph Topology Simulation */}
+        <div className="relative w-full h-[480px] card-volumetric flex items-center justify-center p-4 overflow-hidden">
+          <div className="absolute top-4 left-4 z-10 font-mono text-xs text-[var(--ink-muted)] flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
+            <span>TOPOLOGY: DISTRIBUTED B-TREE & RAFT STATE</span>
           </div>
 
-          <div className="relative flex-1 w-full h-full flex items-center justify-center overflow-hidden">
-            {viewMode === "canvas" ? (
-              <>
-                <canvas
-                  ref={canvasRef}
-                  width={640}
-                  height={420}
-                  className="w-full h-full block cursor-grab active:cursor-grabbing"
-                  aria-label="Interactive Computer Science Topology Graph"
-                />
-                <div className="absolute bottom-2 right-2 font-mono text-[0.7rem] text-[var(--ink-muted)] pointer-events-none bg-[var(--paper-elevated)] px-2.5 py-1 border border-[var(--line)] rounded shadow-xs">
-                  {"// live node traversal [interactive mouse tilt]"}
-                </div>
-              </>
-            ) : (
-              <div className="relative w-full h-full rounded overflow-hidden flex items-center justify-center bg-[var(--paper-subtle)]">
-                <img
-                  src="/images/hero_network_topology.jpg"
-                  alt="Distributed B-Tree Cluster Network Topology"
-                  className="w-full h-full object-contain p-2"
-                />
-              </div>
-            )}
+          <canvas
+            ref={canvasRef}
+            width={640}
+            height={480}
+            className="w-full h-full block cursor-grab active:cursor-grabbing"
+            aria-label="Interactive Computer Science Topology Graph"
+          />
+
+          <div className="absolute bottom-4 right-4 font-mono text-[0.7rem] text-[var(--ink-muted)] pointer-events-none bg-[var(--paper-elevated)] px-2.5 py-1 border border-[var(--line)] rounded shadow-xs">
+            {"// live node traversal [interactive mouse tilt]"}
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import React, { useState } from "react";
 interface TechDetail {
   name: string;
   category: string;
+  layer: string;
   color: string;
   bgColor: string;
   borderColor: string;
@@ -14,19 +15,57 @@ interface TechDetail {
 }
 
 const techCatalog: TechDetail[] = [
+  // 01 Frontend
   {
     name: "TypeScript",
-    category: "Languages",
+    category: "01 Frontend",
+    layer: "01 / Frontend",
     color: "#2563EB",
     bgColor: "#EFF6FF",
     borderColor: "#BFDBFE",
-    role: "Full-stack application architecture, strict compile-time types, and React client interfaces.",
-    benchmark: "Zero runtime overhead · 100% strict type coverage",
+    role: "Full-stack application architecture, strict compile-time types, and typed API boundaries.",
+    benchmark: "Zero runtime overhead · Strict type coverage",
     codeSnippet: "type Result<T, E> = { ok: true; value: T } | { ok: false; error: E };",
   },
   {
+    name: "React & Next.js",
+    category: "01 Frontend",
+    layer: "01 / Frontend",
+    color: "#0F172A",
+    bgColor: "#F8FAFC",
+    borderColor: "#CBD5E1",
+    role: "Server components (RSC), static site generation, streaming hydration, and responsive layouts.",
+    benchmark: "Sub-100ms first contentful paint · Zero client bundle bloat",
+    codeSnippet: "export default async function Page() { const data = await fetchCached(); return <View {...data} />; }",
+  },
+  {
+    name: "Tailwind CSS",
+    category: "01 Frontend",
+    layer: "01 / Frontend",
+    color: "#0891B2",
+    bgColor: "#ECFEFF",
+    borderColor: "#A5F3FC",
+    role: "Utility-first design systems, physical volumetric elevation, and responsive design tokens.",
+    benchmark: "Zero runtime CSS parser · Purged single-digit KB stylesheets",
+    codeSnippet: "className=\"card-volumetric p-6 flex flex-col justify-between shadow-card\"",
+  },
+  {
+    name: "WebSockets & RTC",
+    category: "01 Frontend",
+    layer: "01 / Frontend",
+    color: "#7C3AED",
+    bgColor: "#F5F3FF",
+    borderColor: "#DDD6FE",
+    role: "Bi-directional real-time communication for collaborative editors and live system telemetry.",
+    benchmark: "Sub-15ms peer-to-peer event propagation",
+    codeSnippet: "socket.send(JSON.stringify({ type: 'CRDT_DELTA', payload: delta }));",
+  },
+
+  // 02 Backend & APIs
+  {
     name: "Rust",
-    category: "Languages",
+    category: "02 Backend & APIs",
+    layer: "02 / Backend",
     color: "#EA580C",
     bgColor: "#FFF7ED",
     borderColor: "#FED7AA",
@@ -36,17 +75,78 @@ const techCatalog: TechDetail[] = [
   },
   {
     name: "Go",
-    category: "Languages",
-    color: "#0891B2",
-    bgColor: "#ECFEFF",
-    borderColor: "#A5F3FC",
+    category: "02 Backend & APIs",
+    layer: "02 / Backend",
+    color: "#0284C7",
+    bgColor: "#F0F9FF",
+    borderColor: "#BAE6FD",
     role: "Concurrent microservices, gRPC backends, and distributed worker queues.",
     benchmark: "Lightweight goroutines (~2KB initial stack) · Sub-millisecond GC",
     codeSnippet: "go func(job Job) { results <- process(job) }(currentJob)",
   },
   {
+    name: "Python",
+    category: "02 Backend & APIs",
+    layer: "02 / Backend",
+    color: "#D97706",
+    bgColor: "#FFFBEB",
+    borderColor: "#FDE68A",
+    role: "Data pipelines, telemetry processing scripts, and automation tooling.",
+    benchmark: "Rapid script execution · Rich scientific and analysis libraries",
+    codeSnippet: "async def handle_telemetry(packet: bytes) -> dict: return parse_binary(packet)",
+  },
+  {
+    name: "gRPC & Protobuf",
+    category: "02 Backend & APIs",
+    layer: "02 / Backend",
+    color: "#4338CA",
+    bgColor: "#EEF2FF",
+    borderColor: "#C7D2FE",
+    role: "Compact binary serialization and strongly-typed contract definitions for microservice RPCs.",
+    benchmark: "8x smaller payload size compared to standard JSON",
+    codeSnippet: "rpc SyncState (SyncRequest) returns (SyncResponse);",
+  },
+
+  // 03 DevOps & Cloud
+  {
+    name: "Linux POSIX & Bash",
+    category: "03 DevOps & Cloud",
+    layer: "03 / DevOps",
+    color: "#059669",
+    bgColor: "#ECFDF5",
+    borderColor: "#A7F3D0",
+    role: "POSIX system environments, daemon process supervisors, and shell automation scripts.",
+    benchmark: "Direct OS syscalls · Deterministic shell scripting",
+    codeSnippet: "systemctl status worker.service --no-pager",
+  },
+  {
+    name: "Cloudflare Workers",
+    category: "03 DevOps & Cloud",
+    layer: "03 / DevOps",
+    color: "#E11D48",
+    bgColor: "#FFF1F2",
+    borderColor: "#FECDD3",
+    role: "Serverless edge compute deployed to 250+ global points of presence with V8 isolates.",
+    benchmark: "0ms cold starts · Global p99 response under 10ms",
+    codeSnippet: "export default { fetch: (req, env) => handleEdgeRouting(req, env) };",
+  },
+  {
+    name: "Docker Containers",
+    category: "03 DevOps & Cloud",
+    layer: "03 / DevOps",
+    color: "#0284C7",
+    bgColor: "#F0F9FF",
+    borderColor: "#BAE6FD",
+    role: "Reproducible container builds, isolated application runtimes, and local multi-service testing.",
+    benchmark: "Lightweight OCI containers · Strict cgroup resource limits",
+    codeSnippet: "docker run --pids-limit 100 --memory 512m -d api_server",
+  },
+
+  // 04 Data & Tooling
+  {
     name: "PostgreSQL",
-    category: "Databases",
+    category: "04 Data & Tooling",
+    layer: "04 / Data",
     color: "#1D4ED8",
     bgColor: "#EFF6FF",
     borderColor: "#BFDBFE",
@@ -56,7 +156,8 @@ const techCatalog: TechDetail[] = [
   },
   {
     name: "Redis",
-    category: "Databases",
+    category: "04 Data & Tooling",
+    layer: "04 / Data",
     color: "#DC2626",
     bgColor: "#FEF2F2",
     borderColor: "#FECACA",
@@ -65,34 +166,15 @@ const techCatalog: TechDetail[] = [
     codeSnippet: "await redis.set(`session:${token}`, userId, 'EX', 3600);",
   },
   {
-    name: "Cloudflare Workers",
-    category: "Distributed Systems",
-    color: "#D97706",
-    bgColor: "#FFFBEB",
-    borderColor: "#FDE68A",
-    role: "Serverless edge compute deployed to 250+ global points of presence with V8 isolates.",
-    benchmark: "0ms cold starts · Worldwide p99 response under 10ms",
-    codeSnippet: "export default { fetch: (req, env) => handleEdgeRouting(req, env) };",
-  },
-  {
     name: "Raft Consensus",
-    category: "Distributed Systems",
+    category: "04 Data & Tooling",
+    layer: "04 / Data",
     color: "#7C3AED",
     bgColor: "#F5F3FF",
     borderColor: "#DDD6FE",
     role: "Distributed leader election, log replication, and linearizable consistency across node clusters.",
     benchmark: "Majority quorum fault tolerance · Automated 150ms failover",
     codeSnippet: "fn commit_log_entries(&mut self, leader_commit: u64)",
-  },
-  {
-    name: "Linux & Docker",
-    category: "Tooling & Infrastructure",
-    color: "#059669",
-    bgColor: "#ECFDF5",
-    borderColor: "#A7F3D0",
-    role: "POSIX system environments, containerized deployments, automated CI pipelines, and bash scripting.",
-    benchmark: "Reproducible OCI container builds · Strict cgroup resource limits",
-    codeSnippet: "docker run --pids-limit 100 --memory 512m -d api_server",
   },
 ];
 
@@ -116,7 +198,7 @@ export default function SystemCraftSection() {
   const [lastCacheEvent, setLastCacheEvent] = useState<string>("Read Hit @ 0x7FFF0040 (L1 Cache · 1.1ns)");
   const [hitRate, setHitRate] = useState<number>(95.8);
 
-  const categories = ["All", "Languages", "Distributed Systems", "Databases", "Tooling & Infrastructure"];
+  const categories = ["All", "01 Frontend", "02 Backend & APIs", "03 DevOps & Cloud", "04 Data & Tooling"];
 
   const filteredTech = activeCategory === "All" 
     ? techCatalog 
@@ -137,34 +219,16 @@ export default function SystemCraftSection() {
   };
 
   return (
-    <section id="sec-005" className="section-wrap" aria-label="Technical Craft & Technology Ecosystem">
+    <section id="sec-005" className="section-wrap" aria-label="Technical Craft & System Layers">
       <header className="section-header">
-        <div className="section-tag">{"005 // TECH STACK & SYSTEM CRAFT"}</div>
-        <h2 className="section-title">Core technologies, protocols, and memory models.</h2>
+        <div className="section-tag">{"005 // SYSTEM LAYERS & TECH STACK"}</div>
+        <h2 className="section-title">The right tools. The whole picture.</h2>
         <p className="section-subtitle">
-          An interactive software ecosystem built around high concurrency, type safety, and predictable latency. Click any technology to inspect its role and benchmark figures.
+          From the interface you touch to the systems you don&apos;t see. A toolkit for taking ownership of the whole product across frontend, backend, devops, and data.
         </p>
       </header>
 
-      {/* Hero Visual: Full-Width Colorful Tech Stack Ecosystem Graphic */}
-      <div className="card-volumetric p-4 sm:p-6 mb-10 overflow-hidden">
-        <div className="flex justify-between items-center pb-3 mb-3 border-b border-[var(--line)] font-mono text-xs text-[var(--ink-secondary)]">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
-            <span className="font-semibold text-[var(--ink)]">INTERCONNECTED RUNTIME & LANGUAGE ECOSYSTEM</span>
-          </div>
-          <span className="text-[var(--accent-emerald)] font-semibold text-[0.7rem]">100% SOFTWARE ARCHITECTURE</span>
-        </div>
-        <div className="relative rounded overflow-hidden bg-[var(--paper-subtle)] border border-[var(--line)]">
-          <img
-            src="/images/tech_stack_ecosystem.jpg"
-            alt="Modern Software Engineering Tech Stack Matrix"
-            className="w-full h-auto object-contain max-h-[460px] mx-auto block"
-          />
-        </div>
-      </div>
-
-      {/* Main Grid: Interactive Technology Matrix & Memory Hierarchy */}
+      {/* Main Grid: Interactive Technology Matrix & Memory Hierarchy (NO GENERIC CHART POSTER) */}
       <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-8 items-start">
         {/* Left: Interactive Tech Matrix */}
         <div className="card-volumetric p-6 flex flex-col justify-between">
@@ -175,7 +239,7 @@ export default function SystemCraftSection() {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-3 py-1 rounded text-xs transition-all ${
+                  className={`px-3 py-1.5 rounded text-xs transition-all ${
                     activeCategory === cat
                       ? "bg-[var(--ink)] text-white font-medium"
                       : "bg-[var(--paper-subtle)] text-[var(--ink-secondary)] hover:bg-[var(--line)]"
@@ -205,7 +269,7 @@ export default function SystemCraftSection() {
                       {tech.name}
                     </div>
                     <div className="text-[0.68rem] text-[var(--ink-muted)] truncate mt-1">
-                      {tech.category}
+                      {tech.layer}
                     </div>
                   </button>
                 );
@@ -230,7 +294,7 @@ export default function SystemCraftSection() {
                     {selectedTech.name}
                   </h3>
                   <span className="font-mono text-[0.7rem] px-2 py-0.5 rounded bg-white/70 border border-[var(--line)] text-[var(--ink-secondary)]">
-                    {selectedTech.category}
+                    {selectedTech.layer}
                   </span>
                 </div>
                 <div className="font-mono text-xs font-semibold" style={{ color: selectedTech.color }}>

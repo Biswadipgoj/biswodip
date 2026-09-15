@@ -502,3 +502,164 @@ save everything i asked as promt.md file
 
 ---
 
+## Prompt 37
+
+`
+install https://github.com/petergyang/no-ai-slop npx skills add https://github.com/Leonxlnx/taste-skill install https://github.com/pbakaus/impeccable npx skills@latest add emilkowalski/skills and all give list of all installed i need to remove some
+`
+
+---
+
+## Prompt 38
+
+`
+remove which more than once just keep the latest after all https://github.com/vercel-labs/agent-skills install this also https://github.com/vercel-labs/agent-skills this also
+`
+
+---
+
+## Prompt 39
+
+`
+if something same skill more than one times remove the extra
+`
+
+---
+
+## Prompt 40
+
+`
+global and loca;l
+`
+
+---
+
+## Prompt 41
+
+`
+use all skill to plan my need not dark black color and flat and redesign with promt need # biswadip.in — Portfolio Rebuild Plan
+`
+
+---
+
+## Prompt 42
+
+`
+remove index.html dont need i havent asked fr please build more robustly
+`
+
+---
+
+## Prompt 43
+
+`
+web footer verydull please make its interesting told you thousand times no dark black page also not flat utilize full page and animation scroling object all related to computer science and 3d workspace make its more sophitacted and in the computer dont use any project make that more creative animated and animation is very dull make total animation use all repo skill installed using them(must) plan robustly then build
+`
+
+---
+
+## Prompt 44
+
+`
+also use no ai slop repo to all word in the site fix its all content look like ai gen please use that must and create plan
+`
+
+---
+
+## Prompt 45
+
+`
+then also browser test unusal weird animation weird thing remove that and fix
+`
+
+---
+
+## Prompt 46
+
+`
+rather than use please make from top to bottom in scroll everysection everything goes(even which need to click to view) goes in scroll in animation with everyscroll its goes one section to another in animated way and all componnent must with relevant image(gen relevant image for everything)and everysection mustbe look creative playfull and dont mention 3d or something like stupid thing its a techie portoflio so make after deep research use different plagarith to make its ai free and tech stack part is dull make its super creative and all page color text visibilt is good not dark or not white color make sure colorfull also please ui i slope in the end to reran all word in my portfoilio make its ai feeling off every wording build a master plan and plesae use all repo/skill installed use them and dont use hardware realted thing i am btech cse no hardware first to build plan and in end also to test please
+`
+
+---
+
+## Prompt 47
+
+`
+please use colorfull image and no hardware part strict if someone visit its give wow feel with 100000000pnt on uiux. for the image of every project architecture its with everptoject section architecture clickin needed
+`
+
+---
+
+## Prompt 48
+
+`
+chart only related project what bullshit you made mother fucker you fuvked up my page
+`
+
+---
+
+## Prompt 49
+
+`
+white pussy
+`
+
+---
+
+## Prompt 50
+
+`
+first doing and bull shit collect all my promt i send please create master doc and build with that
+`
+
+---
+
+## Prompt 51
+
+`
+and of everything test on browser
+`
+
+---
+
+## Prompt 52
+
+`
+https://github.com/addyosmani/agent-skills install this and use
+`
+
+---
+
+## Prompt 53
+
+`
+wtach potch.studio and lexspace.co , yelm.watch for animation then build
+`
+
+---
+
+## Prompt 54
+
+`
+use everything i send in that chat notone
+`
+
+---
+
+## Prompt 55
+
+`
+wtach 1 potch.studio and 2 lexspace.co , 3 yelm.watch for animation then build
+`
+
+---
+
+## Prompt 56
+
+`
+its poch.studio
+`
+
+
+
+
