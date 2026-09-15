@@ -1,26 +1,20 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
+import { Sora, Inter } from "next/font/google";
 import "./globals.css";
 
 import { personal } from "@/lib/data";
 
-const fraunces = Fraunces({
+const display = Sora({
   subsets: ["latin"],
-  variable: "--font-fraunces",
+  weight: ["600"],
+  variable: "--font-display",
   display: "swap",
 });
 
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const mono = IBM_Plex_Mono({
+const sans = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-  variable: "--font-mono",
+  variable: "--font-body-loaded",
   display: "swap",
 });
 
@@ -32,14 +26,15 @@ export const metadata: Metadata = {
   description,
   keywords: [
     "Biswodip Goj",
-    "Software Engineer",
-    "Distributed Systems",
-    "Full-Stack Developer",
-    "Systems Architecture",
+    "Software Developer",
+    "Business Analyst",
+    "Business Data",
+    "Dashboards",
+    "Databases",
+    "Analytics",
     "Next.js",
-    "Rust",
-    "TypeScript",
     "PostgreSQL",
+    "West Bengal",
     "India",
   ],
   authors: [{ name: personal.name }],
@@ -58,10 +53,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F8F7F4",
+  themeColor: "#243e54",
   width: "device-width",
   initialScale: 1,
 };
+
 
 export default function RootLayout({
   children,
@@ -69,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${mono.variable}`}>
+    <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body>
         {children}
       </body>
