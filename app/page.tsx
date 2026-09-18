@@ -1,5 +1,5 @@
-import Portfolio from "@/components/Portfolio";
+import CompilePortfolio from "@/components/CompilePortfolio";
 
 export default function Home() {
-  return <Portfolio />;
+  return <CompilePortfolio />;
 }

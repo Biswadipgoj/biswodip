@@ -1,20 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Sora, Inter } from "next/font/google";
-import "./globals.css";
+import { Sora, Inter, JetBrains_Mono } from "next/font/google";
+import "./compile.css";
 
 import { personal } from "@/lib/data";
 
 const display = Sora({
   subsets: ["latin"],
-  weight: ["600"],
+  weight: ["600", "700"],
   variable: "--font-display",
   display: "swap",
 });
 
-const sans = Inter({
+const body = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-  variable: "--font-body-loaded",
+  variable: "--font-body",
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -27,15 +34,12 @@ export const metadata: Metadata = {
   keywords: [
     "Biswodip Goj",
     "Software Developer",
-    "Business Analyst",
-    "Business Data",
-    "Dashboards",
-    "Databases",
-    "Analytics",
+    "Full-Stack Engineer",
+    "React",
     "Next.js",
+    "TypeScript",
     "PostgreSQL",
-    "West Bengal",
-    "India",
+    "Portfolio",
   ],
   authors: [{ name: personal.name }],
   creator: personal.name,
@@ -53,11 +57,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#243e54",
+  themeColor: "#2563eb",
   width: "device-width",
   initialScale: 1,
 };
-
 
 export default function RootLayout({
   children,
@@ -65,7 +68,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body>
         {children}
       </body>
