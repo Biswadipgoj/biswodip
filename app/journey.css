@@ -74,6 +74,47 @@
   box-shadow: 0 8px 20px -6px rgba(50, 35, 25, 0.14);
 }
 
+[data-scroll-3d] {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3.5px;
+  z-index: 120;
+  background: rgba(0, 0, 0, 0.05);
+  pointer-events: none;
+}
+
+.scroll-progress-fill {
+  box-shadow: 0 0 12px rgba(216, 129, 53, 0.75), 0 0 24px rgba(116, 81, 153, 0.55);
+}
+
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(169, 128, 104, 0.45); }
+  70% { box-shadow: 0 0 0 8px rgba(169, 128, 104, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(169, 128, 104, 0); }
+}
+
+.workflow-number, .process-index {
+  animation: pulseRing 2.8s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes beamTravel {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+[data-wire] {
+  background: linear-gradient(90deg, #a37c62 0%, #ffffff 50%, #a37c62 100%);
+  background-size: 200% 100%;
+  animation: beamTravel 2.8s infinite linear;
+}
+
 [data-magnetic] {
   display: inline-block;
   will-change: transform;
@@ -105,8 +146,9 @@ h4 {font-size:24px;letter-spacing:-.025em}
 h1 em,h2 em,h3 em {font-family:var(--font-display),Georgia,serif;font-weight:400}
 p {color:var(--ink-soft);text-wrap:pretty}
 ul,ol {list-style:none;margin:0;padding:0}
-img {display:block;max-width:100%}
-svg {width:20px;height:20px;flex-shrink:0}
+svg {width:20px;height:20px;max-width:24px;max-height:24px;flex-shrink:0;display:inline-block;vertical-align:middle}
+svg.tech-logo {max-width:none;max-height:none}
+.ds-button svg, .action svg, .nav-projects svg, .text-link svg {width:18px!important;height:18px!important;max-width:18px!important;max-height:18px!important;flex-shrink:0!important}
 code,pre {font-family:var(--font-mono)}
 section,article,footer {scroll-margin-top:112px;min-width:0}
 main {outline:none}

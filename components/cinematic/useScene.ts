@@ -52,36 +52,7 @@ export function useScene(build: SceneBuilder) {
 }
 
 /**
- * Master 3D & Multi-Scroll Editorial Animation Engine:
- * 
- * [data-reveal]          — fade up from 32px below
- * [data-reveal="left"]   — slide in from left
- * [data-reveal="right"]  — slide in from right
- * [data-reveal="scale"]  — scale from 0.85 with spring
- * [data-reveal="clip"]   — clip-path reveal from bottom
- * [data-reveal="blur"]   — blur(8px) to clear
- * [data-reveal="rotate"] — slight rotation reveal
- * [data-reveal="3d-flip"]— 3D perspective fold-up (rotateX)
- * [data-reveal="3d-depth"]— 3D perspective fly-in from Z-space
- * [data-tilt-3d]         — Interactive physical 3D card tilt on mouse move with specular shine
- * [data-parallax-3d]     — Multi-layer 3D parallax scroll depth
- * [data-magnetic]        — Magnetic cursor attraction on buttons
- * [data-media]           — parallax scale & 3D tilt scrub on images
- * [data-wire]            — horizontal line draw-on
- * [data-stagger]         — container: children stagger in
- * [data-parallax]        — subtle parallax y-shift on scroll
- * [data-parallax="deep"] — deeper parallax shift
- * [data-count]           — counter animation (0 to value)
- * [data-split]           — word-by-word reveal
- * [data-progress]        — width animation (progress bars)
- * [data-draw]            — SVG path draw-on
- * [data-float]           — continuous gentle float
- * [data-float-3d]        — continuous 3D floating rotation
- * [data-pulse]           — subtle pulse on enter
- * [data-slide-x]         — horizontal slide scrub
- * [data-fade-section]    — full section opacity transition
- * [data-border-draw]     — progressive border draw
- * [data-index-reveal]    — step number badge 3D pop
+ * Robust, High-Performance 3D & Multi-Scroll Animation System
  */
 export function useEditorialReveal() {
   const ref = useRef<HTMLElement>(null);
@@ -93,49 +64,66 @@ export function useEditorialReveal() {
     media.add('(prefers-reduced-motion: no-preference)', () => {
       const ctx = gsap.context(() => {
 
-        // ─── 1. Standard & 3D Reveal Variants ───
+        // ─── 1. Scroll-Driven Reveal Animations ───
         gsap.utils.toArray<HTMLElement>('[data-reveal]', root).forEach(element => {
           const variant = element.dataset.reveal;
-          let from: gsap.TweenVars = { y: 32, opacity: 0 };
-          let to: gsap.TweenVars = { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' };
+          let from: gsap.TweenVars = { y: 36, opacity: 0 };
+          let to: gsap.TweenVars = { y: 0, opacity: 1, duration: 0.85, ease: 'power3.out' };
 
           if (variant === 'left') {
-            from = { x: -48, opacity: 0 };
-            to = { x: 0, opacity: 1, duration: 0.7, ease: 'power2.out' };
+            from = { x: -50, opacity: 0 };
+            to = { x: 0, opacity: 1, duration: 0.75, ease: 'power2.out' };
           } else if (variant === 'right') {
-            from = { x: 48, opacity: 0 };
-            to = { x: 0, opacity: 1, duration: 0.7, ease: 'power2.out' };
+            from = { x: 50, opacity: 0 };
+            to = { x: 0, opacity: 1, duration: 0.75, ease: 'power2.out' };
           } else if (variant === 'scale') {
             from = { scale: 0.85, opacity: 0 };
-            to = { scale: 1, opacity: 1, duration: 0.7, ease: 'back.out(1.4)' };
+            to = { scale: 1, opacity: 1, duration: 0.75, ease: 'back.out(1.5)' };
           } else if (variant === 'clip') {
             from = { clipPath: 'inset(100% 0 0 0)', opacity: 0 };
             to = { clipPath: 'inset(0% 0 0 0)', opacity: 1, duration: 0.9, ease: 'power3.out' };
           } else if (variant === 'blur') {
-            from = { filter: 'blur(8px)', opacity: 0, y: 12 };
+            from = { filter: 'blur(10px)', opacity: 0, y: 16 };
             to = { filter: 'blur(0px)', opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' };
           } else if (variant === 'rotate') {
-            from = { rotate: -3, y: 20, opacity: 0 };
+            from = { rotate: -4, y: 24, opacity: 0 };
             to = { rotate: 0, y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' };
           } else if (variant === '3d-flip') {
-            from = { transformPerspective: 1000, rotateX: 20, y: 40, opacity: 0, scale: 0.95 };
+            from = { transformPerspective: 1200, rotateX: 24, y: 44, opacity: 0, scale: 0.94 };
             to = { rotateX: 0, y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out' };
           } else if (variant === '3d-depth') {
-            from = { transformPerspective: 1200, z: -80, y: 30, opacity: 0, scale: 0.9 };
-            to = { z: 0, y: 0, opacity: 1, scale: 1, duration: 0.85, ease: 'back.out(1.2)' };
+            from = { transformPerspective: 1200, z: -100, y: 36, opacity: 0, scale: 0.88 };
+            to = { z: 0, y: 0, opacity: 1, scale: 1, duration: 0.85, ease: 'back.out(1.3)' };
           }
 
           gsap.fromTo(element, from, {
             ...to,
             scrollTrigger: {
               trigger: element,
-              start: 'top 92%',
-              toggleActions: 'play none none reverse',
+              start: 'top 94%',
+              toggleActions: 'play none none none',
+              once: true,
             },
           });
         });
 
-        // ─── 2. Interactive 3D Card Tilt with Specular Reflection ───
+        // ─── 1B. Continuous 3D Scroll Perspective & Depth Cylinder ───
+        gsap.utils.toArray<HTMLElement>('[data-scroll-3d]', root).forEach(element => {
+          gsap.fromTo(element,
+            { transformPerspective: 1200, rotateX: 7, scale: 0.97, y: 20 },
+            {
+              rotateX: -5, scale: 1.0, y: -20, ease: 'none',
+              scrollTrigger: {
+                trigger: element,
+                start: 'top 95%',
+                end: 'bottom 5%',
+                scrub: 0.6,
+              },
+            }
+          );
+        });
+
+        // ─── 2. Interactive 3D Card Tilt with Dynamic Specular Reflection ───
         gsap.utils.toArray<HTMLElement>('[data-tilt-3d]', root).forEach(card => {
           let ticking = false;
           const handleMouseMove = (e: MouseEvent) => {
@@ -157,8 +145,8 @@ export function useEditorialReveal() {
                 transformPerspective: 1200,
                 rotateX: rotateX,
                 rotateY: rotateY,
-                scale3d: [1.02, 1.02, 1.02],
-                duration: 0.35,
+                scale3d: [1.025, 1.025, 1.025],
+                duration: 0.3,
                 ease: 'power2.out',
                 overwrite: 'auto',
               });
@@ -172,7 +160,7 @@ export function useEditorialReveal() {
               rotateX: 0,
               rotateY: 0,
               scale: 1,
-              duration: 0.6,
+              duration: 0.65,
               ease: 'power3.out',
               overwrite: 'auto',
             });
@@ -182,36 +170,36 @@ export function useEditorialReveal() {
           card.addEventListener('mouseleave', handleMouseLeave);
         });
 
-        // ─── 3. Magnetic Button Hover ───
+        // ─── 3. Magnetic Hover on Buttons & Links ───
         gsap.utils.toArray<HTMLElement>('[data-magnetic]', root).forEach(btn => {
           const handleMouseMove = (e: MouseEvent) => {
             const rect = btn.getBoundingClientRect();
             const x = e.clientX - (rect.left + rect.width / 2);
             const y = e.clientY - (rect.top + rect.height / 2);
-            gsap.to(btn, { x: x * 0.25, y: y * 0.25, duration: 0.25, ease: 'power2.out' });
+            gsap.to(btn, { x: x * 0.28, y: y * 0.28, duration: 0.22, ease: 'power2.out' });
           };
           const handleMouseLeave = () => {
-            gsap.to(btn, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.4)' });
+            gsap.to(btn, { x: 0, y: 0, duration: 0.55, ease: 'elastic.out(1, 0.4)' });
           };
           btn.addEventListener('mousemove', handleMouseMove);
           btn.addEventListener('mouseleave', handleMouseLeave);
         });
 
-        // ─── 4. Media Parallax & 3D Perspective Scrub (images/screenshots) ───
+        // ─── 4. Media 3D Perspective Scrub on Scroll ───
         gsap.utils.toArray<HTMLElement>('[data-media]', root).forEach(element => {
           gsap.fromTo(element,
-            { transformPerspective: 1000, rotateX: 6, scale: 0.92, y: 32, opacity: 0.8 },
+            { transformPerspective: 1200, rotateX: 12, scale: 0.93, y: 44, opacity: 0.82 },
             {
               rotateX: 0, scale: 1, y: 0, opacity: 1, ease: 'none',
               scrollTrigger: {
                 trigger: element,
-                start: 'top 94%', end: 'center 48%', scrub: 0.5,
+                start: 'top 95%', end: 'center 48%', scrub: 0.5,
               },
             }
           );
         });
 
-        // ─── 5. Wire Draw (horizontal lines) ───
+        // ─── 5. Wire Draw (horizontal workflow lines) ───
         gsap.utils.toArray<HTMLElement>('[data-wire]', root).forEach(element => {
           gsap.fromTo(element,
             { scaleX: 0, transformOrigin: 'left' },
@@ -225,7 +213,7 @@ export function useEditorialReveal() {
           );
         });
 
-        // ─── 6. Stagger containers ───
+        // ─── 6. Stagger Containers ───
         gsap.utils.toArray<HTMLElement>('[data-stagger]', root).forEach(container => {
           const children = [...container.children] as HTMLElement[];
           if (!children.length) return;
@@ -236,8 +224,9 @@ export function useEditorialReveal() {
               stagger: 0.08,
               scrollTrigger: {
                 trigger: container,
-                start: 'top 90%',
-                toggleActions: 'play none none reverse',
+                start: 'top 92%',
+                toggleActions: 'play none none none',
+                once: true,
               },
             }
           );
@@ -246,7 +235,7 @@ export function useEditorialReveal() {
         // ─── 7. Parallax Y-shift (Subtle & Deep) ───
         gsap.utils.toArray<HTMLElement>('[data-parallax]', root).forEach(element => {
           const isDeep = element.dataset.parallax === 'deep';
-          const distance = isDeep ? 60 : 30;
+          const distance = isDeep ? 70 : 35;
           gsap.fromTo(element,
             { y: distance },
             {
@@ -262,9 +251,9 @@ export function useEditorialReveal() {
         // ─── 8. Multi-Layer 3D Parallax Drift ───
         gsap.utils.toArray<HTMLElement>('[data-parallax-3d]', root).forEach(element => {
           gsap.fromTo(element,
-            { transformPerspective: 1000, z: -40, rotateZ: -4, y: 35 },
+            { transformPerspective: 1200, z: -60, rotateZ: -6, y: 50 },
             {
-              z: 20, rotateZ: 4, y: -35, ease: 'none',
+              z: 35, rotateZ: 6, y: -50, ease: 'none',
               scrollTrigger: {
                 trigger: element,
                 start: 'top bottom', end: 'bottom top', scrub: 0.6,
@@ -273,7 +262,7 @@ export function useEditorialReveal() {
           );
         });
 
-        // ─── 9. Counter animation ───
+        // ─── 9. Counter Animation ───
         gsap.utils.toArray<HTMLElement>('[data-count]', root).forEach(element => {
           const target = parseInt(element.dataset.count || '0', 10);
           const obj = { val: 0 };
@@ -283,12 +272,13 @@ export function useEditorialReveal() {
             scrollTrigger: {
               trigger: element,
               start: 'top 88%',
-              toggleActions: 'play none none reverse',
+              toggleActions: 'play none none none',
+              once: true,
             },
           });
         });
 
-        // ─── 10. Word-by-word text split ───
+        // ─── 10. Word-by-word Text Split with 3D Tilt ───
         gsap.utils.toArray<HTMLElement>('[data-split]', root).forEach(element => {
           const wrapTextNodes = (parent: Node) => {
             const children = [...parent.childNodes];
@@ -301,6 +291,7 @@ export function useEditorialReveal() {
                     const span = document.createElement('span');
                     span.style.display = 'inline-block';
                     span.style.marginRight = '0.15em';
+                    span.style.transformOrigin = '50% 100%';
                     span.textContent = part;
                     span.classList.add('split-word');
                     fragment.appendChild(span);
@@ -321,143 +312,99 @@ export function useEditorialReveal() {
           const splitWords = element.querySelectorAll('.split-word');
           if (splitWords.length) {
             gsap.fromTo(splitWords,
-              { y: 22, opacity: 0 },
+              { y: 26, rotateX: 35, opacity: 0, transformPerspective: 800 },
               {
-                y: 0, opacity: 1, duration: 0.45, ease: 'power2.out',
-                stagger: 0.035,
+                y: 0, rotateX: 0, opacity: 1, duration: 0.5, ease: 'power3.out',
+                stagger: 0.04,
                 scrollTrigger: {
                   trigger: element,
                   start: 'top 88%',
-                  toggleActions: 'play none none reverse',
+                  toggleActions: 'play none none none',
+                  once: true,
                 },
               }
             );
           }
         });
 
-        // ─── 11. Progress bar width ───
-        gsap.utils.toArray<HTMLElement>('[data-progress]', root).forEach(element => {
-          const target = element.dataset.progress || '100';
-          gsap.fromTo(element,
-            { width: '0%' },
-            {
-              width: target + '%', duration: 1.2, ease: 'power2.out',
-              scrollTrigger: {
-                trigger: element,
-                start: 'top 90%',
-                toggleActions: 'play none none reverse',
-              },
-            }
-          );
-        });
-
-        // ─── 12. SVG Path Draw ───
-        gsap.utils.toArray<SVGPathElement>('[data-draw]', root).forEach(path => {
-          const length = path.getTotalLength();
-          gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
-          gsap.to(path, {
-            strokeDashoffset: 0, ease: 'none',
-            scrollTrigger: {
-              trigger: path.closest('svg') || path,
-              start: 'top 80%', end: 'bottom 40%', scrub: 0.5,
-            },
-          });
-        });
-
-        // ─── 13. Continuous Float (2D & 3D) ───
-        gsap.utils.toArray<HTMLElement>('[data-float]', root).forEach(element => {
-          gsap.to(element, {
-            y: -8, duration: 2.5, ease: 'sine.inOut', repeat: -1, yoyo: true,
-          });
-        });
-
+        // ─── 11. Continuous 3D Floating Physics ───
         gsap.utils.toArray<HTMLElement>('[data-float-3d]', root).forEach(element => {
           gsap.to(element, {
             transformPerspective: 800,
-            y: -12,
+            y: -14,
             rotateX: 6,
             rotateY: -8,
-            duration: 3.2,
+            duration: 3.5,
             ease: 'sine.inOut',
             repeat: -1,
             yoyo: true,
           });
         });
 
-        // ─── 14. Pulse on enter ───
+        gsap.utils.toArray<HTMLElement>('[data-float]', root).forEach(element => {
+          gsap.to(element, {
+            y: -8, duration: 2.5, ease: 'sine.inOut', repeat: -1, yoyo: true,
+          });
+        });
+
+        // ─── 12. Pulse on Enter ───
         gsap.utils.toArray<HTMLElement>('[data-pulse]', root).forEach(element => {
           gsap.fromTo(element,
-            { scale: 0.9, opacity: 0 },
+            { scale: 0.85, opacity: 0 },
             {
-              scale: 1, opacity: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)',
+              scale: 1, opacity: 1, duration: 0.55, ease: 'elastic.out(1.1, 0.5)',
               scrollTrigger: {
                 trigger: element,
-                start: 'top 90%',
-                toggleActions: 'play none none reverse',
+                start: 'top 92%',
+                toggleActions: 'play none none none',
+                once: true,
               },
             }
           );
         });
 
-        // ─── 15. Horizontal slide scrub ───
-        gsap.utils.toArray<HTMLElement>('[data-slide-x]', root).forEach(element => {
-          const direction = element.dataset.slideX === 'right' ? 80 : -80;
-          gsap.fromTo(element,
-            { x: direction, opacity: 0.4 },
-            {
-              x: 0, opacity: 1, ease: 'none',
-              scrollTrigger: {
-                trigger: element,
-                start: 'top 95%', end: 'top 45%', scrub: 0.5,
-              },
-            }
-          );
-        });
-
-        // ─── 16. Section fade transitions ───
+        // ─── 13. Section Fade & Scale Transitions ───
         gsap.utils.toArray<HTMLElement>('[data-fade-section]', root).forEach(element => {
           gsap.fromTo(element,
-            { opacity: 0 },
+            { opacity: 0.2, y: 36, scale: 0.98 },
             {
-              opacity: 1, ease: 'none',
+              opacity: 1, y: 0, scale: 1, ease: 'power2.out',
               scrollTrigger: {
                 trigger: element,
-                start: 'top 98%', end: 'top 70%', scrub: true,
+                start: 'top 96%', end: 'top 65%', scrub: 0.5,
               },
             }
           );
         });
 
-        // ─── 17. Border draw-on for elements ───
-        gsap.utils.toArray<HTMLElement>('[data-border-draw]', root).forEach(element => {
-          gsap.fromTo(element,
-            { backgroundSize: '0% 1px' },
-            {
-              backgroundSize: '100% 1px', ease: 'none',
-              scrollTrigger: {
-                trigger: element,
-                start: 'top 85%', end: 'top 55%', scrub: 0.4,
-              },
-            }
-          );
-        });
-
-        // ─── 18. Index/number counter reveal ───
+        // ─── 14. Step Index Reveal ───
         gsap.utils.toArray<HTMLElement>('[data-index-reveal]', root).forEach((element, i) => {
           gsap.fromTo(element,
             { scale: 0.6, opacity: 0, rotate: -8 },
             {
               scale: 1, opacity: 1, rotate: 0, duration: 0.5,
-              delay: i * 0.06,
+              delay: i * 0.05,
               ease: 'back.out(2)',
               scrollTrigger: {
                 trigger: element,
                 start: 'top 90%',
-                toggleActions: 'play none none reverse',
+                toggleActions: 'play none none none',
+                once: true,
               },
             }
           );
         });
+
+        // ─── 15. Global Cursor Tracking for Ambient Glass Refraction ───
+        const handleGlobalPointerMove = (e: MouseEvent) => {
+          const xPercent = (e.clientX / window.innerWidth) * 100;
+          const yPercent = (e.clientY / window.innerHeight) * 100;
+          document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`);
+          document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`);
+          document.documentElement.style.setProperty('--cursor-xp', `${xPercent}%`);
+          document.documentElement.style.setProperty('--cursor-yp', `${yPercent}%`);
+        };
+        window.addEventListener('mousemove', handleGlobalPointerMove, { passive: true });
 
       }, root);
 

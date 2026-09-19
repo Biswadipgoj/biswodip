@@ -16,7 +16,7 @@ function ProjectChapter({project, index}: {project: Project; index: number}) {
   const ref = useEditorialReveal();
   const isEven = index % 2 === 0;
   return <article ref={ref} id={project.slug} className={'project-chapter project-'+project.slug} style={projectStyle(project)} data-fade-section>
-    <div className="project-card">
+    <div className="project-card" data-scroll-3d>
       <header className="project-heading" data-reveal={isEven ? 'left' : 'right'}>
         <h3><Link href={'/project/'+project.slug}>{project.name}<ArrowUpRightIcon aria-hidden="true"/><span className="sr-only"> project details</span></Link></h3>
         <p data-reveal>{project.blurb}</p>
@@ -29,7 +29,7 @@ function ProjectChapter({project, index}: {project: Project; index: number}) {
         </div>
         <ProjectActions project={project}/>
       </header>
-      <Link className="project-visual" href={'/project/'+project.slug} aria-label={'Explore '+project.name+' project details'} data-tilt-3d>
+      <Link className="project-visual" href={'/project/'+project.slug} aria-label={'Explore '+project.name+' project details'} data-tilt-3d data-scroll-3d>
         <div data-media><ProjectMedia project={project}/></div>
         <span className="screenshot-caption" data-reveal="blur">
           {project.slug==='telepoint'?'Live EMI portal interface':'Real application interface'}

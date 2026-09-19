@@ -15,7 +15,7 @@ export function Process() {
       <p data-reveal>{personal.maturity}</p>
     </header>
     <div className="process-composition">
-      <div className="process-document glass-panel" data-reveal="3d-flip" data-tilt-3d>
+      <div className="process-document glass-panel" data-reveal="3d-flip" data-tilt-3d data-scroll-3d>
         <span className="document-tab" data-reveal="blur">requirement → application</span>
         <h3 data-reveal>Start with<br /><em>the workflow.</em></h3>
         <div className="document-path" data-stagger>
@@ -24,7 +24,7 @@ export function Process() {
         <p data-reveal="blur">{storyCopy.testing}</p>
       </div>
       <ol className="process-steps">
-        {processStages.map((stage, i) => <li key={stage.title} className="glass-panel" data-reveal={i % 2 === 0 ? 'left' : 'right'} data-tilt-3d style={{padding: '28px', borderRadius: '14px', marginBottom: '20px'}}>
+        {processStages.map((stage, i) => <li key={stage.title} className="glass-panel" data-reveal={i % 2 === 0 ? 'left' : 'right'} data-tilt-3d data-scroll-3d style={{padding: '28px', borderRadius: '14px', marginBottom: '20px'}}>
           <span className="process-index" data-index-reveal>{String(i+1).padStart(2,'0')}</span>
           <div>
             <h3>{stage.title}</h3>
@@ -37,7 +37,7 @@ export function Process() {
     <section id="capabilities" className="capabilities" data-fade-section>
       <h3 data-reveal="rotate">{storyCopy.capabilitiesTitle}</h3>
       <div className="capability-list" data-stagger>
-        {capabilities.map(item => <article key={item.title} className="glass-panel" data-reveal="3d-depth" data-tilt-3d style={{padding: '24px', borderRadius: '12px', marginBottom: '16px'}}>
+        {capabilities.map(item => <article key={item.title} className="glass-panel" data-reveal="3d-depth" data-tilt-3d data-scroll-3d style={{padding: '24px', borderRadius: '12px', marginBottom: '16px'}}>
           <h4>{item.title}</h4>
           <p>{item.body}</p>
         </article>)}
@@ -46,7 +46,7 @@ export function Process() {
     <div className="principles" data-fade-section>
       <h3 data-reveal="right">Principles I work by</h3>
       <dl data-stagger>
-        {principles.map(item => <div key={item.title} className="glass-panel" data-reveal="3d-flip" data-tilt-3d style={{padding: '24px', borderRadius: '12px', marginBottom: '16px'}}>
+        {principles.map(item => <div key={item.title} className="glass-panel" data-reveal="3d-flip" data-tilt-3d data-scroll-3d style={{padding: '24px', borderRadius: '12px', marginBottom: '16px'}}>
           <dt>{item.title}</dt>
           <dd>{item.line}</dd>
         </div>)}
@@ -63,7 +63,7 @@ export function Journey() {
       <p data-reveal>{storyCopy.foundationsBody}</p>
     </header>
     <div className="education-degrees" data-stagger>
-      {education.map(item => <article key={item.title} className="glass-panel" data-reveal="3d-depth" data-tilt-3d style={{padding: '28px', borderRadius: '14px'}}>
+      {education.map(item => <article key={item.title} className="glass-panel" data-reveal="3d-depth" data-tilt-3d data-scroll-3d style={{padding: '28px', borderRadius: '14px'}}>
         <span data-reveal="blur">{item.date} · {item.institution}</span>
         <h3>{item.title}</h3>
       </article>)}
@@ -75,7 +75,7 @@ export function Journey() {
       </ul>
     </div>
     <ol className="education-timeline">
-      {journey.map((entry, i) => <li key={entry.date} className="glass-panel" data-reveal={i % 2 === 0 ? 'left' : 'right'} data-tilt-3d style={{padding: '24px', borderRadius: '14px', marginBottom: '20px'}}>
+      {journey.map((entry, i) => <li key={entry.date} className="glass-panel" data-reveal={i % 2 === 0 ? 'left' : 'right'} data-tilt-3d data-scroll-3d style={{padding: '24px', borderRadius: '14px', marginBottom: '20px'}}>
         <span className="education-year" data-reveal="rotate">{entry.date}</span>
         <div>
           <h3>{entry.title}</h3>
@@ -104,7 +104,7 @@ export function Contact() {
       <FlowLine steps={storyCopy.footer.flow}/>
     </div>
     <div className="contact-main">
-      <div className="contact-invite glass-panel" data-reveal="left" data-tilt-3d style={{padding: '36px', borderRadius: '18px'}}>
+      <div className="contact-invite glass-panel" data-reveal="left" data-tilt-3d data-scroll-3d style={{padding: '36px', borderRadius: '18px'}}>
         <h2 data-split>Let&apos;s build<br /><em>something useful.</em></h2>
         <p data-reveal>{storyCopy.footer.body}</p>
         <a className="contact-email" href={'mailto:'+personal.email} data-reveal="scale">
@@ -119,7 +119,7 @@ export function Contact() {
           {socials.map(link => <span key={link.label} data-magnetic><a href={link.url} target={link.label==='Email'?undefined:'_blank'} rel={link.label==='Email'?undefined:'noopener noreferrer'}>{link.label}<ArrowUpRightIcon aria-hidden="true"/></a></span>)}
         </nav>
       </div>
-      <div className="source-index glass-panel" data-reveal="right" data-tilt-3d style={{borderRadius: '18px'}}>
+      <div className="source-index glass-panel" data-reveal="right" data-tilt-3d data-scroll-3d style={{borderRadius: '18px'}}>
         <div className="source-index-heading" data-reveal="blur">
           <h3>{storyCopy.footer.sourceTitle}</h3>
           <span aria-hidden="true">{'{ }'}</span>
@@ -136,7 +136,7 @@ export function Contact() {
         <span data-magnetic><a className="text-link" href="#projects" data-reveal>View projects<ArrowRightIcon aria-hidden="true"/></a></span>
       </div>
     </div>
-    <div className="footer-person glass-panel" data-reveal="3d-depth" data-tilt-3d style={{padding: '24px 32px', borderRadius: '16px'}}>
+    <div className="footer-person glass-panel" data-reveal="3d-depth" data-tilt-3d data-scroll-3d style={{padding: '24px 32px', borderRadius: '16px'}}>
       <Image src="/biswodip.png" alt="Biswodip Goj" width={72} height={88} style={{borderRadius: '10px', objectFit: 'cover'}}/>
       <div><strong>{personal.name}</strong><span>{personal.role}</span></div>
       <p>{personal.tagline}</p>

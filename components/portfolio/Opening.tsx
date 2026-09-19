@@ -20,7 +20,7 @@ export default function Opening() {
       </div>
       <p className="hero-python" data-reveal="blur"><strong>Python</strong> — {stackCopy.notes[2].body.toLowerCase()}</p>
     </div>
-    <div className="hero-workflow glass-panel" data-reveal="3d-flip" data-tilt-3d data-workflow>
+    <div className="hero-workflow glass-panel" data-reveal="3d-flip" data-tilt-3d data-scroll-3d data-workflow>
       <div className="workflow-heading" data-reveal="blur">
         <span>Idea → application</span>
         <span aria-hidden="true">[0<span data-count="6">6</span>]</span>

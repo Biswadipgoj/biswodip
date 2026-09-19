@@ -6,9 +6,12 @@ export function PlusIcon(props: SVGProps<SVGSVGElement>) {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
+      width={props.width ?? 20}
+      height={props.height ?? 20}
       {...props}
+      style={{ width: props.width ?? 20, height: props.height ?? 20, flexShrink: 0, ...props.style }}
     >
-      <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 12h6m6 0h-6m0 0V6m0 6v6"/>
+      <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 12h12m-6 6V6"/>
     </svg>
   );
 }

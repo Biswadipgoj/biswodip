@@ -13,7 +13,7 @@ export default function Identity() {
         <p data-reveal>{personal.intro}</p>
         <span data-reveal="blur">{personal.role} · B.Tech CSE</span>
       </div>
-      <figure className="identity-portrait glass-panel" data-media data-tilt-3d>
+      <figure className="identity-portrait glass-panel" data-media data-tilt-3d data-scroll-3d>
         <Image src="/biswodip.png" alt="Portrait of Biswodip Goj, full-stack software engineer" width={1086} height={1448} sizes="(max-width: 799px) 85vw, 34vw" />
         <figcaption data-reveal="blur">{personal.location}</figcaption>
       </figure>
@@ -27,7 +27,7 @@ export default function Identity() {
     <div className="scope-section" data-fade-section>
       <h3 data-reveal="3d-flip">{storyCopy.scopeTitle}</h3>
       <dl className="scope-list" data-stagger>
-        {engineeringScope.map(item => <div key={item.category} className="glass-panel" data-reveal="3d-depth" data-tilt-3d style={{padding: '24px', borderRadius: '12px'}}>
+        {engineeringScope.map(item => <div key={item.category} className="glass-panel" data-reveal="3d-depth" data-tilt-3d data-scroll-3d style={{padding: '24px', borderRadius: '12px'}}>
           <dt>{item.category}</dt>
           <dd>{item.description}</dd>
         </div>)}
