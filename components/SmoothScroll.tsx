@@ -6,42 +6,26 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+declare global { interface Window { portfolioScroll?: Lenis } }
 
-/**
- * Smooth scroll with GSAP ScrollTrigger integration.
- * This is the CRITICAL bridge — without it, no scroll animation works.
- */
+/** One clock for smooth scrolling and every scroll scene, including route cleanup. */
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
-
-    const lenis = new Lenis({
-      duration: 0.65,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      touchMultiplier: 1.2,
-      wheelMultiplier: 1.0,
+    const media = gsap.matchMedia();
+    media.add('(prefers-reduced-motion: no-preference)', () => {
+      const lenis = new Lenis({ duration: 0.8, smoothWheel: true, syncTouch: false, anchors: { offset: -80 } });
+      const tick = (seconds: number) => lenis.raf(seconds * 1000);
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add(tick);
+      window.portfolioScroll = lenis;
+      return () => {
+        gsap.ticker.remove(tick);
+        lenis.off('scroll', ScrollTrigger.update);
+        lenis.destroy();
+        if (window.portfolioScroll === lenis) delete window.portfolioScroll;
+      };
     });
-
-    // ★ CRITICAL: Sync Lenis scroll position → GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
-
-    // ★ CRITICAL: Drive Lenis RAF from GSAP ticker (single unified loop)
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
-
-    // Expose for anchor navigation
-    (window as unknown as { lenis?: Lenis }).lenis = lenis;
-
-    return () => {
-      lenis.destroy();
-      gsap.ticker.remove(lenis.raf as unknown as gsap.TickerCallback);
-      (window as unknown as { lenis?: Lenis }).lenis = undefined;
-    };
+    return () => media.revert();
   }, []);
-
   return <>{children}</>;
 }

@@ -1,77 +1,21 @@
-import type { Metadata, Viewport } from "next";
-import { Sora, Inter, JetBrains_Mono } from "next/font/google";
-import "./compile.css";
+import type { Metadata, Viewport } from 'next';
+import { Fraunces, Manrope } from 'next/font/google';
+import { personal } from '@/lib/data';
+import './journey.css';
 
-import { personal } from "@/lib/data";
-
-const display = Sora({
-  subsets: ["latin"],
-  weight: ["600", "700"],
-  variable: "--font-display",
-  display: "swap",
-});
-
-const body = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-body",
-  display: "swap",
-});
-
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-mono",
-  display: "swap",
-});
-
+const display = Fraunces({ subsets: ['latin'], axes: ['opsz'], style: ['normal', 'italic'], variable: '--font-display', display: 'swap' });
+const body = Manrope({ subsets: ['latin'], variable: '--font-body', display: 'swap' });
 const title = `${personal.name} — ${personal.role}`;
-const description = personal.intro;
-
 export const metadata: Metadata = {
-  title,
-  description,
-  keywords: [
-    "Biswodip Goj",
-    "Software Developer",
-    "Full-Stack Engineer",
-    "React",
-    "Next.js",
-    "TypeScript",
-    "PostgreSQL",
-    "Portfolio",
-  ],
-  authors: [{ name: personal.name }],
-  creator: personal.name,
-  openGraph: {
-    title,
-    description,
-    type: "website",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title,
-    description,
-  },
+  metadataBase: new URL('https://biswadip.in'),
+  title, description: personal.intro,
+  alternates: { canonical: '/' },
+  keywords: ['Biswodip Goj', 'Full-Stack Software Engineer', 'React', 'Next.js', 'TypeScript', 'PostgreSQL', 'Portfolio'],
+  authors: [{ name: personal.name }], creator: personal.name,
+  openGraph: { title, description: personal.intro, type: 'website', locale: 'en_IN', url: '/', images: [{ url: '/biswodip.png', width: 1086, height: 1448, alt: personal.name }] },
+  twitter: { card: 'summary_large_image', title, description: personal.intro, images: ['/biswodip.png'] },
 };
-
-export const viewport: Viewport = {
-  themeColor: "#2563eb",
-  width: "device-width",
-  initialScale: 1,
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
-      <body>
-        {children}
-      </body>
-    </html>
-  );
+export const viewport: Viewport = { themeColor: '#f5edc8', width: 'device-width', initialScale: 1 };
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return <html lang="en" className={`${display.variable} ${body.variable}`}><body>{children}</body></html>;
 }
