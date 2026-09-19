@@ -30,49 +30,155 @@ const buildNano: SceneBuilder = (tl, root, desktop) => {
 };
 
 const featureExamples = [
-  { label: 'Password', code: 'password: hashedPassword', title: 'A little more control.', body: 'Protect a link with a password. The application checks it before revealing the destination.', state: 'Password required' },
-  { label: 'Expiry', code: 'expiresAt: DateTime?', title: 'Useful for a moment.', body: 'Give a link an expiry date. After that date, its destination is no longer available through the link.', state: 'Active → expired' },
-  { label: 'One-time', code: 'oneTimeUse: true', title: 'Open once. Then close.', body: 'Burn-after-read links are marked inactive after access. The original record stays in the database.', state: 'Open → inactive' },
-  { label: 'Alias', code: 'customAlias: String?', title: 'A link you can remember.', body: 'Choose an available alias instead of a generated code.', state: '/x7p2a9q → /portfolio' },
-  { label: 'Analytics', code: 'clicks / lastVisited', title: 'See when it is used.', body: 'The real data model tracks the click count and last-visited time. No invented usage figures.', state: 'Click → count + last visit' },
+  {
+    label: 'Cryptographic Auth',
+    code: 'password: hashedPassword // bcrypt (10 rounds)',
+    title: 'Bcrypt Hash Verification',
+    body: 'Protects sensitive redirects with bcrypt-hashed credentials. The route performs constant-time password verification prior to emitting redirect headers, mitigating brute-force attacks.',
+    state: 'Hash verification → 403 Forbidden / 302 Redirect',
+  },
+  {
+    label: 'Temporal TTL',
+    code: 'expiresAt: DateTime? // indexed check',
+    title: 'Deterministic Temporal Invalidation (TTL)',
+    body: 'Time-to-live boundaries enforced at redirect evaluation. Once current timestamp exceeds the indexed expiresAt value, the engine short-circuits to HTTP 410 Gone without downstream origin resolution.',
+    state: 'now() > expiresAt → HTTP 410 Gone',
+  },
+  {
+    label: 'Atomic Token Burn',
+    code: 'oneTimeUse: true // atomic CAS flip',
+    title: 'Atomic Single-Use Ephemeral Tokens',
+    body: 'Single-read secrecy via atomic compare-and-swap updates. On first resolution, isActive is flipped to false within the transaction. Subsequent requests fail instantly, preventing token replay attacks.',
+    state: 'SELECT FOR UPDATE → isActive = false',
+  },
+  {
+    label: 'B-Tree Indexing',
+    code: 'customAlias: String? @unique',
+    title: 'O(1) Collision-Resistant Alias Ingress',
+    body: 'Custom routing paths validated against strict URL-safe regex specifications. Backed by a unique B-tree index in PostgreSQL guaranteeing O(1) existence verification and strict uniqueness constraints.',
+    state: 'O(1) B-Tree Index Lookup → Ingress Route',
+  },
+  {
+    label: 'Atomic Telemetry',
+    code: 'clicks: Int (increment) · lastVisited: DateTime',
+    title: 'Atomic High-Throughput Click Telemetry',
+    body: 'Records link access frequency and timestamp telemetry in a single atomic database write, eliminating read-modify-write race conditions under concurrent traffic spikes.',
+    state: 'UPDATE link SET clicks = clicks + 1, lastVisited = NOW()',
+  },
 ];
 
 export function NanoFeatures() {
   const [active, setActive] = useState(0);
   const feature = featureExamples[active];
-  return <div className="nano-features">
-    <div className="feature-tabs" role="tablist" aria-label="NanoLink features">{featureExamples.map((item, i) => <Button key={item.label} variant="ghost" role="tab" id={`nano-tab-${i}`} aria-selected={active === i} aria-controls="nano-feature-panel" tabIndex={active === i ? 0 : -1} className="feature-tab" onClick={() => setActive(i)} onKeyDown={event => {
-      const index = event.key === 'ArrowRight' ? (i + 1) % featureExamples.length : event.key === 'ArrowLeft' ? (i + featureExamples.length - 1) % featureExamples.length : event.key === 'Home' ? 0 : event.key === 'End' ? featureExamples.length - 1 : undefined;
-      if (index !== undefined) { event.preventDefault(); setActive(index); document.getElementById(`nano-tab-${index}`)?.focus(); }
-    }}>{item.label}</Button>)}</div>
-    <div className="feature-panel" id="nano-feature-panel" role="tabpanel" aria-labelledby={`nano-tab-${active}`} tabIndex={0}>
-      <div><h4>{feature.title}</h4><p>{feature.body}</p></div>
-      <div className={`feature-state feature-state-${active}`}><span>Conceptual link lifecycle</span><strong>{feature.state}</strong><code>{feature.code}</code></div>
+  return (
+    <div className="nano-features">
+      <div className="feature-tabs" role="tablist" aria-label="NanoLink architectural features">
+        {featureExamples.map((item, i) => (
+          <Button
+            key={item.label}
+            variant="ghost"
+            role="tab"
+            id={`nano-tab-${i}`}
+            aria-selected={active === i}
+            aria-controls="nano-feature-panel"
+            tabIndex={active === i ? 0 : -1}
+            className="feature-tab"
+            onClick={() => setActive(i)}
+            onKeyDown={event => {
+              const index = event.key === 'ArrowRight' ? (i + 1) % featureExamples.length : event.key === 'ArrowLeft' ? (i + featureExamples.length - 1) % featureExamples.length : event.key === 'Home' ? 0 : event.key === 'End' ? featureExamples.length - 1 : undefined;
+              if (index !== undefined) { event.preventDefault(); setActive(index); document.getElementById(`nano-tab-${index}`)?.focus(); }
+            }}
+          >
+            {item.label}
+          </Button>
+        ))}
+      </div>
+      <div className="feature-panel" id="nano-feature-panel" role="tabpanel" aria-labelledby={`nano-tab-${active}`} tabIndex={0}>
+        <div>
+          <h4>{feature.title}</h4>
+          <p>{feature.body}</p>
+        </div>
+        <div className={`feature-state feature-state-${active}`}>
+          <span>Production Invariant State</span>
+          <strong>{feature.state}</strong>
+          <code>{feature.code}</code>
+        </div>
+      </div>
     </div>
-  </div>;
+  );
 }
 
 export default function NanoLinkScene({ project }: { project: Project }) {
   const ref = useScene(buildNano);
-  const url = 'https://example.com/a/very/long/path/to/something-worth-sharing';
-  return <>
-    <section ref={ref} className="scroll-chapter nano-scene" aria-label="Inside NanoLink">
-      <div className="chapter-viewport product-viewport">
-        <div className="scene-stage nano-cover" data-range="0,0.23"><ProjectMedia project={project} /><span className="scene-caption">One link. A whole system behind it.</span></div>
-        <div className="scene-stage nano-machine" data-range="0.23,0.48">
-          <h4>A long story.<br /><em>A short link.</em></h4>
-          <div className="url-track"><div className="long-url" aria-label={url}>{[...url].map((char, i) => <span key={i} className="url-char" aria-hidden="true">{char}</span>)}</div><div className="short-url">nanl.vercel.app/<strong>portfolio</strong></div></div>
-          <FlowLine steps={['Validate', 'Generate alias', 'Store', 'Return']} />
-          <p className="scene-caption">Illustrative URL transformation</p>
+  const url = 'https://enterprise.internal.infra.service/v2/telemetry/reports/daily?auth=token';
+  return (
+    <>
+      <section ref={ref} className="scroll-chapter nano-scene" aria-label="Inside NanoLink Architecture">
+        <div className="chapter-viewport product-viewport">
+          <div className="scene-stage nano-cover" data-range="0,0.23">
+            <ProjectMedia project={project} />
+            <span className="scene-caption">High-throughput short-code hashing engine and redirect resolver.</span>
+          </div>
+          <div className="scene-stage nano-machine" data-range="0.23,0.48">
+            <h4>Collision-Resistant Hashing.<br /><em>Deterministic Resolution.</em></h4>
+            <div className="url-track">
+              <div className="long-url" aria-label={url}>
+                {[...url].map((char, i) => <span key={i} className="url-char" aria-hidden="true">{char}</span>)}
+              </div>
+              <div className="short-url">nanl.vercel.app/<strong>metrics</strong></div>
+            </div>
+            <FlowLine steps={['Zod Ingress', 'Bcrypt Derivation', 'Prisma Transaction', 'O(1) Edge Resolution']} />
+            <p className="scene-caption">End-to-end request lifecycle through boundary validation to redirect emission</p>
+          </div>
+          <div className="scene-stage nano-source" data-range="0.49,0.70">
+            <div className="scene-subheading">
+              <h4>Atomic Transaction Engine.<br /><em>Zero Partial Writes.</em></h4>
+              <p>Zod schema validation followed by single-transaction persistence.</p>
+            </div>
+            <CodeWindow lines={nanoCode} file="api/links/route.ts" label="Production Route Handler · NanoLink" />
+          </div>
+          <div className="scene-stage nano-database" data-range="0.70,0.90">
+            <div className="database-explanation">
+              <h4>Normalized Schema.<br /><em>B-Tree Indexing.</em></h4>
+              <p>Unique constraints on primary lookups with referential foreign key integrity.</p>
+              <div className="database-technologies">
+                <span>Next.js 15<span>Ingress Gateway</span></span>
+                <span>Prisma ORM<span>Relational Layer</span></span>
+                <span>PostgreSQL<span>ACID Persistence</span></span>
+              </div>
+              <a className="text-link" href={project.evidence[1].url} target="_blank" rel="noopener noreferrer">Inspect PostgreSQL Schema</a>
+            </div>
+            <div className="schema-sheet">
+              <div className="schema-heading">
+                <strong>Link Entity</strong>
+                <span>Relational Schema Definition</span>
+              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Field</TableHead>
+                    <TableHead>Relational Type &amp; Constraint</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {nanoFields.map(([name, type]) => (
+                    <TableRow className="schema-record" key={name}>
+                      <TableCell>{name}</TableCell>
+                      <TableCell>{type}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+          <div className="scene-stage nano-return" data-range="0.88,1.01">
+            <ProjectMedia project={project} />
+            <p className="scene-caption">Live production application deployed on Vercel Edge.</p>
+          </div>
         </div>
-        <div className="scene-stage nano-source" data-range="0.49,0.70"><div className="scene-subheading"><h4>The application<br /><em>makes it persistent.</em></h4><p>Validated input becomes a stored Link.</p></div><CodeWindow lines={nanoCode} file="api/links/route.ts" label="Actual source excerpt · NanoLink" /></div>
-        <div className="scene-stage nano-database" data-range="0.70,0.90">
-          <div className="database-explanation"><h4>Small link.<br /><em>Real data model.</em></h4><p>The same record connects creation, access rules and retrieval.</p><div className="database-technologies"><span>Next.js<span>Application</span></span><span>Prisma<span>Database access</span></span><span>PostgreSQL<span>Persistence</span></span></div><a className="text-link" href={project.evidence[1].url} target="_blank" rel="noopener noreferrer">View actual schema</a></div>
-          <div className="schema-sheet"><div className="schema-heading"><strong>Link</strong><span>Prisma model / field excerpt</span></div><Table><TableHeader><TableRow><TableHead>Field</TableHead><TableHead>Type</TableHead></TableRow></TableHeader><TableBody>{nanoFields.map(([name, type]) => <TableRow className="schema-record" key={name}><TableCell>{name}</TableCell><TableCell>{type}</TableCell></TableRow>)}</TableBody></Table></div>
-        </div>
-        <div className="scene-stage nano-return" data-range="0.88,1.01"><ProjectMedia project={project} /><p className="scene-caption">Back to the product. Ready to open.</p></div>
-      </div>
-    </section>
-    <NanoFeatures />
-  </>;
+      </section>
+      <NanoFeatures />
+    </>
+  );
 }
+

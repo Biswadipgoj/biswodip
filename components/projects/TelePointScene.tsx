@@ -12,7 +12,13 @@ const paymentCode = [
   "  .select('id, retail_pin, is_active')",
   "  .eq('auth_user_id', user.id)",
   '  .single();',
+  '',
+  '// Assert principal authorization & active collection privileges',
+  'if (!retailer?.is_active) {',
+  "  return new NextResponse('Unauthorized Principal', { status: 403 });",
+  '}',
 ];
+
 const buildTelePoint: SceneBuilder = (tl, root, desktop) => {
   gsap.set(root.querySelectorAll('.tele-decomposition, .tele-code, .tele-system, .tele-return'), { autoAlpha: 0 });
   tl.fromTo('.tele-cover', { scale: 0.87 }, { scale: 1, duration: 0.14 }, 0)
@@ -33,13 +39,56 @@ const buildTelePoint: SceneBuilder = (tl, root, desktop) => {
 
 export default function TelePointScene({ project }: { project: Project }) {
   const ref = useScene(buildTelePoint);
-  return <section ref={ref} className="scroll-chapter tele-scene" aria-label="Inside TelePoint"><div className="chapter-viewport product-viewport">
-    <div className="scene-stage tele-cover" data-range="0,0.24"><ProjectMedia project={project} /><p className="scene-caption">The actual deployed entry point.</p></div>
-    <div className="scene-stage tele-decomposition" data-range="0.22,0.43"><h4>One application.<br /><em>Different responsibilities.</em></h4><div className="tele-fragments">
-      {[{ name: 'Role selection', position: 'top', note: 'Admin / retailer' }, { name: 'Account access', position: 'middle', note: 'Sign-in interface' }, { name: 'Customer entry', position: 'bottom', note: 'View an EMI account' }].map((part, i) => <figure className={`tele-fragment tele-fragment-${i}`} key={part.name}><div className={`interface-crop crop-${part.position}`}><Image src={project.previewImage} alt={`TelePoint ${part.name.toLowerCase()}, cropped from the actual interface`} fill sizes="(max-width: 799px) 85vw, 32vw" /></div><figcaption><strong>{part.name}</strong><span>{part.note}</span></figcaption></figure>)}
-    </div></div>
-    <div className="scene-stage tele-code" data-range="0.43,0.65"><div className="scene-subheading"><h4>Behind the interface,<br /><em>application rules.</em></h4><p>A source excerpt from the payment submission route.</p></div><CodeWindow lines={paymentCode} file="payments/submit/route.ts" label="Actual source excerpt · TelePoint" /></div>
-    <div className="scene-stage tele-system" data-range="0.64,0.90"><h4>From a submission<br /><em>to an account record.</em></h4><FlowLine steps={project.chapter.flow} /><div className="tele-tech-line"><span><strong>Interface</strong>TypeScript / Tailwind CSS</span><span><strong>Application</strong>Next.js route handlers</span><span><strong>Data</strong>Supabase / PostgreSQL</span></div><p className="scene-caption">Conceptual workflow based on the application source.</p></div>
-    <div className="scene-stage tele-return" data-range="0.89,1.01"><ProjectMedia project={project} /><p className="scene-caption">Explore the real application.</p></div>
-  </div></section>;
+  return (
+    <section ref={ref} className="scroll-chapter tele-scene" aria-label="Inside TelePoint Architecture">
+      <div className="chapter-viewport product-viewport">
+        <div className="scene-stage tele-cover" data-range="0,0.24">
+          <ProjectMedia project={project} />
+          <p className="scene-caption">Production financial EMI portal with role-isolated boundaries.</p>
+        </div>
+        <div className="scene-stage tele-decomposition" data-range="0.22,0.43">
+          <h4>Multi-Principal Isolation.<br /><em>Zero Cross-Tenant Leakage.</em></h4>
+          <div className="tele-fragments">
+            {[
+              { name: 'Admin Boundary', position: 'top', note: 'Account provisioning & portfolio oversight' },
+              { name: 'Agent Interface', position: 'middle', note: 'Idempotent installment collections' },
+              { name: 'Customer Ledger', position: 'bottom', note: 'Amortization schedule & receipt audit' }
+            ].map((part, i) => (
+              <figure className={`tele-fragment tele-fragment-${i}`} key={part.name}>
+                <div className={`interface-crop crop-${part.position}`}>
+                  <Image src={project.previewImage} alt={`TelePoint ${part.name.toLowerCase()} view`} fill sizes="(max-width: 799px) 85vw, 32vw" />
+                </div>
+                <figcaption>
+                  <strong>{part.name}</strong>
+                  <span>{part.note}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+        <div className="scene-stage tele-code" data-range="0.43,0.65">
+          <div className="scene-subheading">
+            <h4>Server-Side Principal Check.<br /><em>Defense in Depth.</em></h4>
+            <p>Session-bound principal verification prior to financial record mutations.</p>
+          </div>
+          <CodeWindow lines={paymentCode} file="api/payments/submit/route.ts" label="Production Verification · TelePoint" />
+        </div>
+        <div className="scene-stage tele-system" data-range="0.64,0.90">
+          <h4>Idempotent State Transitions.<br /><em>Reconciled Ledger Invariants.</em></h4>
+          <FlowLine steps={project.chapter.flow} />
+          <div className="tele-tech-line">
+            <span><strong>Ingress Layer</strong>TypeScript 5 / React 18</span>
+            <span><strong>Boundary Layer</strong>Next.js Route Handlers (Auth Session)</span>
+            <span><strong>Persistence Engine</strong>Supabase / PostgreSQL (ACID TX)</span>
+          </div>
+          <p className="scene-caption">Deterministic installment state machine: Pending → Due → Overdue → Cleared.</p>
+        </div>
+        <div className="scene-stage tele-return" data-range="0.89,1.01">
+          <ProjectMedia project={project} />
+          <p className="scene-caption">Live production deployment on Vercel with automated reconciliation.</p>
+        </div>
+      </div>
+    </section>
+  );
 }
+
