@@ -73,8 +73,9 @@ export const stack = [
   {
     id: 'interface',
     title: 'Client State & Invariant Boundaries',
+    subtitle: 'React 18 / TypeScript 5',
     description: 'Strict compile-time typing, optimistic rollbacks, sub-16ms render budgets.',
-    tools: ['React 18', 'TypeScript 5', 'Tailwind CSS', 'TanStack Query'],
+    tools: ['React 18', 'TypeScript 5', 'Tailwind CSS', 'TanStack Query', 'Web Vitals'],
     evidence: 'ShortenForm.tsx',
     sample: 'Compile-time invariants · Optimistic mutation rollback',
     detail: 'Client-side component architecture built with strict compile-time TypeScript typing and zero runtime exceptions. Implements optimistic mutation rollbacks, defensive error boundaries, request debouncing, WCAG 2.1 AA accessibility standards, and a strict sub-16ms per-frame rendering budget for fluid 120fps interactions.',
@@ -83,8 +84,9 @@ export const stack = [
   {
     id: 'application',
     title: 'API Gateway & Ingress Validation',
+    subtitle: 'Next.js 15 / Zod',
     description: 'Defense-in-depth pipeline. Rate limiting, JWT/session auth, RFC 7807.',
-    tools: ['Next.js 15', 'Zod', 'Node.js', 'bcryptjs', 'Redis'],
+    tools: ['Next.js 15', 'Zod', 'Node.js', 'bcryptjs', 'Redis Rate Limiter'],
     evidence: 'api/links/route.ts',
     sample: 'Sliding-window rate limit · Zod parse · bcrypt derivation · RFC 7807',
     detail: 'Defense-in-depth API ingress pipeline. Sanitizes and validates every incoming payload with Zod schemas prior to database access. Enforces sliding-window rate limiting to prevent automated scraping/DDoS, hashes credentials using bcrypt with 10 salt rounds, and emits RFC 7807 structured problem responses on any contract violation — zero unauthorized database writes.',
@@ -93,8 +95,9 @@ export const stack = [
   {
     id: 'data',
     title: 'Relational Persistence & ACID Isolation',
+    subtitle: 'PostgreSQL / Prisma ORM',
     description: 'Normalized schema modeling, B-Tree index optimization, Postgres RLS.',
-    tools: ['PostgreSQL', 'Prisma ORM', 'Supabase', 'PgBouncer'],
+    tools: ['PostgreSQL', 'Prisma ORM', 'Supabase', 'PgBouncer', 'ACID Transactions'],
     evidence: 'prisma/schema.prisma',
     sample: 'B-Tree @unique indexes · Foreign key constraints · ACID rollbacks',
     detail: 'Normalized relational schema design with strict referential integrity. Employs unique B-tree indexing on lookup columns (shortCode, customAlias) for guaranteed O(1) query time complexity. Utilizes connection pooling via PgBouncer for high concurrency and executes mutative operations within atomic transactions that roll back completely on failure.',
@@ -103,14 +106,17 @@ export const stack = [
   {
     id: 'delivery',
     title: 'Edge Routing, Lifecycle & Observability',
+    subtitle: 'Edge Runtime / Playwright E2E',
     description: 'Sub-50ms Edge execution, atomic increments, automated CI/CD gates.',
-    tools: ['Edge Runtime', 'Playwright E2E', 'GitHub Actions', 'Vercel'],
+    tools: ['Edge Runtime', 'Playwright E2E', 'GitHub Actions', 'Vercel Edge'],
     evidence: '[shortCode]/page.tsx',
     sample: 'Sub-50ms Edge redirect · Atomic telemetry · Playwright CI/CD test gates',
     detail: 'Sub-50ms Edge request resolution with single round-trip lifecycle validation. Atomically increments telemetry counters, invalidates burn-after-read tokens, and issues cached HTTP 301/302 redirects. Every release is gated by automated GitHub Actions CI/CD pipelines running Playwright E2E test suites against live PostgreSQL instances — never mock data.',
     source: 'https://github.com/Biswadipgoj/nl/blob/master/src/app/%5BshortCode%5D/page.tsx',
   },
 ] as const;
+
+export const architectureOwnership = 'Full architectural ownership from database kernel to client viewport.';
 
 export const heroCode = [
   'interface SystemPipeline<TReq, TRes> {',

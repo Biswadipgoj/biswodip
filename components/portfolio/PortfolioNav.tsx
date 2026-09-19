@@ -25,8 +25,23 @@ export default function PortfolioNav() {
     // Observer updates chapter state without a React render on every scroll frame.
     const onHash = () => { setOpen(false); update(); };
     window.addEventListener('hashchange', onHash);
+    window.addEventListener('scroll', update, { passive: true });
+
+    // Connect to Lenis smooth scroll instance if initialized
+    const win = window as unknown as { portfolioScroll?: { on?: (ev: string, cb: () => void) => void; off?: (ev: string, cb: () => void) => void } };
+    if (win.portfolioScroll?.on) {
+      win.portfolioScroll.on('scroll', update);
+    }
+
     update();
-    return () => { observer.disconnect(); window.removeEventListener('hashchange', onHash); };
+    return () => { 
+      observer.disconnect(); 
+      window.removeEventListener('hashchange', onHash); 
+      window.removeEventListener('scroll', update);
+      if (win.portfolioScroll?.off) {
+        win.portfolioScroll.off('scroll', update);
+      }
+    };
   }, []);
   useEffect(() => {
     if (!open) return;

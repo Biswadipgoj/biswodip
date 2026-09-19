@@ -8,84 +8,62 @@ import { ArrowDownIcon, ArrowUpRightIcon } from '@/components/icons';
 const buildStack: SceneBuilder = (tl, root, desktop) => {
   const layers = root.querySelectorAll<HTMLElement>('.stack-layer');
   const wireFill = root.querySelector<HTMLElement>('.stack-wire-fill');
-  const track = root.querySelector<HTMLElement>('.stack-assembly-track');
   const indicators = root.querySelectorAll<HTMLElement>('.stack-stage-indicator');
 
-  if (!track || layers.length === 0) return;
+  if (layers.length === 0) return;
 
-  // Initialize all layers with subtle depth
-  gsap.set(layers, { opacity: 0.7, scale: 0.97 });
-  if (layers[0]) gsap.set(layers[0], { opacity: 1, scale: 1 });
-  if (indicators[0]) indicators[0].classList.add('is-active');
+  const compact = !desktop || window.innerHeight < 880;
+  root.dataset.compact = String(compact);
 
   if (wireFill) {
     gsap.set(wireFill, { scaleY: 0, transformOrigin: 'top' });
+    tl.to(wireFill, { scaleY: 1, duration: 0.9, ease: 'none' }, 0.03);
   }
 
-  if (desktop) {
-    // Calculate vertical travel distance so all 4 cards smoothly travel through the center
-    // Track travels up so Card 01 -> Card 02 -> Card 03 -> Card 04 each take center stage
-    const cardHeight = layers[0].offsetHeight || 220;
-    const gap = 18;
-    const stepDistance = cardHeight + gap;
-    const totalTravel = stepDistance * (layers.length - 1);
-
-    // Continuous smooth vertical translation scrub across the entire scene
-    tl.to(track, {
-      y: -totalTravel,
-      ease: 'power1.inOut',
-      duration: 1,
-    }, 0);
-
-    // Wire fill grows alongside scroll progress
-    if (wireFill) {
-      tl.to(wireFill, { scaleY: 1, ease: 'none', duration: 1 }, 0);
-    }
-
-    // Sequentially highlight and activate each card (01 -> 02 -> 03 -> 04)
+  if (compact) {
+    gsap.set(layers, { autoAlpha: 0, y: 30 });
     layers.forEach((layer, i) => {
-      const startAt = Math.max(0, (i - 0.4) / (layers.length - 1));
-      const peakAt = i / (layers.length - 1);
-      const endAt = Math.min(1, (i + 0.4) / (layers.length - 1));
-
-      // Active card scale and full opacity spotlight
+      const r = 0.24 * i;
       tl.to(layer, {
-        opacity: 1,
-        scale: 1.02,
-        duration: 0.18,
-        ease: 'power2.out',
-        onStart: () => {
-          layers.forEach(l => l.classList.remove('is-active'));
-          layer.classList.add('is-active');
-          indicators.forEach((ind, idx) => {
-            if (idx === i) ind.classList.add('is-active');
-            else ind.classList.remove('is-active');
-          });
-        },
-      }, Math.max(0, peakAt - 0.08));
-
-      // Dim passed cards slightly while preserving readability
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.07,
+      }, r)
+      .fromTo(layer.querySelectorAll('.stack-tool'), 
+        { clipPath: 'inset(0 100% 0 0)' }, 
+        { clipPath: 'inset(0 0% 0 0)', stagger: 0.017, duration: 0.04 }, 
+        r + 0.02
+      );
       if (i < layers.length - 1) {
-        tl.to(layer, {
-          opacity: 0.65,
-          scale: 0.98,
-          duration: 0.15,
-          ease: 'power2.in',
-        }, Math.min(1, peakAt + 0.18));
+        tl.to(layer, { autoAlpha: 0, y: -25, duration: 0.05 }, r + 0.20);
       }
     });
   } else {
-    // Mobile: smooth entrance stagger, full visibility
-    tl.fromTo(
-      layers,
-      { opacity: 0.3, y: 30 },
-      { opacity: 1, y: 0, stagger: 0.1, duration: 0.6, ease: 'power2.out' },
-      0.05
-    );
-    if (wireFill) {
-      tl.to(wireFill, { scaleY: 1, duration: 0.8, ease: 'none' }, 0);
-    }
+    layers.forEach((layer, s) => {
+      tl.fromTo(layer, 
+        { x: desktop ? (s % 2 ? 80 : -80) : 28, y: 25 * s, opacity: 0.25, rotateX: 10 }, 
+        { x: 0, y: 0, opacity: 1, rotateX: 0, duration: 0.2 }, 
+        0.19 * s
+      )
+      .fromTo(layer.querySelectorAll('.stack-tool'), 
+        { clipPath: 'inset(0 100% 0 0)' }, 
+        { clipPath: 'inset(0 0% 0 0)', stagger: 0.03, duration: 0.1 }, 
+        0.19 * s + 0.06
+      );
+    });
   }
+
+  // Bidirectional active layer synchronization
+  tl.eventCallback('onUpdate', () => {
+    const progress = tl.progress();
+    const activeIndex = Math.min(layers.length - 1, Math.max(0, Math.floor(progress * layers.length)));
+    indicators.forEach((ind, idx) => {
+      ind.classList.toggle('is-active', idx === activeIndex);
+    });
+    layers.forEach((layer, idx) => {
+      layer.classList.toggle('is-active', idx === activeIndex);
+    });
+  });
 };
 
 /** Per-card 3D perspective tilt on hover — applied to each stack-layer card */
@@ -99,12 +77,12 @@ function TiltCard({ children, className, id, onClick }: { children: React.ReactN
       const rect = el.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const y = ((e.clientY - rect.top) / rect.height) * 2 - 1;
-      el.style.transform = `perspective(900px) rotateX(${-y * 6}deg) rotateY(${x * 6}deg) translateZ(10px)`;
+      el.style.transform = `perspective(900px) rotateX(${-y * 5}deg) rotateY(${x * 5}deg) translateZ(6px)`;
       el.style.transition = 'transform 60ms linear';
     };
     const onLeave = () => {
       el.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
-      el.style.transition = 'transform 500ms cubic-bezier(.22,1,.36,1)';
+      el.style.transition = 'transform 400ms cubic-bezier(.22,1,.36,1)';
     };
     el.addEventListener('mousemove', onMove);
     el.addEventListener('mouseleave', onLeave);
@@ -116,11 +94,21 @@ function TiltCard({ children, className, id, onClick }: { children: React.ReactN
 export default function Stack() {
   const ref = useScene(buildStack);
 
-  const scrollToLayer = (index: number) => {
+  const selectLayer = (index: number) => {
     const root = ref.current;
     if (!root) return;
     const layers = root.querySelectorAll<HTMLElement>('.stack-layer');
-    if (layers[index]) {
+    const indicators = root.querySelectorAll<HTMLElement>('.stack-stage-indicator');
+    
+    indicators.forEach((ind, i) => ind.classList.toggle('is-active', i === index));
+    layers.forEach((layer, i) => {
+      layer.classList.toggle('is-active', i === index);
+      if (root.dataset.compact === 'true') {
+        gsap.to(layer, { autoAlpha: i === index ? 1 : 0, y: i === index ? 0 : 25, duration: 0.25, overwrite: 'auto' });
+      }
+    });
+
+    if (root.dataset.compact !== 'true' && layers[index]) {
       layers[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   };
@@ -129,13 +117,13 @@ export default function Stack() {
     <section id="stack" ref={ref} className="scroll-chapter stack-section" data-environment="sky">
       <div className="chapter-viewport stack-viewport">
         <div className="stack-heading">
-          <div className="stack-badge-row">
-            <span className="small-label stack-pill-label">SYSTEM ARCHITECTURE</span>
-            <span className="stack-status-pulse">4 Contracts Active</span>
-          </div>
-          <h2>Deterministic Contracts.<br /><em className="stack-heading-em">Zero Leakage.</em></h2>
+          <span className="stack-eyebrow">SYSTEM ARCHITECTURE · 4 DETERMINISTIC CONTRACTS</span>
+          <h2>Deterministic Contracts.<br />Zero Leakage.</h2>
           <p>
             Trace an end-to-end transaction from client ingress through boundary validation, relational persistence, and edge resolution — zero unhandled exceptions, zero data loss.
+          </p>
+          <p className="stack-ownership-statement">
+            Full architectural ownership from database kernel to client viewport.
           </p>
 
           {/* Interactive stage quick-nav tabs */}
@@ -144,12 +132,13 @@ export default function Stack() {
               <button
                 key={layer.id}
                 type="button"
-                className={`stack-stage-indicator indicator-${idx}`}
-                onClick={() => scrollToLayer(idx)}
+                className={`stack-stage-indicator indicator-${idx} ${idx === 0 ? 'is-active' : ''}`}
+                onClick={() => selectLayer(idx)}
                 aria-label={`Jump to stage 0${idx + 1}: ${layer.title}`}
               >
                 <span className="indicator-num">0{idx + 1}</span>
-                <span className="indicator-name">{layer.title.split('&')[0].trim()}</span>
+                <span className="indicator-name">{layer.title}</span>
+                <span className="indicator-tech">{layer.subtitle}</span>
               </button>
             ))}
           </div>
@@ -168,7 +157,7 @@ export default function Stack() {
           </a>
 
           <div className="stack-verification">
-            <span className="verification-label">Verification Pipeline</span>
+            <span className="verification-label">Delivery & Verification</span>
             <p>
               Strict TypeScript 5 compilation. Static ESLint analysis. Production releases gated by automated Playwright E2E integration suites against live containerized PostgreSQL instances.
             </p>
@@ -183,11 +172,13 @@ export default function Stack() {
                 key={layer.id}
                 className={`stack-layer stack-layer-${i} ${i === 0 ? 'is-active' : ''}`}
                 id={layer.id === 'application' ? 'api' : undefined}
-                onClick={() => scrollToLayer(i)}
+                onClick={() => selectLayer(i)}
               >
-                <div className="stack-layer-glass-highlight" aria-hidden="true" />
                 <div className="stack-layer-heading">
-                  <span className="layer-index">0{i + 1}</span>
+                  <div className="layer-badge-row">
+                    <span className="layer-index">0{i + 1}</span>
+                    <span className="layer-contract-pill">{layer.subtitle}</span>
+                  </div>
                   <h3>{layer.title}</h3>
                   <span className="layer-badge">{layer.description}</span>
                 </div>
