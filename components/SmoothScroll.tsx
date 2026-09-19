@@ -35,8 +35,19 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         lenis.raf(seconds * 1000);
       };
 
-      lenis.on('scroll', () => {
+      let velocityDecay: ReturnType<typeof setTimeout>;
+      lenis.on('scroll', (e: { velocity?: number }) => {
         ScrollTrigger.update();
+        if (typeof e.velocity === 'number') {
+          const v = Math.max(-14, Math.min(14, e.velocity));
+          document.documentElement.style.setProperty('--scroll-velocity', `${v * 0.14}deg`);
+          document.documentElement.style.setProperty('--scroll-stretch', `${1 + Math.abs(v) * 0.003}`);
+          clearTimeout(velocityDecay);
+          velocityDecay = setTimeout(() => {
+            document.documentElement.style.setProperty('--scroll-velocity', '0deg');
+            document.documentElement.style.setProperty('--scroll-stretch', '1');
+          }, 120);
+        }
       });
 
       gsap.ticker.add(tick);
