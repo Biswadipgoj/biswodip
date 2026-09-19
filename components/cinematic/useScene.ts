@@ -109,19 +109,17 @@ export function useEditorialReveal() {
 
         // ─── 1B. Continuous 3D Scroll Perspective & Depth Cylinder ───
         gsap.utils.toArray<HTMLElement>('[data-scroll-3d]', root).forEach(element => {
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: element,
-              start: 'top 98%',
-              end: 'bottom 2%',
-              scrub: 0.5,
-            },
-          });
-          tl.fromTo(element,
-            { transformPerspective: 1400, rotateX: 13, scale: 0.95, z: -60, opacity: 0.8 },
-            { rotateX: 0, scale: 1.01, z: 0, opacity: 1, duration: 0.5, ease: 'power1.out' }
-          ).to(element,
-            { rotateX: -9, scale: 0.97, z: -40, opacity: 0.88, duration: 0.5, ease: 'power1.in' }
+          gsap.fromTo(element,
+            { transformPerspective: 1200, rotateX: 7, scale: 0.97, y: 20 },
+            {
+              rotateX: -5, scale: 1.0, y: -20, ease: 'none',
+              scrollTrigger: {
+                trigger: element,
+                start: 'top 95%',
+                end: 'bottom 5%',
+                scrub: 0.6,
+              },
+            }
           );
         });
 
@@ -137,8 +135,8 @@ export function useEditorialReveal() {
               const y = e.clientY - rect.top;
               const centerX = rect.width / 2;
               const centerY = rect.height / 2;
-              const rotateX = ((y - centerY) / centerY) * -11;
-              const rotateY = ((x - centerX) / centerX) * 11;
+              const rotateX = ((y - centerY) / centerY) * -9;
+              const rotateY = ((x - centerX) / centerX) * 9;
 
               card.style.setProperty('--mouse-x', `${x}px`);
               card.style.setProperty('--mouse-y', `${y}px`);
@@ -147,8 +145,8 @@ export function useEditorialReveal() {
                 transformPerspective: 1200,
                 rotateX: rotateX,
                 rotateY: rotateY,
-                scale3d: [1.03, 1.03, 1.03],
-                duration: 0.28,
+                scale3d: [1.025, 1.025, 1.025],
+                duration: 0.3,
                 ease: 'power2.out',
                 overwrite: 'auto',
               });
@@ -178,7 +176,7 @@ export function useEditorialReveal() {
             const rect = btn.getBoundingClientRect();
             const x = e.clientX - (rect.left + rect.width / 2);
             const y = e.clientY - (rect.top + rect.height / 2);
-            gsap.to(btn, { x: x * 0.3, y: y * 0.3, duration: 0.2, ease: 'power2.out' });
+            gsap.to(btn, { x: x * 0.28, y: y * 0.28, duration: 0.22, ease: 'power2.out' });
           };
           const handleMouseLeave = () => {
             gsap.to(btn, { x: 0, y: 0, duration: 0.55, ease: 'elastic.out(1, 0.4)' });
@@ -187,21 +185,17 @@ export function useEditorialReveal() {
           btn.addEventListener('mouseleave', handleMouseLeave);
         });
 
-        // ─── 4. Media 3D Perspective Scrub on Scroll (Floating Glass Displays) ───
+        // ─── 4. Media 3D Perspective Scrub on Scroll ───
         gsap.utils.toArray<HTMLElement>('[data-media]', root).forEach(element => {
-          const tl = gsap.timeline({
-            scrollTrigger: {
-              trigger: element,
-              start: 'top 98%',
-              end: 'bottom 5%',
-              scrub: 0.5,
-            },
-          });
-          tl.fromTo(element,
-            { transformPerspective: 1400, rotateX: 16, rotateY: -4, scale: 0.92, z: -80, opacity: 0.8 },
-            { rotateX: 0, rotateY: 0, scale: 1.0, z: 0, opacity: 1, duration: 0.5, ease: 'power1.out' }
-          ).to(element,
-            { rotateX: -10, rotateY: 3, scale: 0.96, z: -50, opacity: 0.86, duration: 0.5, ease: 'power1.in' }
+          gsap.fromTo(element,
+            { transformPerspective: 1200, rotateX: 12, scale: 0.93, y: 44, opacity: 0.82 },
+            {
+              rotateX: 0, scale: 1, y: 0, opacity: 1, ease: 'none',
+              scrollTrigger: {
+                trigger: element,
+                start: 'top 95%', end: 'center 48%', scrub: 0.5,
+              },
+            }
           );
         });
 

@@ -79,54 +79,6 @@
   will-change: transform;
 }
 
-/* 3D Depth Layering on Tilt */
-[data-tilt-3d] {
-  transform-style: preserve-3d;
-  perspective: 1200px;
-}
-
-[data-tilt-3d] h1,
-[data-tilt-3d] h2,
-[data-tilt-3d] h3,
-[data-tilt-3d] h4,
-[data-tilt-3d] .workflow-number,
-[data-tilt-3d] .process-index,
-[data-tilt-3d] .action,
-[data-tilt-3d] .copy-email,
-[data-tilt-3d] .text-link {
-  transform: translateZ(24px);
-  transform-style: preserve-3d;
-  transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-[data-tilt-3d] p,
-[data-tilt-3d] .glass-pill,
-[data-tilt-3d] .workflow-wire {
-  transform: translateZ(12px);
-  transform-style: preserve-3d;
-  transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-[data-tilt-3d] img,
-[data-tilt-3d] .product-image {
-  transform: translateZ(30px);
-  transform-style: preserve-3d;
-  transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-@keyframes float3d {
-  0%, 100% {
-    transform: translateY(0px) rotateX(0deg) rotateY(0deg);
-  }
-  50% {
-    transform: translateY(-8px) rotateX(4deg) rotateY(-3deg);
-  }
-}
-
-.floating-3d {
-  animation: float3d 5s ease-in-out infinite;
-}
-
 .scroll-progress-bar {
   position: fixed;
   top: 0;
