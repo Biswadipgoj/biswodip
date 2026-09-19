@@ -1,226 +1,856 @@
-/** Central content source. Truth-audited production engineering portfolio. */
+/** Public content: September 2026 specification. Project evidence is linked below. */
+
 export const personal = {
-  name: 'Biswodip Goj', firstName: 'Biswodip', lastName: 'Goj',
-  email: 'biswadipgoj@gmail.com', location: 'Uluberia, West Bengal, India',
-  role: 'Full-Stack Software Engineer',
-  tagline: '60+ engineered systems. Scalable architectures, typed APIs, and relational persistence.',
-  intro: 'Software engineer with formal CSE foundations and 60+ shipped projects across production web platforms, cross-platform Android mobile applications, and machine learning training pipelines. I engineer the entire lifecycle: high-throughput client interfaces, resilient API gateways, transactional database schemas, and automated CI/CD deployment pipelines.',
-  about: 'I design from the database constraints up to the interface layer. Across high-volume production applications including Erpixa, NanoLink, TelePoint, Nexora, and Tripmate, I have engineered multi-tenant Row-Level Security isolation models, idempotent financial payment state machines, collision-resistant short-code hashing engines, and minimum-cash-flow graph solvers. I analyze PostgreSQL query plans, write zero-downtime migrations, enforce strict compile-time TypeScript invariants, and automate Playwright E2E verification suites against live databases. The focus is on operational reliability, deterministic execution, and resilient boundaries under load.',
+  "name": "Biswodip Goj",
+  "firstName": "Biswodip",
+  "lastName": "Goj",
+  "email": "biswadipgoj@gmail.com",
+  "location": "Uluberia, West Bengal, India",
+  "role": "Full-Stack Software Engineer",
+  "tagline": "I build and ship web applications across the frontend, backend, APIs and databases.",
+  "intro": "I\u2019m Biswodip Goj, a computer science graduate and full-stack software engineer who builds and ships web applications and software products. My work spans frontend development, backend logic, APIs, authentication, databases and deployment.",
+  "about": [
+    "I like working across the complete application rather than treating the frontend and backend as separate worlds. I start by understanding the workflow, define the data and application boundaries, then build the interface, backend logic and persistence around them.",
+    "My work is mainly centered on TypeScript and JavaScript, with React, Next.js and Node.js for application development, PostgreSQL and MongoDB for data, and Python for selected projects and technical work.",
+    "Building projects independently has also meant owning the less visible parts of development: handling edge cases, debugging failures, working with APIs, designing data structures, checking permissions, testing important flows and getting the finished software deployed.",
+    "I care about software that is understandable, maintainable and useful to the people who actually use it."
+  ],
+  "ownership": "I work across the full application stack, from data and APIs to the interface users interact with.",
+  "maturity": "I don't just build the interface. I work through the data, application logic, APIs and deployment needed to make the product work.",
+  "resume": "/Biswodip-Goj-Resume.pdf"
 } as const;
 
-export type Project = {
-  name: string; slug: string; blurb: string; description: string; technicalNote: string;
-  url: string; repo?: string; previewImage: string; features: string[]; techStack: string[];
-  evidence: { label: string; url: string }[];
-  chapter: { index: string; bg: string; ink: string; accent: string; label: string; flow: string[] };
-};
+export const hero = {
+  "eyebrow": "FULL-STACK SOFTWARE ENGINEER",
+  "heading": "I build software from the interface to the database.",
+  "body": "Web applications, APIs and data-driven products built with TypeScript, React, Next.js, Node.js, PostgreSQL and MongoDB.",
+  "primary": "View my work",
+  "secondary": "Contact me",
+  "workflowTitle": "From a requirement to working software.",
+  "workflow": [
+    "Requirement",
+    "Application Design",
+    "Frontend + Backend",
+    "Database",
+    "Test + Debug",
+    "Deploy"
+  ]
+} as const;
 
-export const projects: Project[] = [
-  {
-    name: 'Erpixa', slug: 'erpixa', blurb: 'Multi-tenant ERP platform. Organization-scoped schema with PostgreSQL RLS isolation.',
-    description: 'Enterprise resource planning platform engineered for multi-tenant scalability. Dynamically provisions organization modules (CRM, inventory, sales, accounting, HR) based on verified business-type configurations. Enforces strict tenant isolation at the PostgreSQL storage engine via Row-Level Security (RLS) policies rather than error-prone application-layer filters.',
-    technicalNote: 'Built with React 18 and TypeScript on Vite. Employs Supabase Auth integrated with custom PostgreSQL schema migrations. Organization membership is cryptographically bound to the authenticated JWT principal. Row-Level Security policies reject unauthorized cross-tenant read/write operations at the database kernel level with zero performance penalty on indexed foreign keys.',
-    url: 'https://erpixa.vercel.app/', repo: 'https://github.com/Biswadipgoj/Erpixa', previewImage: '/previews/erpixa.webp',
-    features: ['PostgreSQL Row-Level Security (RLS) tenant isolation', 'Dynamic module provisioning via organization configuration flags', 'Granular Role-Based Access Control (RBAC) hierarchy', 'Optimistic UI state management with Supabase Realtime synchronization'],
-    techStack: ['React', 'TypeScript', 'Vite', 'PostgreSQL', 'Supabase', 'Tailwind CSS'],
-    evidence: [{ label: 'Application source', url: 'https://github.com/Biswadipgoj/Erpixa' }, { label: 'Database schema (RLS)', url: 'https://github.com/Biswadipgoj/Erpixa/blob/main/supabase/schema.sql' }],
-    chapter: { index: '01', bg: '#efcdbc', ink: '#422f32', accent: '#8b4031', label: 'Enterprise Architecture', flow: ['Org Tenant Provisioning', 'Module Flags', 'Postgres RLS Policy', 'Isolated Workspace'] },
-  },
-  {
-    name: 'NanoLink', slug: 'nanolink', blurb: 'High-throughput short-link engine with atomic lifecycle evaluation and click telemetry.',
-    description: 'URL shortening and analytics engine built for deterministic execution under load. Validates incoming request payloads against strict Zod runtime schemas, generates collision-resistant nanoid hashes with custom base62 alphabets, and writes through Prisma ORM with unique B-tree constraints. The Edge redirect path resolves expiration, one-time burn tokens, and atomic click counter increments in a single round-trip.',
-    technicalNote: 'Next.js App Router route handlers parse and sanitize request payloads before database ingress. Employs bcrypt key-derivation with 10 salt rounds for password-protected links. Unique indexes on shortCode and customAlias guarantee O(1) query lookups. The redirect engine evaluates active status, expiration timestamps, and password verification atomically, issuing HTTP 301/302 redirects with minimal latency.',
-    url: 'https://nanl.vercel.app/', repo: 'https://github.com/Biswadipgoj/nl', previewImage: '/previews/nanolink.webp',
-    features: ['Runtime Zod schema validation & payload sanitization', 'Collision-resistant Nanoid base62 short-code generation', 'O(1) B-tree indexed database lookups in PostgreSQL', 'Bcrypt password hashing with cryptographic salt rounds', 'Single-transaction atomic click increment & token burn lifecycle'],
-    techStack: ['Next.js 15', 'TypeScript', 'Prisma ORM', 'PostgreSQL', 'Tailwind CSS', 'Playwright'],
-    evidence: [{ label: 'Create-link route handler', url: 'https://github.com/Biswadipgoj/nl/blob/master/src/app/api/links/route.ts' }, { label: 'Prisma relational schema', url: 'https://github.com/Biswadipgoj/nl/blob/master/prisma/schema.prisma' }],
-    chapter: { index: '02', bg: '#dce8ca', ink: '#2e402f', accent: '#3a6140', label: 'High-Throughput Services', flow: ['POST Ingress', 'Zod Payload Validation', 'B-Tree Hash Lookup', 'Atomic Counter Update', 'Edge 301 Redirect'] },
-  },
-  {
-    name: 'TelePoint', slug: 'telepoint', blurb: 'Enterprise EMI management & payment collection portal with state-machine financial reconciliation.',
-    description: 'Role-scoped EMI (Equated Monthly Installment) management and collections portal. Engineered for financial workflows requiring strict audit trails, principal authorization, and immutable ledger transactions. Administrators supervise account lifecycles and approve settlements, while collection agents record customer installments with automated amortization scheduling.',
-    technicalNote: 'Server-side route handlers enforce session-based principal verification on all mutative requests. Installment processing models discrete state transitions (Pending → Due → Overdue → Cleared) with idempotent execution to prevent double-charging. Built on Supabase and PostgreSQL with strict foreign-key integrity constraints and principal-filtered reporting views.',
-    url: 'https://telepoint-topaz.vercel.app/', repo: 'https://github.com/Biswadipgoj/telepoint', previewImage: '/previews/telepoint.webp',
-    features: ['Multi-tier Role-Based Access Control (Admin, Agent, Customer)', 'Discrete installment state-machine with automated amortization', 'Idempotent transaction recording with audit reconciliation', 'Principal-scoped reporting queries preventing horizontal privilege escalation'],
-    techStack: ['Next.js 14', 'TypeScript', 'Supabase', 'PostgreSQL', 'Tailwind CSS'],
-    evidence: [{ label: 'Deployed application', url: 'https://telepoint-topaz.vercel.app/' }, { label: 'Application source', url: 'https://github.com/Biswadipgoj/telepoint' }],
-    chapter: { index: '03', bg: '#cbe3e5', ink: '#2c434b', accent: '#315f73', label: 'Financial Workflows', flow: ['Principal Auth Check', 'Installment Submission', 'State-Machine Transition', 'Ledger Reconciliation', 'Audit Export'] },
-  },
-  {
-    name: 'Nexora', slug: 'nexora', blurb: 'Unified modular workspace engine deployed across Web, Windows Electron, and Android.',
-    description: 'Cross-platform project workspace and task management engine built on a unified TypeScript codebase. Features real-time collaborative kanban boards, structured list views, and personal task backlogs. Features an offline-first sync engine with optimistic UI updates and a keyboard-driven command palette utilizing Levenshtein fuzzy search.',
-    technicalNote: 'Architected with Next.js and TypeScript on Supabase Realtime websockets. The unified codebase compiles to a responsive web application, an Electron native desktop binary for Windows with OS-level window management, and an Android package via Capacitor with native touch gesture handling and local SQLite caching.',
-    url: 'https://nexora-xi-rust.vercel.app/', repo: 'https://github.com/Biswadipgoj/nexora', previewImage: '/previews/nexora.webp',
-    features: ['Unified codebase targeting Web, Windows (Electron), and Android (Capacitor)', 'Real-time multi-client workspace synchronization via Supabase channels', 'Keyboard-driven command palette (Cmd+K) with fuzzy-matching search', 'Optimistic UI mutation queues with offline-first synchronization'],
-    techStack: ['Next.js', 'TypeScript', 'Supabase', 'Material UI', 'Electron', 'Capacitor', 'Android SDK'],
-    evidence: [{ label: 'Application source', url: 'https://github.com/Biswadipgoj/nexora' }],
-    chapter: { index: '04', bg: '#e3dcf0', ink: '#3e334d', accent: '#665080', label: 'Cross-Platform Systems', flow: ['Task Ingress', 'Kanban State Sync', 'Realtime Broadcast', 'Native Shell Execution'] },
-  },
-  {
-    name: 'Tripmate', slug: 'tripmate', blurb: 'Multi-party expense settlement engine with minimum-cash-flow graph debt simplification.',
-    description: 'Collaborative expense management platform for group travel and shared accounts. Solves multi-party debt settlement by implementing a minimum-cash-flow graph algorithm that reduces complex N-party debt webs into the mathematical minimum number of direct transactions. Includes UPI deep-linking for instantaneous settlement and immutable PDF ledger exports.',
-    technicalNote: 'Next.js and Supabase backend with custom graph-reduction algorithms running in pure TypeScript. Evaluates net member balances and iteratively matches maximal creditors with maximal debtors, reducing transaction complexity from O(N²) to O(N). Generates standard UPI payment intent strings for zero-friction mobile execution.',
-    url: 'https://trip-mu-coral.vercel.app/', repo: 'https://github.com/Biswadipgoj/trip', previewImage: '/previews/tripmate.webp',
-    features: ['Minimum-cash-flow graph debt simplification algorithm (O(N²) → O(N))', 'Multi-currency equal and weighted split strategies', 'Direct UPI deep-linking payment intent generation', 'Client-side immutable PDF financial statement generation', 'Smooth physics-based animated transitions with Framer Motion'],
-    techStack: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Supabase', 'Framer Motion'],
-    evidence: [{ label: 'Application source', url: 'https://github.com/Biswadipgoj/trip' }],
-    chapter: { index: '05', bg: '#f0ddbb', ink: '#4a3b2e', accent: '#7c5231', label: 'Algorithmic Systems', flow: ['Expense Ingestion', 'Weighted Split Matrix', 'Graph Debt Solver', 'UPI Intent Settlement'] },
-  },
-];
+export const seo = {
+  "title": "Biswodip Goj — Full-Stack Software Engineer",
+  "description": "Biswodip Goj is a full-stack software engineer building web applications with TypeScript, React, Next.js, Node.js, PostgreSQL and MongoDB.",
+  "socialTitle": "Biswodip Goj | Full-Stack Software Engineer",
+  "socialDescription": "Web applications, APIs and software products built across frontend, backend and databases."
+} as const;
 
-/** Architecture layers and deterministic engineering contracts. */
-export const stack = [
-  {
-    id: 'interface',
-    title: 'Client State & Invariant Boundaries',
-    subtitle: 'React 18 / TypeScript 5',
-    description: 'Strict compile-time typing, optimistic rollbacks, sub-16ms render budgets.',
-    tools: ['React 18', 'TypeScript 5', 'Tailwind CSS', 'TanStack Query', 'Web Vitals'],
-    evidence: 'ShortenForm.tsx',
-    sample: 'Compile-time invariants · Optimistic mutation rollback',
-    detail: 'Client-side component architecture built with strict compile-time TypeScript typing and zero runtime exceptions. Implements optimistic mutation rollbacks, defensive error boundaries, request debouncing, WCAG 2.1 AA accessibility standards, and a strict sub-16ms per-frame rendering budget for fluid 120fps interactions.',
-    source: 'https://github.com/Biswadipgoj/nl/blob/master/src/components/ShortenForm.tsx',
-  },
-  {
-    id: 'application',
-    title: 'API Gateway & Ingress Validation',
-    subtitle: 'Next.js 15 / Zod',
-    description: 'Defense-in-depth pipeline. Rate limiting, JWT/session auth, RFC 7807.',
-    tools: ['Next.js 15', 'Zod', 'Node.js', 'bcryptjs', 'Redis Rate Limiter'],
-    evidence: 'api/links/route.ts',
-    sample: 'Sliding-window rate limit · Zod parse · bcrypt derivation · RFC 7807',
-    detail: 'Defense-in-depth API ingress pipeline. Sanitizes and validates every incoming payload with Zod schemas prior to database access. Enforces sliding-window rate limiting to prevent automated scraping/DDoS, hashes credentials using bcrypt with 10 salt rounds, and emits RFC 7807 structured problem responses on any contract violation — zero unauthorized database writes.',
-    source: 'https://github.com/Biswadipgoj/nl/blob/master/src/app/api/links/route.ts',
-  },
-  {
-    id: 'data',
-    title: 'Relational Persistence & ACID Isolation',
-    subtitle: 'PostgreSQL / Prisma ORM',
-    description: 'Normalized schema modeling, B-Tree index optimization, Postgres RLS.',
-    tools: ['PostgreSQL', 'Prisma ORM', 'Supabase', 'PgBouncer', 'ACID Transactions'],
-    evidence: 'prisma/schema.prisma',
-    sample: 'B-Tree @unique indexes · Foreign key constraints · ACID rollbacks',
-    detail: 'Normalized relational schema design with strict referential integrity. Employs unique B-tree indexing on lookup columns (shortCode, customAlias) for guaranteed O(1) query time complexity. Utilizes connection pooling via PgBouncer for high concurrency and executes mutative operations within atomic transactions that roll back completely on failure.',
-    source: 'https://github.com/Biswadipgoj/nl/blob/master/prisma/schema.prisma',
-  },
-  {
-    id: 'delivery',
-    title: 'Edge Routing, Lifecycle & Observability',
-    subtitle: 'Edge Runtime / Playwright E2E',
-    description: 'Sub-50ms Edge execution, atomic increments, automated CI/CD gates.',
-    tools: ['Edge Runtime', 'Playwright E2E', 'GitHub Actions', 'Vercel Edge'],
-    evidence: '[shortCode]/page.tsx',
-    sample: 'Sub-50ms Edge redirect · Atomic telemetry · Playwright CI/CD test gates',
-    detail: 'Sub-50ms Edge request resolution with single round-trip lifecycle validation. Atomically increments telemetry counters, invalidates burn-after-read tokens, and issues cached HTTP 301/302 redirects. Every release is gated by automated GitHub Actions CI/CD pipelines running Playwright E2E test suites against live PostgreSQL instances — never mock data.',
-    source: 'https://github.com/Biswadipgoj/nl/blob/master/src/app/%5BshortCode%5D/page.tsx',
-  },
+export const foundations = [
+  "Data Structures & Algorithms",
+  "Object-Oriented Programming",
+  "Database Management Systems",
+  "Operating Systems",
+  "Computer Networks",
+  "Software Engineering",
+  "Machine Learning",
+  "Cyber Security"
 ] as const;
 
-export const architectureOwnership = 'Full architectural ownership from database kernel to client viewport.';
 
-export const heroCode = [
-  'interface SystemPipeline<TReq, TRes> {',
-  '  ingress:   (req: TReq) => Promise<ValidatedPayload>;',
-  '  boundary:  (payload: ValidatedPayload) => Promise<AuthContext>;',
-  '  mutate:    (tx: PrismaClient) => Promise<TRes>; // ACID guarantee',
-  '  telemetry: (metric: MetricEvent) => void;         // async non-blocking',
-  '}',
-];
+export const stack = [
+  {
+    "title": "Languages",
+    "tools": [
+      "TypeScript",
+      "JavaScript",
+      "Python",
+      "SQL"
+    ]
+  },
+  {
+    "title": "Frontend",
+    "tools": [
+      "React",
+      "Next.js",
+      "HTML",
+      "CSS"
+    ]
+  },
+  {
+    "title": "Backend",
+    "tools": [
+      "Node.js",
+      "REST APIs",
+      "Authentication",
+      "API integration"
+    ]
+  },
+  {
+    "title": "Data",
+    "tools": [
+      "PostgreSQL",
+      "MongoDB",
+      "SQL",
+      "Database design"
+    ]
+  },
+  {
+    "title": "Development",
+    "tools": [
+      "Git",
+      "GitHub",
+      "Postman",
+      "Debugging"
+    ]
+  },
+  {
+    "title": "CS fundamentals",
+    "tools": [
+      "Data Structures & Algorithms",
+      "Object-Oriented Programming",
+      "Database Management Systems",
+      "Operating Systems",
+      "Computer Networks"
+    ]
+  }
+] as const;
 
-export const nanoCode = [
-  'const newLink = await prisma.link.create({',
-  '  data: {',
-  '    userId,',
-  '    originalUrl: normalizedUrl,',
-  '    shortCode, // collision-resistant nanoid base62',
-  '    customAlias: parsed.customAlias || null,',
-  '    password: hashedPassword, // bcrypt salt rounds: 10',
-  '    expiresAt: parsed.expiresAt ? new Date(parsed.expiresAt) : null,',
-  '    oneTimeUse: parsed.oneTimeUse,',
-  '  },',
-  '})',
-];
+export const primaryStack = [
+  "TypeScript",
+  "JavaScript",
+  "React",
+  "Next.js",
+  "Node.js",
+  "PostgreSQL",
+  "MongoDB",
+  "Python",
+  "SQL",
+  "Git",
+  "GitHub",
+  "REST APIs"
+] as const;
 
-export const nanoFields = [
-  ['id', 'String · Primary Key UUID'],
-  ['originalUrl', 'String · Sanitized URI'],
-  ['shortCode', 'String · Unique B-Tree Index (O(1))'],
-  ['customAlias', 'String? · Unique B-Tree Index'],
-  ['expiresAt', 'DateTime? · Indexed Expiry Check'],
-  ['oneTimeUse', 'Boolean · Atomic Invalidation Flag'],
-  ['clicks', 'Int · Atomic Counter Increment'],
-  ['lastVisited', 'DateTime? · Telemetry Timestamp'],
-  ['isActive', 'Boolean · Soft-disable Status Flag'],
+export const stackCopy = {
+  "title": "Technologies I work with",
+  "intro": "My core stack is centered on modern web development, application APIs and database-backed software.",
+  "notes": [
+    {
+      "name": "PostgreSQL",
+      "body": "Relational database design and SQL."
+    },
+    {
+      "name": "MongoDB",
+      "body": "Document-oriented database development."
+    },
+    {
+      "name": "Python",
+      "body": "Automation, data work and selected software projects."
+    },
+    {
+      "name": "Git · GitHub",
+      "body": "Version control, project history, code organization and software delivery."
+    },
+    {
+      "name": "Postman",
+      "body": "API testing and debugging."
+    }
+  ]
+} as const;
+
+export const capabilities = [
+  {
+    "title": "Application Development",
+    "body": "Building complete web applications with reusable interfaces, application logic, authentication and persistent data."
+  },
+  {
+    "title": "API Development",
+    "body": "Designing and consuming REST APIs, handling requests and responses, validation, authentication and third-party integrations."
+  },
+  {
+    "title": "Database Development",
+    "body": "Designing relational and document-oriented data models, writing queries and connecting application workflows to persistent data."
+  },
+  {
+    "title": "Frontend Engineering",
+    "body": "Building responsive React and Next.js interfaces with reusable components, application state and API integration."
+  },
+  {
+    "title": "Debugging & Quality",
+    "body": "Reproducing problems, tracing application behaviour, fixing defects and checking important user workflows before release."
+  },
+  {
+    "title": "Delivery",
+    "body": "Working with Git and GitHub to develop, maintain and deploy software from an initial requirement to a usable application."
+  }
 ] as const;
 
 export const processStages = [
-  { title: 'System Architecture', body: 'Define the domain boundaries, data models, and API contracts before writing code. Determine concurrency requirements, caching layers, and failure blast radiuses.', artifact: 'requirements → system design specification' },
-  { title: 'Data Contracts & Invariants', body: 'Specify the PostgreSQL relational schema, indexes, and Zod boundary schemas. Interfaces and routes must be derived from strict type invariants.', artifact: 'schema.prisma & typed API contracts' },
-  { title: 'Implementation & Concurrency', body: 'Write clean, maintainable TypeScript. Implement optimistic UI updates, atomic database transactions, rate limiting, and robust error boundaries.', artifact: 'production code & verified diffs' },
-  { title: 'Automated CI/CD & Testing', body: 'Automate static analysis, strict typechecks, and Playwright end-to-end integration tests executing against running containerized databases in GitHub Actions.', artifact: 'CI/CD pipeline & passing E2E suites' },
-  { title: 'Telemetry & Operational Loop', body: 'Monitor real-world production metrics: p99 latency, error rates, database connection pool saturation, and edge cache hit ratios. Drive iterative refinements from telemetry.', artifact: 'production telemetry → system optimization' },
+  {
+    "title": "Understand",
+    "body": "Understand what the software needs to do and how the user will use it.",
+    "artifact": "Requirements",
+    "question": "What does the user need to do?"
+  },
+  {
+    "title": "Design",
+    "body": "Choose the application structure, data model and API boundaries before implementation.",
+    "artifact": "Application design",
+    "question": "How do the interface, API and data fit together?"
+  },
+  {
+    "title": "Build",
+    "body": "Develop the interface, application logic, APIs and database integration.",
+    "artifact": "Working software",
+    "question": "What happens when the user takes an action?"
+  },
+  {
+    "title": "Test",
+    "body": "Exercise important flows, reproduce bugs and verify the finished behaviour.",
+    "artifact": "Test + debug",
+    "question": "Does the complete workflow behave as expected?"
+  },
+  {
+    "title": "Ship",
+    "body": "Deploy the application, fix issues and continue improving it.",
+    "artifact": "Deployment",
+    "question": "Can someone open and use the application?"
+  }
 ] as const;
 
 export const principles = [
-  { title: 'ACID over Assumptions', line: 'Enforce integrity at the database layer with foreign keys, indexes, and transactions.' },
-  { title: 'Zero-Trust Boundaries', line: 'Sanitize, authenticate, and validate every request payload before execution.' },
-  { title: 'Deterministic Reliability', line: 'Automate verification with real end-to-end tests against running databases, not mocks.' },
+  {
+    "title": "Use the right data model.",
+    "line": "Structure data around the actual relationships and workflows the application needs."
+  },
+  {
+    "title": "Validate at the boundary.",
+    "line": "Treat user input, API requests and external data as untrusted until they have been checked."
+  },
+  {
+    "title": "Make behaviour easy to verify.",
+    "line": "Clear logic, useful tests and reproducible bugs make software easier to maintain."
+  },
+  {
+    "title": "Keep the code understandable.",
+    "line": "Prefer straightforward designs that another developer can read and change."
+  }
 ] as const;
 
-/** Senior Engineering Scope: 60+ Shipped Projects */
 export const engineeringScope = [
   {
-    category: 'Full-Stack & Distributed Web',
-    count: '35+ Projects',
-    description: 'High-concurrency web platforms built with Next.js App Router, React 18, Node.js, TypeScript, PostgreSQL, Prisma, Supabase, and Redis caching layers. Architected for multi-tenant isolation, real-time sync, and sub-100ms response budgets.',
-    tags: ['Next.js 15', 'React 18', 'TypeScript', 'Node.js', 'PostgreSQL', 'Prisma', 'Supabase', 'Tailwind CSS', 'Redis', 'Zod'],
+    "category": "Web Applications",
+    "description": "Business software, product interfaces and data-driven web applications."
   },
   {
-    category: 'Cross-Platform & Android Systems',
-    count: '15+ Projects',
-    description: 'Production mobile applications built for Android using Capacitor and React Native. Engineered with offline-first SQLite local persistence, background synchronization workers, deep-linking, and native Android OS hardware integration.',
-    tags: ['Android SDK', 'Capacitor', 'React Native', 'SQLite', 'Offline-First Sync', 'Deep Linking', 'Electron'],
+    "category": "Backend & APIs",
+    "description": "Application logic, REST APIs, authentication and integrations."
   },
   {
-    category: 'Machine Learning & Model Pipelines',
-    count: '10+ Projects',
-    description: 'Supervised and unsupervised ML models trained with PyTorch, Scikit-learn, and NumPy. Engineered end-to-end data preprocessing pipelines, feature engineering, loss optimization, model evaluation (ROC-AUC, F1), and low-latency REST inference endpoints.',
-    tags: ['PyTorch', 'Scikit-learn', 'NumPy', 'Pandas', 'Model Training', 'Feature Engineering', 'Inference APIs'],
+    "category": "Data",
+    "description": "Relational and document-based application data using PostgreSQL and MongoDB."
   },
+  {
+    "category": "Cross-Platform",
+    "description": "Software delivered across web, desktop and Android where a project requires it."
+  }
 ] as const;
 
 export const education = [
   {
-    date: '2021–2024',
-    title: 'B.Tech in Computer Science & Engineering',
-    subtitle: 'Undergraduate Engineering Degree · Lateral Entry',
-    institution: 'Maulana Abul Kalam Azad University of Technology (MAKAUT)',
-    coursework: ['Data Structures & Algorithms', 'Database Management Systems & SQL', 'Operating Systems & Concurrency', 'Computer Networks & Distributed Systems', 'Compiler Design', 'Object-Oriented Software Engineering'],
+    "date": "2021–2024",
+    "title": "B.Tech in Computer Science & Engineering",
+    "institution": "MAKAUT"
   },
   {
-    date: '2018–2021',
-    title: 'Diploma in Computer Science & Technology',
-    subtitle: 'Polytechnic Engineering Foundation',
-    institution: 'West Bengal State Council of Technical Education (WBSCTE)',
-    coursework: ['C & C++ Systems Programming', 'Data Structures & Algorithms in C', 'Digital Logic & Computer Organization', 'Relational DBMS & Normalization', 'Unix/Linux Operating Systems'],
-  },
+    "date": "2018–2021",
+    "title": "Diploma in Computer Science & Technology",
+    "institution": "WBSCTE"
+  }
 ] as const;
 
 export const journey = [
-  { date: '2018–2021', title: 'Systems & CS Foundations.', detail: education[1] },
-  { date: '2021–2024', title: 'Degree Rigor & Distributed Architectures.', detail: education[0] },
-  { date: '2024', title: '60+ Projects Milestone.', body: 'Engineered and deployed over 60 applications across web systems, Android mobile apps, and machine learning training pipelines.' },
-  { date: 'Now', title: 'Production Engineering & High Concurrency.', body: 'Architecting resilient software systems solving complex operational, financial, and multi-tenant problems with zero-trust engineering.' },
+  {
+    "date": "2018–2021",
+    "title": "Computer Science & Technology Diploma",
+    "body": "Built the fundamentals of programming, databases, operating systems and computer networks."
+  },
+  {
+    "date": "2021–2024",
+    "title": "B.Tech in Computer Science & Engineering",
+    "body": "Expanded those foundations through software engineering and computer-science coursework."
+  },
+  {
+    "date": "2024",
+    "title": "Independent Software Development",
+    "body": "Started focusing heavily on building complete software products and web applications."
+  },
+  {
+    "date": "Now",
+    "title": "Full-Stack Software Development",
+    "body": "Building applications across frontend, backend, APIs, databases and multiple platforms."
+  }
 ] as const;
 
 export const socials = [
-  { label: 'Email', url: 'mailto:' + personal.email, handle: personal.email },
-  { label: 'GitHub', url: 'https://github.com/Biswadipgoj', handle: '@Biswadipgoj' },
-  { label: 'LinkedIn', url: 'https://linkedin.com/in/biswadipgoj', handle: 'Biswodip Goj' },
+  {
+    "label": "Email",
+    "url": "mailto:biswadipgoj@gmail.com",
+    "handle": "biswadipgoj@gmail.com"
+  },
+  {
+    "label": "GitHub",
+    "url": "https://github.com/Biswadipgoj",
+    "handle": "@Biswadipgoj"
+  },
+  {
+    "label": "LinkedIn",
+    "url": "https://linkedin.com/in/biswadipgoj",
+    "handle": "Biswodip Goj"
+  }
 ] as const;
 
 export const nav = [
-  { id: 'opening', label: 'Home' }, { id: 'about', label: 'About' }, { id: 'stack', label: 'Architecture' },
-  { id: 'projects', label: 'Projects' }, { id: 'process', label: 'Engineering' },
-  { id: 'journey', label: 'Credentials' }, { id: 'contact', label: 'Contact' },
+  {
+    "id": "opening",
+    "label": "Home"
+  },
+  {
+    "id": "about",
+    "label": "About"
+  },
+  {
+    "id": "stack",
+    "label": "Skills"
+  },
+  {
+    "id": "projects",
+    "label": "Projects"
+  },
+  {
+    "id": "process",
+    "label": "How I Build"
+  },
+  {
+    "id": "journey",
+    "label": "Education"
+  },
+  {
+    "id": "contact",
+    "label": "Contact"
+  }
 ] as const;
+
+export const nanoCode = [
+  "const newLink = await prisma.link.create({",
+  "  data: {",
+  "    userId,",
+  "    originalUrl: normalizedUrl,",
+  "    shortCode,",
+  "    customAlias: parsed.customAlias || null,",
+  "    password: hashedPassword,",
+  "    expiresAt: parsed.expiresAt ? new Date(parsed.expiresAt) : null,",
+  "    oneTimeUse: parsed.oneTimeUse,",
+  "  },",
+  "})"
+] as const;
+
+export const nanoFields = [
+  [
+    "originalUrl",
+    "Destination URL"
+  ],
+  [
+    "shortCode",
+    "Unique short identifier"
+  ],
+  [
+    "customAlias",
+    "Optional, unique alias"
+  ],
+  [
+    "password",
+    "Optional password hash"
+  ],
+  [
+    "expiresAt",
+    "Optional expiry date"
+  ],
+  [
+    "oneTimeUse",
+    "Single-use setting"
+  ],
+  [
+    "clicks",
+    "Visit count"
+  ],
+  [
+    "lastVisited",
+    "Last visit time"
+  ],
+  [
+    "isActive",
+    "Whether the link is active"
+  ]
+] as const;
+
+export const storyCopy = {
+  "projectsTitle": "Five products. Real work.",
+  "projectsIntro": "What each application does, what I built, and the source behind it.",
+  "focus": "Engineering focus",
+  "work": "What I built",
+  "nano": {
+    "title": "A long URL. A short link.",
+    "note": "Illustrative link transformation. The real create-link workflow validates the request and saves the destination.",
+    "long": "https://example.com/articles/building-web-applications",
+    "short": "nanl.vercel.app/read",
+    "dataTitle": "One link, one record.",
+    "dataBody": "The destination and its settings stay together in the Link model."
+  },
+  "tele": {
+    "title": "A payment follows a customer.",
+    "note": "Customer ownership and installment checks connect the collection workflow to the stored records.",
+    "labels": [
+      "Authentication",
+      "Customer ownership",
+      "Installment checks",
+      "Payment request"
+    ]
+  },
+  "processTitle": "How I build",
+  "testing": "I test important application workflows and validate behaviour through the browser and application interfaces.",
+  "scopeTitle": "What I build",
+  "capabilitiesTitle": "Engineering capabilities",
+  "foundationsTitle": "Computer Science Foundations",
+  "foundationsBody": "My formal CS background gives me a foundation in the principles behind software development, not only the frameworks used to build applications.",
+  "footer": {
+    "title": "Let’s build something useful.",
+    "body": "Have a software role or a product to discuss? Get in touch.",
+    "sourceTitle": "Explore the source",
+    "flowTitle": "The whole application, connected.",
+    "flow": [
+      "Interface",
+      "Application logic",
+      "API",
+      "Database",
+      "Deployment"
+    ],
+    "credit": "Designed and built by Biswodip Goj.",
+    "signature": "biswodip."
+  }
+} as const;
+
+
+export type Project = {
+name: string; slug: string; blurb: string; description: string; technicalNote: string;
+url: string; repo: string; previewImage: string; imageAlt: string;
+features: string[]; techStack: string[]; engineering: string[];
+decisions: {title: string; what: string; why: string; how: string}[];
+data: string; api: string; interface: string;
+evidence: {label: string; url: string}[];
+chapter: {index: string; bg: string; ink: string; accent: string; label: string; flow: string[]};
+};
+export const projects: Project[] = [
+  {
+    "name": "Erpixa",
+    "slug": "erpixa",
+    "url": "https://erpixa.vercel.app/",
+    "repo": "https://github.com/Biswadipgoj/Erpixa",
+    "blurb": "Business management application with organization-based access and modular workflows.",
+    "description": "Erpixa is a business management application built around organizations, users and configurable business workflows. It includes modules for areas such as customer management and operations, with database-level access control for organization data.",
+    "technicalNote": "A React and TypeScript application backed by PostgreSQL, with authentication, organization membership and modular business functionality.",
+    "techStack": [
+      "React",
+      "TypeScript",
+      "PostgreSQL",
+      "Vite"
+    ],
+    "features": [
+      "Organization membership",
+      "Role-based access",
+      "Modular business workflows",
+      "Database-level access control"
+    ],
+    "engineering": [
+      "React",
+      "TypeScript",
+      "PostgreSQL",
+      "Database design",
+      "Authentication",
+      "Role-based access",
+      "Organization-level data access"
+    ],
+    "previewImage": "/previews/erpixa.webp",
+    "imageAlt": "Erpixa real application interface from the deployed site",
+    "chapter": {
+      "index": "01",
+      "bg": "#edc4ae",
+      "ink": "#44312c",
+      "accent": "#884330",
+      "label": "Business applications",
+      "flow": [
+        "Sign in",
+        "Organization",
+        "Business module",
+        "PostgreSQL"
+      ]
+    },
+    "decisions": [
+      {
+        "title": "Organization membership",
+        "what": "Users work within an organization.",
+        "why": "Business records need to belong to the right organization.",
+        "how": "Membership records connect users to organizations and their roles."
+      },
+      {
+        "title": "Access in the database",
+        "what": "PostgreSQL policies control access to organization data.",
+        "why": "Data access should follow the same membership rules as the application.",
+        "how": "Row-level security checks organization membership for supported database operations."
+      },
+      {
+        "title": "Business modules",
+        "what": "The interface groups business functionality into modules.",
+        "why": "Different business workflows need different screens and records.",
+        "how": "React components present the modules available for the organization."
+      }
+    ],
+    "data": "PostgreSQL stores organizations, members and business records. Organization relationships connect records to the business they belong to. Database policies use membership when checking access.",
+    "api": "The React application uses authenticated data operations to read and update organization records. The database applies the organization access rules to those operations.",
+    "interface": "The deployed interface brings organization selection and business workflows into one application.",
+    "evidence": [
+      {
+        "label": "Application source",
+        "url": "https://github.com/Biswadipgoj/Erpixa"
+      },
+      {
+        "label": "Database schema and access policies",
+        "url": "https://github.com/Biswadipgoj/Erpixa/blob/main/supabase/schema.sql"
+      }
+    ]
+  },
+  {
+    "name": "NanoLink",
+    "slug": "nanolink",
+    "url": "https://nanl.vercel.app/",
+    "repo": "https://github.com/Biswadipgoj/nl",
+    "blurb": "URL shortener with custom links, passwords, expiry and click tracking.",
+    "description": "NanoLink is a URL shortening application that lets users create short links with optional custom aliases, password protection, expiration and one-time use. The application also records click counts and link activity.",
+    "technicalNote": "The project combines a Next.js application with REST-style API routes and PostgreSQL data. The implementation handles input validation, link creation, unique identifiers, password-protected links and link lifecycle rules.",
+    "techStack": [
+      "Next.js",
+      "TypeScript",
+      "Node.js",
+      "PostgreSQL"
+    ],
+    "features": [
+      "Request validation",
+      "Custom aliases and unique links",
+      "Password and expiry checks",
+      "Click tracking and one-time use"
+    ],
+    "engineering": [
+      "TypeScript",
+      "Next.js",
+      "Node.js",
+      "PostgreSQL",
+      "REST APIs",
+      "Authentication/security-related application logic",
+      "Database constraints",
+      "Error handling"
+    ],
+    "previewImage": "/previews/nanolink.webp",
+    "imageAlt": "NanoLink real application interface from the deployed site",
+    "chapter": {
+      "index": "02",
+      "bg": "#cfdbc0",
+      "ink": "#2f4434",
+      "accent": "#3c6345",
+      "label": "Links and application APIs",
+      "flow": [
+        "URL + options",
+        "API validation",
+        "PostgreSQL",
+        "Short link"
+      ]
+    },
+    "decisions": [
+      {
+        "title": "Validate link requests",
+        "what": "The create-link API checks the submitted URL and options.",
+        "why": "Invalid input should return a useful error before a link is saved.",
+        "how": "The route validates the request, normalizes the URL and checks it before creating the record."
+      },
+      {
+        "title": "Keep identifiers unique",
+        "what": "Short codes and custom aliases have database uniqueness constraints.",
+        "why": "A short link must identify one destination.",
+        "how": "The API checks existing codes and PostgreSQL also enforces unique values."
+      },
+      {
+        "title": "Apply link rules",
+        "what": "Links can require a password, expire or allow one use.",
+        "why": "The person sharing a link needs control over how it is opened.",
+        "how": "The redirect workflow checks the stored options. One-time links become inactive after use."
+      },
+      {
+        "title": "Record link activity",
+        "what": "A link stores its click count and last visit.",
+        "why": "The owner can see whether the link is being used.",
+        "how": "The application updates the link record when handling a visit."
+      }
+    ],
+    "data": "The PostgreSQL Link model stores the original URL, short code, optional alias, password hash, expiry, activity status and click information. Short codes and custom aliases are unique. This keeps link options together with the destination they control.",
+    "api": "POST /api/links receives the URL and options, validates the request, checks the alias, hashes a supplied password and creates the link record. A successful creation returns the new link with HTTP 201. Invalid input returns an error response.",
+    "interface": "The form connects the destination URL and optional link settings to the create-link API. The result gives the user a short link to share.",
+    "evidence": [
+      {
+        "label": "Create-link API route",
+        "url": "https://github.com/Biswadipgoj/nl/blob/master/src/app/api/links/route.ts"
+      },
+      {
+        "label": "Link data model",
+        "url": "https://github.com/Biswadipgoj/nl/blob/master/prisma/schema.prisma"
+      },
+      {
+        "label": "Link redirect workflow",
+        "url": "https://github.com/Biswadipgoj/nl/blob/master/src/app/%5BshortCode%5D/page.tsx"
+      }
+    ]
+  },
+  {
+    "name": "TelePoint",
+    "slug": "telepoint",
+    "url": "https://telepoint-topaz.vercel.app/",
+    "repo": "https://github.com/Biswadipgoj/telepoint",
+    "blurb": "EMI management and payment collection platform.",
+    "description": "TelePoint is an EMI management application for customer accounts, installments, payment records and reporting. The application provides different roles for managing customer and collection workflows.",
+    "technicalNote": "I built the application around role-based access, customer records, installment workflows, payment handling and database-backed reporting.",
+    "techStack": [
+      "Next.js",
+      "TypeScript",
+      "PostgreSQL"
+    ],
+    "features": [
+      "Role-based access",
+      "Customer and installment records",
+      "Payment workflow handling",
+      "Database-backed reporting"
+    ],
+    "engineering": [
+      "TypeScript",
+      "Next.js",
+      "PostgreSQL",
+      "Authentication",
+      "Role-based access",
+      "API development",
+      "Payment workflow handling",
+      "Reporting"
+    ],
+    "previewImage": "/previews/telepoint.webp",
+    "imageAlt": "TelePoint EMI Management Portal sign-in screen from the deployed application",
+    "chapter": {
+      "index": "03",
+      "bg": "#bcd6df",
+      "ink": "#293f4a",
+      "accent": "#355e73",
+      "label": "Customer and payment workflows",
+      "flow": [
+        "Sign in",
+        "Customer",
+        "Installment",
+        "Payment record"
+      ]
+    },
+    "decisions": [
+      {
+        "title": "Check the signed-in user",
+        "what": "Payment submission requires authentication.",
+        "why": "Collection actions must be associated with an authorized account.",
+        "how": "The API checks the user, active retailer record and PIN before processing the request."
+      },
+      {
+        "title": "Check customer ownership",
+        "what": "A retailer can submit payments for their own customers.",
+        "why": "Customer records and collection actions must follow account permissions.",
+        "how": "The route compares the customer’s retailer ID with the authenticated retailer."
+      },
+      {
+        "title": "Validate installment payments",
+        "what": "The API checks installment status before recording a request.",
+        "why": "An already paid installment or pending request needs a clear response.",
+        "how": "The route checks the selected installment records and returns errors for unsupported actions."
+      },
+      {
+        "title": "Connect records to reports",
+        "what": "Customer, installment and payment records support reporting.",
+        "why": "Collection workflows need a way to review their recorded activity.",
+        "how": "The application reads the related PostgreSQL records for its reports."
+      }
+    ],
+    "data": "PostgreSQL stores customer accounts, installment schedules and payment records. Customers are related to retailers, and installments belong to customers. Those relationships support account access checks and reporting.",
+    "api": "POST /api/payments/submit checks required fields, authentication, retailer status and customer ownership. It checks the selected installments before creating a payment request. Invalid or conflicting requests receive an error response.",
+    "interface": "The real sign-in screen is shown here. Customer and collection screens require an authorized account.",
+    "evidence": [
+      {
+        "label": "Payment submission API",
+        "url": "https://github.com/Biswadipgoj/telepoint/blob/main/app/api/payments/submit/route.ts"
+      },
+      {
+        "label": "Application source",
+        "url": "https://github.com/Biswadipgoj/telepoint"
+      }
+    ]
+  },
+  {
+    "name": "Nexora",
+    "slug": "nexora",
+    "url": "https://nexora-xi-rust.vercel.app/",
+    "repo": "https://github.com/Biswadipgoj/nexora",
+    "blurb": "Cross-platform workspace for projects and task management.",
+    "description": "Nexora is a project and task workspace designed to run across web, Windows desktop and Android.",
+    "technicalNote": "The project uses a shared TypeScript application across multiple platforms, with project boards, list views, personal tasks and keyboard-driven navigation.",
+    "techStack": [
+      "Next.js",
+      "TypeScript",
+      "React",
+      "Electron",
+      "Capacitor"
+    ],
+    "features": [
+      "Project boards and list views",
+      "Personal task management",
+      "Keyboard-driven navigation",
+      "Web, Windows and Android"
+    ],
+    "engineering": [
+      "Next.js",
+      "TypeScript",
+      "React",
+      "Application state",
+      "Cross-platform development",
+      "Desktop application development",
+      "Android application development"
+    ],
+    "previewImage": "/previews/nexora.webp",
+    "imageAlt": "Nexora real application interface from the deployed site",
+    "chapter": {
+      "index": "04",
+      "bg": "#dbcee6",
+      "ink": "#44374d",
+      "accent": "#6c527e",
+      "label": "Web · Windows · Android",
+      "flow": [
+        "Shared TypeScript",
+        "Web",
+        "Windows",
+        "Android"
+      ]
+    },
+    "decisions": [
+      {
+        "title": "Share the application",
+        "what": "A TypeScript application supports multiple platforms.",
+        "why": "Project and task workflows should remain familiar across devices.",
+        "how": "Next.js and React provide the application, with Electron for Windows and Capacitor for Android."
+      },
+      {
+        "title": "Offer different task views",
+        "what": "Projects include boards and list views alongside personal tasks.",
+        "why": "Planning a project and checking individual tasks are different activities.",
+        "how": "The interface presents application state through the relevant task view."
+      },
+      {
+        "title": "Support keyboard navigation",
+        "what": "Users can navigate with a command palette.",
+        "why": "Frequent actions should be easy to reach from the keyboard.",
+        "how": "A shared navigation interface exposes workspace actions."
+      }
+    ],
+    "data": "The workspace organizes projects and their tasks, with personal tasks as another workflow. Application state connects the board and list interfaces to the underlying project information.",
+    "api": "The shared application connects workspace views to the project’s data operations. Platform wrappers provide desktop and Android delivery around that application.",
+    "interface": "Project boards, list views and personal tasks give the shared application its main working surfaces.",
+    "evidence": [
+      {
+        "label": "Application and platform source",
+        "url": "https://github.com/Biswadipgoj/nexora"
+      },
+      {
+        "label": "Platform configuration",
+        "url": "https://github.com/Biswadipgoj/nexora/blob/master/package.json"
+      }
+    ]
+  },
+  {
+    "name": "Tripmate",
+    "slug": "tripmate",
+    "url": "https://trip-mu-coral.vercel.app/",
+    "repo": "https://github.com/Biswadipgoj/trip",
+    "blurb": "Group expense management and settlement application.",
+    "description": "Tripmate helps groups record shared expenses, calculate who owes whom and simplify the final settlement between members.",
+    "technicalNote": "The application handles expense splitting, balance calculations, settlements, UPI payment links and PDF exports.",
+    "techStack": [
+      "Next.js",
+      "React",
+      "TypeScript"
+    ],
+    "features": [
+      "Shared expense splitting",
+      "Balances and settlements",
+      "UPI payment links",
+      "PDF exports"
+    ],
+    "engineering": [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "PostgreSQL/data-backed application",
+      "Expense calculations",
+      "Settlement logic",
+      "API integration",
+      "PDF generation"
+    ],
+    "previewImage": "/previews/tripmate.webp",
+    "imageAlt": "Tripmate real application interface from the deployed site",
+    "chapter": {
+      "index": "05",
+      "bg": "#ead3a7",
+      "ink": "#493d2b",
+      "accent": "#79502f",
+      "label": "Expenses and settlements",
+      "flow": [
+        "Shared expense",
+        "Member balances",
+        "Settlement",
+        "UPI / PDF"
+      ]
+    },
+    "decisions": [
+      {
+        "title": "Connect expenses to members",
+        "what": "Groups can record shared expenses.",
+        "why": "A useful balance needs to account for who paid and who shares the cost.",
+        "how": "The application uses member and expense information to calculate balances."
+      },
+      {
+        "title": "Explain the settlement",
+        "what": "Members can see who owes whom.",
+        "why": "A group needs actionable settlement amounts after recording expenses.",
+        "how": "Balance calculations feed the settlement workflow."
+      },
+      {
+        "title": "Support the next action",
+        "what": "Settlements include UPI links and PDF exports.",
+        "why": "Members need to make payments and keep a readable expense record.",
+        "how": "The application creates payment links and generates a PDF from the expense information."
+      }
+    ],
+    "data": "The application stores groups, members and shared expense information. Expense and member relationships support the balance and settlement calculations.",
+    "api": "The interface connects group and expense actions to stored application data. Settlement amounts are used to create UPI payment links; PDF generation makes the expense information exportable.",
+    "interface": "The group expense interface brings expense entry, member balances and settlement actions together.",
+    "evidence": [
+      {
+        "label": "Expense and settlement source",
+        "url": "https://github.com/Biswadipgoj/trip"
+      }
+    ]
+  }
+];

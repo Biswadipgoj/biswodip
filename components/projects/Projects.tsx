@@ -1,11 +1,10 @@
 'use client';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
-import { projects, type Project } from '@/lib/data';
+import { projects, storyCopy, type Project } from '@/lib/data';
 import { useEditorialReveal } from '@/components/cinematic/useScene';
-import { FlowLine, ProjectActions } from '@/components/cinematic/SoftwarePrimitives';
-import { BrowserMockup } from '@/components/cinematic/BrowserMockup';
-import { ArrowDownIcon, ArrowUpRightIcon } from '@/components/icons';
+import { ProjectActions, ProjectMedia } from '@/components/cinematic/SoftwarePrimitives';
+import { ArrowUpRightIcon } from '@/components/icons';
 import NanoLinkScene from './NanoLinkScene';
 import TelePointScene from './TelePointScene';
 
@@ -13,92 +12,50 @@ export function projectStyle(project: Project): CSSProperties {
   return { '--chapter-bg': project.chapter.bg, '--chapter-ink': project.chapter.ink, '--chapter-accent': project.chapter.accent } as CSSProperties;
 }
 
-function ProjectChapter({ project }: { project: Project }) {
+function ProjectChapter({project, index}: {project: Project; index: number}) {
   const ref = useEditorialReveal();
-  const special = project.slug === 'nanolink' || project.slug === 'telepoint';
-  return (
-    <article ref={ref} id={project.slug} className={`project-chapter project-${project.slug}`} style={projectStyle(project)} data-environment={project.slug}>
-      <header className="project-heading" data-reveal>
-        <div>
-          <h3>{project.name}<span className="project-index">/{project.chapter.index}</span></h3>
-          <p>{project.blurb}</p>
+  const isEven = index % 2 === 0;
+  return <article ref={ref} id={project.slug} className={'project-chapter project-'+project.slug} style={projectStyle(project)} data-fade-section>
+    <div className="project-card">
+      <header className="project-heading" data-reveal={isEven ? 'left' : 'right'}>
+        <h3><Link href={'/project/'+project.slug}>{project.name}<ArrowUpRightIcon aria-hidden="true"/><span className="sr-only"> project details</span></Link></h3>
+        <p data-reveal>{project.blurb}</p>
+        <ul className="project-stack" data-stagger aria-label={project.name+' stack'}>
+          {project.techStack.map(tech=><li key={tech} className="glass-pill" style={{padding: '4px 12px', borderRadius: '16px'}}>{tech}</li>)}
+        </ul>
+        <div className="project-focus glass-panel" data-reveal="3d-depth" style={{padding: '20px', borderRadius: '12px', margin: '20px 0'}}>
+          <h4>{storyCopy.focus}</h4>
+          <ul data-stagger>{project.features.map(feature=><li key={feature}>{feature}</li>)}</ul>
         </div>
-        <span className="project-category">{project.chapter.label}<ArrowDownIcon aria-hidden="true" /></span>
+        <ProjectActions project={project}/>
       </header>
-
-      {/* Media: special scenes keep their GSAP scroll-chapter; others get browser animation */}
-      {project.slug === 'nanolink'
-        ? <NanoLinkScene project={project} />
-        : project.slug === 'telepoint'
-          ? <TelePointScene project={project} />
-          : (
-            <div className="compact-project-media" data-reveal>
-              <BrowserMockup project={project} />
-            </div>
-          )
-      }
-
-      <div className="project-information" data-reveal>
-        <div className="project-summary">
-          <p>{project.description}</p>
-          <ProjectActions project={project} />
-        </div>
-        <div className="project-facts">
-          <div className="project-stack">
-            <span>Built with</span>
-            <p>{project.techStack.join(' · ')}</p>
-          </div>
-          {!special && (
-            <ul className="project-feature-list">
-              {project.features.map(feature => <li key={feature}>{feature}</li>)}
-            </ul>
-          )}
-          {special && <p className="project-engineering">{project.technicalNote}</p>}
-        </div>
-      </div>
-
-      {!special && (
-        <div className="compact-flow">
-          <FlowLine steps={project.chapter.flow} />
-          <span>System Execution Flow</span>
-        </div>
-      )}
-
-      <div className="project-transition" aria-hidden="true">
-        <span>{project.name}</span>
-        <span className="transition-thread" />
-        <ArrowDownIcon />
-      </div>
-    </article>
-  );
+      <Link className="project-visual" href={'/project/'+project.slug} aria-label={'Explore '+project.name+' project details'} data-tilt-3d>
+        <div data-media><ProjectMedia project={project}/></div>
+        <span className="screenshot-caption" data-reveal="blur">
+          {project.slug==='telepoint'?'Live EMI portal interface':'Real application interface'}
+          <span style={{display: 'inline-flex', alignItems: 'center', gap: '6px'}}>Explore project<ArrowUpRightIcon aria-hidden="true"/></span>
+        </span>
+      </Link>
+    </div>
+    {project.slug==='nanolink' && <NanoLinkScene project={project}/>}
+    {project.slug==='telepoint' && <TelePointScene project={project}/>}
+  </article>;
 }
 
 export default function Projects() {
   const ref = useEditorialReveal();
-  return (
-    <section id="projects" className="projects-section">
-      <header ref={ref} className="work-introduction section-space" data-environment="cream">
-        <div data-reveal>
-          <span className="small-label" style={{ color: 'var(--teal-accent, #38bdf8)' }}>SELECTED FLAGSHIP ARCHITECTURES</span>
-          <h2>Built. Shipped.<br /><em>60+ Systems Engineered.</em></h2>
-          <p>Flagship production web systems, cross-platform Android mobile applications, and ML pipelines.<br />Explore the live deployments, database schemas, and source code below.</p>
-        </div>
-        <nav aria-label="Project index">
-          {projects.map(project => (
-            <Link href={`#${project.slug}`} key={project.slug}>
-              <span>{project.chapter.index}</span>
-              <strong>{project.name}</strong>
-              <span>{project.chapter.label}</span>
-              <ArrowUpRightIcon aria-hidden="true" />
-            </Link>
-          ))}
-        </nav>
-      </header>
-
+  return <section id="projects" ref={ref} className="projects-section">
+    <header className="projects-intro section-space">
       <div>
-        {projects.map(project => <ProjectChapter key={project.slug} project={project} />)}
+        <h2 data-split>{storyCopy.projectsTitle}</h2>
+        <p data-reveal>{storyCopy.projectsIntro}</p>
       </div>
-    </section>
-  );
+      <nav aria-label="Featured projects" data-stagger>
+        {projects.map(p=><span key={p.slug} data-magnetic>
+          <a href={'#'+p.slug}>{p.name}<ArrowUpRightIcon aria-hidden="true"/></a>
+        </span>)}
+      </nav>
+    </header>
+    {projects.map((project, i)=><ProjectChapter project={project} index={i} key={project.slug}/>)}
+  </section>;
 }
-

@@ -12,68 +12,29 @@ import * as simpleIcons from 'simple-icons';
 
 /** craft name in lib/data.ts -> simple-icons slug (or a local fallback key) */
 const MAP = {
-  // Frontend
-  'React & Next.js': 'react',
-  'TypeScript': 'typescript',
-  'Tailwind CSS': 'tailwindcss',
-  'Three.js / WebGL': 'threedotjs',
-  'Framer Motion': 'framer',
-  'Redux & Zustand': 'redux',
-  'Vue.js & Nuxt': 'vuedotjs',
-  'SvelteKit': 'svelte',
-  'WebSockets & RTC': 'socketdotio',
-  'Micro-frontends': 'webcomponentsdotorg',
-  'Storybook': 'storybook',
-  'GSAP': 'greensock',
-
-  // Backend & APIs
-  'Node.js & Express': 'nodedotjs',
-  'Python & FastAPI': 'python',
-  'REST & GraphQL': 'graphql',
-  'Kafka & RabbitMQ': 'apachekafka',
-  'JWT & OAuth2': 'jsonwebtokens',
-  'Microservices': 'nestjs',
-  'Go (Golang)': 'go',
-  'Rust': 'rust',
-  'Spring Boot': 'springboot',
-  'gRPC & Protobuf': 'protocolsdotio',
-  'Serverless / Lambdas': 'serverless',
-  'Web3 & Contracts': 'solidity',
-
-  // DevOps & Cloud
-  'Docker & Compose': 'docker',
-  'CI/CD Pipelines': 'githubactions',
-  'AWS & Cloudflare': 'cloudflare',
-  'Kubernetes (K8s)': 'kubernetes',
-  'Linux & Shell': 'linux',
-  'Nginx & Proxy': 'nginx',
-  'Terraform & IaC': 'terraform',
-  'GCP & Azure': 'googlecloud',
-  'Grafana & Metrics': 'grafana',
-  'ArgoCD': 'argo',
-  'Jenkins & GitLab': 'jenkins',
-  'Ansible': 'ansible',
-
-  // Data & Tooling
-  'PostgreSQL & MySQL': 'postgresql',
-  'MongoDB & Redis': 'mongodb',
-  'Prisma & Drizzle': 'prisma',
-  'Jest & Vitest': 'vitest',
-  'Git & Monorepos': 'git',
-  'System Architecture': 'archlinux',
-  'Elasticsearch': 'elasticsearch',
-  'Apache Spark': 'apachespark',
-  'Snowflake / BigQuery': 'snowflake',
-  'Playwright & Cypress': 'playwright',
-  'Neo4j': 'neo4j',
-  'Webpack & Vite': 'vite',
+  "TypeScript": "typescript",
+  "JavaScript": "javascript",
+  "Python": "python",
+  "React": "react",
+  "Next.js": "nextdotjs",
+  "Node.js": "nodedotjs",
+  "PostgreSQL": "postgresql",
+  "MongoDB": "mongodb",
+  "Git": "git",
+  "GitHub": "github",
+  "HTML": "html5",
+  "CSS": "css",
+  "Tailwind CSS": "tailwindcss",
+  "Material UI": "mui",
+  "Vite": "vite",
+  "Electron": "electron",
+  "Capacitor": "capacitor",
+  "Postman": "postman",
+  "Vercel": "vercel"
 };
 
 /** Extra marks used by the hero, stack ribbon and project chips. */
-const EXTRA = [
-  'nextdotjs', 'supabase', 'vercel', 'github', 'electron', 'capacitor',
-  'html5', 'css', 'javascript', 'sass', 'figma', 'postman', 'jira', 'notion',
-];
+const EXTRA = [];
 
 function lookup(slug) {
   const key = 'si' + slug.charAt(0).toUpperCase() + slug.slice(1);

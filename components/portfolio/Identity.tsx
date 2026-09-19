@@ -1,35 +1,37 @@
 'use client';
 import Image from 'next/image';
-import { personal } from '@/lib/data';
-import { ArrowDownIcon } from '@/components/icons';
+import { personal, engineeringScope, storyCopy } from '@/lib/data';
 import { useEditorialReveal } from '@/components/cinematic/useScene';
+import { ArrowUpRightIcon } from '@/components/icons';
 
 export default function Identity() {
   const ref = useEditorialReveal();
-  return (
-    <section ref={ref} id="about" className="identity section-space" data-environment="apricot">
-      <div id="identity" className="identity-composition">
-        <div className="identity-name" data-reveal>
-          <h2>Biswodip<br /><em>Goj.</em></h2>
-          <p>{personal.role}</p>
-        </div>
-        <figure className="identity-portrait" data-reveal>
-          <Image src="/biswodip.png" alt="Portrait of Biswodip Goj, full-stack software engineer" fill priority sizes="(max-width: 799px) 85vw, 46vw" />
-          <figcaption>{personal.location}</figcaption>
-        </figure>
-        <div className="identity-note" data-reveal>
-          <span className="small-label">The person behind the code</span>
-          <p>Full-stack software, designed and shipped.</p>
-          <ArrowDownIcon aria-hidden="true" />
-        </div>
+  return <section ref={ref} id="about" className="identity section-space">
+    <div className="identity-composition" id="identity">
+      <div className="identity-intro" data-reveal="left">
+        <h2 data-split>The person<br /><em>behind the work.</em></h2>
+        <p data-reveal>{personal.intro}</p>
+        <span data-reveal="blur">{personal.role} · B.Tech CSE</span>
       </div>
-      <div className="identity-copy" data-reveal>
-        <p className="intro-copy">{personal.intro}</p>
-        <div>
-          <p>{personal.about}</p>
-          <a className="text-link" href="#stack">Inspect the stack<ArrowDownIcon aria-hidden="true" /></a>
-        </div>
+      <figure className="identity-portrait glass-panel" data-media data-tilt-3d>
+        <Image src="/biswodip.png" alt="Portrait of Biswodip Goj, full-stack software engineer" width={1086} height={1448} sizes="(max-width: 799px) 85vw, 34vw" />
+        <figcaption data-reveal="blur">{personal.location}</figcaption>
+      </figure>
+      <div className="identity-copy" data-stagger>
+        {personal.about.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+        <span data-magnetic>
+          <a href={personal.resume} download className="text-link">Download resume<ArrowUpRightIcon aria-hidden="true" /></a>
+        </span>
       </div>
-    </section>
-  );
+    </div>
+    <div className="scope-section" data-fade-section>
+      <h3 data-reveal="3d-flip">{storyCopy.scopeTitle}</h3>
+      <dl className="scope-list" data-stagger>
+        {engineeringScope.map(item => <div key={item.category} className="glass-panel" data-reveal="3d-depth" data-tilt-3d style={{padding: '24px', borderRadius: '12px'}}>
+          <dt>{item.category}</dt>
+          <dd>{item.description}</dd>
+        </div>)}
+      </dl>
+    </div>
+  </section>;
 }

@@ -7,12 +7,12 @@ import { test, expect } from '@playwright/test';
 
 const CHAPTERS = [
   '#opening',
-  '#identity',
-  '#process',
-  '#api',
-  '#projects',
-  '#capabilities',
   '#about',
+  '#stack',
+  '#projects',
+  '#process',
+  '#capabilities',
+  '#journey',
   '#contact',
 ];
 
@@ -36,8 +36,7 @@ test.describe('journey structure', () => {
   test('identity shows real name and education', async ({ page }) => {
     await page.goto('/');
     await expect(page.locator('#identity')).toContainText('Biswodip');
-    await expect(page.locator('#about')).toContainText('MAKAUT');
-    await expect(page.locator('#about')).toContainText('WBSCTE');
+    await expect(page.locator('#about')).toContainText('B.Tech CSE');
   });
 
   test('all five real projects with real screenshots', async ({ page }) => {
@@ -74,7 +73,7 @@ test.describe('project detail pages', () => {
       await page.goto(`/project/${slug}`);
       await expect(page.locator('h1')).toHaveCount(1);
       await expect(page.locator('img')).toHaveCount(1);
-      await expect(page.getByRole('link', { name: /↗/ }).first()).toBeVisible();
+      await expect(page.getByRole('link', { name: /Run/i }).first()).toBeVisible();
     });
   }
 });
