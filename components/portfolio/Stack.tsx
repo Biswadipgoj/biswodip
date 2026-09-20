@@ -11,7 +11,7 @@ export default function Stack() {
   return <section id="stack" ref={ref} className="stack-section section-space" data-motion-root>
     <header className="section-heading"><h2><AnimatedText>{portfolioCopy.stack}</AnimatedText></h2><p data-reveal>{portfolioCopy.stackBody}</p></header>
     <div className="request-composition">
-      <div className="request-source">
+      <div className="request-source" data-depth="panel">
         <div className="request-method"><span>POST</span><code>/api/links</code><span>201 Created</span></div>
         <CodeWindow lines={nanoValidationCode} file="src/app/api/links/route.ts" label="Source excerpt · NanoLink request validation"/>
         <a href={projects[1].evidence[0].url} target="_blank" rel="noopener noreferrer" className="text-link">Read the route<ArrowUpRightIcon aria-hidden="true"/></a>
@@ -30,6 +30,6 @@ export default function Stack() {
       <div className="stack-categories" data-stagger>{stack.map(category=><div className="stack-category" key={category.title}><h4>{category.title}</h4><ul>{category.tools.map(tool=><li key={tool}>{tool}</li>)}</ul></div>)}</div>
       <dl className="stack-notes" data-stagger>{stackCopy.notes.map(note=><div key={note.name}><dt>{note.name}</dt><dd>{note.body}</dd></div>)}</dl>
     </div>
-    <div className="kinetic-band" aria-hidden="true"><span data-drift>Interface. Logic. Data. Connected.</span></div>
+    <div className="kinetic-band" aria-hidden="true"><span data-drift>Interface · Logic · Data · AI Pipelines · Production Delivery</span></div>
   </section>;
 }

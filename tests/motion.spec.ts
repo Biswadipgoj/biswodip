@@ -108,3 +108,48 @@ test('project interfaces move through 3D depth and direct project anchors remain
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect.poll(() => screen.evaluate(el => getComputedStyle(el).transform)).toBe('none');
 });
+
+test('all interactive buttons and click functions respond properly across the journey', async ({ page, context }) => {
+  try {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  } catch {}
+  await page.goto('/');
+
+  // 1. Hero primary action button clicks and navigates
+  const heroPrimary = page.locator('.hero-actions a[href="#projects"]');
+  await expect(heroPrimary).toBeVisible();
+  await heroPrimary.click();
+  await expect(page).toHaveURL(/#projects$/);
+
+  // 2. Desktop navigation links all have valid hrefs
+  const navLinks = page.locator('.desktop-nav a');
+  expect(await navLinks.count()).toBeGreaterThan(5);
+
+  // 3. Project buttons (Live, Source, Details) all exist and have valid targets
+  const liveButtons = page.locator('.project-actions a:has-text("Live")');
+  expect(await liveButtons.count()).toBe(5);
+  for (let i = 0; i < 5; i++) {
+    const href = await liveButtons.nth(i).getAttribute('href');
+    expect(href).toMatch(/^https?:\/\//);
+  }
+
+  // 4. Copy email button in footer
+  await page.locator('#contact').scrollIntoViewIfNeeded();
+  const copyBtn = page.locator('.copy-email');
+  await expect(copyBtn).toBeVisible();
+  await copyBtn.click();
+  await expect(copyBtn).toContainText('Copied');
+
+  // 5. Back to top button
+  const backToTop = page.locator('.back-to-top');
+  await expect(backToTop).toBeVisible();
+  await backToTop.click();
+  await expect(page).toHaveURL(/#opening$/);
+
+  // 6. Resume download links exist with valid PDF target
+  const resumeLinks = page.locator('a[download]');
+  expect(await resumeLinks.count()).toBeGreaterThan(0);
+  for (let i = 0; i < await resumeLinks.count(); i++) {
+    expect(await resumeLinks.nth(i).getAttribute('href')).toContain('.pdf');
+  }
+});

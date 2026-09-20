@@ -20,6 +20,10 @@ export default function Opening() {
   return <section id="opening" ref={ref} className="opening" aria-labelledby="hero-title" data-motion-root>
     <div className="hero-stage">
       <div className="hero-grid" aria-hidden="true" />
+      <div className="hero-orbit-badges" aria-hidden="true">
+        <span className="hero-orbit-chip chip-left" data-parallax="40" data-plane="1">⚡ Full-Stack &amp; AI</span>
+        <span className="hero-orbit-chip chip-right" data-parallax="-30" data-plane="-1">5 Production Apps</span>
+      </div>
       <div className="hero-copy">
         <p className="hero-eyebrow"><span className="status-dot"/>{personal.name} / {personal.role}</p>
         <h1 id="hero-title"><AnimatedText>{hero.heading}</AnimatedText></h1>
@@ -31,7 +35,7 @@ export default function Opening() {
         <Link href="/project/tripmate" prefetch={false} className="hero-small-image"><ProjectMedia project={projects[4]} priority/></Link>
         <div className="hero-mini-label glass-panel"><span>From the interface</span><span className="hero-label-line"/><strong>to the database.</strong><ArrowUpRightIcon aria-hidden="true"/></div>
       </div>
-      <div className="hero-bottom"><span>TypeScript · React · Next.js · PostgreSQL</span><a href="#about">Scroll to explore<ArrowDownIcon aria-hidden="true"/></a><span>Independent projects / 01—05</span></div>
+      <div className="hero-bottom"><span>TypeScript · React · Next.js · Python</span><a href="#about" className="scroll-hint">Scroll to explore<ArrowDownIcon aria-hidden="true"/></a><span>Independent projects / 01—05</span></div>
     </div>
   </section>;
 }

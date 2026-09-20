@@ -46,19 +46,48 @@ export function Journey() {
 
 export function Contact() {
   const ref = useEditorialReveal();
+  const [copied, setCopied] = useState(false);
   const [copyState, setCopyState] = useState('');
   const timer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => () => clearTimeout(timer.current), []);
   const copyEmail = async () => {
     clearTimeout(timer.current);
-    try { await navigator.clipboard.writeText(personal.email); setCopyState('Email copied.'); }
-    catch { setCopyState('Copy unavailable. Select the email address or use the email link.'); }
-    timer.current = setTimeout(() => setCopyState(''), 5000);
+    let success = false;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(personal.email);
+        success = true;
+      }
+    } catch {}
+    if (!success) {
+      try {
+        const input = document.createElement('textarea');
+        input.value = personal.email;
+        input.style.position = 'fixed';
+        input.style.left = '-9999px';
+        input.style.top = '-9999px';
+        document.body.appendChild(input);
+        input.focus();
+        input.select();
+        success = document.execCommand('copy');
+        input.remove();
+      } catch {}
+    }
+    if (success) {
+      setCopied(true);
+      setCopyState('Email copied.');
+      timer.current = setTimeout(() => { setCopied(false); setCopyState(''); }, 4500);
+    } else {
+      setCopyState('Copy unavailable. Select the email address or use the email link.');
+      timer.current = setTimeout(() => setCopyState(''), 5000);
+    }
   };
   return <footer id="contact" ref={ref} className="contact-section section-space" data-motion-root>
     <div className="footer-orbit-chips" aria-hidden="true">
-      <span className="footer-chip footer-chip-1" data-parallax="50" data-plane="1">⚡ Full-Stack &amp; AI</span>
-      <span className="footer-chip footer-chip-2" data-parallax="-40" data-plane="-1">&lt;ShipToProduction /&gt;</span>
+      <span className="footer-chip footer-chip-1" data-parallax="55" data-plane="1">⚡ Full-Stack &amp; AI</span>
+      <span className="footer-chip footer-chip-2" data-parallax="-45" data-plane="-1">&lt;ShipToProduction /&gt;</span>
+      <span className="footer-chip footer-chip-3" data-parallax="35" data-drift>const ready = true;</span>
+      <span className="footer-chip footer-chip-4" data-parallax="-30" data-plane="1">Brainware Univ · 2024</span>
     </div>
     <div className="footer-connection"><h2><AnimatedText>{storyCopy.footer.flowTitle}</AnimatedText></h2><FlowLine steps={storyCopy.footer.flow}/></div>
     <div className="contact-main">
@@ -66,18 +95,37 @@ export function Contact() {
         <div className="availability-badge" data-reveal><span className="availability-dot" aria-hidden="true"/><span className="availability-text">Available for full-time engineering roles · 2026</span></div>
         <h2><AnimatedText>{portfolioCopy.contact}</AnimatedText></h2><p data-reveal>{storyCopy.footer.body}</p>
         <a className="contact-email" href={'mailto:'+personal.email}>{personal.email}<ArrowUpRightIcon aria-hidden="true"/></a>
-        <div className="contact-tools"><Button className="copy-email" variant="outline" onClick={copyEmail}>Copy email</Button><a href={personal.resume} download className="text-link">Download resume<ArrowDownIcon aria-hidden="true"/></a></div>
+        <div className="contact-tools">
+          <Button className={'copy-email ' + (copied ? 'copied' : '')} variant="outline" onClick={copyEmail} aria-live="polite">
+            {copied ? 'Copied! ✓' : 'Copy email'}
+          </Button>
+          <a href={personal.resume} download className="text-link">Download resume<ArrowDownIcon aria-hidden="true"/></a>
+        </div>
         <p className="copy-status" role="status">{copyState}</p>
         <nav aria-label="Contact links" className="contact-socials" data-stagger>{socials.map(link=><a key={link.label} href={link.url} target={link.label==='Email'?undefined:'_blank'} rel={link.label==='Email'?undefined:'noopener noreferrer'}>{link.label}<ArrowUpRightIcon aria-hidden="true"/></a>)}</nav>
       </div>
       <div className="source-index glass-panel" data-depth="panel">
-        <div className="source-index-heading"><div><h3>{storyCopy.footer.sourceTitle}</h3><span className="source-count">5 Repositories</span></div><span aria-hidden="true">{'{ }'}</span></div>
+        <div className="source-index-heading"><div><h3>{storyCopy.footer.sourceTitle}</h3><span className="source-count">05 Repositories</span></div><span aria-hidden="true">{'{ }'}</span></div>
         <ul data-stagger>{projects.map(project=><li key={project.slug}><a href={project.repo} target="_blank" rel="noopener noreferrer"><span className="source-branch" aria-hidden="true">↳</span><div><strong>{project.name}</strong><span>{project.techStack.slice(0,3).join(' · ')}</span></div><ArrowUpRightIcon aria-hidden="true"/></a></li>)}</ul>
         <a className="text-link" href="#projects">View projects<ArrowRightIcon aria-hidden="true"/></a>
       </div>
     </div>
-    <div className="footer-person glass-panel" data-reveal><Image src="/biswodip.png" alt="Biswodip Goj" width={56} height={70}/><div><strong>{personal.name}</strong><span>{personal.role}</span></div><p>{personal.tagline}</p></div>
-    <div className="footer-signature" aria-hidden="true"><span data-parallax="35">{storyCopy.footer.signature}</span></div>
-    <div className="contact-colophon"><span>{storyCopy.footer.credit}</span><span>{personal.location}</span><a href="#opening">Back to top<ArrowUpRightIcon aria-hidden="true"/></a></div>
+    <div className="footer-person glass-panel" data-reveal>
+      <div className="footer-avatar-wrap">
+        <Image src="/biswodip.png" alt="Biswodip Goj" width={60} height={75} className="footer-avatar"/>
+        <span className="avatar-status-dot" title="Active developer" aria-hidden="true"/>
+      </div>
+      <div>
+        <strong>{personal.name}</strong>
+        <span className="footer-role-chip">{personal.role}</span>
+      </div>
+      <p>{personal.tagline}</p>
+    </div>
+    <div className="footer-signature" aria-hidden="true"><span data-parallax="40" data-drift>{storyCopy.footer.signature}</span></div>
+    <div className="contact-colophon">
+      <span>{storyCopy.footer.credit}</span>
+      <span>{personal.location}</span>
+      <a href="#opening" className="back-to-top" aria-label="Back to top of page">Back to top<ArrowUpRightIcon aria-hidden="true"/></a>
+    </div>
   </footer>;
 }
