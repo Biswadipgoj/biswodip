@@ -20,9 +20,12 @@ export default function Opening() {
   return <section id="opening" ref={ref} className="opening" aria-labelledby="hero-title" data-motion-root>
     <div className="hero-stage">
       <div className="hero-grid" aria-hidden="true" />
+      <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '8%', right: '12%', width: 440, height: 440, background: 'radial-gradient(circle, rgba(147, 199, 179, 0.6), transparent 70%)' }} aria-hidden="true" />
+      <div className="spatial-ambient-orb" data-spatial="orb" style={{ bottom: '12%', left: '5%', width: 380, height: 380, background: 'radial-gradient(circle, rgba(232, 166, 124, 0.52), transparent 70%)' }} aria-hidden="true" />
       <div className="hero-orbit-badges" aria-hidden="true">
         <span className="hero-orbit-chip chip-left" data-parallax="40" data-plane="1">⚡ Full-Stack &amp; AI</span>
         <span className="hero-orbit-chip chip-right" data-parallax="-30" data-plane="-1">5 Production Apps</span>
+        <span className="hero-orbit-chip chip-center" data-parallax="28" data-plane="1">Brainware Univ · 2024</span>
       </div>
       <div className="hero-copy">
         <p className="hero-eyebrow"><span className="status-dot"/>{personal.name} / {personal.role}</p>
@@ -33,7 +36,7 @@ export default function Opening() {
       <div className="hero-gallery" data-parallax="32" aria-label="A preview of my software projects">
         <Link href="/project/nanolink" prefetch={false} className="hero-main-image"><ProjectMedia project={projects[1]} priority/></Link>
         <Link href="/project/tripmate" prefetch={false} className="hero-small-image"><ProjectMedia project={projects[4]} priority/></Link>
-        <div className="hero-mini-label glass-panel"><span>From the interface</span><span className="hero-label-line"/><strong>to the database.</strong><ArrowUpRightIcon aria-hidden="true"/></div>
+        <div className="hero-mini-label glass-panel" data-spatial="card"><span>From the interface</span><span className="hero-label-line"/><strong>to the database.</strong><ArrowUpRightIcon aria-hidden="true"/></div>
       </div>
       <div className="hero-bottom"><span>TypeScript · React · Next.js · Python</span><a href="#about" className="scroll-hint">Scroll to explore<ArrowDownIcon aria-hidden="true"/></a><span>Independent projects / 01—05</span></div>
     </div>

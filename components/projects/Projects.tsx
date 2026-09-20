@@ -17,8 +17,9 @@ function ProjectChapter({project,index}: {project: Project;index: number}) {
   const ref = useEditorialReveal();
   const layout = index === 0 || index === 4 ? 'expanse' : index === 2 ? 'panorama' : 'split';
   return <article ref={ref} id={project.slug} className={'project-chapter project-'+project.slug+' layout-'+layout} style={projectStyle(project)} data-motion-root>
+    <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '10%', right: index % 2 === 0 ? '5%' : '65%', width: 480, height: 480, background: 'radial-gradient(circle, color-mix(in srgb, var(--chapter-accent) 40%, transparent), transparent 70%)' }} aria-hidden="true" />
     <div className="chapter-meta" data-reveal><span>{project.chapter.index} / {project.chapter.label}</span><span>Independent project</span></div>
-    <div className="project-card">
+    <div className="project-card" data-spatial="card">
       <header className="project-heading">
         <h3><Link href={'/project/'+project.slug}><AnimatedText>{project.name}</AnimatedText><ArrowUpRightIcon aria-hidden="true"/><span className="sr-only"> project details</span></Link></h3>
         <p data-reveal>{project.blurb}</p>

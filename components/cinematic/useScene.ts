@@ -26,7 +26,7 @@ export function useEditorialReveal(build?: SceneBuilder) {
       });
 
       // Read transforms before any tween writes to avoid a layout pass per glyph.
-      const transforms = new Set(owned('[data-reveal], [data-media], [data-parallax], [data-wire], [data-drift], [data-depth], [data-plane]'));
+      const transforms = new Set(owned('[data-reveal], [data-media], [data-parallax], [data-wire], [data-drift], [data-depth], [data-plane], [data-spatial]'));
       for (const group of owned('[data-stagger]')) {
         for (const child of group.children) transforms.add(child as HTMLElement);
       }
@@ -120,6 +120,69 @@ export function useEditorialReveal(build?: SceneBuilder) {
           rotationY: 12 * direction, rotationX: -5, z: 35, ease: 'none', scrollTrigger: {
             trigger: plane.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.55,
           },
+        });
+      }
+      for (const element of owned('[data-spatial]')) {
+        const type = element.dataset.spatial;
+        const depth = desktop ? 1 : 0.45;
+        const timeline = gsap.timeline({ scrollTrigger: {
+          trigger: element.parentElement || element, start: 'top 98%', end: 'bottom 5%', scrub: 0.5,
+          invalidateOnRefresh: true,
+        } });
+        if (type === 'hero') {
+          timeline.fromTo(element, {
+            transformPerspective: 1400, rotationX: 15 * depth, rotationY: -12 * depth, z: -80 * depth, scale: 0.94
+          }, { rotationX: 0, rotationY: 0, z: 0, scale: 1, duration: 0.5, ease: 'none' })
+            .to(element, { rotationX: -12 * depth, rotationY: 8 * depth, z: -60 * depth, scale: 0.95, duration: 0.5, ease: 'none' });
+        } else if (type === 'card') {
+          timeline.fromTo(element, {
+            transformPerspective: 1200, rotationX: 13 * depth, rotationY: -6 * depth, z: -50 * depth, y: 32, scale: 0.96
+          }, { rotationX: 0, rotationY: 0, z: 0, y: 0, scale: 1, duration: 0.45, ease: 'none' })
+            .to(element, { rotationX: -8 * depth, rotationY: 4 * depth, z: -28 * depth, y: -20, scale: 0.97, duration: 0.45, ease: 'none' });
+        } else if (type === 'panel') {
+          timeline.fromTo(element, {
+            transformPerspective: 1300, rotationX: 10 * depth, rotationY: 7 * depth, z: -40 * depth, y: 26
+          }, { rotationX: 0, rotationY: 0, z: 0, y: 0, duration: 0.48, ease: 'none' })
+            .to(element, { rotationX: -6 * depth, rotationY: -4 * depth, z: -20 * depth, y: -16, duration: 0.48, ease: 'none' });
+        } else if (type === 'chip' || type === 'float') {
+          const dir = Number(element.dataset.dir || 1);
+          timeline.fromTo(element, {
+            transformPerspective: 1000, y: 45 * depth * dir, z: -35 * depth, rotationZ: -8 * dir, rotationX: 10 * depth
+          }, { y: 0, z: 25 * depth, rotationZ: 0, rotationX: 0, duration: 0.5, ease: 'none' })
+            .to(element, { y: -45 * depth * dir, z: -20 * depth, rotationZ: 8 * dir, rotationX: -10 * depth, duration: 0.5, ease: 'none' });
+        } else if (type === 'orb') {
+          timeline.fromTo(element, {
+            yPercent: 30 * depth, xPercent: -15 * depth, scale: 0.85
+          }, { yPercent: 0, xPercent: 0, scale: 1.15, duration: 0.5, ease: 'none' })
+            .to(element, { yPercent: -30 * depth, xPercent: 15 * depth, scale: 0.9, duration: 0.5, ease: 'none' });
+        } else if (type === 'stagger-3d') {
+          const children = [...element.children];
+          if (children.length) {
+            gsap.fromTo(children, {
+              transformPerspective: 1000, rotationX: 16 * depth, z: -35 * depth, y: 26, opacity: 1
+            }, {
+              rotationX: 0, z: 0, y: 0, opacity: 1, ease: 'none', stagger: { amount: 0.45 }, scrollTrigger: scroll(element, 'top 55%')
+            });
+          }
+        } else {
+          timeline.fromTo(element, {
+            transformPerspective: 1000, rotationX: 8 * depth, z: -30 * depth, y: 20
+          }, { rotationX: 0, z: 0, y: 0, duration: 0.5, ease: 'none' })
+            .to(element, { rotationX: -4 * depth, z: -15 * depth, y: -10, duration: 0.5, ease: 'none' });
+        }
+      }
+
+      // Pointer tracking for dynamic VisionOS specular reflection on spatial cards
+      if (desktop) {
+        const tiltTargets = owned('.glass-panel, .project-card, .source-index, .footer-person, .process-document, .schema-sheet');
+        tiltTargets.forEach(card => {
+          const onMove = (e: MouseEvent) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+          };
+          card.addEventListener('mousemove', onMove);
+          cleanup.push(() => card.removeEventListener('mousemove', onMove));
         });
       }
       if (build && desktop) {

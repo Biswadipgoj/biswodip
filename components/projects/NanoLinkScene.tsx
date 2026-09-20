@@ -28,7 +28,7 @@ export default function NanoLinkScene({project}: {project: Project}) {
       <CodeWindow lines={nanoCode} file="src/app/api/links/route.ts" label="Source excerpt · creating the Link record"/>
       <a className="text-link" href={project.evidence[0].url} target="_blank" rel="noopener noreferrer">Read the create-link route</a>
     </div>
-    <div className="schema-sheet">
+    <div className="schema-sheet" data-spatial="panel">
       <h4><AnimatedText>{storyCopy.nano.dataTitle}</AnimatedText></h4><p>{storyCopy.nano.dataBody}</p>
       <Table><TableHeader><TableRow><TableHead>Field</TableHead><TableHead>Purpose</TableHead></TableRow></TableHeader><TableBody data-stagger>{nanoFields.map(([name,type])=><TableRow key={name}><TableCell><code>{name}</code></TableCell><TableCell>{type}</TableCell></TableRow>)}</TableBody></Table>
       <a className="text-link" href={project.evidence[1].url} target="_blank" rel="noopener noreferrer">View schema source</a>
