@@ -47,6 +47,14 @@
 - Button & click suite verified across Desktop and Mobile: hero actions, navigation links, project live links, copy email with visual and clipboard fallback, back to top, and PDF download.
 - Brainware University verified for both B.Tech and Diploma credentials.
 - Zero horizontal overflow (`<= 1px`) verified across all viewports.
-- Production preview verified on http://localhost:3029. Dev server preserved on http://localhost:3000.
+- Zero mention of "analyst" or "business analysis" in active copy; role strictly focused on Full-Stack Software Engineering and AI Systems.
+- Footer completely redesigned into a playful, 3D interactive Mission Control Deck:
+  - Live Telemetry HUD strip: `SYSTEM: ONLINE`, `LATENCY: {ping}ms`, `STACK: TS · NEXT · PG · PY`, `LOCATION: WEST BENGAL (IST)`, `DISPATCH: IMMEDIATE` with animated pulsing LEDs.
+  - Interactive Developer Terminal: interactive CLI buttons (`> biswadip.status()`, `> biswadip.skills()`, `> biswadip.ping()`, `> git.latest()`) with real-time output and blinking cursor.
+  - 3D Holographic Source Index: repository cards with 3D tilt, glowing `⎇ main` branch badge, and tech tags.
+  - 6 differential parallax spatial chips floating across depth planes.
+  - Profile card with rotating conic gradient beacon halo (`@keyframes halo-spin`) around avatar and status LED.
+- All verification gates re-tested and passed: `npm run typecheck` (0 errors), `npm run lint` (0 warnings), `npm run build` (13/13 routes), and Playwright suite (36 passed, 2 skipped, 0 failures across 38 tests).
+- Committed to `main` (`8071111`).
 
 
