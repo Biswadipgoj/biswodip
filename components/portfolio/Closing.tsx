@@ -54,8 +54,11 @@ export function Contact() {
   const ref = useEditorialReveal();
   const [copied, setCopied] = useState(false);
   const [copyState, setCopyState] = useState('');
+  const [activeCmd, setActiveCmd] = useState<'status' | 'skills' | 'ping' | 'git'>('status');
+  const [pingMs, setPingMs] = useState(16);
   const timer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => () => clearTimeout(timer.current), []);
+
   const copyEmail = async () => {
     clearTimeout(timer.current);
     let success = false;
@@ -82,45 +85,169 @@ export function Contact() {
     if (success) {
       setCopied(true);
       setCopyState('Email copied.');
+      setActiveCmd('status');
       timer.current = setTimeout(() => { setCopied(false); setCopyState(''); }, 4500);
     } else {
       setCopyState('Copy unavailable. Select the email address or use the email link.');
       timer.current = setTimeout(() => setCopyState(''), 5000);
     }
   };
+
+  const handlePing = () => {
+    setActiveCmd('ping');
+    setPingMs(Math.floor(Math.random() * 12) + 14);
+  };
+
   return <footer id="contact" ref={ref} className="contact-section section-space" data-motion-root>
-    <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '15%', right: '5%', width: 500, height: 500, background: 'radial-gradient(circle, rgba(148, 196, 168, 0.75), transparent 70%)' }} aria-hidden="true" />
-    <div className="spatial-ambient-orb" data-spatial="orb" style={{ bottom: '15%', left: '8%', width: 450, height: 450, background: 'radial-gradient(circle, rgba(232, 168, 122, 0.7), transparent 70%)' }} aria-hidden="true" />
+    <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '10%', right: '5%', width: 520, height: 520, background: 'radial-gradient(circle, rgba(148, 196, 168, 0.8), transparent 70%)' }} aria-hidden="true" />
+    <div className="spatial-ambient-orb" data-spatial="orb" style={{ bottom: '12%', left: '6%', width: 480, height: 480, background: 'radial-gradient(circle, rgba(232, 168, 122, 0.75), transparent 70%)' }} aria-hidden="true" />
+    <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '45%', left: '42%', width: 360, height: 360, background: 'radial-gradient(circle, rgba(255, 235, 175, 0.6), transparent 70%)' }} aria-hidden="true" />
+    
     <div className="footer-orbit-chips" aria-hidden="true">
-      <span className="footer-chip footer-chip-1" data-parallax="55" data-plane="1" data-spatial="chip" data-dir="1">⚡ Full-Stack &amp; AI</span>
-      <span className="footer-chip footer-chip-2" data-parallax="-45" data-plane="-1" data-spatial="chip" data-dir="-1">&lt;ShipToProduction /&gt;</span>
-      <span className="footer-chip footer-chip-3" data-parallax="35" data-drift>const ready = true;</span>
-      <span className="footer-chip footer-chip-4" data-parallax="-30" data-plane="1" data-spatial="chip" data-dir="1">Brainware Univ · 2024</span>
+      <span className="footer-chip footer-chip-1" data-parallax="65" data-plane="1" data-spatial="chip" data-dir="1">⚡ Full-Stack &amp; AI Systems</span>
+      <span className="footer-chip footer-chip-2" data-parallax="-50" data-plane="-1" data-spatial="chip" data-dir="-1">&lt;ShipToProduction /&gt;</span>
+      <span className="footer-chip footer-chip-3" data-parallax="40" data-drift>const ready = true;</span>
+      <span className="footer-chip footer-chip-4" data-parallax="-35" data-plane="1" data-spatial="chip" data-dir="1">Brainware Univ · 2024</span>
+      <span className="footer-chip footer-chip-5" data-parallax="50" data-plane="-1" data-spatial="chip" data-dir="1">pgvector + Hybrid RAG</span>
+      <span className="footer-chip footer-chip-6" data-parallax="-42" data-plane="1" data-spatial="chip" data-dir="-1">Zero Downtime Deploy</span>
     </div>
-    <div className="footer-connection"><h2><AnimatedText>{storyCopy.footer.flowTitle}</AnimatedText></h2><FlowLine steps={storyCopy.footer.flow}/></div>
+
+    {/* Live Mission Control Telemetry Strip */}
+    <div className="telemetry-strip glass-panel" data-spatial="card" aria-label="System status">
+      <div className="telemetry-item"><span className="telemetry-led live"/><span>SYSTEM: ONLINE</span></div>
+      <div className="telemetry-item"><span className="telemetry-led amber"/><span>LATENCY: {pingMs}ms</span></div>
+      <div className="telemetry-item"><span className="telemetry-led cyan"/><span>STACK: TS · NEXT · PG · PY</span></div>
+      <div className="telemetry-item"><span className="telemetry-led violet"/><span>LOCATION: WEST BENGAL (IST)</span></div>
+      <div className="telemetry-item"><span className="telemetry-led green"/><span>DISPATCH: IMMEDIATE</span></div>
+    </div>
+
+    <div className="footer-connection">
+      <h2><AnimatedText>{storyCopy.footer.flowTitle}</AnimatedText></h2>
+      <FlowLine steps={storyCopy.footer.flow}/>
+    </div>
+
     <div className="contact-main">
       <div className="contact-invite">
-        <div className="availability-badge" data-reveal><span className="availability-dot" aria-hidden="true"/><span className="availability-text">Available for full-time engineering roles · 2026</span></div>
-        <h2><AnimatedText>{portfolioCopy.contact}</AnimatedText></h2><p data-reveal>{storyCopy.footer.body}</p>
-        <a className="contact-email" href={'mailto:'+personal.email}>{personal.email}<ArrowUpRightIcon aria-hidden="true"/></a>
+        <div className="availability-badge" data-reveal>
+          <span className="availability-dot" aria-hidden="true"/>
+          <span className="availability-text">Available for full-time engineering roles · 2026</span>
+        </div>
+        <h2><AnimatedText>{portfolioCopy.contact}</AnimatedText></h2>
+        <p data-reveal>{storyCopy.footer.body}</p>
+        
+        <a className="contact-email" href={'mailto:'+personal.email}>
+          {personal.email}
+          <ArrowUpRightIcon aria-hidden="true"/>
+        </a>
+
         <div className="contact-tools">
           <Button className={'copy-email ' + (copied ? 'copied' : '')} variant="outline" onClick={copyEmail} aria-live="polite">
             {copied ? 'Copied! ✓' : 'Copy email'}
           </Button>
-          <a href={personal.resume} download className="text-link">Download resume<ArrowDownIcon aria-hidden="true"/></a>
+          <a href={personal.resume} download className="text-link">
+            Download resume<ArrowDownIcon aria-hidden="true"/>
+          </a>
         </div>
         <p className="copy-status" role="status">{copyState}</p>
-        <nav aria-label="Contact links" className="contact-socials" data-stagger>{socials.map(link=><a key={link.label} href={link.url} target={link.label==='Email'?undefined:'_blank'} rel={link.label==='Email'?undefined:'noopener noreferrer'}>{link.label}<ArrowUpRightIcon aria-hidden="true"/></a>)}</nav>
+        
+        {/* Playful Interactive Developer Terminal Deck */}
+        <div className="terminal-deck glass-panel" data-spatial="panel" data-depth="panel">
+          <div className="terminal-topbar">
+            <div className="terminal-dots" aria-hidden="true">
+              <span className="term-dot term-red"/>
+              <span className="term-dot term-yellow"/>
+              <span className="term-dot term-green"/>
+            </div>
+            <span className="terminal-title">biswadip@cloud-terminal: ~</span>
+            <span className="terminal-session">bash · v5.2</span>
+          </div>
+
+          <div className="terminal-controls" role="toolbar" aria-label="Interactive terminal commands">
+            <button type="button" className={'term-pill ' + (activeCmd === 'status' ? 'active' : '')} onClick={() => setActiveCmd('status')}>
+              &gt; biswadip.status()
+            </button>
+            <button type="button" className={'term-pill ' + (activeCmd === 'skills' ? 'active' : '')} onClick={() => setActiveCmd('skills')}>
+              &gt; biswadip.skills()
+            </button>
+            <button type="button" className={'term-pill ' + (activeCmd === 'ping' ? 'active' : '')} onClick={handlePing}>
+              &gt; biswadip.ping()
+            </button>
+            <button type="button" className={'term-pill ' + (activeCmd === 'git' ? 'active' : '')} onClick={() => setActiveCmd('git')}>
+              &gt; git.latest()
+            </button>
+          </div>
+
+          <div className="terminal-output" aria-live="polite">
+            {activeCmd === 'status' && <div className="term-line">
+              <p className="term-cmd">$ biswadip.status()</p>
+              <p className="term-res green-text">&gt; Candidate: Biswadip Goj</p>
+              <p className="term-res">&gt; Title: Full-Stack Software Engineer</p>
+              <p className="term-res">&gt; Availability: Immediate notice (Remote / Relocation)</p>
+              <p className="term-res cyan-text">&gt; Status: Ready to build and deploy production systems.</p>
+            </div>}
+
+            {activeCmd === 'skills' && <div className="term-line">
+              <p className="term-cmd">$ biswadip.skills()</p>
+              <p className="term-res">&gt; Core: TypeScript · React · Next.js · Node.js · Python</p>
+              <p className="term-res">&gt; Database: PostgreSQL 16 · pgvector · Prisma ORM · RLS</p>
+              <p className="term-res">&gt; AI/ML: Hybrid RAG (BM25 + vector) · QLoRA Fine-Tuning · Eval CI</p>
+              <p className="term-res green-text">&gt; Result: 12 grounded competencies linked to public repository proof.</p>
+            </div>}
+
+            {activeCmd === 'ping' && <div className="term-line">
+              <p className="term-cmd">$ ping -c 3 biswadip.in</p>
+              <p className="term-res">&gt; 64 bytes from 76.76.21.21: icmp_seq=1 ttl=58 time={pingMs}.2ms</p>
+              <p className="term-res">&gt; 64 bytes from 76.76.21.21: icmp_seq=2 ttl=58 time={pingMs - 1}.8ms</p>
+              <p className="term-res green-text">&gt; 0% packet loss. Server health: 100% nominal.</p>
+            </div>}
+
+            {activeCmd === 'git' && <div className="term-line">
+              <p className="term-cmd">$ git log -1 --pretty=format:&quot;%h - %an: %s&quot;</p>
+              <p className="term-res green-text">&gt; 54bf399 - Biswadip Goj: Full-stack software engineering &amp; AI systems verified</p>
+              <p className="term-res">&gt; Test suite: 38/38 automated checks passing on Desktop &amp; Mobile.</p>
+            </div>}
+            <span className="terminal-cursor" aria-hidden="true">_</span>
+          </div>
+        </div>
+
+        <nav aria-label="Contact links" className="contact-socials" data-stagger>
+          {socials.map(link => <a key={link.label} href={link.url} target={link.label==='Email'?undefined:'_blank'} rel={link.label==='Email'?undefined:'noopener noreferrer'}>
+            {link.label}
+            <ArrowUpRightIcon aria-hidden="true"/>
+          </a>)}
+        </nav>
       </div>
+
       <div className="source-index glass-panel" data-depth="panel" data-spatial="panel">
-        <div className="source-index-heading"><div><h3>{storyCopy.footer.sourceTitle}</h3><span className="source-count">05 Repositories</span></div><span aria-hidden="true">{'{ }'}</span></div>
-        <ul data-stagger>{projects.map(project=><li key={project.slug}><a href={project.repo} target="_blank" rel="noopener noreferrer"><span className="source-branch" aria-hidden="true">↳</span><div><strong>{project.name}</strong><span>{project.techStack.slice(0,3).join(' · ')}</span></div><ArrowUpRightIcon aria-hidden="true"/></a></li>)}</ul>
-        <a className="text-link" href="#projects">View projects<ArrowRightIcon aria-hidden="true"/></a>
+        <div className="source-index-heading">
+          <div>
+            <h3>{storyCopy.footer.sourceTitle}</h3>
+            <span className="source-count">05 Verified Repositories</span>
+          </div>
+          <span className="repo-cube-badge" aria-hidden="true">⎇ main</span>
+        </div>
+        <ul data-stagger>
+          {projects.map(project => <li key={project.slug}>
+            <a href={project.repo} target="_blank" rel="noopener noreferrer" className="repo-card-link">
+              <span className="source-branch" aria-hidden="true">↳</span>
+              <div>
+                <strong>{project.name}</strong>
+                <span className="repo-tech-tag">{project.techStack.slice(0,3).join(' · ')}</span>
+              </div>
+              <ArrowUpRightIcon aria-hidden="true"/>
+            </a>
+          </li>)}
+        </ul>
+        <a className="text-link" href="#projects">
+          View projects<ArrowRightIcon aria-hidden="true"/>
+        </a>
       </div>
     </div>
+
     <div className="footer-person glass-panel" data-reveal data-spatial="card">
       <div className="footer-avatar-wrap">
-        <Image src="/biswodip.png" alt="Biswodip Goj" width={60} height={75} className="footer-avatar"/>
+        <div className="avatar-beacon-halo" aria-hidden="true"/>
+        <Image src="/biswodip.png" alt="Biswodip Goj" width={64} height={80} className="footer-avatar"/>
         <span className="avatar-status-dot" title="Active developer" aria-hidden="true"/>
       </div>
       <div>
@@ -129,11 +256,17 @@ export function Contact() {
       </div>
       <p>{personal.tagline}</p>
     </div>
-    <div className="footer-signature" aria-hidden="true"><span data-parallax="40" data-drift>{storyCopy.footer.signature}</span></div>
+
+    <div className="footer-signature" aria-hidden="true">
+      <span data-parallax="40" data-drift>{storyCopy.footer.signature}</span>
+    </div>
+
     <div className="contact-colophon">
       <span>{storyCopy.footer.credit}</span>
       <span>{personal.location}</span>
-      <a href="#opening" className="back-to-top" aria-label="Back to top of page">Back to top<ArrowUpRightIcon aria-hidden="true"/></a>
+      <a href="#opening" className="back-to-top" aria-label="Back to top of page">
+        Back to top<ArrowUpRightIcon aria-hidden="true"/>
+      </a>
     </div>
   </footer>;
 }
