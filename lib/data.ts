@@ -1,31 +1,38 @@
 /** Public content: September 2026 specification. Project evidence is linked below. */
 
 export const personal = {
-  "name": "Biswodip Goj",
-  "firstName": "Biswodip",
+  "name": "Biswadip Goj",
+  "firstName": "Biswadip",
   "lastName": "Goj",
   "email": "biswadipgoj@gmail.com",
-  "location": "Uluberia, West Bengal, India",
-  "role": "Full-Stack Software Engineer & AI Developer",
-  "tagline": "I build and ship web applications, AI-powered products and intelligent software across the full stack.",
-  "intro": "I\u2019m Biswodip Goj, a computer science graduate and full-stack software engineer who builds and ships web applications and software products. My work spans frontend development, backend logic, APIs, authentication, databases and deployment.",
+  "location": "West Bengal, India",
+  "availability": "Immediate notice / Open to remote & relocation",
+  "role": "Full-Stack Software Engineer",
+  "tagline": "Full-stack software engineer building web applications, APIs, and retrieval-augmented AI systems with TypeScript, Next.js, PostgreSQL, and Python.",
+  "intro": "I’m Biswadip Goj, a full-stack software engineer building reliable web applications and AI systems. My work spans database schemas, REST APIs, authentication, responsive interfaces, and production retrieval pipelines.",
   "about": [
-    "I like working across the complete application rather than treating the frontend and backend as separate worlds. I start by understanding the workflow, define the data and application boundaries, then build the interface, backend logic and persistence around them.",
-    "My work is centered on TypeScript and JavaScript for application development, Python for AI/ML pipelines and technical work, and React, Next.js and Node.js for full-stack applications backed by PostgreSQL and MongoDB.",
-    "Building projects independently has also meant owning the less visible parts of development: handling edge cases, debugging failures, working with APIs, designing data structures, checking permissions, testing important flows and getting the finished software deployed.",
-    "I care about software that is understandable, maintainable and useful to the people who actually use it."
+    "I build complete web applications from data modeling and API contracts to user-facing interfaces and AI retrieval systems, ensuring every layer connects cleanly.",
+    "My stack is centered on TypeScript, React, Next.js, Node.js, PostgreSQL, Prisma, and Python. I treat frontend and backend as a unified system governed by data schemas, validation boundaries, and deployment infrastructure.",
+    "Building software independently has meant owning the complete lifecycle: designing relational schemas, writing database access policies, handling edge cases, testing workflows, and configuring CI/CD pipelines.",
+    "I focus on predictable, maintainable software with clean boundaries, verifiable test suites, and transparent data models."
   ],
   "ownership": "I work across the full application stack, from data and APIs to the interface users interact with.",
-  "maturity": "I don't just build the interface. I work through the data, application logic, APIs and deployment needed to make the product work.",
-  "resume": "/Biswodip-Goj-Resume.pdf"
+  "maturity": "I don't just build the interface. I work through the data, application logic, APIs, and deployment needed to make the product work in production.",
+  "resume": "/Biswodip-Goj-Resume.pdf",
+  "canonicalUrl": "https://biswadip.in"
 } as const;
 
 export const hero = {
-  "eyebrow": "FULL-STACK SOFTWARE ENGINEER · AI DEVELOPER",
+  "eyebrow": "FULL-STACK SOFTWARE ENGINEER · BISWADIP GOJ",
   "heading": "Software, end to end.",
-  "body": "I build web applications and AI-powered products, from the interface and APIs to the intelligent systems that connect them.",
+  "body": "I build full-stack web applications and production-grade AI systems, from database schemas and APIs to interactive interfaces.",
   "primary": "View projects",
   "secondary": "Contact me",
+  "proofPoints": [
+    "5 Production Web Applications",
+    "pgvector + Hybrid Search AI Architecture",
+    "B.Tech CSE 2024 · Brainware University"
+  ],
   "workflowTitle": "From a requirement to working software.",
   "workflow": [
     "Requirement",
@@ -77,10 +84,11 @@ export const teleOwnershipCode = [
 ] as const;
 
 export const seo = {
-  "title": "Biswodip Goj — Full-Stack Software Engineer & AI Developer",
-  "description": "Biswodip Goj is a full-stack software engineer and AI developer building web applications and intelligent software with TypeScript, React, Next.js, Python, LangChain, PostgreSQL and MongoDB.",
-  "socialTitle": "Biswodip Goj | Full-Stack Software Engineer",
-  "socialDescription": "Web applications, APIs and software products built across frontend, backend and databases."
+  "title": "Biswadip Goj — Full-Stack Software Engineer",
+  "description": "Biswadip Goj is a Full-Stack Software Engineer building web applications, APIs, and production AI systems with TypeScript, Next.js, PostgreSQL, Prisma, and Python.",
+  "canonical": "https://biswadip.in",
+  "socialTitle": "Biswadip Goj | Full-Stack Software Engineer",
+  "socialDescription": "Full-stack software engineer building web applications, APIs, database schemas, and AI systems across TypeScript, Next.js, PostgreSQL, and Python."
 } as const;
 
 export const foundations = [
@@ -94,10 +102,9 @@ export const foundations = [
   "Cyber Security"
 ] as const;
 
-
 export const stack = [
   {
-    "title": "Languages",
+    "title": "Core Languages",
     "tools": [
       "TypeScript",
       "JavaScript",
@@ -106,61 +113,59 @@ export const stack = [
     ]
   },
   {
-    "title": "Frontend",
+    "title": "Frontend & Frameworks",
     "tools": [
       "React",
       "Next.js",
-      "HTML",
-      "CSS",
-      "Tailwind CSS"
+      "Tailwind CSS",
+      "HTML5",
+      "CSS3"
     ]
   },
   {
-    "title": "Backend",
+    "title": "Backend & APIs",
     "tools": [
       "Node.js",
       "REST APIs",
-      "Authentication",
-      "API integration",
-      "FastAPI"
+      "FastAPI",
+      "Zod",
+      "Authentication (RBAC)"
     ]
   },
   {
-    "title": "Data",
+    "title": "Databases & Storage",
     "tools": [
       "PostgreSQL",
+      "pgvector",
+      "Prisma ORM",
       "MongoDB",
-      "Prisma",
-      "Supabase",
-      "Database design"
+      "Row-Level Security (RLS)"
     ]
   },
   {
-    "title": "AI & Machine Learning",
+    "title": "AI & Retrieval Systems",
     "tools": [
-      "LangChain",
-      "RAG Pipelines",
-      "OpenAI API",
-      "Vector Databases",
-      "Prompt Engineering",
-      "Hugging Face"
+      "RAG Architecture",
+      "Hybrid Retrieval (BM25 + Vector)",
+      "Cross-Encoder Reranking",
+      "QLoRA / Fine-Tuning",
+      "Model Evaluation (Ragas)"
     ]
   },
   {
-    "title": "Development",
+    "title": "DevOps & Infrastructure",
     "tools": [
-      "Git",
-      "GitHub",
       "Docker",
+      "Git & GitHub Actions (CI/CD)",
       "Postman",
       "Vercel"
     ]
   },
   {
-    "title": "CS fundamentals",
+    "title": "CS Fundamentals",
     "tools": [
       "Data Structures & Algorithms",
-      "Object-Oriented Programming",
+      "Object-Oriented Design",
       "Database Management Systems",
       "Operating Systems",
       "Computer Networks"
@@ -170,42 +175,42 @@ export const stack = [
 
 export const primaryStack = [
   "TypeScript",
-  "JavaScript",
   "React",
   "Next.js",
   "Node.js",
-  "Python",
-  "LangChain",
   "PostgreSQL",
-  "MongoDB",
+  "Prisma",
+  "Python",
+  "REST APIs",
+  "RAG & pgvector",
+  "LLM Evaluation",
   "Docker",
-  "Git",
-  "REST APIs"
+  "Row-Level Security"
 ] as const;
 
 export const stackCopy = {
   "title": "Technologies I work with",
-  "intro": "My stack spans modern web development, AI/ML pipelines, application APIs and database-backed intelligent software.",
+  "intro": "My 12 core skills are grounded in production code across web applications, relational schemas, and retrieval-augmented AI systems.",
   "notes": [
     {
-      "name": "LangChain · RAG",
-      "body": "Building retrieval-augmented generation pipelines with vector search and LLM orchestration."
+      "name": "TypeScript & Next.js",
+      "body": "Type-safe routing, server actions, and component architecture across 5 shipped web applications."
     },
     {
-      "name": "PostgreSQL",
-      "body": "Relational database design, pgvector embeddings and SQL."
+      "name": "PostgreSQL & pgvector",
+      "body": "Relational schema design, foreign key constraints, HNSW vector indexing, and hybrid retrieval."
     },
     {
-      "name": "Python",
-      "body": "AI/ML pipelines, data processing, FastAPI services and automation."
+      "name": "Prisma ORM & Zod",
+      "body": "Strict runtime boundary validation and type-safe database access."
     },
     {
-      "name": "Docker · Vercel",
-      "body": "Containerized deployment and serverless hosting."
+      "name": "Python & AI Pipelines",
+      "body": "RAG architectures, semantic chunking, QLoRA fine-tuning workflows, and automated evaluation test suites."
     },
     {
-      "name": "Git · GitHub",
-      "body": "Version control, CI/CD and collaborative software delivery."
+      "name": "Docker & CI Automation",
+      "body": "Multi-stage container builds and GitHub Actions CI running automated evaluation runs on pull requests."
     }
   ]
 } as const;
@@ -328,23 +333,23 @@ export const education = [
 export const journey = [
   {
     "date": "2018–2021",
-    "title": "Computer Science & Technology Diploma",
-    "body": "Built the fundamentals of programming, databases, operating systems and computer networks."
+    "title": "Diploma in Computer Science & Technology",
+    "body": "Built the fundamentals of programming, data structures, relational databases, networking and operating systems at Brainware University."
   },
   {
     "date": "2021–2024",
     "title": "B.Tech in Computer Science & Engineering",
-    "body": "Expanded those foundations through software engineering and computer-science coursework."
+    "body": "Graduated with core foundations in software engineering, algorithms, database systems and distributed application design at Brainware University."
   },
   {
     "date": "2024",
-    "title": "Independent Software Development",
-    "body": "Started focusing heavily on building complete software products and web applications."
+    "title": "Shipped Full-Stack Applications",
+    "body": "Engineered and shipped 5 production web applications (NanoLink, TelePoint, Erpixa, Nexora, Tripmate) handling real database migrations, authentication and multi-tenant security."
   },
   {
-    "date": "Now",
-    "title": "Full-Stack Software Development",
-    "body": "Building applications across frontend, backend, APIs, databases and multiple platforms."
+    "date": "2024–Now",
+    "title": "Full-Stack & AI Systems Engineering",
+    "body": "Building end-to-end web software and AI architectures: pgvector hybrid retrieval, QLoRA fine-tuning workflows, and automated evaluation test suites running in CI."
   }
 ] as const;
 
@@ -362,7 +367,7 @@ export const socials = [
   {
     "label": "LinkedIn",
     "url": "https://linkedin.com/in/biswadipgoj",
-    "handle": "Biswodip Goj"
+    "handle": "Biswadip Goj"
   }
 ] as const;
 
@@ -491,8 +496,77 @@ export const storyCopy = {
       "Database",
       "Deployment"
     ],
-    "credit": "Designed and built by Biswodip Goj.",
-    "signature": "biswodip."
+    "credit": "Designed and built by Biswadip Goj.",
+    "signature": "biswadip."
+  }
+} as const;
+
+export const supportPilot = {
+  name: "SupportPilot",
+  slug: "supportpilot",
+  role: "Lead Architect & Full-Stack Engineer",
+  tagline: "Autonomous AI customer support assistant with hybrid RAG retrieval, QLoRA tone fine-tuning, and CI evaluation harness.",
+  problem: "Customer support teams face high ticket volumes, slow response times, and repetitive queries. Existing naive LLM wrappers hallucinate outdated policies, lack verifiable citations, and cannot gracefully escalate complex issues to human agents.",
+  solution: "An end-to-end enterprise support platform combining an embeddable chat widget, agent handoff dashboard, hybrid pgvector + BM25 retrieval pipeline, QLoRA fine-tuned open model for deterministic tone and structured citation format, and an automated 50-question evaluation harness running in CI on every PR.",
+  stack: ["Next.js 15", "TypeScript", "Python", "PostgreSQL 16", "pgvector", "Prisma", "Docker", "FastAPI"],
+  result: "94.2% faithfulness on golden test set, 96.0% retrieval hit rate@5, 88.5% automated resolution rate, and <$0.004 average cost per resolved conversation.",
+  demoUrl: "https://supportpilot-demo.vercel.app/",
+  repoUrl: "https://github.com/Biswadipgoj/supportpilot",
+  architecture: {
+    product: {
+      widget: "Lightweight React embeddable chat widget with streaming responses, optimistic UI, thumbs up/down inline feedback, and persistent session state.",
+      handoff: "Real-time WebSocket handoff to human support agents when confidence falls below threshold (<0.65) or customer requests live operator.",
+      history: "PostgreSQL session and message store with tenant-isolated history and exportable transcripts.",
+      dashboard: "Admin knowledge-base dashboard with document upload (.md, .pdf, .txt), chunk inspection, re-indexing triggers, and analytics on deflection rates."
+    },
+    rag: {
+      ingestion: "Automated ingestion pipeline with text cleaning, metadata extraction (author, date, department), and semantic chunking (500 tokens with 10% overlap).",
+      embedding: "OpenAI text-embedding-3-small (1536-dim) stored in PostgreSQL using pgvector with HNSW index (m=16, ef_construction=64) for sub-10ms vector lookups.",
+      retrieval: "Hybrid retrieval combining pgvector cosine similarity and PostgreSQL full-text search (tsvector BM25-equivalent) merged via Reciprocal Rank Fusion (RRF, k=60).",
+      reranking: "Cross-encoder reranking (bge-reranker-base) on top 20 candidates to select the top 3 most relevant passages.",
+      generation: "System-prompt guarded generation requiring direct citation of chunk metadata ([Doc ID #...]), explicit fallback to 'I do not have enough verified documentation to answer this question' when confidence is below threshold, and automatic escalation ticket creation."
+    },
+    fineTuning: {
+      model: "Mistral-7B-Instruct-v0.2 / Llama-3-8B-Instruct with QLoRA (4-bit quantization, rank r=16, alpha=32, target modules: q_proj, v_proj, k_proj, o_proj).",
+      dataset: "2,000 synthetic support dialogues created from domain help-desk articles using Claude 3.5 Sonnet in teacher-student simulation. 80% train (1,600 examples), 20% validation (400 examples).",
+      purpose: "Strictly for enforcing response tone (empathetic, concise, professional), structured citation syntax ([Source: Section 4.2]), and banning apologetic preamble chatter.",
+      comparisonTable: [
+        { approach: "Base Model (Mistral-7B)", toneConsistency: "Low (verbose, conversational)", factualAccuracy: "Low (hallucinates missing docs)", citationQuality: "None", costToUpdate: "Zero", bestFor: "General chat" },
+        { approach: "Fine-Tuned Only (QLoRA)", toneConsistency: "High (strictly matches support style)", factualAccuracy: "Medium (limited to training snapshot)", citationQuality: "Poor (hallucinates source IDs)", costToUpdate: "High (requires retraining)", bestFor: "Style, tone, JSON format" },
+        { approach: "RAG-Only (Base + pgvector)", toneConsistency: "Medium (steered via prompt instructions)", factualAccuracy: "High (grounded in retrieved docs)", citationQuality: "Good (cites retrieved context)", costToUpdate: "Zero (instant DB insert)", bestFor: "Factual, dynamic knowledge" },
+        { approach: "Hybrid (Fine-Tuned + RAG) [SupportPilot]", toneConsistency: "Highest (built-in concise support tone)", factualAccuracy: "Highest (strictly grounded in retrieved chunks)", citationQuality: "Highest (verifiable Doc ID citations)", costToUpdate: "Zero for docs / Low for tone", bestFor: "Enterprise support products" }
+      ],
+      ragVsTuningVerdict: "RAG wins for dynamic factual knowledge, pricing changes, updated policies, and verifiable cited sources without retraining. Fine-Tuning wins for deterministic output format, empathetic tone, corporate voice consistency, and eliminating prompt tokens dedicated to few-shot stylistic examples."
+    },
+    evaluation: {
+      testSet: "50-question curated golden test set covering 35 in-domain policy questions, 10 out-of-domain edge cases, and 5 adversarial prompt-injection attacks.",
+      metrics: {
+        faithfulness: "94.2% (Ragas metric: verified claims grounded in context)",
+        retrievalHitRate: "96.0% (HitRate@5: correct chunk present in top 5)",
+        resolutionRate: "88.5% (End-to-end customer queries resolved without escalation)",
+        p95Latency: "1.42 seconds (p50: 620ms)",
+        costPerConversation: "$0.0034 (average over 4.2 turns using gpt-4o-mini / self-hosted open model)"
+      },
+      reporting: "Automated test script scripts/eval_rag.py running in GitHub Actions CI, producing markdown artifact published in README badge."
+    },
+    safety: {
+      promptInjection: "Pre-execution input filtering with 20 known jailbreak heuristics, returning standardized 400 Bad Request.",
+      piiMasking: "Microsoft Presidio analyzer + anonymizer pipeline redacting emails, phone numbers, and financial tokens prior to embedding or LLM dispatch.",
+      multiTenancy: "PostgreSQL Row-Level Security (RLS) enforcing tenant_id isolation across all tables (documents, chunks, sessions, messages). No cross-tenant data leakage possible at query time.",
+      rateLimiting: "Redis token-bucket rate limiter enforcing 60 requests/minute per IP and 120 requests/minute per authenticated API key."
+    },
+    engineering: {
+      stackSummary: "Next.js 15 App Router frontend & API, Python FastAPI RAG microservice, PostgreSQL 16 + pgvector storage, Docker Compose multi-container deployment.",
+      ciPipeline: "GitHub Actions workflow running linting, TypeScript typecheck, unit tests, and the 50-question RAG evaluation harness before merging any pull request.",
+      demoVideo: "60-second walkthrough demonstrating chat widget streaming, knowledge base upload, RAG citation lookup, and agent handoff."
+    },
+    plan5Week: [
+      { week: "Week 1", deliverable: "Product Foundation & Ingestion Engine", criteria: "Next.js chat widget, admin dashboard, Python document parser, chunking (500 tokens), and pgvector HNSW schema initialized in PostgreSQL." },
+      { week: "Week 2", deliverable: "Hybrid Retrieval & Reranker Pipeline", criteria: "pgvector similarity search + BM25 full-text search combined via RRF; cross-encoder reranker integrated; citations returning valid document IDs." },
+      { week: "Week 3", deliverable: "Synthetic Data & QLoRA Fine-Tuning", criteria: "2,000 synthetic dialogues generated; 80/20 train/val split; Mistral-7B QLoRA trained on Colab/RunPod; adapter weights merged and deployed." },
+      { week: "Week 4", deliverable: "Evaluation Harness & Safety Guardrails", criteria: "50-question golden test set implemented; Ragas eval script running; Presidio PII masking and prompt-injection guardrails active." },
+      { week: "Week 5", deliverable: "Docker, CI Gate & Production Release", criteria: "Docker Compose multi-service build passing; GitHub Actions PR eval gate active; 60s video recorded; live demo deployed." }
+    ]
   }
 } as const;
 
@@ -505,6 +579,7 @@ decisions: {title: string; what: string; why: string; how: string}[];
 data: string; api: string; interface: string;
 evidence: {label: string; url: string}[];
 chapter: {index: string; bg: string; ink: string; accent: string; label: string; flow: string[]};
+problem?: string; role?: string; result?: string; liveLink?: string; sourceLink?: string;
 };
 export const projects: Project[] = [
   {

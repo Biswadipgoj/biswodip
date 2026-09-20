@@ -15,13 +15,13 @@ export default function Identity() {
         <p className="section-index">01 / The engineer</p>
         <h2><AnimatedText>{portfolioCopy.identity}</AnimatedText></h2>
         <p data-reveal>{personal.intro}</p>
-        <div className="identity-facts" data-stagger><span>B.Tech CSE<strong>{education[0].institution} · 2024</strong></span><span>Based in<strong>West Bengal, India</strong></span><span>Portfolio<strong>{projects.length} live applications</strong></span></div>
+        <div className="identity-facts" data-stagger><span>B.Tech CSE<strong>{education[0].institution} · 2024</strong></span><span>Based in<strong>West Bengal, India</strong></span><span>Availability<strong>Remote / Relocate / Immediate</strong></span><span>Portfolio<strong>{projects.length} live applications</strong></span></div>
         <div className="identity-links"><a href={socials[1].url} className="text-link" target="_blank" rel="noopener noreferrer">GitHub<ArrowUpRightIcon aria-hidden="true"/></a><a href={socials[2].url} className="text-link" target="_blank" rel="noopener noreferrer">LinkedIn<ArrowUpRightIcon aria-hidden="true"/></a><a href="#projects" className="text-link">Explore projects<ArrowUpRightIcon aria-hidden="true"/></a></div>
       </div>
       <figure className="identity-portrait" data-media data-spatial="card">
         <div className="portrait-sheet" aria-hidden="true" data-parallax="25" data-plane="-1"/>
-        <div data-depth="portrait"><Image src="/biswodip.png" alt="Biswodip Goj, full-stack software engineer" width={1086} height={1448} sizes="(max-width: 799px) 82vw, 32vw"/></div>
-        <figcaption><span>Biswodip Goj</span><span>{personal.location}</span></figcaption>
+        <div data-depth="portrait"><Image src="/biswodip.png" alt="Biswadip Goj, full-stack software engineer" width={1086} height={1448} sizes="(max-width: 799px) 82vw, 32vw"/></div>
+        <figcaption><span>Biswadip Goj</span><span className="sr-only"> (Biswodip)</span><span>{personal.location}</span></figcaption>
       </figure>
     </div>
     <div className="identity-statement"><p data-reveal>{personal.about[0]}</p><p data-reveal>{personal.about[2]}</p></div>

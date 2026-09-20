@@ -33,7 +33,7 @@ doc = SimpleDocTemplate(str(output), pagesize=A4, rightMargin=40, leftMargin=40,
 story = [para(safe(person['name']), 'name'), para(safe(person['role']), 'role')]
 contacts = [link('mailto:'+person['email'],person['email']), safe(person['location'])]
 story += [para(' | '.join(contacts), 'contact')]
-story += [para(link(data['socials'][1]['url'],'GitHub: Biswadipgoj')+' | '+link(data['socials'][2]['url'],'LinkedIn: biswadipgoj')+' | '+link('https://biswodip.in','biswodip.in'),'contact')]
+story += [para(link(data['socials'][1]['url'],'GitHub: Biswadipgoj')+' | '+link(data['socials'][2]['url'],'LinkedIn: biswadipgoj')+' | '+link('https://biswadip.in','biswadip.in'),'contact')]
 story += [Spacer(1,9),HRFlowable(width='100%',thickness=.6,color=colors.HexColor('#9eafa3'))]
 story += [para('PROFILE','section'),para(safe(person['tagline'])+' Computer science graduate with independently built projects spanning business applications, URL shortening, payment workflows, collaboration and shared expenses.')]
 story += [para('TECHNICAL SKILLS','section')]
