@@ -30,7 +30,12 @@ const MAP = {
   "Electron": "electron",
   "Capacitor": "capacitor",
   "Postman": "postman",
-  "Vercel": "vercel"
+  "Vercel": "vercel",
+  "Docker": "docker",
+  "FastAPI": "fastapi",
+  "LangChain": "langchain",
+  "Prisma": "prisma",
+  "Supabase": "supabase"
 };
 
 /** Extra marks used by the hero, stack ribbon and project chips. */

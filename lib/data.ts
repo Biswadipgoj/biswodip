@@ -6,12 +6,12 @@ export const personal = {
   "lastName": "Goj",
   "email": "biswadipgoj@gmail.com",
   "location": "Uluberia, West Bengal, India",
-  "role": "Full-Stack Software Engineer",
-  "tagline": "I build and ship web applications across the frontend, backend, APIs and databases.",
+  "role": "Full-Stack Software Engineer & AI Developer",
+  "tagline": "I build and ship web applications, AI-powered products and intelligent software across the full stack.",
   "intro": "I\u2019m Biswodip Goj, a computer science graduate and full-stack software engineer who builds and ships web applications and software products. My work spans frontend development, backend logic, APIs, authentication, databases and deployment.",
   "about": [
     "I like working across the complete application rather than treating the frontend and backend as separate worlds. I start by understanding the workflow, define the data and application boundaries, then build the interface, backend logic and persistence around them.",
-    "My work is mainly centered on TypeScript and JavaScript, with React, Next.js and Node.js for application development, PostgreSQL and MongoDB for data, and Python for selected projects and technical work.",
+    "My work is centered on TypeScript and JavaScript for application development, Python for AI/ML pipelines and technical work, and React, Next.js and Node.js for full-stack applications backed by PostgreSQL and MongoDB.",
     "Building projects independently has also meant owning the less visible parts of development: handling edge cases, debugging failures, working with APIs, designing data structures, checking permissions, testing important flows and getting the finished software deployed.",
     "I care about software that is understandable, maintainable and useful to the people who actually use it."
   ],
@@ -21,9 +21,9 @@ export const personal = {
 } as const;
 
 export const hero = {
-  "eyebrow": "FULL-STACK SOFTWARE ENGINEER",
+  "eyebrow": "FULL-STACK SOFTWARE ENGINEER · AI DEVELOPER",
   "heading": "Software, end to end.",
-  "body": "I build web applications, from the interface and APIs to the data that connects them.",
+  "body": "I build web applications and AI-powered products, from the interface and APIs to the intelligent systems that connect them.",
   "primary": "View projects",
   "secondary": "Contact me",
   "workflowTitle": "From a requirement to working software.",
@@ -77,8 +77,8 @@ export const teleOwnershipCode = [
 ] as const;
 
 export const seo = {
-  "title": "Biswodip Goj — Full-Stack Software Engineer",
-  "description": "Biswodip Goj is a full-stack software engineer building web applications with TypeScript, React, Next.js, Node.js, PostgreSQL and MongoDB.",
+  "title": "Biswodip Goj — Full-Stack Software Engineer & AI Developer",
+  "description": "Biswodip Goj is a full-stack software engineer and AI developer building web applications and intelligent software with TypeScript, React, Next.js, Python, LangChain, PostgreSQL and MongoDB.",
   "socialTitle": "Biswodip Goj | Full-Stack Software Engineer",
   "socialDescription": "Web applications, APIs and software products built across frontend, backend and databases."
 } as const;
@@ -111,7 +111,8 @@ export const stack = [
       "React",
       "Next.js",
       "HTML",
-      "CSS"
+      "CSS",
+      "Tailwind CSS"
     ]
   },
   {
@@ -120,7 +121,8 @@ export const stack = [
       "Node.js",
       "REST APIs",
       "Authentication",
-      "API integration"
+      "API integration",
+      "FastAPI"
     ]
   },
   {
@@ -128,8 +130,20 @@ export const stack = [
     "tools": [
       "PostgreSQL",
       "MongoDB",
-      "SQL",
+      "Prisma",
+      "Supabase",
       "Database design"
+    ]
+  },
+  {
+    "title": "AI & Machine Learning",
+    "tools": [
+      "LangChain",
+      "RAG Pipelines",
+      "OpenAI API",
+      "Vector Databases",
+      "Prompt Engineering",
+      "Hugging Face"
     ]
   },
   {
@@ -137,8 +151,9 @@ export const stack = [
     "tools": [
       "Git",
       "GitHub",
+      "Docker",
       "Postman",
-      "Debugging"
+      "Vercel"
     ]
   },
   {
@@ -159,38 +174,38 @@ export const primaryStack = [
   "React",
   "Next.js",
   "Node.js",
+  "Python",
+  "LangChain",
   "PostgreSQL",
   "MongoDB",
-  "Python",
-  "SQL",
+  "Docker",
   "Git",
-  "GitHub",
   "REST APIs"
 ] as const;
 
 export const stackCopy = {
   "title": "Technologies I work with",
-  "intro": "My core stack is centered on modern web development, application APIs and database-backed software.",
+  "intro": "My stack spans modern web development, AI/ML pipelines, application APIs and database-backed intelligent software.",
   "notes": [
     {
-      "name": "PostgreSQL",
-      "body": "Relational database design and SQL."
+      "name": "LangChain · RAG",
+      "body": "Building retrieval-augmented generation pipelines with vector search and LLM orchestration."
     },
     {
-      "name": "MongoDB",
-      "body": "Document-oriented database development."
+      "name": "PostgreSQL",
+      "body": "Relational database design, pgvector embeddings and SQL."
     },
     {
       "name": "Python",
-      "body": "Automation, data work and selected software projects."
+      "body": "AI/ML pipelines, data processing, FastAPI services and automation."
+    },
+    {
+      "name": "Docker · Vercel",
+      "body": "Containerized deployment and serverless hosting."
     },
     {
       "name": "Git · GitHub",
-      "body": "Version control, project history, code organization and software delivery."
-    },
-    {
-      "name": "Postman",
-      "body": "API testing and debugging."
+      "body": "Version control, CI/CD and collaborative software delivery."
     }
   ]
 } as const;
@@ -201,12 +216,16 @@ export const capabilities = [
     "body": "Building complete web applications with reusable interfaces, application logic, authentication and persistent data."
   },
   {
+    "title": "AI & ML Engineering",
+    "body": "Designing RAG pipelines, integrating LLMs via LangChain and OpenAI, building vector search systems and deploying intelligent features into production applications."
+  },
+  {
     "title": "API Development",
     "body": "Designing and consuming REST APIs, handling requests and responses, validation, authentication and third-party integrations."
   },
   {
     "title": "Database Development",
-    "body": "Designing relational and document-oriented data models, writing queries and connecting application workflows to persistent data."
+    "body": "Designing relational and document-oriented data models, writing queries, pgvector embeddings and connecting application workflows to persistent data."
   },
   {
     "title": "Frontend Engineering",
@@ -217,8 +236,8 @@ export const capabilities = [
     "body": "Reproducing problems, tracing application behaviour, fixing defects and checking important user workflows before release."
   },
   {
-    "title": "Delivery",
-    "body": "Working with Git and GitHub to develop, maintain and deploy software from an initial requirement to a usable application."
+    "title": "DevOps & Delivery",
+    "body": "Containerizing with Docker, deploying to Vercel, working with Git/GitHub CI pipelines from initial requirement to production."
   }
 ] as const;
 

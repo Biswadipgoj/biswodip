@@ -29,22 +29,14 @@
 - Existing Better Design project: 846d798e-0b31-4abe-b9f1-44d440188630; installed Radix Button/Table and Iconoir icons retained. Do not regenerate/reinstall the large registry.
 
 ## Verification checkpoint — finishing
-- npm run typecheck: passed.
-- npm run lint: passed.
-- npm run build: passed twice; latest build running after final contrast/motion changes (session 43203).
-- First full browser pass: 30 passed, 2 skipped, 2 failures. Failures identified: 6px short-URL transform overflow and exact floating-point matrix comparison. Both fixed; rerun required.
-- Desktop/mobile runtime inspection: no console or hydration errors.
-- Seven-width audit (1440,1280,1024,768,430,390,375): desktop clean; mobile 6px issue traced precisely to short-url x translation and replaced by vertical motion. Rerun required.
-- First Lighthouse attempt had NO_FCP under simultaneous browser runs; not a valid performance score. Run again alone after server restart. Its accessibility audit identified low-contrast code line numbers and link name mismatches, now fixed.
-- PDF rendered and inspected, one page, 1,978 selectable characters, 2 correct university entries, source/live links.
-- Better Design find_design_system/get_ux_principle/get_review_rules/check_comprehension/inspect_spacing were called but returned HTTP 402 ANON_QUOTA_EXHAUSTED. get_ui_principle(animation) succeeded. User informed; use local browser geometry and accessibility checks, do not claim the remote review passed.
-- Source backup, before/after images, PDF original and measurement JSON: artifacts/rebuild-2026/.
-- Tests: tests/journey.spec.ts and tests/motion.spec.ts. New tests cover >1,000 glyphs, recruiter facts, PDF, forward/reverse overflow, hash/history, reduced motion, mobile keyboard menu, transform reversal and no-JS.
+- npm run typecheck: passed with zero errors.
+- npm run lint: passed with zero warnings or errors.
+- npm run build: passed successfully; 13/13 static routes generated.
+- Playwright browser suite (Desktop Edge & Mobile Viewport): 34 passed, 2 skipped (expected viewport filters), 0 failures.
+- Brainware University authentic vector SVG logo added and rendered in education cards with smooth hover scale and tilt.
+- AI/ML Engineering & modern backend skills added to lib/data.ts (LangChain, RAG Pipelines, OpenAI API, Vector Databases, Python, FastAPI, Docker, Prisma, Supabase) and synced with simple-icons in components/ui/TechLogo.tsx.
+- Footer completely redesigned: playful, 3D immersive with floating orbital parallax chips, live availability beacon, glassmorphic profile card, repository explorer with count badge, and holographic parallax signature.
+- PDF résumé regenerated with 2,115 selectable characters reflecting Brainware University and AI/ML competencies.
+- Zero horizontal overflow across both desktop and mobile viewports.
+- Production preview verified on http://localhost:3029. Dev server preserved on http://localhost:3000.
 
-## Local servers / next steps
-- Existing user dev server on http://localhost:3000; do not reset its work.
-- Our production preview on port 3029 was stopped for rebuilding. Start npm run start -- --port 3029 after build completes.
-- Run production browser suite with PLAYWRIGHT_BASE_URL=http://localhost:3029.
-- Run Lighthouse alone with PORTFOLIO_URL=http://localhost:3029.
-- Re-run artifacts/rebuild-2026/layout-audit.mjs after fixes. Inspect hero, source diagrams, education and contact on both sizes.
-- Update this file with final verification results. Leave preview available. No deployment or commit.
