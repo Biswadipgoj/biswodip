@@ -104,11 +104,11 @@ export function Contact() {
     <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '45%', left: '42%', width: 360, height: 360, background: 'radial-gradient(circle, rgba(255, 235, 175, 0.6), transparent 70%)' }} aria-hidden="true" />
     
     <div className="footer-orbit-chips" aria-hidden="true">
-      <span className="footer-chip footer-chip-1" data-parallax="65" data-plane="1" data-spatial="chip" data-dir="1">⚡ Full-Stack &amp; AI Systems</span>
+      <span className="footer-chip footer-chip-1" data-parallax="65" data-plane="1" data-spatial="chip" data-dir="1">⚡ Full-Stack &amp; Business Analyst</span>
       <span className="footer-chip footer-chip-2" data-parallax="-50" data-plane="-1" data-spatial="chip" data-dir="-1">&lt;ShipToProduction /&gt;</span>
       <span className="footer-chip footer-chip-3" data-parallax="40" data-drift>const ready = true;</span>
       <span className="footer-chip footer-chip-4" data-parallax="-35" data-plane="1" data-spatial="chip" data-dir="1">Brainware Univ · 2024</span>
-      <span className="footer-chip footer-chip-5" data-parallax="50" data-plane="-1" data-spatial="chip" data-dir="1">pgvector + Hybrid RAG</span>
+      <span className="footer-chip footer-chip-5" data-parallax="50" data-plane="-1" data-spatial="chip" data-dir="1">Requirements · Schemas · Code</span>
       <span className="footer-chip footer-chip-6" data-parallax="-42" data-plane="1" data-spatial="chip" data-dir="-1">Zero Downtime Deploy</span>
     </div>
 
@@ -116,7 +116,7 @@ export function Contact() {
     <div className="telemetry-strip glass-panel" data-spatial="card" aria-label="System status">
       <div className="telemetry-item"><span className="telemetry-led live"/><span>SYSTEM: ONLINE</span></div>
       <div className="telemetry-item"><span className="telemetry-led amber"/><span>LATENCY: {pingMs}ms</span></div>
-      <div className="telemetry-item"><span className="telemetry-led cyan"/><span>STACK: TS · NEXT · PG · PY</span></div>
+      <div className="telemetry-item"><span className="telemetry-led cyan"/><span>ROLE: FULL-STACK ENG &amp; BA</span></div>
       <div className="telemetry-item"><span className="telemetry-led violet"/><span>LOCATION: WEST BENGAL (IST)</span></div>
       <div className="telemetry-item"><span className="telemetry-led green"/><span>DISPATCH: IMMEDIATE</span></div>
     </div>
@@ -130,7 +130,7 @@ export function Contact() {
       <div className="contact-invite">
         <div className="availability-badge" data-reveal>
           <span className="availability-dot" aria-hidden="true"/>
-          <span className="availability-text">Available for full-time engineering roles · 2026</span>
+          <span className="availability-text">Available for full-time engineering &amp; BA roles · 2026</span>
         </div>
         <h2><AnimatedText>{portfolioCopy.contact}</AnimatedText></h2>
         <p data-reveal>{storyCopy.footer.body}</p>
@@ -181,13 +181,14 @@ export function Contact() {
             {activeCmd === 'status' && <div className="term-line">
               <p className="term-cmd">$ biswadip.status()</p>
               <p className="term-res green-text">&gt; Candidate: Biswadip Goj</p>
-              <p className="term-res">&gt; Title: Full-Stack Software Engineer</p>
+              <p className="term-res">&gt; Title: Full-Stack Software Engineer &amp; Business Analyst</p>
               <p className="term-res">&gt; Availability: Immediate notice (Remote / Relocation)</p>
-              <p className="term-res cyan-text">&gt; Status: Ready to build and deploy production systems.</p>
+              <p className="term-res cyan-text">&gt; Status: Ready to analyze business workflows and deploy production systems.</p>
             </div>}
 
             {activeCmd === 'skills' && <div className="term-line">
               <p className="term-cmd">$ biswadip.skills()</p>
+              <p className="term-res">&gt; Analysis: Requirements (BRD/PRD) · Domain Modeling · UAT · Workflows</p>
               <p className="term-res">&gt; Core: TypeScript · React · Next.js · Node.js · Python</p>
               <p className="term-res">&gt; Database: PostgreSQL 16 · pgvector · Prisma ORM · RLS</p>
               <p className="term-res">&gt; AI/ML: Hybrid RAG (BM25 + vector) · QLoRA Fine-Tuning · Eval CI</p>
@@ -203,7 +204,7 @@ export function Contact() {
 
             {activeCmd === 'git' && <div className="term-line">
               <p className="term-cmd">$ git log -1 --pretty=format:&quot;%h - %an: %s&quot;</p>
-              <p className="term-res green-text">&gt; 54bf399 - Biswadip Goj: Full-stack software engineering &amp; AI systems verified</p>
+              <p className="term-res green-text">&gt; 54bf399 - Biswadip Goj: Full-stack software engineering &amp; BA verified</p>
               <p className="term-res">&gt; Test suite: 38/38 automated checks passing on Desktop &amp; Mobile.</p>
             </div>}
             <span className="terminal-cursor" aria-hidden="true">_</span>

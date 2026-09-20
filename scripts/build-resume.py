@@ -37,7 +37,7 @@ story += [para(link(data['socials'][1]['url'],'GitHub: Biswadipgoj')+' | '+link(
 story += [Spacer(1,9),HRFlowable(width='100%',thickness=.6,color=colors.HexColor('#9eafa3'))]
 story += [para('PROFILE','section'),para(safe(person['tagline'])+' Computer science graduate with independently built projects spanning business applications, URL shortening, payment workflows, collaboration and shared expenses.')]
 story += [para('TECHNICAL SKILLS','section')]
-for category in data['stack'][:5]:
+for category in data['stack'][:6]:
     story.append(para('<b>'+safe(category['title'])+':</b> '+safe(', '.join(category['tools']))))
 story += [para('SELECTED PROJECTS','section')]
 for project in data['projects']:

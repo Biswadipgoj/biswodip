@@ -7,36 +7,36 @@ export const personal = {
   "email": "biswadipgoj@gmail.com",
   "location": "West Bengal, India",
   "availability": "Immediate notice / Open to remote & relocation",
-  "role": "Full-Stack Software Engineer",
-  "tagline": "Full-stack software engineer building web applications, APIs, and retrieval-augmented AI systems with TypeScript, Next.js, PostgreSQL, and Python.",
-  "intro": "I’m Biswadip Goj, a full-stack software engineer building reliable web applications and AI systems. My work spans database schemas, REST APIs, authentication, responsive interfaces, and production retrieval pipelines.",
+  "role": "Full-Stack Software Engineer & Business Analyst",
+  "tagline": "Full-stack software engineer & business analyst bridging business requirements, workflow modeling, relational schemas, and AI systems.",
+  "intro": "I’m Biswadip Goj, a Full-Stack Software Engineer and Business Analyst. I bridge operational requirements and technical execution: analyzing business workflows, structuring relational data models, and engineering complete web applications and AI systems.",
   "about": [
-    "I build complete web applications from data modeling and API contracts to user-facing interfaces and AI retrieval systems, ensuring every layer connects cleanly.",
-    "My stack is centered on TypeScript, React, Next.js, Node.js, PostgreSQL, Prisma, and Python. I treat frontend and backend as a unified system governed by data schemas, validation boundaries, and deployment infrastructure.",
-    "Building software independently has meant owning the complete lifecycle: designing relational schemas, writing database access policies, handling edge cases, testing workflows, and configuring CI/CD pipelines.",
-    "I focus on predictable, maintainable software with clean boundaries, verifiable test suites, and transparent data models."
+    "I work across the complete lifecycle from business analysis and workflow design to full-stack engineering and deployment. I understand the business problem first—stakeholder workflows, data boundaries, and operational rules—before architecting the software.",
+    "My engineering stack is centered on TypeScript, React, Next.js, Node.js, PostgreSQL, Prisma, and Python, paired with business analysis methodologies: requirement elicitation, process flow mapping, and acceptance testing.",
+    "Building projects like TelePoint and Erpixa meant acting as both the business analyst and the engineer: analyzing retail EMI collection friction and multi-tenant organization hierarchies, defining the data structures, and engineering the complete product.",
+    "I focus on software that solves real operational bottlenecks with transparent schemas, deterministic APIs, and verified test suites."
   ],
-  "ownership": "I work across the full application stack, from data and APIs to the interface users interact with.",
-  "maturity": "I don't just build the interface. I work through the data, application logic, APIs, and deployment needed to make the product work in production.",
+  "ownership": "I bridge business analysis and full-stack software engineering, from requirements and data schemas to user-facing applications.",
+  "maturity": "I don't just build the interface. I work through the business requirements, data architecture, APIs, and deployment needed to make products work in production.",
   "resume": "/Biswodip-Goj-Resume.pdf",
   "canonicalUrl": "https://biswadip.in"
 } as const;
 
 export const hero = {
-  "eyebrow": "FULL-STACK SOFTWARE ENGINEER · BISWADIP GOJ",
+  "eyebrow": "FULL-STACK SOFTWARE ENGINEER & BUSINESS ANALYST · BISWADIP GOJ",
   "heading": "Software, end to end.",
-  "body": "I build full-stack web applications and production-grade AI systems, from database schemas and APIs to interactive interfaces.",
+  "body": "I analyze business workflows and engineer full-stack web applications and AI systems, connecting business requirements to production software.",
   "primary": "View projects",
   "secondary": "Contact me",
   "proofPoints": [
     "5 Production Web Applications",
-    "pgvector + Hybrid Search AI Architecture",
+    "Business Analysis & System Architecture",
     "B.Tech CSE 2024 · Brainware University"
   ],
   "workflowTitle": "From a requirement to working software.",
   "workflow": [
-    "Requirement",
-    "Application Design",
+    "Requirement Analysis",
+    "System Design",
     "Frontend + Backend",
     "Database",
     "Test + Debug",
@@ -84,11 +84,11 @@ export const teleOwnershipCode = [
 ] as const;
 
 export const seo = {
-  "title": "Biswadip Goj — Full-Stack Software Engineer",
-  "description": "Biswadip Goj is a Full-Stack Software Engineer building web applications, APIs, and production AI systems with TypeScript, Next.js, PostgreSQL, Prisma, and Python.",
+  "title": "Biswadip Goj — Full-Stack Software Engineer & Business Analyst",
+  "description": "Biswadip Goj is a Full-Stack Software Engineer and Business Analyst building web applications, APIs, and production AI systems with TypeScript, Next.js, PostgreSQL, Prisma, and Python.",
   "canonical": "https://biswadip.in",
-  "socialTitle": "Biswadip Goj | Full-Stack Software Engineer",
-  "socialDescription": "Full-stack software engineer building web applications, APIs, database schemas, and AI systems across TypeScript, Next.js, PostgreSQL, and Python."
+  "socialTitle": "Biswadip Goj | Full-Stack Software Engineer & Business Analyst",
+  "socialDescription": "Full-stack software engineer and business analyst bridging business requirements, workflow modeling, relational schemas, and AI systems across TypeScript, Next.js, PostgreSQL, and Python."
 } as const;
 
 export const foundations = [
@@ -103,6 +103,16 @@ export const foundations = [
 ] as const;
 
 export const stack = [
+  {
+    "title": "Business Analysis & Systems",
+    "tools": [
+      "Requirements Elicitation (BRD/PRD)",
+      "Process Flow Modeling",
+      "Workflow & Domain Design",
+      "User Stories & Acceptance (UAT)",
+      "System Boundaries"
+    ]
+  },
   {
     "title": "Core Languages",
     "tools": [
@@ -190,8 +200,12 @@ export const primaryStack = [
 
 export const stackCopy = {
   "title": "Technologies I work with",
-  "intro": "My 12 core skills are grounded in production code across web applications, relational schemas, and retrieval-augmented AI systems.",
+  "intro": "My core capabilities span business analysis, domain modeling, full-stack application development, and retrieval-augmented AI systems.",
   "notes": [
+    {
+      "name": "Business Analysis & Systems",
+      "body": "Analyzing domain workflows, writing functional specifications, mapping edge cases, and converting stakeholder requirements into data schemas."
+    },
     {
       "name": "TypeScript & Next.js",
       "body": "Type-safe routing, server actions, and component architecture across 5 shipped web applications."
@@ -216,6 +230,10 @@ export const stackCopy = {
 } as const;
 
 export const capabilities = [
+  {
+    "title": "Business Analysis & Systems Modeling",
+    "body": "Eliciting stakeholder requirements, mapping business processes, defining functional specifications, and translating operational workflows into robust technical architectures."
+  },
   {
     "title": "Application Development",
     "body": "Building complete web applications with reusable interfaces, application logic, authentication and persistent data."
@@ -248,16 +266,16 @@ export const capabilities = [
 
 export const processStages = [
   {
-    "title": "Understand",
-    "body": "Understand what the software needs to do and how the user will use it.",
-    "artifact": "Requirements",
-    "question": "What does the user need to do?"
+    "title": "Analyze & Understand",
+    "body": "Elicit business requirements, analyze operational friction, and map stakeholder workflows.",
+    "artifact": "Business Requirements",
+    "question": "What is the business workflow and user objective?"
   },
   {
-    "title": "Design",
-    "body": "Choose the application structure, data model and API boundaries before implementation.",
-    "artifact": "Application design",
-    "question": "How do the interface, API and data fit together?"
+    "title": "Architect & Design",
+    "body": "Model data structures, define system boundaries, and specify API contracts before code.",
+    "artifact": "System Architecture",
+    "question": "How do domain rules, data models, and APIs align?"
   },
   {
     "title": "Build",
@@ -266,10 +284,10 @@ export const processStages = [
     "question": "What happens when the user takes an action?"
   },
   {
-    "title": "Test",
-    "body": "Exercise important flows, reproduce bugs and verify the finished behaviour.",
+    "title": "Test & Verify",
+    "body": "Exercise business workflows, test boundary conditions, and verify user acceptance criteria.",
     "artifact": "Test + debug",
-    "question": "Does the complete workflow behave as expected?"
+    "question": "Does the complete workflow satisfy the business rules?"
   },
   {
     "title": "Ship",
@@ -281,6 +299,10 @@ export const processStages = [
 
 export const principles = [
   {
+    "title": "Start with the business workflow.",
+    "line": "Software succeeds when it mirrors the real-world operational rules and domain relationships."
+  },
+  {
     "title": "Use the right data model.",
     "line": "Structure data around the actual relationships and workflows the application needs."
   },
@@ -291,29 +313,25 @@ export const principles = [
   {
     "title": "Make behaviour easy to verify.",
     "line": "Clear logic, useful tests and reproducible bugs make software easier to maintain."
-  },
-  {
-    "title": "Keep the code understandable.",
-    "line": "Prefer straightforward designs that another developer can read and change."
   }
 ] as const;
 
 export const engineeringScope = [
   {
+    "category": "Business Analysis & Systems",
+    "description": "Requirement elicitation, domain workflow modeling, process flows, and translating business rules into technical architecture."
+  },
+  {
     "category": "Web Applications",
-    "description": "Business software, product interfaces and data-driven web applications."
+    "description": "Business management software, product interfaces, and data-driven web applications."
   },
   {
     "category": "Backend & APIs",
-    "description": "Application logic, REST APIs, authentication and integrations."
+    "description": "Application logic, REST APIs, authentication, and database access controls."
   },
   {
-    "category": "Data",
-    "description": "Relational and document-based application data using PostgreSQL and MongoDB."
-  },
-  {
-    "category": "Cross-Platform",
-    "description": "Software delivered across web, desktop and Android where a project requires it."
+    "category": "Data & AI Retrieval",
+    "description": "Relational data modeling with PostgreSQL, pgvector hybrid retrieval, and automated evaluation harnesses."
   }
 ] as const;
 
@@ -587,9 +605,14 @@ export const projects: Project[] = [
     "slug": "erpixa",
     "url": "https://erpixa.vercel.app/",
     "repo": "https://github.com/Biswadipgoj/Erpixa",
-    "blurb": "Business management application with organization-based access and modular workflows.",
-    "description": "Erpixa is a business management application built around organizations, users and configurable business workflows. It includes modules for areas such as customer management and operations, with database-level access control for organization data.",
-    "technicalNote": "A React and TypeScript application backed by PostgreSQL, with authentication, organization membership and modular business functionality.",
+    "blurb": "Multi-tenant business management application with organization-based access and modular workflows.",
+    "description": "Erpixa is a business operations platform built by analyzing small business departmental workflows, multi-tier organizational hierarchies, and cross-team data access requirements. It translates organizational boundaries into PostgreSQL database-level security policies and modular UI workflows.",
+    "technicalNote": "Bridging Business Analysis with Full-Stack Engineering: I modeled the multi-tenant organization structure, mapped role permissions, and engineered the React, TypeScript, and PostgreSQL application with row-level security.",
+    "problem": "Small businesses suffer from disconnected departmental workflows, fragmented records, and lack of secure multi-tenant data isolation.",
+    "role": "Full-Stack Software Engineer & Business Analyst (Sole Developer)",
+    "result": "Zero cross-organization data leakage with 100% database-enforced row-level security and modular business operations.",
+    "liveLink": "https://erpixa.vercel.app/",
+    "sourceLink": "https://github.com/Biswadipgoj/Erpixa",
     "techStack": [
       "React",
       "TypeScript",
@@ -754,9 +777,14 @@ export const projects: Project[] = [
     "slug": "telepoint",
     "url": "https://telepoint-topaz.vercel.app/",
     "repo": "https://github.com/Biswadipgoj/telepoint",
-    "blurb": "EMI management and payment collection platform.",
-    "description": "TelePoint is an EMI management application for customer accounts, installments, payment records and reporting. The application provides different roles for managing customer and collection workflows.",
-    "technicalNote": "I built the application around role-based access, customer records, installment workflows, payment handling and database-backed reporting.",
+    "blurb": "EMI management and payment collection platform built from retail financial process analysis.",
+    "description": "TelePoint is an EMI management portal engineered after analyzing real-world offline smartphone financing friction: payment leakage, cash reconciliation delays, and customer account disputes. It structures collection workflows into authenticated, role-separated stages.",
+    "technicalNote": "Combining Business Analysis with Full-Stack Development: I analyzed retailer-to-customer debt cycles, mapped the verification state machine, and implemented customer ownership validation in Next.js and PostgreSQL.",
+    "problem": "Offline device retailers face high default rates and reconciliation errors when managing customer installment payments through paper ledgers.",
+    "role": "Full-Stack Software Engineer & Business Analyst (Sole Developer)",
+    "result": "100% verified customer-to-retailer ownership authorization preventing unauthorized collections and manual calculation errors.",
+    "liveLink": "https://telepoint-topaz.vercel.app/",
+    "sourceLink": "https://github.com/Biswadipgoj/telepoint",
     "techStack": [
       "Next.js",
       "TypeScript",

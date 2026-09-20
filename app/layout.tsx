@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   keywords: [
     'Biswadip Goj',
     'Full-Stack Software Engineer',
+    'Business Analyst',
     'React',
     'Next.js',
     'Node.js',
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_IN',
     url: 'https://biswadip.in',
-    images: [{ url: '/social-preview.jpg', width: 1200, height: 630, alt: 'Biswadip Goj — Full-Stack Software Engineer' }],
+    images: [{ url: '/social-preview.jpg', width: 1200, height: 630, alt: 'Biswadip Goj — Full-Stack Software Engineer & Business Analyst' }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -46,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: 'Biswadip Goj',
-    jobTitle: 'Full-Stack Software Engineer',
+    jobTitle: 'Full-Stack Software Engineer & Business Analyst',
     url: 'https://biswadip.in',
     email: 'biswadipgoj@gmail.com',
     address: {
@@ -59,6 +60,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       name: 'Brainware University'
     },
     knowsAbout: [
+      'Business Analysis',
+      'Requirements Elicitation',
       'TypeScript',
       'React',
       'Next.js',
