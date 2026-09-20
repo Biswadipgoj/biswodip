@@ -1,37 +1,28 @@
 'use client';
 import Image from 'next/image';
-import { personal, engineeringScope, storyCopy } from '@/lib/data';
+import { personal, engineeringScope, projects, socials, education, portfolioCopy } from '@/lib/data';
 import { useEditorialReveal } from '@/components/cinematic/useScene';
+import { AnimatedText } from '@/components/cinematic/AnimatedText';
 import { ArrowUpRightIcon } from '@/components/icons';
 
 export default function Identity() {
   const ref = useEditorialReveal();
-  return <section ref={ref} id="about" className="identity section-space">
+  return <section ref={ref} id="about" className="identity section-space" data-motion-root>
     <div className="identity-composition" id="identity">
-      <div className="identity-intro" data-reveal="left">
-        <h2 data-split>The person<br /><em>behind the work.</em></h2>
+      <div className="identity-intro">
+        <p className="section-index">01 / The engineer</p>
+        <h2><AnimatedText>{portfolioCopy.identity}</AnimatedText></h2>
         <p data-reveal>{personal.intro}</p>
-        <span data-reveal="blur">{personal.role} · B.Tech CSE</span>
+        <div className="identity-facts" data-stagger><span>B.Tech CSE<strong>{education[0].institution} · 2024</strong></span><span>Based in<strong>West Bengal, India</strong></span><span>Portfolio<strong>{projects.length} live applications</strong></span></div>
+        <div className="identity-links"><a href={socials[1].url} className="text-link" target="_blank" rel="noopener noreferrer">GitHub<ArrowUpRightIcon aria-hidden="true"/></a><a href={socials[2].url} className="text-link" target="_blank" rel="noopener noreferrer">LinkedIn<ArrowUpRightIcon aria-hidden="true"/></a></div>
       </div>
-      <figure className="identity-portrait glass-panel" data-media data-tilt-3d data-scroll-3d>
-        <Image src="/biswodip.png" alt="Portrait of Biswodip Goj, full-stack software engineer" width={1086} height={1448} sizes="(max-width: 799px) 85vw, 34vw" />
-        <figcaption data-reveal="blur">{personal.location}</figcaption>
+      <figure className="identity-portrait" data-media>
+        <div className="portrait-sheet" aria-hidden="true"/>
+        <div data-depth="portrait"><Image src="/biswodip.png" alt="Biswodip Goj, full-stack software engineer" width={1086} height={1448} sizes="(max-width: 799px) 82vw, 32vw"/></div>
+        <figcaption><span>Biswodip Goj</span><span>{personal.location}</span></figcaption>
       </figure>
-      <div className="identity-copy" data-stagger>
-        {personal.about.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
-        <span data-magnetic>
-          <a href={personal.resume} download className="text-link">Download resume<ArrowUpRightIcon aria-hidden="true" /></a>
-        </span>
-      </div>
     </div>
-    <div className="scope-section" data-fade-section>
-      <h3 data-reveal="3d-flip">{storyCopy.scopeTitle}</h3>
-      <dl className="scope-list" data-stagger>
-        {engineeringScope.map(item => <div key={item.category} className="glass-panel" data-reveal="3d-depth" data-tilt-3d data-scroll-3d style={{padding: '24px', borderRadius: '12px'}}>
-          <dt>{item.category}</dt>
-          <dd>{item.description}</dd>
-        </div>)}
-      </dl>
-    </div>
+    <div className="identity-statement"><p data-reveal>{personal.about[0]}</p><p data-reveal>{personal.about[2]}</p></div>
+    <dl className="scope-list" data-stagger>{engineeringScope.map((item,i)=><div key={item.category}><span className="scope-number" aria-hidden="true">0{i+1}</span><dt>{item.category}</dt><dd>{item.description}</dd></div>)}</dl>
   </section>;
 }

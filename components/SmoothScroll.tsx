@@ -1,68 +1,67 @@
 'use client';
-
 import { useEffect } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
 gsap.registerPlugin(ScrollTrigger);
+declare global { interface Window { portfolioScroll?: Lenis; gsap?: typeof gsap; ScrollTrigger?: typeof ScrollTrigger; } }
 
-declare global {
-  interface Window {
-    portfolioScroll?: Lenis;
-    gsap?: typeof gsap;
-    ScrollTrigger?: typeof ScrollTrigger;
-  }
-}
-
-/** One synchronized clock for smooth scrolling, GSAP ScrollTrigger, and 3D scenes. */
+/** One clock, native touch scrolling, and complete teardown when motion preferences change. */
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    // Expose tools for runtime inspection
-    window.gsap = gsap;
-    window.ScrollTrigger = ScrollTrigger;
-
+  useEffect(()=>{
+    // Font and document readiness are combined below; avoid three startup refreshes.
+    ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,resize' });
+    if (process.env.NODE_ENV !== 'production') { window.gsap=gsap; window.ScrollTrigger=ScrollTrigger; }
     const media = gsap.matchMedia();
-    media.add('(prefers-reduced-motion: no-preference)', () => {
-      const lenis = new Lenis({
-        duration: 1.1,
-        smoothWheel: true,
-        syncTouch: false,
-        anchors: { offset: -80 },
-      });
-
-      const tick = (seconds: number) => {
-        lenis.raf(seconds * 1000);
-      };
-
-      lenis.on('scroll', () => {
-        ScrollTrigger.update();
-      });
-
+    let disposed = false;
+    let refreshFrame = 0;
+    const refresh = ()=>{if(!disposed) ScrollTrigger.refresh();};
+    const scheduleRefresh = ()=>{
+      cancelAnimationFrame(refreshFrame);
+      if (!disposed) refreshFrame=requestAnimationFrame(refresh);
+    };
+    let onLoad: () => void = () => {};
+    const loaded = new Promise<void>(resolve=>{
+      onLoad = resolve;
+      if(document.readyState==='complete') resolve();
+      else window.addEventListener('load',onLoad,{once:true});
+    });
+    Promise.all([document.fonts.ready,loaded]).then(scheduleRefresh);
+    media.add('(prefers-reduced-motion: no-preference)',()=>{
+      const lenis = new Lenis({ duration:1.05, smoothWheel:true, syncTouch:false, anchors:false });
+      const tick = (seconds:number)=>lenis.raf(seconds*1000);
+      lenis.on('scroll',ScrollTrigger.update);
       gsap.ticker.add(tick);
-      gsap.ticker.lagSmoothing(0);
-
-      window.portfolioScroll = lenis;
-
-      // Ensure ScrollTrigger measures after layout settles
-      const refresh = () => ScrollTrigger.refresh();
-      requestAnimationFrame(refresh);
-      setTimeout(refresh, 250);
-      setTimeout(refresh, 1000);
-      window.addEventListener('resize', refresh);
-
-      return () => {
-        window.removeEventListener('resize', refresh);
-        gsap.ticker.remove(tick);
-        lenis.destroy();
-        if (window.portfolioScroll === lenis) {
-          window.portfolioScroll = undefined;
-        }
+      window.portfolioScroll=lenis;
+      const focusTarget = (target:HTMLElement)=>{
+        const previous = target.getAttribute('tabindex');
+        if(previous===null) target.setAttribute('tabindex','-1');
+        target.focus({preventScroll:true});
+        if(previous===null) target.addEventListener('blur',()=>target.removeAttribute('tabindex'),{once:true});
+      };
+      const navigate = (event:MouseEvent)=>{
+        if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey) return;
+        const anchor=(event.target as Element)?.closest<HTMLAnchorElement>('a[href^="#"]');
+        if(!anchor?.hash) return;
+        const target=document.getElementById(decodeURIComponent(anchor.hash.slice(1)));
+        if(!target) return;
+        event.preventDefault();
+        if(location.hash!==anchor.hash) history.pushState(null,'',anchor.hash);
+        lenis.scrollTo(target,{onComplete:()=>focusTarget(target)});
+      };
+      const restore = ()=>{
+        const target=location.hash ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
+        lenis.scrollTo(target||0,{immediate:true});
+      };
+      document.addEventListener('click',navigate);
+      window.addEventListener('popstate',restore);
+      return ()=>{
+        document.removeEventListener('click',navigate);window.removeEventListener('popstate',restore);
+        gsap.ticker.remove(tick);lenis.destroy();
+        if(window.portfolioScroll===lenis) delete window.portfolioScroll;
       };
     });
-
-    return () => media.revert();
-  }, []);
-
+    return ()=>{disposed=true;window.removeEventListener('load',onLoad);cancelAnimationFrame(refreshFrame);media.revert();};
+  },[]);
   return <>{children}</>;
 }

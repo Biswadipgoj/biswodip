@@ -3,416 +3,149 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { glyphMarkup } from '@/lib/motion-markup';
 
 gsap.registerPlugin(ScrollTrigger);
 export type SceneBuilder = (timeline: gsap.core.Timeline, root: HTMLElement, desktop: boolean) => void;
 
-/**
- * Progressive enhancement: natural document flow until a timeline is ready.
- * CSS sticky owns pinning; GSAP owns reversible transforms. No React scroll state.
- */
-export function useScene(build: SceneBuilder) {
+/** Section ownership prevents two timelines from controlling nested project scenes. */
+export function useEditorialReveal(build?: SceneBuilder) {
   const ref = useRef<HTMLElement>(null);
   useEffect(() => {
     const root = ref.current;
     if (!root) return;
     const media = gsap.matchMedia();
-    media.add({ desktop: '(min-width: 800px)', motion: '(prefers-reduced-motion: no-preference)' }, context => {
+    const initialize = () => media.add({ motion: '(prefers-reduced-motion: no-preference)', desktop: '(min-width: 1000px) and (min-height: 700px)' }, context => {
       if (!context.conditions?.motion) return;
-      root.dataset.animated = 'true';
-      const stages = [...root.querySelectorAll<HTMLElement>('[data-range]')];
-      const timeline = gsap.timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
-          trigger: root, start: 'top top', end: 'bottom bottom', scrub: 0.35,
-          invalidateOnRefresh: true,
-          onUpdate: ({ progress }) => {
-            for (const stage of stages) {
-              const [start, end] = stage.dataset.range!.split(',').map(Number);
-              const inactive = progress < start || progress > end;
-              stage.inert = inactive;
-              stage.setAttribute('aria-hidden', String(inactive));
-            }
-          },
-        },
+      const desktop = Boolean(context.conditions.desktop);
+      const cleanup: Array<() => void> = [];
+      const owned = (selector: string) => [...root.querySelectorAll<HTMLElement>(selector)]
+        .filter(element => element.closest('[data-motion-root]') === root);
+      const scroll = (trigger: HTMLElement, end = 'top 66%') => ({
+        trigger, start: 'top 96%', end, scrub: 0.45, invalidateOnRefresh: true,
       });
-      build(timeline, root, Boolean(context.conditions.desktop));
-      timeline.to({}, { duration: 0.001 }, 1);
-      return () => {
-        delete root.dataset.animated;
-        stages.forEach(stage => { stage.inert = false; stage.removeAttribute('aria-hidden'); });
-      };
+
+      // Read transforms before any tween writes to avoid a layout pass per glyph.
+      const transforms = new Set(owned('[data-reveal], [data-media], [data-parallax], [data-wire], [data-drift], [data-depth], [data-plane]'));
+      for (const group of owned('[data-stagger]')) {
+        for (const child of group.children) transforms.add(child as HTMLElement);
+      }
+      transforms.forEach(element => gsap.getProperty(element, 'x'));
+
+      // One numeric tween per block avoids a computed-style read and tween per letter.
+      for (const block of owned('[data-type]')) {
+        const visual = block.querySelector<HTMLElement>('[data-motion-visual]');
+        if (!visual) continue;
+        const originalMarkup = visual.innerHTML;
+        // Keep the initial document small; letters are split only in nearby scenes.
+        visual.querySelectorAll<HTMLElement>('.motion-word, .code-line').forEach(word => {
+          word.innerHTML = glyphMarkup(word.textContent || '');
+        });
+        cleanup.push(() => { visual.innerHTML = originalMarkup; });
+        const glyphs = [...block.querySelectorAll<HTMLElement>('[data-glyph]')];
+        if (!glyphs.length) continue;
+        const code = block.dataset.type === 'code';
+        const progress = { value: 0 };
+        const stagger = 0.65 / Math.max(1, glyphs.length - 1);
+        const render = () => {
+          glyphs.forEach((glyph, index) => {
+            const remaining = 1 - Math.max(0, Math.min(1, (progress.value - index * stagger) / 0.35));
+            const y = ((code ? 3 : 14) * remaining).toFixed(2);
+            const rotation = ((code ? 0 : desktop ? 32 : 16) * remaining).toFixed(2);
+            const transform = remaining === 0 ? 'none' : `translateY(${y}px) rotateX(${rotation}deg)`;
+            if (glyph.style.transform !== transform) glyph.style.transform = transform;
+          });
+        };
+        gsap.to(progress, {
+          value: 1, duration: 1, ease: 'none', onUpdate: render,
+          scrollTrigger: scroll(block, 'top 60%'),
+        });
+        render();
+      }
+      for (const element of owned('[data-reveal]')) {
+        const side = element.dataset.reveal;
+        gsap.fromTo(element, { y: side === 'left' || side === 'right' ? 0 : 28, x: side === 'left' ? -30 : side === 'right' ? 30 : 0, opacity: 1 }, {
+          x: 0, y: 0, opacity: 1, ease: 'none', scrollTrigger: scroll(element),
+        });
+      }
+      for (const container of owned('[data-stagger]')) {
+        const children = [...container.children].filter(child => !child.hasAttribute('data-reveal'));
+        if (!children.length) continue;
+        gsap.fromTo(children, { y: 22, opacity: 1 }, {
+          y: 0, opacity: 1, ease: 'none', stagger: { amount: 0.45 }, scrollTrigger: scroll(container, 'top 55%'),
+        });
+      }
+      for (const element of owned('[data-media]')) {
+        gsap.fromTo(element, { y: desktop ? 60 : 24, scale: 0.94, rotation: desktop ? -1.5 : 0 }, {
+          y: 0, scale: 1, rotation: 0, ease: 'none', scrollTrigger: scroll(element, 'top 30%'),
+        });
+      }
+      for (const element of owned('[data-parallax]')) {
+        const amount = Number(element.dataset.parallax || 24) * (desktop ? 1 : 0.3);
+        gsap.fromTo(element, { y: amount }, { y: -amount, ease: 'none', scrollTrigger: {
+          trigger: element.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.5,
+        } });
+      }
+      for (const wire of owned('[data-wire]')) {
+        const vertical = wire.dataset.wire === 'vertical';
+        gsap.fromTo(wire, vertical ? { scaleY: 0, transformOrigin: 'top' } : { scaleX: 0, transformOrigin: 'left' }, {
+          ...(vertical ? { scaleY: 1 } : { scaleX: 1 }), ease: 'none',
+          scrollTrigger: scroll(wire.closest<HTMLElement>('[data-flow]') || wire.parentElement!, 'bottom 45%'),
+        });
+      }
+      for (const element of owned('[data-drift]')) {
+        gsap.fromTo(element, { xPercent: desktop ? 8 : 3 }, {
+          xPercent: desktop ? -8 : -3, ease: 'none', scrollTrigger: {
+            trigger: element, start: 'top bottom', end: 'bottom top', scrub: 0.5,
+          },
+        });
+      }
+      // Interface planes arrive in depth, square up for reading, and gently recede.
+      for (const element of owned('[data-depth]')) {
+        const screen = element.dataset.depth === 'screen';
+        const depth = desktop ? 1 : 0.45;
+        const timeline = gsap.timeline({ scrollTrigger: {
+          trigger: element.parentElement, start: 'top 95%', end: 'bottom 8%', scrub: 0.5,
+          invalidateOnRefresh: true,
+        } });
+        timeline.fromTo(element, {
+          transformPerspective: 1400, rotationX: (screen ? 16 : 9) * depth,
+          rotationY: (screen ? -7 : 4) * depth, z: -55 * depth,
+        }, { rotationX: 0, rotationY: 0, z: 0, duration: 0.45, ease: 'none' })
+          .to(element, { rotationX: -4 * depth, rotationY: 2 * depth, z: -24 * depth, duration: 0.35, ease: 'none' }, 0.65);
+      }
+      for (const plane of owned('[data-plane]')) {
+        const direction = Number(plane.dataset.plane || 1);
+        gsap.fromTo(plane, { transformPerspective: 900, rotationY: -16 * direction, rotationX: 8, z: -35 }, {
+          rotationY: 12 * direction, rotationX: -5, z: 35, ease: 'none', scrollTrigger: {
+            trigger: plane.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.55,
+          },
+        });
+      }
+      if (build && desktop) {
+        root.dataset.animated = 'true';
+        const timeline = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
+          trigger: root, start: 'top 72px', end: 'bottom bottom', scrub: 0.45, invalidateOnRefresh: true,
+        } });
+        build(timeline, root, desktop);
+      }
+      return () => { cleanup.forEach(reset => reset()); delete root.dataset.animated; };
     }, root);
-    const refresh = () => ScrollTrigger.refresh();
-    document.fonts.ready.then(refresh);
-    window.addEventListener('load', refresh, { once: true });
-    return () => { window.removeEventListener('load', refresh); media.revert(); };
+    // Prepare only nearby sections so a long page does not block first interaction.
+    let observer: IntersectionObserver | undefined;
+    if (root.id === 'opening') initialize();
+    else {
+      observer = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          observer?.disconnect();
+          initialize();
+        }
+      }, { rootMargin: '200px 0px' });
+      observer.observe(root);
+    }
+    return () => { observer?.disconnect(); media.revert(); };
   }, [build]);
   return ref;
 }
 
-/**
- * Robust, High-Performance 3D & Multi-Scroll Animation System
- */
-export function useEditorialReveal() {
-  const ref = useRef<HTMLElement>(null);
-  useEffect(() => {
-    if (!ref.current) return;
-    const root = ref.current;
-    const media = gsap.matchMedia();
-
-    media.add('(prefers-reduced-motion: no-preference)', () => {
-      const ctx = gsap.context(() => {
-
-        // ─── 1. Scroll-Driven Reveal Animations ───
-        gsap.utils.toArray<HTMLElement>('[data-reveal]', root).forEach(element => {
-          const variant = element.dataset.reveal;
-          let from: gsap.TweenVars = { y: 36, opacity: 0 };
-          let to: gsap.TweenVars = { y: 0, opacity: 1, duration: 0.85, ease: 'power3.out' };
-
-          if (variant === 'left') {
-            from = { x: -50, opacity: 0 };
-            to = { x: 0, opacity: 1, duration: 0.75, ease: 'power2.out' };
-          } else if (variant === 'right') {
-            from = { x: 50, opacity: 0 };
-            to = { x: 0, opacity: 1, duration: 0.75, ease: 'power2.out' };
-          } else if (variant === 'scale') {
-            from = { scale: 0.85, opacity: 0 };
-            to = { scale: 1, opacity: 1, duration: 0.75, ease: 'back.out(1.5)' };
-          } else if (variant === 'clip') {
-            from = { clipPath: 'inset(100% 0 0 0)', opacity: 0 };
-            to = { clipPath: 'inset(0% 0 0 0)', opacity: 1, duration: 0.9, ease: 'power3.out' };
-          } else if (variant === 'blur') {
-            from = { filter: 'blur(10px)', opacity: 0, y: 16 };
-            to = { filter: 'blur(0px)', opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' };
-          } else if (variant === 'rotate') {
-            from = { rotate: -4, y: 24, opacity: 0 };
-            to = { rotate: 0, y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' };
-          } else if (variant === '3d-flip') {
-            from = { transformPerspective: 1200, rotateX: 24, y: 44, opacity: 0, scale: 0.94 };
-            to = { rotateX: 0, y: 0, opacity: 1, scale: 1, duration: 0.9, ease: 'power3.out' };
-          } else if (variant === '3d-depth') {
-            from = { transformPerspective: 1200, z: -100, y: 36, opacity: 0, scale: 0.88 };
-            to = { z: 0, y: 0, opacity: 1, scale: 1, duration: 0.85, ease: 'back.out(1.3)' };
-          }
-
-          gsap.fromTo(element, from, {
-            ...to,
-            scrollTrigger: {
-              trigger: element,
-              start: 'top 94%',
-              toggleActions: 'play none none none',
-              once: true,
-            },
-          });
-        });
-
-        // ─── 1B. Continuous 3D Scroll Perspective & Depth Cylinder ───
-        gsap.utils.toArray<HTMLElement>('[data-scroll-3d]', root).forEach(element => {
-          gsap.fromTo(element,
-            { transformPerspective: 1200, rotateX: 7, scale: 0.97, y: 20 },
-            {
-              rotateX: -5, scale: 1.0, y: -20, ease: 'none',
-              scrollTrigger: {
-                trigger: element,
-                start: 'top 95%',
-                end: 'bottom 5%',
-                scrub: 0.6,
-              },
-            }
-          );
-        });
-
-        // ─── 2. Interactive 3D Card Tilt with Dynamic Specular Reflection ───
-        gsap.utils.toArray<HTMLElement>('[data-tilt-3d]', root).forEach(card => {
-          let ticking = false;
-          const handleMouseMove = (e: MouseEvent) => {
-            if (ticking) return;
-            ticking = true;
-            requestAnimationFrame(() => {
-              const rect = card.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const y = e.clientY - rect.top;
-              const centerX = rect.width / 2;
-              const centerY = rect.height / 2;
-              const rotateX = ((y - centerY) / centerY) * -9;
-              const rotateY = ((x - centerX) / centerX) * 9;
-
-              card.style.setProperty('--mouse-x', `${x}px`);
-              card.style.setProperty('--mouse-y', `${y}px`);
-
-              gsap.to(card, {
-                transformPerspective: 1200,
-                rotateX: rotateX,
-                rotateY: rotateY,
-                scale3d: [1.025, 1.025, 1.025],
-                duration: 0.3,
-                ease: 'power2.out',
-                overwrite: 'auto',
-              });
-              ticking = false;
-            });
-          };
-
-          const handleMouseLeave = () => {
-            gsap.to(card, {
-              transformPerspective: 1200,
-              rotateX: 0,
-              rotateY: 0,
-              scale: 1,
-              duration: 0.65,
-              ease: 'power3.out',
-              overwrite: 'auto',
-            });
-          };
-
-          card.addEventListener('mousemove', handleMouseMove);
-          card.addEventListener('mouseleave', handleMouseLeave);
-        });
-
-        // ─── 3. Magnetic Hover on Buttons & Links ───
-        gsap.utils.toArray<HTMLElement>('[data-magnetic]', root).forEach(btn => {
-          const handleMouseMove = (e: MouseEvent) => {
-            const rect = btn.getBoundingClientRect();
-            const x = e.clientX - (rect.left + rect.width / 2);
-            const y = e.clientY - (rect.top + rect.height / 2);
-            gsap.to(btn, { x: x * 0.28, y: y * 0.28, duration: 0.22, ease: 'power2.out' });
-          };
-          const handleMouseLeave = () => {
-            gsap.to(btn, { x: 0, y: 0, duration: 0.55, ease: 'elastic.out(1, 0.4)' });
-          };
-          btn.addEventListener('mousemove', handleMouseMove);
-          btn.addEventListener('mouseleave', handleMouseLeave);
-        });
-
-        // ─── 4. Media 3D Perspective Scrub on Scroll ───
-        gsap.utils.toArray<HTMLElement>('[data-media]', root).forEach(element => {
-          gsap.fromTo(element,
-            { transformPerspective: 1200, rotateX: 12, scale: 0.93, y: 44, opacity: 0.82 },
-            {
-              rotateX: 0, scale: 1, y: 0, opacity: 1, ease: 'none',
-              scrollTrigger: {
-                trigger: element,
-                start: 'top 95%', end: 'center 48%', scrub: 0.5,
-              },
-            }
-          );
-        });
-
-        // ─── 5. Wire Draw (horizontal workflow lines) ───
-        gsap.utils.toArray<HTMLElement>('[data-wire]', root).forEach(element => {
-          gsap.fromTo(element,
-            { scaleX: 0, transformOrigin: 'left' },
-            {
-              scaleX: 1, ease: 'none',
-              scrollTrigger: {
-                trigger: element.closest('ol') || element.parentElement,
-                start: 'top 85%', end: 'bottom 42%', scrub: 0.4,
-              },
-            }
-          );
-        });
-
-        // ─── 6. Stagger Containers ───
-        gsap.utils.toArray<HTMLElement>('[data-stagger]', root).forEach(container => {
-          const children = [...container.children] as HTMLElement[];
-          if (!children.length) return;
-          gsap.fromTo(children,
-            { y: 28, opacity: 0 },
-            {
-              y: 0, opacity: 1, duration: 0.55, ease: 'power2.out',
-              stagger: 0.08,
-              scrollTrigger: {
-                trigger: container,
-                start: 'top 92%',
-                toggleActions: 'play none none none',
-                once: true,
-              },
-            }
-          );
-        });
-
-        // ─── 7. Parallax Y-shift (Subtle & Deep) ───
-        gsap.utils.toArray<HTMLElement>('[data-parallax]', root).forEach(element => {
-          const isDeep = element.dataset.parallax === 'deep';
-          const distance = isDeep ? 70 : 35;
-          gsap.fromTo(element,
-            { y: distance },
-            {
-              y: -distance, ease: 'none',
-              scrollTrigger: {
-                trigger: element,
-                start: 'top bottom', end: 'bottom top', scrub: true,
-              },
-            }
-          );
-        });
-
-        // ─── 8. Multi-Layer 3D Parallax Drift ───
-        gsap.utils.toArray<HTMLElement>('[data-parallax-3d]', root).forEach(element => {
-          gsap.fromTo(element,
-            { transformPerspective: 1200, z: -60, rotateZ: -6, y: 50 },
-            {
-              z: 35, rotateZ: 6, y: -50, ease: 'none',
-              scrollTrigger: {
-                trigger: element,
-                start: 'top bottom', end: 'bottom top', scrub: 0.6,
-              },
-            }
-          );
-        });
-
-        // ─── 9. Counter Animation ───
-        gsap.utils.toArray<HTMLElement>('[data-count]', root).forEach(element => {
-          const target = parseInt(element.dataset.count || '0', 10);
-          const obj = { val: 0 };
-          gsap.to(obj, {
-            val: target, duration: 1.4, ease: 'power2.out',
-            onUpdate: () => { element.textContent = Math.round(obj.val).toString(); },
-            scrollTrigger: {
-              trigger: element,
-              start: 'top 88%',
-              toggleActions: 'play none none none',
-              once: true,
-            },
-          });
-        });
-
-        // ─── 10. Word-by-word Text Split with 3D Tilt ───
-        gsap.utils.toArray<HTMLElement>('[data-split]', root).forEach(element => {
-          const wrapTextNodes = (parent: Node) => {
-            const children = [...parent.childNodes];
-            children.forEach(node => {
-              if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
-                const words = node.textContent.split(/(\s+)/);
-                const fragment = document.createDocumentFragment();
-                words.forEach(part => {
-                  if (part.trim()) {
-                    const span = document.createElement('span');
-                    span.style.display = 'inline-block';
-                    span.style.marginRight = '0.15em';
-                    span.style.transformOrigin = '50% 100%';
-                    span.textContent = part;
-                    span.classList.add('split-word');
-                    fragment.appendChild(span);
-                  } else if (part) {
-                    fragment.appendChild(document.createTextNode(part));
-                  }
-                });
-                parent.replaceChild(fragment, node);
-              } else if (node.nodeType === Node.ELEMENT_NODE) {
-                const el = node as HTMLElement;
-                if (el.tagName !== 'BR') {
-                  wrapTextNodes(el);
-                }
-              }
-            });
-          };
-          wrapTextNodes(element);
-          const splitWords = element.querySelectorAll('.split-word');
-          if (splitWords.length) {
-            gsap.fromTo(splitWords,
-              { y: 26, rotateX: 35, opacity: 0, transformPerspective: 800 },
-              {
-                y: 0, rotateX: 0, opacity: 1, duration: 0.5, ease: 'power3.out',
-                stagger: 0.04,
-                scrollTrigger: {
-                  trigger: element,
-                  start: 'top 88%',
-                  toggleActions: 'play none none none',
-                  once: true,
-                },
-              }
-            );
-          }
-        });
-
-        // ─── 11. Continuous 3D Floating Physics ───
-        gsap.utils.toArray<HTMLElement>('[data-float-3d]', root).forEach(element => {
-          gsap.to(element, {
-            transformPerspective: 800,
-            y: -14,
-            rotateX: 6,
-            rotateY: -8,
-            duration: 3.5,
-            ease: 'sine.inOut',
-            repeat: -1,
-            yoyo: true,
-          });
-        });
-
-        gsap.utils.toArray<HTMLElement>('[data-float]', root).forEach(element => {
-          gsap.to(element, {
-            y: -8, duration: 2.5, ease: 'sine.inOut', repeat: -1, yoyo: true,
-          });
-        });
-
-        // ─── 12. Pulse on Enter ───
-        gsap.utils.toArray<HTMLElement>('[data-pulse]', root).forEach(element => {
-          gsap.fromTo(element,
-            { scale: 0.85, opacity: 0 },
-            {
-              scale: 1, opacity: 1, duration: 0.55, ease: 'elastic.out(1.1, 0.5)',
-              scrollTrigger: {
-                trigger: element,
-                start: 'top 92%',
-                toggleActions: 'play none none none',
-                once: true,
-              },
-            }
-          );
-        });
-
-        // ─── 13. Section Fade & Scale Transitions ───
-        gsap.utils.toArray<HTMLElement>('[data-fade-section]', root).forEach(element => {
-          gsap.fromTo(element,
-            { opacity: 0.2, y: 36, scale: 0.98 },
-            {
-              opacity: 1, y: 0, scale: 1, ease: 'power2.out',
-              scrollTrigger: {
-                trigger: element,
-                start: 'top 96%', end: 'top 65%', scrub: 0.5,
-              },
-            }
-          );
-        });
-
-        // ─── 14. Step Index Reveal ───
-        gsap.utils.toArray<HTMLElement>('[data-index-reveal]', root).forEach((element, i) => {
-          gsap.fromTo(element,
-            { scale: 0.6, opacity: 0, rotate: -8 },
-            {
-              scale: 1, opacity: 1, rotate: 0, duration: 0.5,
-              delay: i * 0.05,
-              ease: 'back.out(2)',
-              scrollTrigger: {
-                trigger: element,
-                start: 'top 90%',
-                toggleActions: 'play none none none',
-                once: true,
-              },
-            }
-          );
-        });
-
-        // ─── 15. Global Cursor Tracking for Ambient Glass Refraction ───
-        const handleGlobalPointerMove = (e: MouseEvent) => {
-          const xPercent = (e.clientX / window.innerWidth) * 100;
-          const yPercent = (e.clientY / window.innerHeight) * 100;
-          document.documentElement.style.setProperty('--cursor-x', `${e.clientX}px`);
-          document.documentElement.style.setProperty('--cursor-y', `${e.clientY}px`);
-          document.documentElement.style.setProperty('--cursor-xp', `${xPercent}%`);
-          document.documentElement.style.setProperty('--cursor-yp', `${yPercent}%`);
-        };
-        window.addEventListener('mousemove', handleGlobalPointerMove, { passive: true });
-
-      }, root);
-
-      return () => ctx.revert();
-    }, root);
-
-    return () => media.revert();
-  }, []);
-
-  return ref;
-}
+export const useScene = useEditorialReveal;

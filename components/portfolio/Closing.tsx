@@ -1,88 +1,46 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { personal, principles, processStages, journey, socials, education, capabilities, foundations, projects, storyCopy } from '@/lib/data';
+import { personal, principles, processStages, journey, socials, education, capabilities, foundations, projects, storyCopy, portfolioCopy } from '@/lib/data';
 import { useEditorialReveal } from '@/components/cinematic/useScene';
+import { AnimatedText } from '@/components/cinematic/AnimatedText';
 import { ArrowDownIcon, ArrowUpRightIcon, ArrowRightIcon } from '@/components/icons';
 import { FlowLine } from '@/components/cinematic/SoftwarePrimitives';
 import { Button } from '@/components/ui/button';
 
 export function Process() {
   const ref = useEditorialReveal();
-  return <section id="process" ref={ref} className="process-section section-space">
-    <header className="section-heading" data-reveal="clip">
-      <h2 data-split>{storyCopy.processTitle}</h2>
-      <p data-reveal>{personal.maturity}</p>
-    </header>
+  return <section id="process" ref={ref} className="process-section section-space" data-motion-root>
+    <header className="section-heading"><h2><AnimatedText>{portfolioCopy.process}</AnimatedText></h2><p data-reveal>{personal.ownership}</p></header>
     <div className="process-composition">
-      <div className="process-document glass-panel" data-reveal="3d-flip" data-tilt-3d data-scroll-3d>
-        <span className="document-tab" data-reveal="blur">requirement → application</span>
-        <h3 data-reveal>Start with<br /><em>the workflow.</em></h3>
-        <div className="document-path" data-stagger>
-          {processStages.map(stage => <span key={stage.title} className="glass-pill" style={{padding: '8px 12px', borderRadius: '8px', marginBottom: '6px'}}>{stage.artifact}<ArrowDownIcon aria-hidden="true"/></span>)}
-        </div>
-        <p data-reveal="blur">{storyCopy.testing}</p>
+      <div className="process-document glass-panel">
+        <span className="document-tab">The development loop</span>
+        <div className="process-orbit" aria-hidden="true"><span data-parallax="45" data-plane="1">plan</span><span data-parallax="-30" data-plane="-1">{'{ build }'}</span><span data-parallax="24" data-plane="1">verify</span></div>
+        <p>{storyCopy.testing}</p>
       </div>
-      <ol className="process-steps">
-        {processStages.map((stage, i) => <li key={stage.title} className="glass-panel" data-reveal={i % 2 === 0 ? 'left' : 'right'} data-tilt-3d data-scroll-3d style={{padding: '28px', borderRadius: '14px', marginBottom: '20px'}}>
-          <span className="process-index" data-index-reveal>{String(i+1).padStart(2,'0')}</span>
-          <div>
-            <h3>{stage.title}</h3>
-            <p>{stage.body}</p>
-            <span className="process-question" data-reveal="blur">{stage.question}</span>
-          </div>
+      <ol className="process-steps" data-flow>
+        <span className="process-track" aria-hidden="true"><span data-wire="vertical"/></span>
+        {processStages.map((stage,i)=><li key={stage.title}>
+          <span className="process-index" aria-hidden="true">0{i+1}</span>
+          <div><h3><AnimatedText>{stage.title}</AnimatedText></h3><p data-reveal>{stage.body}</p><span className="process-question" data-reveal>{stage.question}</span></div>
         </li>)}
       </ol>
     </div>
-    <section id="capabilities" className="capabilities" data-fade-section>
-      <h3 data-reveal="rotate">{storyCopy.capabilitiesTitle}</h3>
-      <div className="capability-list" data-stagger>
-        {capabilities.map(item => <article key={item.title} className="glass-panel" data-reveal="3d-depth" data-tilt-3d data-scroll-3d style={{padding: '24px', borderRadius: '12px', marginBottom: '16px'}}>
-          <h4>{item.title}</h4>
-          <p>{item.body}</p>
-        </article>)}
-      </div>
+    <section id="capabilities" className="capabilities">
+      <h3><AnimatedText>{storyCopy.capabilitiesTitle}</AnimatedText></h3>
+      <div className="capability-list" data-stagger>{capabilities.map((item,i)=><article key={item.title}><span aria-hidden="true">0{i+1}</span><h4>{item.title}</h4><p>{item.body}</p></article>)}</div>
     </section>
-    <div className="principles" data-fade-section>
-      <h3 data-reveal="right">Principles I work by</h3>
-      <dl data-stagger>
-        {principles.map(item => <div key={item.title} className="glass-panel" data-reveal="3d-flip" data-tilt-3d data-scroll-3d style={{padding: '24px', borderRadius: '12px', marginBottom: '16px'}}>
-          <dt>{item.title}</dt>
-          <dd>{item.line}</dd>
-        </div>)}
-      </dl>
-    </div>
+    <div className="principles"><h3><AnimatedText>Principles I work by.</AnimatedText></h3><dl data-stagger>{principles.map(item=><div key={item.title}><dt>{item.title}</dt><dd>{item.line}</dd></div>)}</dl></div>
   </section>;
 }
 
 export function Journey() {
   const ref = useEditorialReveal();
-  return <section id="journey" ref={ref} className="journey-section section-space">
-    <header className="section-heading" data-reveal="clip">
-      <h2 data-split>Education &amp;<br /><em>the journey so far.</em></h2>
-      <p data-reveal>{storyCopy.foundationsBody}</p>
-    </header>
-    <div className="education-degrees" data-stagger>
-      {education.map(item => <article key={item.title} className="glass-panel" data-reveal="3d-depth" data-tilt-3d data-scroll-3d style={{padding: '28px', borderRadius: '14px'}}>
-        <span data-reveal="blur">{item.date} · {item.institution}</span>
-        <h3>{item.title}</h3>
-      </article>)}
-    </div>
-    <div className="foundations" data-fade-section>
-      <h3 data-reveal="right">{storyCopy.foundationsTitle}</h3>
-      <ul data-stagger style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
-        {foundations.map(item => <li key={item} className="glass-pill" data-reveal="scale" style={{padding: '8px 16px', borderRadius: '24px'}}>{item}</li>)}
-      </ul>
-    </div>
-    <ol className="education-timeline">
-      {journey.map((entry, i) => <li key={entry.date} className="glass-panel" data-reveal={i % 2 === 0 ? 'left' : 'right'} data-tilt-3d data-scroll-3d style={{padding: '24px', borderRadius: '14px', marginBottom: '20px'}}>
-        <span className="education-year" data-reveal="rotate">{entry.date}</span>
-        <div>
-          <h3>{entry.title}</h3>
-          <p>{entry.body}</p>
-        </div>
-      </li>)}
-    </ol>
+  return <section id="journey" ref={ref} className="journey-section section-space" data-motion-root>
+    <header className="section-heading"><p className="section-index">05 / Education & growth</p><h2><AnimatedText>{portfolioCopy.education}</AnimatedText></h2><p data-reveal>{storyCopy.foundationsBody}</p></header>
+    <div className="education-degrees" data-stagger>{education.map((item,i)=><article key={item.title}><span className="degree-number" aria-hidden="true">0{i+1}</span><div><span className="degree-date">{item.date}</span><h3>{item.title}</h3><p>{item.institution}</p></div><ArrowUpRightIcon aria-hidden="true"/></article>)}</div>
+    <ol className="education-timeline" data-flow><span className="education-track" aria-hidden="true"><span data-wire/></span>{journey.map(entry=><li key={entry.date}><span className="timeline-dot" aria-hidden="true"/><span className="education-year"><AnimatedText>{entry.date}</AnimatedText></span><div data-reveal><h3>{entry.title}</h3><p>{entry.body}</p></div></li>)}</ol>
+    <div className="foundations"><h3><AnimatedText>{storyCopy.foundationsTitle}</AnimatedText></h3><ul data-stagger>{foundations.map(item=><li key={item}>{item}</li>)}</ul></div>
   </section>;
 }
 
@@ -97,55 +55,24 @@ export function Contact() {
     catch { setCopyState('Copy unavailable. Select the email address or use the email link.'); }
     timer.current = setTimeout(() => setCopyState(''), 5000);
   };
-
-  return <footer id="contact" ref={ref} className="contact-section section-space">
-    <div className="footer-connection" data-reveal="clip">
-      <h2 data-reveal="blur">{storyCopy.footer.flowTitle}</h2>
-      <FlowLine steps={storyCopy.footer.flow}/>
-    </div>
+  return <footer id="contact" ref={ref} className="contact-section section-space" data-motion-root>
+    <div className="footer-connection"><h2><AnimatedText>{storyCopy.footer.flowTitle}</AnimatedText></h2><FlowLine steps={storyCopy.footer.flow}/></div>
     <div className="contact-main">
-      <div className="contact-invite glass-panel" data-reveal="left" data-tilt-3d data-scroll-3d style={{padding: '36px', borderRadius: '18px'}}>
-        <h2 data-split>Let&apos;s build<br /><em>something useful.</em></h2>
-        <p data-reveal>{storyCopy.footer.body}</p>
-        <a className="contact-email" href={'mailto:'+personal.email} data-reveal="scale">
-          {personal.email}<ArrowUpRightIcon aria-hidden="true"/>
-        </a>
-        <div className="contact-tools" data-stagger>
-          <span data-magnetic><Button className="copy-email" variant="outline" onClick={copyEmail}>Copy email</Button></span>
-          <span data-magnetic><a href={personal.resume} download className="text-link">Download resume<ArrowDownIcon aria-hidden="true"/></a></span>
-        </div>
+      <div className="contact-invite">
+        <h2><AnimatedText>{portfolioCopy.contact}</AnimatedText></h2><p data-reveal>{storyCopy.footer.body}</p>
+        <a className="contact-email" href={'mailto:'+personal.email}>{personal.email}<ArrowUpRightIcon aria-hidden="true"/></a>
+        <div className="contact-tools"><Button className="copy-email" variant="outline" onClick={copyEmail}>Copy email</Button><a href={personal.resume} download className="text-link">Download resume<ArrowDownIcon aria-hidden="true"/></a></div>
         <p className="copy-status" role="status">{copyState}</p>
-        <nav aria-label="Contact links" className="contact-socials" data-stagger>
-          {socials.map(link => <span key={link.label} data-magnetic><a href={link.url} target={link.label==='Email'?undefined:'_blank'} rel={link.label==='Email'?undefined:'noopener noreferrer'}>{link.label}<ArrowUpRightIcon aria-hidden="true"/></a></span>)}
-        </nav>
+        <nav aria-label="Contact links" className="contact-socials" data-stagger>{socials.map(link=><a key={link.label} href={link.url} target={link.label==='Email'?undefined:'_blank'} rel={link.label==='Email'?undefined:'noopener noreferrer'}>{link.label}<ArrowUpRightIcon aria-hidden="true"/></a>)}</nav>
       </div>
-      <div className="source-index glass-panel" data-reveal="right" data-tilt-3d data-scroll-3d style={{borderRadius: '18px'}}>
-        <div className="source-index-heading" data-reveal="blur">
-          <h3>{storyCopy.footer.sourceTitle}</h3>
-          <span aria-hidden="true">{'{ }'}</span>
-        </div>
-        <ul data-stagger>
-          {projects.map(project => <li key={project.slug}>
-            <a href={project.repo} target="_blank" rel="noopener noreferrer">
-              <span className="source-branch" aria-hidden="true">↳</span>
-              <div><strong>{project.name}</strong><span>{project.techStack.slice(0,3).join(' · ')}</span></div>
-              <ArrowUpRightIcon aria-hidden="true"/>
-            </a>
-          </li>)}
-        </ul>
-        <span data-magnetic><a className="text-link" href="#projects" data-reveal>View projects<ArrowRightIcon aria-hidden="true"/></a></span>
+      <div className="source-index glass-panel" data-depth="panel">
+        <div className="source-index-heading"><h3>{storyCopy.footer.sourceTitle}</h3><span aria-hidden="true">{'{ }'}</span></div>
+        <ul data-stagger>{projects.map(project=><li key={project.slug}><a href={project.repo} target="_blank" rel="noopener noreferrer"><span className="source-branch" aria-hidden="true">↳</span><div><strong>{project.name}</strong><span>{project.techStack.slice(0,3).join(' · ')}</span></div><ArrowUpRightIcon aria-hidden="true"/></a></li>)}</ul>
+        <a className="text-link" href="#projects">View projects<ArrowRightIcon aria-hidden="true"/></a>
       </div>
     </div>
-    <div className="footer-person glass-panel" data-reveal="3d-depth" data-tilt-3d data-scroll-3d style={{padding: '24px 32px', borderRadius: '16px'}}>
-      <Image src="/biswodip.png" alt="Biswodip Goj" width={72} height={88} style={{borderRadius: '10px', objectFit: 'cover'}}/>
-      <div><strong>{personal.name}</strong><span>{personal.role}</span></div>
-      <p>{personal.tagline}</p>
-    </div>
-    <div className="footer-signature" data-reveal="clip" aria-hidden="true">{storyCopy.footer.signature}</div>
-    <div className="contact-colophon" data-reveal="blur">
-      <span>{storyCopy.footer.credit}</span>
-      <span>{personal.location}</span>
-      <span data-magnetic><a href="#opening">Back to top<ArrowUpRightIcon aria-hidden="true"/></a></span>
-    </div>
+    <div className="footer-person" data-reveal><Image src="/biswodip.png" alt="Biswodip Goj" width={56} height={70}/><div><strong>{personal.name}</strong><span>{personal.role}</span></div><p>{personal.tagline}</p></div>
+    <div className="footer-signature" aria-hidden="true"><span data-parallax="35">{storyCopy.footer.signature}</span></div>
+    <div className="contact-colophon"><span>{storyCopy.footer.credit}</span><span>{personal.location}</span><a href="#opening">Back to top<ArrowUpRightIcon aria-hidden="true"/></a></div>
   </footer>;
 }

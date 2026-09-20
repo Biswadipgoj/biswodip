@@ -22,9 +22,9 @@ export const personal = {
 
 export const hero = {
   "eyebrow": "FULL-STACK SOFTWARE ENGINEER",
-  "heading": "I build software from the interface to the database.",
-  "body": "Web applications, APIs and data-driven products built with TypeScript, React, Next.js, Node.js, PostgreSQL and MongoDB.",
-  "primary": "View my work",
+  "heading": "Software, end to end.",
+  "body": "I build web applications, from the interface and APIs to the data that connects them.",
+  "primary": "View projects",
   "secondary": "Contact me",
   "workflowTitle": "From a requirement to working software.",
   "workflow": [
@@ -36,6 +36,45 @@ export const hero = {
     "Deploy"
   ]
 } as const;
+
+export const portfolioCopy = {
+  identity: 'A person behind every decision.',
+  stack: 'Follow a request. See the engineering.',
+  stackBody: 'A real NanoLink request connects the interface, validation, application logic and persistent data.',
+  work: 'Built to be used.',
+  process: 'From a requirement to a release.',
+  education: 'The foundations behind the frameworks.',
+  contact: 'Let’s build what comes next.',
+  request: [
+    { name: 'Request', detail: 'Read the JSON body and validate it with the Zod schema.', tool: 'Next.js · Zod' },
+    { name: 'Application logic', detail: 'Normalize the URL, check alias uniqueness and hash an optional password.', tool: 'TypeScript · nanoid · bcrypt' },
+    { name: 'Persistence', detail: 'Save the destination and options in the Link model.', tool: 'Prisma · PostgreSQL' },
+    { name: 'Response', detail: 'Return the created record with HTTP 201.', tool: 'REST API' },
+  ],
+} as const;
+
+export const nanoValidationCode = [
+  'const createLinkSchema = z.object({',
+  "  originalUrl: z.string().min(1, 'URL is required'),",
+  "  customAlias: z.string().optional().or(z.literal('')),",
+  "  password: z.string().optional().or(z.literal('')),",
+  "  expiresAt: z.string().optional().or(z.literal('')),",
+  '  oneTimeUse: z.boolean().default(false),',
+  '})',
+] as const;
+
+export const teleOwnershipCode = [
+  'const { data: custOwner } = await svc',
+  "  .from('customers')",
+  "  .select('id, retailer_id')",
+  "  .eq('id', customer_id)",
+  '  .single();',
+  'if (!custOwner || custOwner.retailer_id !== retailer.id)',
+  '  return NextResponse.json(',
+  "    { error: 'Customer does not belong to your account' },",
+  '    { status: 403 }',
+  '  );',
+] as const;
 
 export const seo = {
   "title": "Biswodip Goj — Full-Stack Software Engineer",
@@ -258,12 +297,12 @@ export const education = [
   {
     "date": "2021–2024",
     "title": "B.Tech in Computer Science & Engineering",
-    "institution": "MAKAUT"
+    "institution": "Brainware University"
   },
   {
     "date": "2018–2021",
     "title": "Diploma in Computer Science & Technology",
-    "institution": "WBSCTE"
+    "institution": "Brainware University"
   }
 ] as const;
 

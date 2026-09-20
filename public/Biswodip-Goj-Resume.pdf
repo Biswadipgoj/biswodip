@@ -1,21 +1,227 @@
 %PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<<
+/F1 2 0 R /F2 3 0 R
+>>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /Resources <<>> /MediaBox [0 0 612 792] >>
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (mailto:biswadipgoj@gmail.com)
+>> /Border [ 0 0 0 ] /Rect [ 46 750.2898 132.36 759.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+5 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj)
+>> /Border [ 0 0 0 ] /Rect [ 46 738.2898 118.024 747.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+6 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://linkedin.com/in/biswadipgoj)
+>> /Border [ 0 0 0 ] /Rect [ 124.552 738.2898 201.032 747.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+7 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://biswodip.in)
+>> /Border [ 0 0 0 ] /Rect [ 207.56 738.2898 247.128 747.8898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+8 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj/Erpixa)
+>> /Border [ 0 0 0 ] /Rect [ 46 533.3898 75.0415 544.7898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+9 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://erpixa.vercel.app/)
+>> /Border [ 0 0 0 ] /Rect [ 46 497.1898 101.136 506.7898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+10 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj/Erpixa)
+>> /Border [ 0 0 0 ] /Rect [ 107.664 497.1898 152.576 506.7898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+11 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj/nl)
+>> /Border [ 0 0 0 ] /Rect [ 46 476.8898 89.282 488.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+12 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://nanl.vercel.app/)
+>> /Border [ 0 0 0 ] /Rect [ 46 440.6898 101.136 450.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+13 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj/nl)
+>> /Border [ 0 0 0 ] /Rect [ 107.664 440.6898 152.576 450.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+14 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj/telepoint)
+>> /Border [ 0 0 0 ] /Rect [ 46 420.3898 88.7595 431.7898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+15 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://telepoint-topaz.vercel.app/)
+>> /Border [ 0 0 0 ] /Rect [ 46 384.1898 101.136 393.7898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+16 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj/telepoint)
+>> /Border [ 0 0 0 ] /Rect [ 107.664 384.1898 152.576 393.7898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+17 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj/nexora)
+>> /Border [ 0 0 0 ] /Rect [ 46 363.8898 78.205 375.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+18 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://nexora-xi-rust.vercel.app/)
+>> /Border [ 0 0 0 ] /Rect [ 46 327.6898 101.136 337.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+19 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj/nexora)
+>> /Border [ 0 0 0 ] /Rect [ 107.664 327.6898 152.576 337.2898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+20 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj/trip)
+>> /Border [ 0 0 0 ] /Rect [ 46 307.3898 86.1185 318.7898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+21 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://trip-mu-coral.vercel.app/)
+>> /Border [ 0 0 0 ] /Rect [ 46 271.1898 101.136 280.7898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+22 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://github.com/Biswadipgoj/trip)
+>> /Border [ 0 0 0 ] /Rect [ 107.664 271.1898 152.576 280.7898 ] /Subtype /Link /Type /Annot
+>>
+endobj
+23 0 obj
+<<
+/Annots [ 4 0 R 5 0 R 6 0 R 7 0 R 8 0 R 9 0 R 10 0 R 11 0 R 12 0 R 13 0 R 
+  14 0 R 15 0 R 16 0 R 17 0 R 18 0 R 19 0 R 20 0 R 21 0 R 22 0 R ] /Contents 27 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 26 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+24 0 obj
+<<
+/PageMode /UseNone /Pages 26 0 R /Type /Catalog
+>>
+endobj
+25 0 obj
+<<
+/Author (Biswodip Goj) /CreationDate (D:20260920015742+05'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20260920015742+05'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (\(unspecified\)) /Title (Biswodip Goj - Resume) /Trapped /False
+>>
+endobj
+26 0 obj
+<<
+/Count 1 /Kids [ 23 0 R ] /Type /Pages
+>>
+endobj
+27 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1960
+>>
+stream
+Gb!#\>?BQ=&:WeDbgRVV:N5?0S3AM2ThRIB9$I!3Z%WcLOt/%fHMZZG,WiqL,$O9<mGT%hOmVsVk*p9YEhSOYY5+V@!CdC.3HW+1+?9ZcDurRB0M-H%m't<(5m2g+kf!!F`]%kQE<Ff57,W<=kR@XlX)C@eq$qku]f4k:ZG_fNi._$f?E?B)4(?a"aB/c;`9!VQ>XJ"J[eC)X*nh$XYHSnq2UN]"3#!7"LT@0%Rk'Y._-EM2)^6_)Gg8:FdY]1bZnOTr'PKipC,9?Pf%(foN+3C7q$gH@mg^QY6,N$kh'V?//h[1LQ\6)K.[J*J/pr;X@^VklOWJnIQ%BV03@T8.jV]:DJ:?,c^irJc?S1-OBERlJ?@=P<r/,)brY?8RT34#(FVqUIp7coh:R4>fgZ1ML)dN>l(PoF?K+l4d2[JrW5P-YCVsef=H$K^)hfj#g_OCVh:Q7i]@Je7*af&Ulih7N[D[:K+qXJMcS(Lu)U=WLg,:?Sl3(E)=8^@^&d4$VIXN5q]%&s]:TGtHB;O.JZM.2'<5Z0&2$If65F"+Vn4R9fbBl>Wt:SsD&3?sD484>$6`aW)R'U;LkN:N3"/kNJqMS]g$(Vk8b973.J<SX^ih:41nPYtc7<)lb[KQG.SKNDSR+b2JL*h8eH&?h0$#G:9I8a_o>6+@NtlF[ZepdcllJh2R3Y;?_uO_-jsdC_q`%<^TQQ.TV&IXaI#n'>D@cZD(7>Kn?j#L=3YmgSOQX&Gpu1tgZE%L\6bHpr'Z]esD+*8#u+Y,(YgZ;UAR"1]cEl]XDQ+a=O[T4V-*DEC6,?p/?$oaK>K8lA'#9Q-2;M911<*6id`T%enNmro_p;,-q#n/[FG)ITJ,H"*cTCL`&e_c9'-;_(Cf7Iut22WQ9ch1kV'bOZV(-_aMLUmU?e*!r3pK98`P%h>%SL5].a[t>]Cbh3)E9aah`Jpmn[2O,?5SY]s==:u&1!F;dIm(U"FBeX?HrMcN_:M,f11-#?!m14GQ-"?(V-">f"n\PadnJOCH9C\FkP22:u95XfA_Xjl^'mS3-DS4XJ)K5UdMH\uMnLLuMan9^\B!`=n9GM<);<jI=f6os+S8e2Pr+Af(&%b`.)X0cZ?A`Q!&@iBtX*TR"W1E.S,KaL,mRKDR9\4.N+42Bp;PlZNRL5H_fNgJW:'I[*(I3f^n8$*IrCheW`=&dp(l$e']k3&3Y+P/"\n:;t[\N_5R[T/"`1EKn?s,e''^5)8+P;GC2/GH'>j*n])kS(oJ'@+GE?B/Sl;6QUU@p17DN,bulPKu,X%J3p'^/8fB9ET,=!UF7NuUjM)-3Q#QRblF>7%<pSJYeM?&(YfiWMb2.<%%pCJli+fP!G!8c!"P4+nYo+d]_0[J@R\clg&qku@m\_1J6dgubDq,-u5JX5DJ3@J@[#[l9+M7W<jpLW<'UTM)gjBL,DsG5`Ropil;?+*K0cPG@@ESONgbVe\FnUZcF6/dnD8$qkBqrLr,F$u5q1+fZ]]AtPCH*qfo:3?bB=9e[>mbt/$9A9tnc/T*1_44t1sd,+1Um/;C]ljpsMdd3aMFXbT-(ACTh8DEh81!rt:M&n=jUa.Bf_Kmoq#B@3S4k:S(]er[3jFGuW$o$OUG+,:,PNo0eGrm>M6'n=Y%\e\T7h1YeZ]#f_[^abd>KhLp[1f0P09)`gH20YDAn@TI;D>^6qmO3#0-dqFDj+bI+*9!UaO__P-=JF<T2*lo&%nUfXWYBrVHp?#/KRQ+7?o?o9[qY+HZ?f9<Gi?=.*4I4Ru,f@>Q\VDQXTh$cH@Xc;Olrj)Hi/RnFVDXfm@]1op_&nMnEn!m.jL[k=:_gZgiK"rHN.4i`]rq=.OIn#u1),h<$h<hONd-EIZ@6_LC8*GH-oQ8JjAkm:RF1-S)(^0P+SJF8,0*@#*`Z99gH?*4c5Q(1KkD`(l)QMaHKK2SAJ9rs>58ld31c..,Btc@6ZqF@u~>endstream
 endobj
 xref
-0 4
+0 28
 0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000493 00000 n 
+0000000668 00000 n 
+0000000853 00000 n 
+0000001021 00000 n 
+0000001203 00000 n 
+0000001374 00000 n 
+0000001562 00000 n 
+0000001740 00000 n 
+0000001910 00000 n 
+0000002094 00000 n 
+0000002280 00000 n 
+0000002461 00000 n 
+0000002652 00000 n 
+0000002834 00000 n 
+0000003014 00000 n 
+0000003202 00000 n 
+0000003383 00000 n 
+0000003562 00000 n 
+0000003748 00000 n 
+0000004096 00000 n 
+0000004166 00000 n 
+0000004454 00000 n 
+0000004515 00000 n 
 trailer
-<< /Size 4 /Root 1 0 R >>
+<<
+/ID 
+[<34215ca4b0baeeea365c3bbc82087122><34215ca4b0baeeea365c3bbc82087122>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 25 0 R
+/Root 24 0 R
+/Size 28
+>>
 startxref
-206
+6567
 %%EOF

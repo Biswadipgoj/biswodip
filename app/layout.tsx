@@ -1,8 +1,7 @@
 ﻿import type { Metadata, Viewport } from 'next';
-import { Fraunces, Manrope } from 'next/font/google';
+import { Manrope } from 'next/font/google';
 import { personal, seo } from '@/lib/data';
 import './journey.css';
-const display=Fraunces({subsets:['latin'],axes:['opsz'],style:['normal','italic'],variable:'--font-display',display:'swap'});
 const body=Manrope({subsets:['latin'],variable:'--font-body',display:'swap'});
 export const metadata:Metadata={
   metadataBase:new URL('https://biswodip.in'),title:seo.title,description:seo.description,alternates:{canonical:'/'},
@@ -12,5 +11,5 @@ export const metadata:Metadata={
   twitter:{card:'summary_large_image',title:seo.socialTitle,description:seo.socialDescription,images:['/social-preview.jpg']},
 };
 export const viewport:Viewport={themeColor:'#e9cebb',width:'device-width',initialScale:1};
-export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en" className={display.variable+' '+body.variable}><body>{children}</body></html>;}
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en" className={body.variable}><body>{children}</body></html>;}
 
