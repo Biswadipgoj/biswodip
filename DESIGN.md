@@ -33,3 +33,10 @@ The user confirmed both the Diploma and B.Tech at **Brainware University**. `lib
 Use `npm run build`, `npm run typecheck`, `npm run lint` and `npm run test:browser`. The browser suite covers source-backed content, corrected qualifications, a usable PDF, responsive overflow, navigation/history, keyboard disclosure, scroll reversal, reduced motion and no-JavaScript reading. Run Lighthouse on production independently of other browser jobs. Before/after screenshots and measured geometry are stored under `artifacts/rebuild-2026`.
 
 Rebuild the one-page, selectable PDF with `node scripts/build-resume.mjs`; it reads the same TypeScript content source and uses Python reportlab/pypdf. The PDF has live application and repository links for all five projects.
+
+## September 20 recruiter and mobile refinement
+The opening uses a compact four-line headline, immediately available project and resume actions, layered real screenshots, and a reversible six-step workflow strip. Its screenshot parent flattens sibling composition to avoid intersecting 3D planes. Mobile keeps native flow and scroll-driven screenshot transforms.
+
+The skills section starts with an interactive technology-to-project index derived from project data. Supporting categories expand with native details/summary; business analysis is explicitly included. A real NanoLink request walkthrough follows the index. Every result links to its existing project details. Filter and disclosure changes refresh scroll geometry. Reduced motion disables added entrance effects.
+
+Overlapping transform controllers were removed; spatial cards hold a readable middle interval. The opening no longer mounts the blocking CLI intro. Updated desktop/mobile captures and seven-width DOM measurements live in artifacts/. Better Design's remote calls remain quota-blocked (HTTP 402), including spacing inspection; local geometry is separate evidence, not a Better Design receipt.

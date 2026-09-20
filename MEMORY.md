@@ -59,3 +59,46 @@
 - All verification gates re-tested and passed: `npm run typecheck` (0 errors), `npm run lint` (0 warnings), `npm run build` (13/13 routes), and Playwright suite (36 passed, 2 skipped, 0 failures across 38 tests).
 
 
+
+## Recruiter / mobile refinement - 2026-09-20
+- Preserved the pre-existing dirty working tree. Current lib/data.ts uses Biswadip and a 60+ claim; no new employment, metrics or credentials were introduced in this refinement.
+- Shortened the hero from the oversized production-software heading to "From real problems to working software." The accessible heading now matches the visible heading.
+- Mobile work and resume actions fit in the opening viewport. Desktop screenshot planes use flat parent composition to prevent visible 3D intersections. Added a reversible six-step workflow strip and mobile screenshot depth choreography.
+- Removed PortfolioLoader from the page: it blocked first access, hid the page without JavaScript, and bypassed automation via navigator.webdriver. The existing untracked component file is retained.
+- Skills now precede the request walkthrough. Technology filters derive from the five projects' techStack arrays, expose matching project links, support keyboard and announce results. Business-analysis skills and other stack categories use native disclosure elements. Layout changes refresh ScrollTrigger positions.
+- Removed duplicate transform ownership for elements combining media/depth/parallax/spatial attributes. Spatial child cards are no longer simultaneously animated by their parent stagger. Cards hold a readable middle interval. Ambient gradients now follow scroll instead of simultaneous CSS loops.
+- Better Design discovery, UI, UX, review, comprehension and spacing tools were attempted; all returned HTTP 402 ANON_QUOTA_EXHAUSTED. No successful remote review claimed. Local Impeccable context and detector ran; detector warnings concerned existing decorative treatments.
+- Playwright screenshot / DOM evidence: artifacts/before-{390,1440}.png, artifacts/after-{width}-{section}.png, artifacts/responsive-measurements.json. Seven widths (320/375/390/768/1024/1440/1728), four sections each, maximum document overflow 0px.
+- Added regression tests for technology filtering by keyboard and visible mobile primary actions. Initial test caught duplicated logo accessible names; decorative logos inside filter buttons now have aria-hidden wrappers.
+
+## Handoff & verification checkpoint — 2026-09-20 (Resumed from Codex)
+- Preserved all uncommitted working tree changes; zero reset of ongoing work.
+- Addressed pending inspection of mobile viewport rendering and animations.
+- Updated `lib/data.ts` and `components/portfolio/Closing.tsx`:
+  - Location consistently set to `Uluberia, West Bengal, India` across `personal.location`, identity caption, footer colophon, and developer terminal.
+  - Developer terminal `profile` response explicitly displays `Full-Stack Software Engineer & Business Analyst`.
+- Re-built selectable 1-page PDF résumé via `node scripts/build-resume.mjs` (2,407 characters, both Brainware University degrees, zero page overflow).
+- Re-ran complete verification pipeline:
+  - `npm run typecheck`: Passed with 0 errors.
+  - `npm run lint`: Passed with 0 warnings/errors.
+  - `npm run build`: Passed (13/13 static pages generated).
+  - `npm run test:browser`: 39 passed, 3 skipped, 0 failures across 42 test cases on Desktop Edge and Mobile Viewport.
+- Fresh mobile screenshots captured and validated across `#opening`, `#stack`, `#projects`, `#nanolink`, and `#contact` without horizontal overflow or layout regressions.
+
+## ATS Résumé & Complete Responsive Verification Checkpoint — 2026-09-21
+- Incorporated all verified credentials into `lib/data.ts`, `scripts/build-resume.py`, and `scripts/build-resume.mjs`:
+  - Contact: `+91 7003617074`, `biswadipgoj@gmail.com`, `Uluberia, West Bengal, India`.
+  - Roles: `Full-Stack Software Engineer & Business Analyst`.
+  - Experience & Industrial Training:
+    - Remote Independent Software Engineer & Technical Consultant (2023–Present, 60+ shipped builds).
+    - Logicrack Infosystem Pvt. Ltd., Kolkata (10-week industrial training, ASP.NET Core 6.0 MVC, Office CRM project).
+    - Webguru Technology (Web development field training).
+  - Education: B.Tech CSE (2021–2024) Brainware University, Diploma CST (2018–2021) Brainware University, Uluberia High School.
+- Generated 1-page ATS-optimized selectable PDF résumé (`public/Biswodip-Goj-Resume.pdf`) with 3,780 selectable characters and zero page overflow.
+- Ran full automated verification suite:
+  - `npm run typecheck`: Passed (0 errors).
+  - `npm run lint`: Passed (0 warnings, 0 errors).
+  - `npm run build`: Passed (13/13 static routes).
+  - `npm run test:browser`: 39 passed, 3 skipped, 0 failures across 42 tests.
+  - `node scripts/verify-responsive.mjs`: Tested 28 states across 7 viewports (320px–1728px); max document overflow is strictly 0px.
+

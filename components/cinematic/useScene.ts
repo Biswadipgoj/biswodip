@@ -75,12 +75,12 @@ export function useEditorialReveal(build?: SceneBuilder) {
           y: 0, opacity: 1, ease: 'none', stagger: { amount: 0.45 }, scrollTrigger: scroll(container, 'top 55%'),
         });
       }
-      for (const element of owned('[data-media]')) {
+      for (const element of owned('[data-media]:not([data-spatial])')) {
         gsap.fromTo(element, { y: desktop ? 60 : 24, scale: 0.94, rotation: desktop ? -1.5 : 0 }, {
           y: 0, scale: 1, rotation: 0, ease: 'none', scrollTrigger: scroll(element, 'top 30%'),
         });
       }
-      for (const element of owned('[data-parallax]')) {
+      for (const element of owned('[data-parallax]:not([data-plane]):not([data-spatial])')) {
         const amount = Number(element.dataset.parallax || 24) * (desktop ? 1 : 0.3);
         gsap.fromTo(element, { y: amount }, { y: -amount, ease: 'none', scrollTrigger: {
           trigger: element.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.5,
@@ -101,7 +101,7 @@ export function useEditorialReveal(build?: SceneBuilder) {
         });
       }
       // Interface planes arrive in depth, square up for reading, and gently recede.
-      for (const element of owned('[data-depth]')) {
+      for (const element of owned('[data-depth]:not([data-spatial])')) {
         const screen = element.dataset.depth === 'screen';
         const depth = desktop ? 1 : 0.45;
         const timeline = gsap.timeline({ scrollTrigger: {
@@ -138,7 +138,7 @@ export function useEditorialReveal(build?: SceneBuilder) {
           timeline.fromTo(element, {
             transformPerspective: 1200, rotationX: 13 * depth, rotationY: -6 * depth, z: -50 * depth, y: 32, scale: 0.96
           }, { rotationX: 0, rotationY: 0, z: 0, y: 0, scale: 1, duration: 0.45, ease: 'none' })
-            .to(element, { rotationX: -8 * depth, rotationY: 4 * depth, z: -28 * depth, y: -20, scale: 0.97, duration: 0.45, ease: 'none' });
+            .to(element, { rotationX: -8 * depth, rotationY: 4 * depth, z: -28 * depth, y: -20, scale: 0.97, duration: 0.25, ease: 'none' }, 0.75);
         } else if (type === 'panel') {
           timeline.fromTo(element, {
             transformPerspective: 1300, rotationX: 10 * depth, rotationY: 7 * depth, z: -40 * depth, y: 26
@@ -156,7 +156,7 @@ export function useEditorialReveal(build?: SceneBuilder) {
           }, { yPercent: 0, xPercent: 0, scale: 1.15, duration: 0.5, ease: 'none' })
             .to(element, { yPercent: -30 * depth, xPercent: 15 * depth, scale: 0.9, duration: 0.5, ease: 'none' });
         } else if (type === 'stagger-3d') {
-          const children = [...element.children];
+          const children = [...element.children].filter(child => !child.hasAttribute('data-spatial'));
           if (children.length) {
             gsap.fromTo(children, {
               transformPerspective: 1000, rotationX: 16 * depth, z: -35 * depth, y: 26, opacity: 1
@@ -172,6 +172,19 @@ export function useEditorialReveal(build?: SceneBuilder) {
         }
       }
 
+      // Mobile keeps native scrolling while the opening screenshots separate in depth.
+      if (!desktop && root.id === 'opening') {
+        gsap.fromTo(root.querySelector('.hero-main-image'), { rotationX: 7, rotationY: -8, y: 12 }, {
+          rotationX: -3, rotationY: 3, y: -18, ease: 'none', scrollTrigger: {
+            trigger: root.querySelector('.hero-gallery'), start: 'top bottom', end: 'bottom top', scrub: 0.45,
+          },
+        });
+        gsap.fromTo(root.querySelector('.hero-small-image'), { rotationZ: 7, y: 22 }, {
+          rotationZ: -3, y: -28, ease: 'none', scrollTrigger: {
+            trigger: root.querySelector('.hero-gallery'), start: 'top bottom', end: 'bottom top', scrub: 0.45,
+          },
+        });
+      }
       // Pointer tracking for dynamic VisionOS specular reflection on spatial cards
       if (desktop) {
         const tiltTargets = owned('.glass-panel, .project-card, .source-index, .footer-person, .process-document, .schema-sheet');

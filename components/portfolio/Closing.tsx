@@ -1,7 +1,20 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { personal, principles, processStages, journey, socials, education, capabilities, foundations, projects, storyCopy, portfolioCopy } from '@/lib/data';
+import {
+  personal,
+  principles,
+  processStages,
+  journey,
+  socials,
+  education,
+  foundations,
+  projects,
+  storyCopy,
+  portfolioCopy,
+  engineeringEvidence,
+  engineeringDecisions
+} from '@/lib/data';
 import { useEditorialReveal } from '@/components/cinematic/useScene';
 import { AnimatedText } from '@/components/cinematic/AnimatedText';
 import { ArrowDownIcon, ArrowUpRightIcon, ArrowRightIcon } from '@/components/icons';
@@ -10,52 +23,164 @@ import { Button } from '@/components/ui/button';
 
 export function Process() {
   const ref = useEditorialReveal();
-  return <section id="process" ref={ref} className="process-section section-space" data-motion-root>
-    <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '15%', right: '8%', width: 450, height: 450, background: 'radial-gradient(circle, rgba(219, 184, 120, 0.65), transparent 70%)' }} aria-hidden="true" />
-    <header className="section-heading"><h2><AnimatedText>{portfolioCopy.process}</AnimatedText></h2><p data-reveal>{personal.ownership}</p></header>
-    <div className="process-composition">
-      <div className="process-document glass-panel" data-spatial="panel">
-        <span className="document-tab">The development loop</span>
-        <div className="process-orbit" aria-hidden="true">
-          <span data-parallax="45" data-plane="1" data-spatial="chip" data-dir="1">plan</span>
-          <span data-parallax="-30" data-plane="-1" data-spatial="chip" data-dir="-1">{'{ build }'}</span>
-          <span data-parallax="24" data-plane="1" data-spatial="chip" data-dir="1">verify</span>
-        </div>
-        <p>{storyCopy.testing}</p>
+  return (
+    <section id="process" ref={ref} className="process-section section-space" data-motion-root>
+      <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '15%', right: '8%', width: 450, height: 450, background: 'radial-gradient(circle, rgba(219, 184, 120, 0.65), transparent 70%)' }} aria-hidden="true" />
+      <header className="section-heading">
+        <p className="section-index">04 / How I Engineer</p>
+        <h2><AnimatedText>{storyCopy.processTitle}</AnimatedText></h2>
+        <p data-reveal>{personal.ownership}</p>
+      </header>
+
+      {/* From Requirement to Production Lifecycle */}
+      <div className="lifecycle-panel glass-panel" data-spatial="panel">
+        <span className="document-tab">From Requirement to Production</span>
+        <p className="lifecycle-sub">Translating real operational workflows into verified, deployed software systems.</p>
+        <FlowLine steps={[
+          "Requirement",
+          "Workflow",
+          "Data Model",
+          "API",
+          "Interface",
+          "Validation",
+          "Testing",
+          "Deployment",
+          "Iteration"
+        ]} />
       </div>
-      <ol className="process-steps" data-flow>
-        <span className="process-track" aria-hidden="true"><span data-wire="vertical"/></span>
-        {processStages.map((stage,i)=><li key={stage.title}>
-          <span className="process-index" aria-hidden="true">0{i+1}</span>
-          <div><h3><AnimatedText>{stage.title}</AnimatedText></h3><p data-reveal>{stage.body}</p><span className="process-question" data-reveal>{stage.question}</span></div>
-        </li>)}
-      </ol>
-    </div>
-    <section id="capabilities" className="capabilities">
-      <h3><AnimatedText>{storyCopy.capabilitiesTitle}</AnimatedText></h3>
-      <div className="capability-list" data-spatial="stagger-3d">{capabilities.map((item,i)=><article key={item.title} data-spatial="card"><span aria-hidden="true">0{i+1}</span><h4>{item.title}</h4><p>{item.body}</p></article>)}</div>
+
+      <div className="process-composition">
+        <ol className="process-steps" data-flow>
+          <span className="process-track" aria-hidden="true"><span data-wire="vertical"/></span>
+          {processStages.map((stage) => (
+            <li key={stage.title}>
+              <span className="process-index" aria-hidden="true">{stage.step}</span>
+              <div>
+                <span className="stage-phase">{stage.phase}</span>
+                <h3><AnimatedText>{stage.title}</AnimatedText></h3>
+                <p data-reveal>{stage.body}</p>
+                <span className="process-evidence" data-reveal>Verification: {stage.evidence}</span>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      {/* Engineering Evidence Section (#capabilities preserves test selector) */}
+      <section id="capabilities" className="engineering-evidence-section">
+        <header className="sub-section-heading">
+          <p className="section-index">Demonstrated Competency</p>
+          <h3><AnimatedText>{storyCopy.evidenceTitle}</AnimatedText></h3>
+          <p>{storyCopy.evidenceSub}</p>
+        </header>
+        <div className="engineering-evidence-grid" data-spatial="stagger-3d">
+          {engineeringEvidence.map((ev, i) => (
+            <article key={ev.domain} className="evidence-card glass-panel" data-spatial="card">
+              <div className="evidence-card-header">
+                <span className="evidence-num">0{i + 1}</span>
+                <h4>{ev.domain}</h4>
+              </div>
+              <p className="evidence-summary">{ev.summary}</p>
+              <ul className="evidence-items">
+                {ev.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Engineering Decisions Section */}
+      <section id="decisions" className="engineering-decisions-section">
+        <header className="sub-section-heading">
+          <p className="section-index">Technical Trade-Offs</p>
+          <h3><AnimatedText>{storyCopy.decisionsTitle}</AnimatedText></h3>
+          <p>{storyCopy.decisionsSub}</p>
+        </header>
+        <div className="engineering-decisions-grid" data-spatial="stagger-3d">
+          {engineeringDecisions.map((dec) => (
+            <article key={dec.decision} className="decision-card glass-panel" data-spatial="card">
+              <div className="decision-meta">
+                <span className="decision-project">{dec.project}</span>
+                <span className="decision-context">{dec.context}</span>
+              </div>
+              <h4>{dec.decision}</h4>
+              <p>{dec.reasoning}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <div className="principles">
+        <h3><AnimatedText>Principles I engineer by.</AnimatedText></h3>
+        <dl data-spatial="stagger-3d">
+          {principles.map((item) => (
+            <div key={item.title} data-spatial="card">
+              <dt>{item.title}</dt>
+              <dd>{item.line}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </section>
-    <div className="principles"><h3><AnimatedText>Principles I work by.</AnimatedText></h3><dl data-spatial="stagger-3d">{principles.map(item=><div key={item.title} data-spatial="card"><dt>{item.title}</dt><dd>{item.line}</dd></div>)}</dl></div>
-  </section>;
+  );
 }
 
 export function Journey() {
   const ref = useEditorialReveal();
-  return <section id="journey" ref={ref} className="journey-section section-space" data-motion-root>
-    <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '20%', right: '10%', width: 420, height: 420, background: 'radial-gradient(circle, rgba(220, 201, 144, 0.65), transparent 70%)' }} aria-hidden="true" />
-    <header className="section-heading"><p className="section-index">05 / Education & growth</p><h2><AnimatedText>{portfolioCopy.education}</AnimatedText></h2><p data-reveal>{storyCopy.foundationsBody}</p></header>
-    <div className="education-degrees" data-spatial="stagger-3d">{education.map((item,i)=><article key={item.title} data-spatial="card"><span className="degree-number" aria-hidden="true">0{i+1}</span><Image src="/brainware-university-logo.svg" alt="Brainware University" width={48} height={48} className="university-logo" priority={false}/><div><span className="degree-date">{item.date}</span><h3>{item.title}</h3><p>{item.institution}</p></div><ArrowUpRightIcon aria-hidden="true"/></article>)}</div>
-    <ol className="education-timeline" data-flow><span className="education-track" aria-hidden="true"><span data-wire/></span>{journey.map(entry=><li key={entry.date}><span className="timeline-dot" aria-hidden="true"/><span className="education-year"><AnimatedText>{entry.date}</AnimatedText></span><div data-reveal><h3>{entry.title}</h3><p>{entry.body}</p></div></li>)}</ol>
-    <div className="foundations"><h3><AnimatedText>{storyCopy.foundationsTitle}</AnimatedText></h3><ul data-stagger>{foundations.map(item=><li key={item}>{item}</li>)}</ul></div>
-  </section>;
+  return (
+    <section id="journey" ref={ref} className="journey-section section-space" data-motion-root>
+      <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '20%', right: '10%', width: 420, height: 420, background: 'radial-gradient(circle, rgba(220, 201, 144, 0.65), transparent 70%)' }} aria-hidden="true" />
+      <header className="section-heading">
+        <p className="section-index">05 / Education & Background</p>
+        <h2><AnimatedText>{portfolioCopy.education}</AnimatedText></h2>
+        <p data-reveal>{storyCopy.foundationsBody}</p>
+      </header>
+      <div className="education-degrees" data-spatial="stagger-3d">
+        {education.map((item, i) => (
+          <article key={item.title} data-spatial="card">
+            <span className="degree-number" aria-hidden="true">0{i + 1}</span>
+            <Image src="/brainware-university-logo.svg" alt="Brainware University" width={48} height={48} className="university-logo" priority={false} />
+            <div>
+              <span className="degree-date">{item.date}</span>
+              <h3>{item.title}</h3>
+              <p>{item.institution}</p>
+            </div>
+            <ArrowUpRightIcon aria-hidden="true" />
+          </article>
+        ))}
+      </div>
+      <ol className="education-timeline" data-flow>
+        <span className="education-track" aria-hidden="true"><span data-wire /></span>
+        {journey.map((entry) => (
+          <li key={entry.date}>
+            <span className="timeline-dot" aria-hidden="true" />
+            <span className="education-year"><AnimatedText>{entry.date}</AnimatedText></span>
+            <div data-reveal>
+              <h3>{entry.title}</h3>
+              <p>{entry.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div className="foundations">
+        <h3><AnimatedText>{storyCopy.foundationsTitle}</AnimatedText></h3>
+        <ul data-stagger>
+          {foundations.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
 }
 
 export function Contact() {
   const ref = useEditorialReveal();
   const [copied, setCopied] = useState(false);
   const [copyState, setCopyState] = useState('');
-  const [activeCmd, setActiveCmd] = useState<'status' | 'skills' | 'ping' | 'git'>('status');
-  const [pingMs, setPingMs] = useState(16);
+  const [activeCmd, setActiveCmd] = useState<'profile' | 'projects' | 'stack' | 'contact'>('profile');
   const timer = useRef<ReturnType<typeof setTimeout>>();
   useEffect(() => () => clearTimeout(timer.current), []);
 
@@ -84,190 +209,184 @@ export function Contact() {
     }
     if (success) {
       setCopied(true);
-      setCopyState('Email copied.');
-      setActiveCmd('status');
+      setCopyState('Email copied to clipboard.');
       timer.current = setTimeout(() => { setCopied(false); setCopyState(''); }, 4500);
     } else {
-      setCopyState('Copy unavailable. Select the email address or use the email link.');
+      setCopyState('Copy unavailable. Select the email address directly or click the mailto link.');
       timer.current = setTimeout(() => setCopyState(''), 5000);
     }
   };
 
-  const handlePing = () => {
-    setActiveCmd('ping');
-    setPingMs(Math.floor(Math.random() * 12) + 14);
-  };
+  return (
+    <footer id="contact" ref={ref} className="contact-section section-space" data-motion-root>
+      <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '10%', right: '5%', width: 520, height: 520, background: 'radial-gradient(circle, rgba(148, 196, 168, 0.8), transparent 70%)' }} aria-hidden="true" />
+      <div className="spatial-ambient-orb" data-spatial="orb" style={{ bottom: '12%', left: '6%', width: 480, height: 480, background: 'radial-gradient(circle, rgba(232, 168, 122, 0.75), transparent 70%)' }} aria-hidden="true" />
 
-  return <footer id="contact" ref={ref} className="contact-section section-space" data-motion-root>
-    <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '10%', right: '5%', width: 520, height: 520, background: 'radial-gradient(circle, rgba(148, 196, 168, 0.8), transparent 70%)' }} aria-hidden="true" />
-    <div className="spatial-ambient-orb" data-spatial="orb" style={{ bottom: '12%', left: '6%', width: 480, height: 480, background: 'radial-gradient(circle, rgba(232, 168, 122, 0.75), transparent 70%)' }} aria-hidden="true" />
-    <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '45%', left: '42%', width: 360, height: 360, background: 'radial-gradient(circle, rgba(255, 235, 175, 0.6), transparent 70%)' }} aria-hidden="true" />
-    
-    <div className="footer-orbit-chips" aria-hidden="true">
-      <span className="footer-chip footer-chip-1" data-parallax="65" data-plane="1" data-spatial="chip" data-dir="1">⚡ Full-Stack &amp; Business Analyst</span>
-      <span className="footer-chip footer-chip-2" data-parallax="-50" data-plane="-1" data-spatial="chip" data-dir="-1">&lt;ShipToProduction /&gt;</span>
-      <span className="footer-chip footer-chip-3" data-parallax="40" data-drift>const ready = true;</span>
-      <span className="footer-chip footer-chip-4" data-parallax="-35" data-plane="1" data-spatial="chip" data-dir="1">Brainware Univ · 2024</span>
-      <span className="footer-chip footer-chip-5" data-parallax="50" data-plane="-1" data-spatial="chip" data-dir="1">Requirements · Schemas · Code</span>
-      <span className="footer-chip footer-chip-6" data-parallax="-42" data-plane="1" data-spatial="chip" data-dir="-1">Zero Downtime Deploy</span>
-    </div>
+      <div className="footer-connection">
+        <h2><AnimatedText>{storyCopy.footer.flowTitle}</AnimatedText></h2>
+        <FlowLine steps={storyCopy.footer.flow} />
+      </div>
 
-    {/* Live Mission Control Telemetry Strip */}
-    <div className="telemetry-strip glass-panel" data-spatial="card" aria-label="System status">
-      <div className="telemetry-item"><span className="telemetry-led live"/><span>SYSTEM: ONLINE</span></div>
-      <div className="telemetry-item"><span className="telemetry-led amber"/><span>LATENCY: {pingMs}ms</span></div>
-      <div className="telemetry-item"><span className="telemetry-led cyan"/><span>ROLE: FULL-STACK ENG &amp; BA</span></div>
-      <div className="telemetry-item"><span className="telemetry-led violet"/><span>LOCATION: WEST BENGAL (IST)</span></div>
-      <div className="telemetry-item"><span className="telemetry-led green"/><span>DISPATCH: IMMEDIATE</span></div>
-    </div>
+      <div className="contact-main">
+        <div className="contact-invite">
+          <div className="availability-badge" data-reveal>
+            <span className="availability-dot" aria-hidden="true" />
+            <span className="availability-text">Open to Remote / Relocation · Full-Time Software Engineering</span>
+          </div>
+          <h2><AnimatedText>{storyCopy.footer.title}</AnimatedText></h2>
+          <p className="contact-body" data-reveal>{storyCopy.footer.body}</p>
+          <p className="contact-secondary-note" data-reveal>{storyCopy.footer.secondary}</p>
 
-    <div className="footer-connection">
-      <h2><AnimatedText>{storyCopy.footer.flowTitle}</AnimatedText></h2>
-      <FlowLine steps={storyCopy.footer.flow}/>
-    </div>
+          <a className="contact-email" href={'mailto:' + personal.email}>
+            {personal.email}
+            <ArrowUpRightIcon aria-hidden="true" />
+          </a>
 
-    <div className="contact-main">
-      <div className="contact-invite">
-        <div className="availability-badge" data-reveal>
-          <span className="availability-dot" aria-hidden="true"/>
-          <span className="availability-text">Available for full-time engineering &amp; BA roles · 2026</span>
+          <div className="contact-tools">
+            <Button className={'copy-email ' + (copied ? 'copied' : '')} variant="outline" onClick={copyEmail} aria-live="polite">
+              {copied ? 'Copied! ✓' : 'Copy email'}
+            </Button>
+            <a href={personal.resume} download className="action action-quiet">
+              Download resume<ArrowDownIcon aria-hidden="true" />
+            </a>
+            <a href="https://github.com/Biswadipgoj" target="_blank" rel="noopener noreferrer" className="text-link">
+              GitHub<ArrowUpRightIcon aria-hidden="true" />
+            </a>
+          </div>
+          <p className="copy-status" role="status">{copyState}</p>
+
+          {/* Quick Engineering Inspector Deck */}
+          <div className="terminal-deck glass-panel" data-spatial="panel" data-depth="panel">
+            <div className="terminal-topbar">
+              <div className="terminal-dots" aria-hidden="true">
+                <span className="term-dot term-red" />
+                <span className="term-dot term-yellow" />
+                <span className="term-dot term-green" />
+              </div>
+              <span className="terminal-title">biswadip@workstation: ~</span>
+              <span className="terminal-session">candidate-brief</span>
+            </div>
+
+            <div className="terminal-controls" role="toolbar" aria-label="Candidate brief inspection tabs">
+              <button type="button" className={'term-pill ' + (activeCmd === 'profile' ? 'active' : '')} onClick={() => setActiveCmd('profile')}>
+                profile
+              </button>
+              <button type="button" className={'term-pill ' + (activeCmd === 'projects' ? 'active' : '')} onClick={() => setActiveCmd('projects')}>
+                shipped-work
+              </button>
+              <button type="button" className={'term-pill ' + (activeCmd === 'stack' ? 'active' : '')} onClick={() => setActiveCmd('stack')}>
+                tech-summary
+              </button>
+              <button type="button" className={'term-pill ' + (activeCmd === 'contact' ? 'active' : '')} onClick={() => setActiveCmd('contact')}>
+                hiring-info
+              </button>
+            </div>
+
+            <div className="terminal-output" aria-live="polite">
+              {activeCmd === 'profile' && (
+                <div className="term-line">
+                  <p className="term-res green-text">Engineer: Biswadip Goj</p>
+                  <p className="term-res">Role: Full-Stack Software Engineer &amp; Business Analyst</p>
+                  <p className="term-res">Advantage: Business workflow analysis, relational data modeling, system contracts</p>
+                  <p className="term-res cyan-text">Degree: B.Tech CSE (2024) · Brainware University</p>
+                </div>
+              )}
+
+              {activeCmd === 'projects' && (
+                <div className="term-line">
+                  <p className="term-res green-text">Track Record: 60+ software products &amp; systems shipped independently</p>
+                  <p className="term-res">Selected Open Architectures &amp; Source Repositories on GitHub:</p>
+                  <p className="term-res">1. Erpixa · Multi-tenant business app with PostgreSQL RLS</p>
+                  <p className="term-res">2. NanoLink · Next.js URL service with runtime Zod boundary validation</p>
+                  <p className="term-res">3. TelePoint · Retail EMI platform with customer ownership checks</p>
+                  <p className="term-res">4. Nexora · Cross-platform workspace (Web, Windows, Android)</p>
+                  <p className="term-res">5. Tripmate · Settlement engine with greedy debt minimization</p>
+                </div>
+              )}
+
+              {activeCmd === 'stack' && (
+                <div className="term-line">
+                  <p className="term-res green-text">Core: TypeScript, React, Next.js, Node.js, Python, SQL</p>
+                  <p className="term-res">Data: PostgreSQL, Prisma ORM, Database Design, Row-Level Security, pgvector</p>
+                  <p className="term-res">Backend: REST APIs, Zod Validation, Authentication, RBAC, Business Logic</p>
+                  <p className="term-res">Quality &amp; Delivery: Git, GitHub Actions, Docker, CI/CD, Production Deployment</p>
+                </div>
+              )}
+
+              {activeCmd === 'contact' && (
+                <div className="term-line">
+                  <p className="term-res green-text">Email: biswadipgoj@gmail.com</p>
+                  <p className="term-res">Location: {personal.location}</p>
+                  <p className="term-res">Availability: Remote / Relocation</p>
+                  <p className="term-res cyan-text">Status: Ready for technical interviews &amp; hiring discussions</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <nav aria-label="Contact links" className="contact-socials" data-stagger>
+            {socials.map((link) => (
+              <a key={link.label} href={link.url} target={link.label === 'Email' ? undefined : '_blank'} rel={link.label === 'Email' ? undefined : 'noopener noreferrer'}>
+                {link.label}
+                <ArrowUpRightIcon aria-hidden="true" />
+              </a>
+            ))}
+          </nav>
         </div>
-        <h2><AnimatedText>{portfolioCopy.contact}</AnimatedText></h2>
-        <p data-reveal>{storyCopy.footer.body}</p>
-        
-        <a className="contact-email" href={'mailto:'+personal.email}>
-          {personal.email}
-          <ArrowUpRightIcon aria-hidden="true"/>
-        </a>
 
-        <div className="contact-tools">
-          <Button className={'copy-email ' + (copied ? 'copied' : '')} variant="outline" onClick={copyEmail} aria-live="polite">
-            {copied ? 'Copied! ✓' : 'Copy email'}
-          </Button>
-          <a href={personal.resume} download className="text-link">
-            Download resume<ArrowDownIcon aria-hidden="true"/>
+        <div className="source-index glass-panel" data-depth="panel" data-spatial="panel">
+          <div className="source-index-heading">
+            <div>
+              <h3>{storyCopy.footer.sourceTitle}</h3>
+              <span className="source-count">05 Verified Repositories</span>
+            </div>
+            <span className="repo-cube-badge" aria-hidden="true">⎇ main</span>
+          </div>
+          <ul data-stagger>
+            {projects.map((project) => (
+              <li key={project.slug}>
+                <a href={project.repo} target="_blank" rel="noopener noreferrer" className="repo-card-link">
+                  <span className="source-branch" aria-hidden="true">↳</span>
+                  <div>
+                    <strong>{project.name}</strong>
+                    <span className="repo-tech-tag">{project.techStack.slice(0, 3).join(' · ')}</span>
+                  </div>
+                  <ArrowUpRightIcon aria-hidden="true" />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a className="text-link" href="#projects">
+            View projects<ArrowRightIcon aria-hidden="true" />
           </a>
         </div>
-        <p className="copy-status" role="status">{copyState}</p>
-        
-        {/* Playful Interactive Developer Terminal Deck */}
-        <div className="terminal-deck glass-panel" data-spatial="panel" data-depth="panel">
-          <div className="terminal-topbar">
-            <div className="terminal-dots" aria-hidden="true">
-              <span className="term-dot term-red"/>
-              <span className="term-dot term-yellow"/>
-              <span className="term-dot term-green"/>
-            </div>
-            <span className="terminal-title">biswadip@cloud-terminal: ~</span>
-            <span className="terminal-session">bash · v5.2</span>
-          </div>
-
-          <div className="terminal-controls" role="toolbar" aria-label="Interactive terminal commands">
-            <button type="button" className={'term-pill ' + (activeCmd === 'status' ? 'active' : '')} onClick={() => setActiveCmd('status')}>
-              &gt; biswadip.status()
-            </button>
-            <button type="button" className={'term-pill ' + (activeCmd === 'skills' ? 'active' : '')} onClick={() => setActiveCmd('skills')}>
-              &gt; biswadip.skills()
-            </button>
-            <button type="button" className={'term-pill ' + (activeCmd === 'ping' ? 'active' : '')} onClick={handlePing}>
-              &gt; biswadip.ping()
-            </button>
-            <button type="button" className={'term-pill ' + (activeCmd === 'git' ? 'active' : '')} onClick={() => setActiveCmd('git')}>
-              &gt; git.latest()
-            </button>
-          </div>
-
-          <div className="terminal-output" aria-live="polite">
-            {activeCmd === 'status' && <div className="term-line">
-              <p className="term-cmd">$ biswadip.status()</p>
-              <p className="term-res green-text">&gt; Candidate: Biswadip Goj</p>
-              <p className="term-res">&gt; Title: Full-Stack Software Engineer &amp; Business Analyst</p>
-              <p className="term-res">&gt; Availability: Immediate notice (Remote / Relocation)</p>
-              <p className="term-res cyan-text">&gt; Status: Ready to analyze business workflows and deploy production systems.</p>
-            </div>}
-
-            {activeCmd === 'skills' && <div className="term-line">
-              <p className="term-cmd">$ biswadip.skills()</p>
-              <p className="term-res">&gt; Analysis: Requirements (BRD/PRD) · Domain Modeling · UAT · Workflows</p>
-              <p className="term-res">&gt; Core: TypeScript · React · Next.js · Node.js · Python</p>
-              <p className="term-res">&gt; Database: PostgreSQL 16 · pgvector · Prisma ORM · RLS</p>
-              <p className="term-res">&gt; AI/ML: Hybrid RAG (BM25 + vector) · QLoRA Fine-Tuning · Eval CI</p>
-              <p className="term-res green-text">&gt; Result: 12 grounded competencies linked to public repository proof.</p>
-            </div>}
-
-            {activeCmd === 'ping' && <div className="term-line">
-              <p className="term-cmd">$ ping -c 3 biswadip.in</p>
-              <p className="term-res">&gt; 64 bytes from 76.76.21.21: icmp_seq=1 ttl=58 time={pingMs}.2ms</p>
-              <p className="term-res">&gt; 64 bytes from 76.76.21.21: icmp_seq=2 ttl=58 time={pingMs - 1}.8ms</p>
-              <p className="term-res green-text">&gt; 0% packet loss. Server health: 100% nominal.</p>
-            </div>}
-
-            {activeCmd === 'git' && <div className="term-line">
-              <p className="term-cmd">$ git log -1 --pretty=format:&quot;%h - %an: %s&quot;</p>
-              <p className="term-res green-text">&gt; 54bf399 - Biswadip Goj: Full-stack software engineering &amp; BA verified</p>
-              <p className="term-res">&gt; Test suite: 38/38 automated checks passing on Desktop &amp; Mobile.</p>
-            </div>}
-            <span className="terminal-cursor" aria-hidden="true">_</span>
-          </div>
-        </div>
-
-        <nav aria-label="Contact links" className="contact-socials" data-stagger>
-          {socials.map(link => <a key={link.label} href={link.url} target={link.label==='Email'?undefined:'_blank'} rel={link.label==='Email'?undefined:'noopener noreferrer'}>
-            {link.label}
-            <ArrowUpRightIcon aria-hidden="true"/>
-          </a>)}
-        </nav>
       </div>
 
-      <div className="source-index glass-panel" data-depth="panel" data-spatial="panel">
-        <div className="source-index-heading">
-          <div>
-            <h3>{storyCopy.footer.sourceTitle}</h3>
-            <span className="source-count">05 Verified Repositories</span>
-          </div>
-          <span className="repo-cube-badge" aria-hidden="true">⎇ main</span>
+      <div className="footer-person glass-panel" data-reveal data-spatial="card">
+        <div className="footer-avatar-wrap">
+          <div className="avatar-beacon-halo" aria-hidden="true" />
+          <Image src="/biswodip.png" alt="Biswodip Goj" width={64} height={80} className="footer-avatar" />
+          <span className="avatar-status-dot" title="Active developer" aria-hidden="true" />
         </div>
-        <ul data-stagger>
-          {projects.map(project => <li key={project.slug}>
-            <a href={project.repo} target="_blank" rel="noopener noreferrer" className="repo-card-link">
-              <span className="source-branch" aria-hidden="true">↳</span>
-              <div>
-                <strong>{project.name}</strong>
-                <span className="repo-tech-tag">{project.techStack.slice(0,3).join(' · ')}</span>
-              </div>
-              <ArrowUpRightIcon aria-hidden="true"/>
-            </a>
-          </li>)}
-        </ul>
-        <a className="text-link" href="#projects">
-          View projects<ArrowRightIcon aria-hidden="true"/>
+        <div>
+          <strong>{personal.name}</strong>
+          <span className="footer-role-chip">{personal.role}</span>
+        </div>
+        <p>{personal.tagline}</p>
+      </div>
+
+      <div className="footer-signature" aria-hidden="true">
+        <span data-parallax="40" data-drift>{storyCopy.footer.signature}</span>
+      </div>
+
+      <div className="contact-colophon">
+        <span>{storyCopy.footer.credit}</span>
+        <span>{personal.location}</span>
+        <a href="#opening" className="back-to-top" aria-label="Back to top of page">
+          Back to top<ArrowUpRightIcon aria-hidden="true" />
         </a>
       </div>
-    </div>
-
-    <div className="footer-person glass-panel" data-reveal data-spatial="card">
-      <div className="footer-avatar-wrap">
-        <div className="avatar-beacon-halo" aria-hidden="true"/>
-        <Image src="/biswodip.png" alt="Biswodip Goj" width={64} height={80} className="footer-avatar"/>
-        <span className="avatar-status-dot" title="Active developer" aria-hidden="true"/>
-      </div>
-      <div>
-        <strong>{personal.name}</strong>
-        <span className="footer-role-chip">{personal.role}</span>
-      </div>
-      <p>{personal.tagline}</p>
-    </div>
-
-    <div className="footer-signature" aria-hidden="true">
-      <span data-parallax="40" data-drift>{storyCopy.footer.signature}</span>
-    </div>
-
-    <div className="contact-colophon">
-      <span>{storyCopy.footer.credit}</span>
-      <span>{personal.location}</span>
-      <a href="#opening" className="back-to-top" aria-label="Back to top of page">
-        Back to top<ArrowUpRightIcon aria-hidden="true"/>
-      </a>
-    </div>
-  </footer>;
+    </footer>
+  );
 }
+

@@ -7,6 +7,19 @@ import Projects from '@/components/projects/Projects';
 import { Process, Journey, Contact } from '@/components/portfolio/Closing';
 
 export default function JourneyPortfolio() {
-  return <SmoothScroll><PortfolioNav/><main id="main" tabIndex={-1}><Opening/><Identity/><Stack/><Projects/><Process/><Journey/></main><Contact/></SmoothScroll>;
+  return (
+    <SmoothScroll>
+      <PortfolioNav />
+      <main id="main" tabIndex={-1}>
+        <Opening />
+        <Identity />
+        <Stack />
+        <Projects />
+        <Process />
+        <Journey />
+      </main>
+      <Contact />
+    </SmoothScroll>
+  );
 }
 

@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test('recruiter facts, functional resume and accessible animated text', async ({ page, request }) => {
   await page.goto('/');
   await expect(page.locator('.education-degrees p')).toHaveText(['Brainware University', 'Brainware University']);
-  await expect(page.locator('h1')).toHaveAccessibleName('Software, end to end.');
+  await expect(page.locator('h1')).toHaveAccessibleName('From real problems to working software.');
   await expect(page.locator('main')).not.toContainText(/vibe.cod|MAKAUT|WBSCTE|gateway callback/i);
   const resume = await request.get('/Biswodip-Goj-Resume.pdf');
   expect(resume.status()).toBe(200);
@@ -83,7 +83,7 @@ test('the portfolio is complete without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto('/');
-  await expect(page.locator('h1')).toHaveAccessibleName('Software, end to end.');
+  await expect(page.locator('h1')).toHaveAccessibleName('From real problems to working software.');
   await expect(page.locator('.project-chapter')).toHaveCount(5);
   await expect(page.locator('.education-degrees p')).toHaveText(['Brainware University', 'Brainware University']);
   await page.locator('#contact').scrollIntoViewIfNeeded();
@@ -153,3 +153,27 @@ test('all interactive buttons and click functions respond properly across the jo
     expect(await resumeLinks.nth(i).getAttribute('href')).toContain('.pdf');
   }
 });
+
+ test('technology explorer connects skills to projects and works by keyboard', async ({ page }) => {
+  await page.goto('/#stack');
+  const next = page.getByRole('button', { name: 'Next.js', exact: true });
+  await next.focus();
+  await page.keyboard.press('Enter');
+  await expect(next).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.skill-proof-list')).toContainText('NanoLink');
+  await expect(page.locator('.skill-proof-list')).not.toContainText('Erpixa');
+  await page.getByRole('button', { name: 'All technologies', exact: true }).click();
+  await expect(page.locator('.skill-proof-row')).toHaveCount(5);
+  const analysis = page.locator('.stack-category').filter({ hasText: 'Business analysis & systems' });
+  await analysis.locator('summary').click();
+  await expect(analysis).toHaveAttribute('open', '');
+  await expect(analysis).toContainText('Requirements elicitation');
+ });
+
+ test('mobile opening offers work and resume before the first scroll', async ({ page }) => {
+  test.skip((page.viewportSize()?.width || 1440) > 799, 'Mobile first viewport');
+  await page.goto('/');
+  await expect(page.locator('.hero-actions a[href="#projects"]')).toBeInViewport();
+  await expect(page.locator('.hero-actions a[download]')).toBeInViewport();
+  await expect(page.locator('.cli-loader-overlay')).toHaveCount(0);
+ });

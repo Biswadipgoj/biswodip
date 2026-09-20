@@ -49,9 +49,20 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         if(location.hash!==anchor.hash) history.pushState(null,'',anchor.hash);
         lenis.scrollTo(target,{onComplete:()=>focusTarget(target)});
       };
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
       const restore = ()=>{
         const target=location.hash ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
-        lenis.scrollTo(target||0,{immediate:true});
+        if (target) {
+          lenis.scrollTo(target, { immediate: true });
+        } else {
+          lenis.scrollTo(0, { immediate: true });
+          window.scrollTo(0, 0);
+          requestAnimationFrame(() => {
+            window.scrollTo(0, 0);
+          });
+        }
       };
       document.addEventListener('click',navigate);
       window.addEventListener('popstate',restore);
