@@ -1,11 +1,11 @@
 'use client';
-import { hero, personal, socials, projects } from '@/lib/data';
+import { hero, personal, socials } from '@/lib/data';
 import { ActionLink } from '@/components/cinematic/SoftwarePrimitives';
 import { ArrowDownIcon, ArrowUpRightIcon } from '@/components/icons';
 import { useScene, type SceneBuilder } from '@/components/cinematic/useScene';
 import { AnimatedText } from '@/components/cinematic/AnimatedText';
-import Image from 'next/image';
 import { useEntrance } from '@/components/cinematic/useEntrance';
+import CreativeStudio from '@/components/portfolio/CreativeStudio';
 
 const build: SceneBuilder = (timeline, root, desktop) => {
   const select = (selector: string) => root.querySelector<HTMLElement>(selector);
@@ -91,33 +91,30 @@ export default function Opening() {
         <span className="hero-orbit-chip chip-right" data-parallax="-30" data-plane="-1">{hero.workflow[1]}</span>
         <span className="hero-orbit-chip chip-center" data-parallax="28" data-plane="1">B.Tech CSE · 2024</span>
       </div>
-      <div className="hero-copy">
-        <p className="hero-eyebrow" data-entrance><span className="status-dot"/>{hero.eyebrow} · {personal.name}</p>
-        <h1 id="hero-title" aria-label={hero.heading}><AnimatedText>{hero.heading}</AnimatedText></h1>
-        <p className="hero-body" data-entrance>{hero.body}</p>
-        <div className="hero-proof-strip" aria-label="Key qualifications">
-          {hero.proofStrip.map((item) => (
-            <div key={item.label} className="proof-item">
-              <strong>{item.label}</strong>
-              <span>{item.detail}</span>
-            </div>
-          ))}
+      <div className="hero-content-grid">
+        <div className="hero-copy">
+          <p className="hero-eyebrow" data-entrance><span className="status-dot"/>{hero.eyebrow} · {personal.name}</p>
+          <h1 id="hero-title" aria-label={hero.heading}><AnimatedText>{hero.heading}</AnimatedText></h1>
+          <p className="hero-body" data-entrance>{hero.body}</p>
+          <div className="hero-proof-strip" aria-label="Key qualifications">
+            {hero.proofStrip.map((item) => (
+              <div key={item.label} className="proof-item">
+                <strong>{item.label}</strong>
+                <span>{item.detail}</span>
+              </div>
+            ))}
+          </div>
+          <div className="hero-actions" data-entrance>
+            <ActionLink href="#projects">{hero.primary}</ActionLink>
+            <a href={personal.resume} download className="action action-quiet">Resume<ArrowDownIcon aria-hidden="true"/></a>
+            <a href={socials[1].url} target="_blank" rel="noopener noreferrer" className="text-link">GitHub<ArrowUpRightIcon aria-hidden="true"/></a>
+            <a href={socials[2].url} target="_blank" rel="noopener noreferrer" className="text-link">LinkedIn<ArrowUpRightIcon aria-hidden="true"/></a>
+            <a href="#contact" className="text-link">Contact<ArrowUpRightIcon aria-hidden="true"/></a>
+          </div>
         </div>
-        <div className="hero-actions" data-entrance>
-          <ActionLink href="#projects">{hero.primary}</ActionLink>
-          <a href={personal.resume} download className="action action-quiet">Resume<ArrowDownIcon aria-hidden="true"/></a>
-          <a href={socials[1].url} target="_blank" rel="noopener noreferrer" className="text-link">GitHub<ArrowUpRightIcon aria-hidden="true"/></a>
-          <a href={socials[2].url} target="_blank" rel="noopener noreferrer" className="text-link">LinkedIn<ArrowUpRightIcon aria-hidden="true"/></a>
-          <a href="#contact" className="text-link">Contact<ArrowUpRightIcon aria-hidden="true"/></a>
+        <div className="hero-gallery" data-hero-gallery aria-label="Interactive Architecture Studio">
+          <CreativeStudio />
         </div>
-      </div>
-      <div className="hero-gallery" data-hero-gallery aria-label="Selected project preview">
-        <figure className="hero-main-image portfolio-preview">
-          <div className="preview-chrome"><span>{projects[0].name}</span><a href={'/project/' + projects[0].slug}>View project<ArrowUpRightIcon aria-hidden="true" /></a></div>
-          <Image src="/previews/erpixa.webp" alt="Erpixa business management interface" width={1600} height={1000} priority sizes="(max-width: 999px) 90vw, 48vw" />
-          <figcaption>{projects[0].blurb}</figcaption>
-          <div className="preview-index">{projects.map(project => <a key={project.slug} href={'#' + project.slug}>{project.name}<ArrowUpRightIcon aria-hidden="true" /></a>)}</div>
-        </figure>
       </div>
       <ol className="hero-workflow" aria-label={hero.workflowTitle} data-spatial="stagger-3d">{hero.workflow.map((step)=><li key={step}>{step}</li>)}</ol>
       <div className="hero-bottom"><span>TypeScript · React · Next.js · PostgreSQL · Python</span><a href="#about" className="scroll-hint">Scroll to explore<ArrowDownIcon aria-hidden="true"/></a><span>60+ Shipped · Production Systems</span></div>

@@ -118,15 +118,50 @@ export default function CreativeStudio() {
     return () => clearInterval(interval);
   }, [speed]);
 
-  // Fluid return-to-hero physics: trigger Anime.js kinetic wave when scrolling back up
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Fluid scroll entry & return-to-hero physics via Anime.js
   useEffect(() => {
-    let lastScroll = 0;
+    const el = containerRef.current;
+    if (!el) return;
+
+    let hasEntered = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !hasEntered) {
+            hasEntered = true;
+            try {
+              animate('.architecture-substrate .substrate-node', {
+                scale: [0.85, 1.45, 1],
+                opacity: [0.25, 1, 0.45],
+                delay: stagger(1.4, { grid: [32, 32], from: 'center' }),
+                duration: 700,
+                ease: 'outCubic'
+              });
+            } catch {}
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+
+    // Dynamic wave when user scrolls up back into the opening section
+    let lastScroll = window.scrollY;
+    let waveCooldown = 0;
     const onScroll = () => {
-      const scrollY = window.scrollY;
-      if (scrollY < 400 && lastScroll >= 400) {
+      const currentScroll = window.scrollY;
+      const now = Date.now();
+      const rect = el.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+
+      if (inView && currentScroll < lastScroll && Math.abs(currentScroll - lastScroll) > 5 && now - waveCooldown > 1100) {
+        waveCooldown = now;
         try {
           animate('.architecture-substrate .substrate-node', {
-            scale: [0.92, 1.45, 1],
+            scale: [0.92, 1.38, 1],
             opacity: [0.3, 0.95, 0.45],
             delay: stagger(1.2, { grid: [32, 32], from: 'center' }),
             duration: 650,
@@ -134,10 +169,14 @@ export default function CreativeStudio() {
           });
         } catch {}
       }
-      lastScroll = scrollY;
+      lastScroll = currentScroll;
     };
+
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   const triggerBurst = () => {
@@ -151,7 +190,7 @@ export default function CreativeStudio() {
     // Anime.js 2D radial wave pulse across all 1,024 kinetic logic nodes
     try {
       animate('.architecture-substrate .substrate-node', {
-        scale: [1, 1.6, 1],
+        scale: [1, 1.65, 1],
         opacity: [0.35, 1, 0.45],
         delay: stagger(1.5, { grid: [32, 32], from: 'center' }),
         duration: 750,
@@ -171,7 +210,11 @@ export default function CreativeStudio() {
   const currentStage = STAGES.find((s) => s.id === activeStage) || STAGES[1];
 
   return (
-    <div className="hero-main-image creative-studio glass-panel" aria-label="1,024-Node Interactive Software Architecture Engine">
+    <div
+      ref={containerRef}
+      className="hero-main-image creative-studio glass-panel"
+      aria-label="1,024-Node Interactive Software Architecture Engine"
+    >
       {/* Chrome Top Bar */}
       <div className="studio-chrome">
         <div className="chrome-controls" aria-hidden="true">

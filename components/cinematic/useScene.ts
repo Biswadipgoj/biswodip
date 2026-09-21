@@ -188,6 +188,8 @@ export function useEditorialReveal(build?: SceneBuilder) {
       }
       if (build) {
         root.dataset.animated = 'true';
+        const isHero = root.id === 'opening';
+        const galleryEl = root.querySelector<HTMLElement>('.hero-gallery');
         const timeline = gsap.timeline({
           defaults: { ease: 'none' },
           scrollTrigger: desktop ? {
@@ -197,9 +199,9 @@ export function useEditorialReveal(build?: SceneBuilder) {
             scrub: 0.45,
             invalidateOnRefresh: true,
           } : {
-            trigger: root,
-            start: 'top top',
-            end: 'bottom bottom',
+            trigger: isHero && galleryEl ? galleryEl : root,
+            start: isHero ? 'top 95%' : 'top 90%',
+            end: isHero ? 'bottom 15%' : 'bottom 20%',
             scrub: 0.45,
             invalidateOnRefresh: true,
           }
