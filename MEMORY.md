@@ -140,3 +140,43 @@
 - Removed unused global --scroll-kinetic update; reduced backdrop sampling. Narrow browserslist/baseline updates leave two Next/PostCSS audit advisories. No forced Next major migration.
 - DOCX not generated; PDF source and builder are editable.
 - Final production Lighthouse audit: performance 70 (target not met), accessibility/best practices/SEO 100, LCP 3369ms, TBT 858ms, CLS 0. Report artifacts/lighthouse-mobile.html. Startup/scene layout work remains an optimization item.
+
+## Overlap Elimination & Mobile 1,024-Node Animation Final Resolution - 2026-09-21
+- **Root Cause Analysis of Overlapping**:
+  - hero-orbit-badges used absolute percentage coordinates (	op: 10%; left: 3%), placing .chip-left ("Contract & 60+ Shipped") directly on top of the "From" in "From real problems to working software."
+  - .hero-copy h1 had max-width: 9.6ch and clamp(48px, 6vw, 96px), causing a 3-line 266px wrap that inflated .hero-copy to 617px.
+  - .hero-actions wrapped buttons into 2 rows (110px height).
+  - .opening[data-animated] .hero-stage had height: calc(100svh - 72px), hard-locking the container height to 728px when the content required 754px, forcing .hero-actions to overflow directly into .hero-workflow (+0.00px collision).
+- **Comprehensive Solution Implemented**:
+  - Removed duplicate floating .hero-orbit-badges from [components/portfolio/Opening.tsx](file:///c:/Users/biswa/biswodip/components/portfolio/Opening.tsx); all key credentials remain prominently showcased in .hero-proof-strip.
+  - Calibrated .hero-copy h1 to clamp(38px, 4.3vw, 66px) with max-width: 15ch, producing a balanced 2-line heading (138px height).
+  - Streamlined .hero-actions to single-line/compact wrap (42px height).
+  - Formatted CreativeStudio with compact padding and a 140px 1,024-node substrate grid (455px total height).
+  - Changed .hero-stage sticky sizing to min-height: calc(100svh - 72px); height: auto; in flex-column flow.
+  - Measured Edge layout clearance:
+    - Desktop (1440x800): Actions-to-Workflow gap: **+97.00px**; Studio-to-Workflow gap: **+81.00px**; Workflow-to-Bottom gap: **+20.00px**; Zero badges collisions; **1,024 kinetic logic nodes**.
+    - Mobile (390x844): Copy-to-Studio gap: **+31.00px**; Studio-to-Workflow gap: **+49.00px**; Workflow-to-Bottom gap: **+50.00px**; **1,024 kinetic logic nodes**.
+- **Mobile Animation Engine (Anime.js + GSAP)**:
+  - Wired IntersectionObserver in [components/portfolio/CreativeStudio.tsx](file:///c:/Users/biswa/biswodip/components/portfolio/CreativeStudio.tsx) to automatically fire Anime.js 2D radial shockwaves across all 1,024 nodes upon scroll entry.
+  - Added return-scroll velocity wave detection with 2D center stagger.
+  - Re-calibrated GSAP ScrollTrigger in [components/cinematic/useScene.ts](file:///c:/Users/biswa/biswodip/components/cinematic/useScene.ts) on .hero-gallery (start: 'top 95%', end: 'bottom 15%'), ensuring 3D pitch, yaw, elevation, and wave animations scrub continuously while the user views the studio on mobile.
+- **Verification**:
+  - 
+pm run typecheck: Passed with 0 errors.
+  - 
+pm run lint: Passed with 0 warnings/errors.
+  - 
+pm run build: Passed (13/13 static routes generated).
+  - 
+pm run test:browser: 45 passed, 3 skipped, 0 failures across 48 test cases on Edge and Mobile Viewport.
+
+## Professional Hero Redesign, ATS Résumé Overhaul & Open Résumé Resolution - 2026-09-21
+- **Eliminated Fake Terminal Loader**: Neutralized PortfolioLoader so the site loads immediately and cleanly without any simulated Linux CLI loading screen.
+- **Hero Gallery Overhaul**: Replaced the simulated 1,024-node 'System Architecture' matrix widget with a senior-level Production Systems Showcase (HeroShowcase.tsx). Features real production web application planes (NanoLink, TelePoint, Nexora) with live status beacons, interactive project switcher tabs, and CSS 3D perspective transforms connected to GSAP scroll scene.
+- **Open Résumé Privacy Resolution**: Transformed #resume from an open, unshielded paper sheet into an Executive Credentials & Résumé Vault. Left side features structured professional timeline and verified education (Brainware University & Uluberia High School); right side features an Executive Recruiter Dossier Card with a confidential frosted glass document shield (protecting phone number and document from casual exposure) with an interactive reveal toggle and instant ATS PDF download actions.
+- **ATS Filter Optimization**: Updated lib/data.ts and scripts/build-resume.py to precisely match the user's uploaded 2-page document specification: 2 pages, vector text, ReportLab ATS-compliant single-column layout, horizontal divider rules, standard section headings (SUMMARY, SKILLS, EXPERIENCE, PROJECTS, EDUCATION), 8,316 selectable characters, 14 clickable links, and both Brainware University qualifications.
+- **Verification**:
+  - npm run typecheck: 0 errors.
+  - npm run lint: 0 errors/warnings.
+  - npm run build: 13/13 static pages compiled successfully.
+  - npm run test:browser: All 48 tests passing (45 passed, 3 skipped as expected) in Playwright under Microsoft Edge (Desktop and Mobile viewports).

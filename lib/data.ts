@@ -446,7 +446,9 @@ export const education = [
 export const schooling = {
   institution: "Uluberia High School",
   location: "Uluberia, West Bengal",
-  detail: "Secondary & Higher Secondary Education"
+  detail: "Secondary & Higher Secondary Education",
+  title: "Secondary & Higher Secondary Education",
+  date: "2011–2018"
 } as const;
 
 export const experience = [
@@ -1492,9 +1494,10 @@ export const primaryTechnologies = [
 
 export const resumeCopy = {
   title: 'The experience behind the work.',
-  summary: 'Full-stack software engineer working across business requirements, relational data models, APIs and responsive interfaces. Builds web applications with TypeScript, React, Next.js, Node.js and PostgreSQL, with experience in business workflow analysis and ASP.NET Core MVC training.',
-  preview: 'Resume preview',
-  pdf: 'Download PDF',
+  summary: 'Computer Science graduate and independent software/product developer with hands-on experience taking applications from ambiguous requirements to deployed, working systems. Comfortable translating business problems into technical workflows, integrating APIs and databases, debugging production issues, and iterating on real user feedback. Has delivered 15+ independent projects with meaningful product scope — spanning multi-tenant SaaS, financial/payment workflows, and cross-platform apps — contracting across client engagements while retaining full ownership of architecture, testing, and delivery.',
+  preview: 'Inspect ATS Document',
+  pdf: 'Download ATS PDF',
   experience: 'Professional experience',
   skills: 'Technical skills',
 } as const;
+
