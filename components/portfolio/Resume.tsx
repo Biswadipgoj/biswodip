@@ -39,7 +39,7 @@ export default function Resume() {
                 </div>
                 <ul className="resume-bullet-list">
                   {item.highlights
-                    .filter((line) => !line.includes('60+'))
+                    .filter((line) => !line.includes('50+') && !line.includes('60+'))
                     .map((line) => (
                       <li key={line} className="resume-bullet">
                         {line}
@@ -51,7 +51,7 @@ export default function Resume() {
           </ol>
 
           <div className="resume-academic-summary" data-reveal>
-            <h4 className="resume-subheading">Verified Education</h4>
+            <h4 className="resume-subheading">Education</h4>
             <ul className="resume-education-list">
               {education.map((deg) => (
                 <li key={deg.title} className="resume-edu-item">
@@ -79,33 +79,35 @@ export default function Resume() {
           </details>
         </div>
 
-        {/* Right Column: Confidential Recruiter Dossier Hub & Protected Document Vault */}
-        <aside className="resume-vault-col" aria-label="Recruiter Document Vault">
+        {/* Right column: the candidate card, the PDF preview and its download. */}
+        <aside className="resume-vault-col" aria-label="Résumé PDF">
           <div className="resume-dossier-card glass-panel">
-            <div className="dossier-header">
-              <div className="dossier-badge-row">
-                <span className="dossier-pill pill-verified">ATS-COMPLIANT</span>
-                <span className="dossier-pill pill-format">2 PAGES · VECTOR PDF</span>
-                <span className="dossier-pill pill-status">ACTIVE</span>
+            <div className="dossier-candidate">
+              <div className="candidate-photo">
+                <Image src="/biswodip.png" alt={`${personal.name}, portrait`} width={160} height={160} sizes="80px" />
               </div>
-              <h4 className="dossier-title">Official Candidate Dossier</h4>
-              <p className="dossier-meta">
-                Verified background: Full-Stack Engineering, Contract Engagements, Relational Schemas, and
-                Brainware University credentials.
-              </p>
+              <div>
+                <p className="candidate-name">{personal.name}</p>
+                <p className="candidate-role">{personal.role}</p>
+                <p className="candidate-meta"><span className="status-dot" aria-hidden="true" />{personal.location}</p>
+              </div>
+            </div>
+            <div className="dossier-header">
+              <h4 className="dossier-title">Résumé</h4>
+              <p className="dossier-meta">PDF · 2 pages · selectable text</p>
             </div>
 
-            {/* Document Privacy Shield: Protects raw paper resume from casual exposure */}
+            {/* The preview starts hidden so the phone number on page one is not on show by default. */}
             <div className="document-shield-container">
               <div className="document-preview-frame">
                 <Image
                   src="/resume-preview.webp"
-                  alt="First page preview of Biswodip Goj’s verified résumé"
+                  alt="First page of Biswodip Goj’s résumé"
                   width={595}
                   height={842}
                   sizes="(max-width: 799px) 85vw, 380px"
                   className={`document-preview-img ${revealed ? 'revealed' : 'shielded'}`}
-                  priority={false}
+                  priority
                 />
 
                 {!revealed && (
@@ -116,15 +118,15 @@ export default function Resume() {
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                       </svg>
                     </div>
-                    <span className="privacy-shield-text">Document Preview Shielded</span>
-                    <span className="privacy-shield-sub">Click below to reveal or download the full document</span>
+                    <span className="privacy-shield-text">Preview hidden</span>
+                    <span className="privacy-shield-sub">Page one includes contact details. Show it here or download the PDF.</span>
                     <button
                       type="button"
-                      className="privacy-reveal-btn"
+                      className="reveal-pill privacy-reveal-btn"
                       onClick={() => setRevealed(true)}
-                      aria-label="Reveal résumé document preview"
+                      aria-label="Show résumé preview"
                     >
-                      Reveal Document Preview
+                      Show preview
                     </button>
                   </div>
                 )}
@@ -132,27 +134,26 @@ export default function Resume() {
 
               {revealed && (
                 <div className="document-hide-bar">
-                  <span>Document preview unshielded</span>
+                  <span>Preview visible</span>
                   <button
                     type="button"
                     className="privacy-hide-btn"
                     onClick={() => setRevealed(false)}
-                    aria-label="Hide document preview"
+                    aria-label="Hide résumé preview"
                   >
-                    Shield Document
+                    Hide preview
                   </button>
                 </div>
               )}
             </div>
 
             <div className="dossier-actions">
-              <a
-                href={personal.resume}
-                download
-                className="action action-primary resume-download-btn"
-                aria-label="Download official ATS résumé PDF"
-              >
-                {resumeCopy.pdf}
+              <a href={personal.resume} download className="file-download" aria-label="Download résumé PDF, 2 pages">
+                <span className="file-download-icon" aria-hidden="true">PDF</span>
+                <span className="file-download-text">
+                  <strong>{resumeCopy.pdf}</strong>
+                  <span>Biswodip-Goj-Resume.pdf · 2 pages</span>
+                </span>
                 <ArrowDownIcon aria-hidden="true" />
               </a>
 
@@ -160,7 +161,7 @@ export default function Resume() {
                 href={personal.resume}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="action action-quiet resume-open-btn"
+                className="text-link resume-open-btn"
                 aria-label="Open résumé PDF in new tab"
               >
                 {resumeCopy.preview}

@@ -2,6 +2,7 @@
 // To add more: invoke the install-icons MCP tool with libraryId="iconoir",
 // or run `bun run add-icon <name>` if scripts/add-icon.ts exists in this repo.
 // Do NOT mix in icons from other libraries — see .library.json for the locked choice.
+// Size lives in the width/height attributes only: an inline style size would outrank every stylesheet rule.
 
 export { ArrowUpRightIcon } from "./arrow-up-right";
 export { ArrowRightIcon } from "./arrow-right";

@@ -40,7 +40,18 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = { themeColor: '#10171c', width: 'device-width', initialScale: 1 };
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  // Paint under the notch and the home indicator; env(safe-area-inset-*) reads 0
+  // without this, so the nav and footer pad themselves back out in CSS.
+  viewportFit: 'cover',
+  // The status bar should match the colour at the very top of the page.
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#efe0c2' },
+    { media: '(prefers-color-scheme: dark)', color: '#efe0c2' },
+  ],
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = {

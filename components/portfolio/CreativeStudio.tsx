@@ -437,8 +437,8 @@ export default function CreativeStudio() {
             </div>
             <div className="tele-metric-card">
               <span className="tele-tag">SHIPPED SYSTEMS</span>
-              <strong className="tele-val">60+ Shipped</strong>
-              <span className="tele-sub">Independent products &amp; systems</span>
+              <strong className="tele-val">50+ Shipped</strong>
+              <span className="tele-sub">Remote teams &amp; independent builds</span>
             </div>
             <div className="tele-metric-card">
               <span className="tele-tag">API LATENCY</span>

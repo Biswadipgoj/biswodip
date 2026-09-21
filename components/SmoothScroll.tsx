@@ -10,7 +10,10 @@ declare global { interface Window { portfolioScroll?: Lenis; gsap?: typeof gsap;
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(()=>{
     // Font and document readiness are combined below; avoid three startup refreshes.
-    ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,resize' });
+    // ignoreMobileResize is the fix for "no animation works on mobile": every time the
+    // address bar collapsed, the resize event forced a full refresh and scrubbed values
+    // snapped back mid-animation. Width changes still refresh via the handler below.
+    ScrollTrigger.config({ autoRefreshEvents: 'visibilitychange,resize', ignoreMobileResize: true });
     if (process.env.NODE_ENV !== 'production') { window.gsap=gsap; window.ScrollTrigger=ScrollTrigger; }
     const media = gsap.matchMedia();
     let disposed = false;
@@ -27,6 +30,83 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       else window.addEventListener('load',onLoad,{once:true});
     });
     Promise.all([document.fonts.ready,loaded]).then(scheduleRefresh);
+
+    // Publish scroll state on <html> so CSS can react without a React render:
+    // data-scroll (past the fold) and data-scroll-dir (nav auto-hide). Both are written
+    // only when they change — any write on the root restyles the whole document.
+    const page = document.documentElement;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let lastY = window.scrollY;
+    let velocityFrame = 0;
+    let settle = 0;
+    const setState = (key: 'scroll' | 'scrollDir' | 'scrollZone', value: string)=>{ if (page.dataset[key] !== value) page.dataset[key] = value; };
+
+    // Velocity skew is written straight onto the few bands that use it, and only while
+    // they are on screen. A custom property on <html> recalculated every element's style
+    // every frame, which on a phone cost more than all the scroll animations combined.
+    const skewTargets = [...document.querySelectorAll<HTMLElement>('[data-velocity-skew]')];
+    const visibleSkew = new Set<HTMLElement>();
+    const skewObserver = new IntersectionObserver(entries=>{
+      for (const entry of entries) {
+        const target = entry.target as HTMLElement;
+        if (entry.isIntersecting) visibleSkew.add(target);
+        else { visibleSkew.delete(target); target.style.transform = ''; }
+      }
+    });
+    skewTargets.forEach(target=>skewObserver.observe(target));
+    const skew = (velocity: number)=>{
+      if (reduced.matches) return;
+      for (const target of visibleSkew) target.style.transform = velocity ? `skewY(${(velocity * Number(target.dataset.velocitySkew)).toFixed(3)}deg)` : '';
+    };
+
+    // Sections flag themselves on screen so ambient loops (pulses, sheens, halos) pause
+    // everywhere else instead of ticking on thirty screens nobody is looking at.
+    const inviewObserver = new IntersectionObserver(entries=>{
+      for (const entry of entries) {
+        if (entry.isIntersecting) (entry.target as HTMLElement).dataset.inview = '';
+        else delete (entry.target as HTMLElement).dataset.inview;
+      }
+    }, { rootMargin: '120px 0px' });
+    document.querySelectorAll('[data-motion-root], .portfolio-nav').forEach(section=>inviewObserver.observe(section));
+
+    // Zone drives the mobile quick-action dock: hidden over the hero and the contact footer
+    // (both already carry the same actions), shown everywhere in between. Boundaries are
+    // measured on refresh, never inside the scroll frame, so scrolling forces no layout.
+    const hero = document.getElementById('opening');
+    const contact = document.getElementById('contact');
+    let heroEnd = 600;
+    let contactStart = Infinity;
+    const measureZones = ()=>{
+      if (hero) heroEnd = hero.offsetTop + hero.offsetHeight * 0.7;
+      if (contact) contactStart = contact.offsetTop - window.innerHeight * 0.6;
+    };
+    measureZones();
+    ScrollTrigger.addEventListener('refresh', measureZones);
+    const readScroll = ()=>{
+      velocityFrame = 0;
+      const y = window.scrollY;
+      const delta = y - lastY;
+      lastY = y;
+      setState('scroll', y > 24 ? 'past' : 'top');
+      if (Math.abs(delta) > 2) setState('scrollDir', delta > 0 ? 'down' : 'up');
+      setState('scrollZone', y < heroEnd ? 'hero' : y > contactStart ? 'contact' : 'body');
+      skew(Math.max(-1, Math.min(1, delta / 60)));
+      clearTimeout(settle);
+      settle = window.setTimeout(()=>skew(0), 140);
+    };
+    const onScroll = ()=>{ if(!velocityFrame) velocityFrame = requestAnimationFrame(readScroll); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    readScroll();
+
+    // Width-only resizes still need a refresh; height-only ones are the address bar.
+    let lastWidth = window.innerWidth;
+    const onResize = ()=>{
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      scheduleRefresh();
+    };
+    window.addEventListener('resize', onResize);
+
     media.add('(prefers-reduced-motion: no-preference)',()=>{
       const lenis = new Lenis({ duration:1.05, smoothWheel:true, syncTouch:false, anchors:false });
       const tick = (seconds:number)=>lenis.raf(seconds*1000);
@@ -72,7 +152,17 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
         if(window.portfolioScroll===lenis) delete window.portfolioScroll;
       };
     });
-    return ()=>{disposed=true;window.removeEventListener('load',onLoad);cancelAnimationFrame(refreshFrame);media.revert();};
+    return ()=>{
+      disposed=true;
+      window.removeEventListener('load',onLoad);
+      window.removeEventListener('scroll',onScroll);
+      window.removeEventListener('resize',onResize);
+      skewObserver.disconnect();inviewObserver.disconnect();
+      ScrollTrigger.removeEventListener('refresh', measureZones);
+      skewTargets.forEach(target=>{ target.style.transform = ''; });
+      cancelAnimationFrame(refreshFrame);cancelAnimationFrame(velocityFrame);clearTimeout(settle);
+      media.revert();
+    };
   },[]);
   return <>{children}</>;
 }

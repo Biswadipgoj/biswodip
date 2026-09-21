@@ -3,14 +3,29 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowUpRightIcon, ArrowRightIcon } from '@/components/icons';
 import { hero, type Project } from '@/lib/data';
+import TechLogo from '@/components/ui/TechLogo';
 import { codeMarkup } from '@/lib/motion-markup';
 
 
 export function ActionLink({href,children,quiet=false,external=false,className=''}:{href:string;children:React.ReactNode;quiet?:boolean;external?:boolean;className?:string}) {
   return <Button asChild variant={quiet?'ghost':'default'} className={'action '+(quiet?'action-quiet ':'')+className}>{external?<a href={href} target="_blank" rel="noopener noreferrer">{children}<ArrowUpRightIcon aria-hidden="true"/></a>:<Link href={href}>{children}<ArrowRightIcon aria-hidden="true"/></Link>}</Button>;
 }
+/**
+ * Project actions borrow two conventions recruiters already know: a deployment-status pill
+ * (a live dot and the real domain, as hosting dashboards show it) and a repository button
+ * with the GitHub mark.
+ */
 export function ProjectActions({project,notes=false,detail=false}:{project:Project;notes?:boolean;detail?:boolean}) {
-  return <div className="project-actions"><ActionLink href={project.url} external>{detail?'Run':'Live'}<span className="sr-only"> {project.name}</span></ActionLink><ActionLink href={project.repo} quiet external>Source<span className="sr-only"> for {project.name}</span></ActionLink>{notes&&<Link className="text-link" href={'/project/'+project.slug}>Project details</Link>}</div>;
+  const host = new URL(project.url).hostname;
+  return <div className="project-actions">
+    <a className="btn-live" href={project.url} target="_blank" rel="noopener noreferrer">
+      <span className="btn-live-dot" aria-hidden="true"/>{detail?'Run':'Live'}<span className="btn-live-host">{host}</span><span className="sr-only"> {project.name}</span><ArrowUpRightIcon aria-hidden="true"/>
+    </a>
+    <a className="btn-code" href={project.repo} target="_blank" rel="noopener noreferrer">
+      <span aria-hidden="true"><TechLogo slug="github" size={16} mono/></span>Source<span className="sr-only"> for {project.name}</span>
+    </a>
+    {notes&&<Link className="text-link" href={'/project/'+project.slug}>Project details</Link>}
+  </div>;
 }
 export function ProjectMedia({project,className='',priority=false}:{project:Project;className?:string;priority?:boolean}) {
   const host = new URL(project.url).hostname;

@@ -18,7 +18,7 @@ function ProjectChapter({project,index}: {project: Project;index: number}) {
     <div className="spatial-ambient-orb" data-spatial="orb" style={{ top: '10%', right: index % 2 === 0 ? '5%' : '65%', width: 480, height: 480, background: 'radial-gradient(circle, color-mix(in srgb, var(--chapter-accent) 40%, transparent), transparent 70%)' }} aria-hidden="true" />
     <div className="chapter-meta" data-reveal>
       <span>{project.chapter.index} / {project.chapter.label}</span>
-      <span className="chapter-status-pill">Featured Production System</span>
+      <span className="chapter-status-pill">Live project</span>
     </div>
     <div className="project-card" data-spatial="card">
       <Link className="project-visual" href={'/project/'+project.slug}>
@@ -54,12 +54,12 @@ function ProjectChapter({project,index}: {project: Project;index: number}) {
           <p className="signal-text">{project.technicalEvidence}</p>
         </div>
         <div className="signal-item highlight-result" data-spatial="card">
-          <span className="signal-badge">05 · Verifiable Result</span>
+          <span className="signal-badge">05 · Result</span>
           <p className="signal-text result-highlight">{project.result}</p>
         </div>
       </div>
       <div className="flow-container">
-        <span className="flow-title">Verified Architecture Flow</span>
+        <span className="flow-title">Architecture flow</span>
         <FlowLine steps={project.chapter.flow}/>
       </div>
     </div>
@@ -71,15 +71,15 @@ export default function Projects() {
   return <section id="projects" ref={ref} className="projects-section" data-motion-root>
     <header className="projects-intro section-space">
       <p className="section-index">03 / Selected work</p>
-      <h2><AnimatedText>{portfolioCopy.work}</AnimatedText><span className="project-total">(Selected Systems · 60+ Shipped)</span></h2>
+      <h2><AnimatedText>{portfolioCopy.work}</AnimatedText><span className="project-total">(Selected Systems · 50+ Shipped)</span></h2>
       <div className="shipped-distinction-banner glass-panel" data-spatial="panel">
         <div className="shipped-badge-group">
-          <span className="shipped-metric">60+</span>
+          <span className="shipped-metric" data-count>50+</span>
           <span className="shipped-label">Products Shipped</span>
         </div>
         <div className="shipped-content">
           <p className="shipped-statement">
-            <strong>60+ software products & systems shipped independently · featured architectures with full open source below.</strong>
+            <strong>50+ software products & systems shipped across remote teams & independent client builds · featured architectures with full open source below.</strong>
           </p>
           <p className="shipped-description">{storyCopy.projectsIntro}</p>
         </div>

@@ -76,7 +76,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             )}
             {project.result && (
               <div className="briefing-box">
-                <span className="briefing-label">03 / Verified Outcome</span>
+                <span className="briefing-label">03 / Outcome</span>
                 <p>{project.result}</p>
               </div>
             )}
@@ -142,7 +142,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {code && (
           <section className="detail-source">
             <h2>Representative Implementation</h2>
-            <p>{code.label}. Contiguous excerpt from the verified repository source.</p>
+            <p>{code.label}. Excerpt from the repository source.</p>
             <CodeWindow lines={code.lines} file={code.file} label={code.label} />
             <a className="text-link" href={code.sourceUrl} target="_blank" rel="noopener noreferrer">
               Read file on GitHub<ArrowUpRightIcon aria-hidden="true" />

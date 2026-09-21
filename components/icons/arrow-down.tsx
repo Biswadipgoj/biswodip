@@ -9,7 +9,7 @@ export function ArrowDownIcon(props: SVGProps<SVGSVGElement>) {
       width={props.width ?? 20}
       height={props.height ?? 20}
       {...props}
-      style={{ width: props.width ?? 20, height: props.height ?? 20, flexShrink: 0, ...props.style }}
+      style={{ flexShrink: 0, ...props.style }}
     >
       <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 3v18m0 0l8.5-8.5M12 21l-8.5-8.5"/>
     </svg>

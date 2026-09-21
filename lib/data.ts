@@ -10,31 +10,31 @@ export const personal = {
   "availability": "Immediate notice / Open to remote & relocation",
   "role": "Full-Stack Software Engineer",
   "secondaryRole": "Freelance & Contract Developer / Business Analyst",
-  "tagline": "Full-Stack Software Engineer contracting across multiple client companies and shipping 60+ production systems with Next.js, React, Node.js, PostgreSQL, Redis, and Kubernetes.",
-  "intro": "I’m Biswodip Goj, a Full-Stack Software Engineer who works across requirements, system modeling, application development, and production delivery. Working as a freelance and contract software engineer across multiple companies alongside shipping 60+ independent software products has given me deep experience translating real business workflows into scalable, resilient production software. I approach software from both the business and engineering sides: eliciting requirements, defining data boundaries, and building high-performance architectures.",
+  "tagline": "Full-Stack Software Engineer collaborating with remote teams and shipping 50+ production systems with Next.js, React, Node.js, PostgreSQL, Redis, and Kubernetes.",
+  "intro": "I’m Biswodip Goj, a Full-Stack Software Engineer who works across requirements, system modeling, application development, and production delivery. Collaborating with distributed teams on remote engineering contracts alongside shipping 50+ software builds and systems has taught me to turn real business workflows into software that holds up in production. I work from both sides: gathering requirements, defining data boundaries, and building the application end to end.",
   "about": [
     "I work across the complete lifecycle from requirement elicitation and workflow design to full-stack engineering, distributed caching, and containerized deployment. I understand the business problem first—stakeholder workflows, data boundaries, and operational rules—before architecting the software.",
-    "As a freelance and contract software engineer across multiple companies, I engineer production web applications, API integrations, and robust database architectures. Across independent development, I have shipped 60+ software products and systems.",
+    "As a contract software engineer collaborating across remote teams and client companies, I engineer production web applications, API integrations, and well-structured databases. Across remote team delivery and independent builds, I have shipped 50+ software products and systems.",
     "My engineering stack is centered on TypeScript, React, Next.js, Node.js, Python, C# (ASP.NET Core MVC), PostgreSQL, Redis, Docker, and Kubernetes, paired with business understanding as a primary advantage: requirement elicitation, process flow mapping, and acceptance testing.",
-    "I focus on software that solves real operational bottlenecks with transparent schemas, deterministic APIs, database-enforced row-level security, and verified test suites."
+    "I focus on software that solves real operational bottlenecks with clear schemas, predictable APIs, database-enforced row-level security, and automated tests."
   ],
   "ownership": "I bridge business analysis and full-stack software engineering, from requirements and data schemas to user-facing applications.",
   "maturity": "I don't just build the interface. I work through the business requirements, data architecture, APIs, and deployment needed to make products work in production.",
   "resume": "/Biswodip-Goj-Resume.pdf",
   "canonicalUrl": "https://biswodip.in",
-  "shippedCount": "60+",
-  "featuredProjectsCount": "60+"
+  "shippedCount": "50+",
+  "featuredProjectsCount": "50+"
 } as const;
 
 export const hero = {
-  "eyebrow": "FULL-STACK SOFTWARE ENGINEER",
+  "eyebrow": "Full-Stack Software Engineer",
   "heading": "From real problems to working software.",
   "body": "I turn business requirements and real operational workflows into production web applications — from data models and APIs to interfaces, testing, and deployment.",
   "primary": "View Selected Work",
   "secondary": "GitHub",
   "third": "Resume",
   "proofStrip": [
-    { "label": "Contract & 60+ Shipped", "detail": "Client companies & production builds" },
+    { "label": "Remote & 50+ Shipped", "detail": "Distributed teams & production builds" },
     { "label": "Full-Stack & Systems", "detail": "Redis, K8s, Docker, Next.js, Postgres" },
     { "label": "B.Tech CSE · 2024", "detail": "Brainware University, Kolkata" },
     { "label": "Remote / Relocation", "detail": "Immediate availability" }
@@ -52,12 +52,12 @@ export const hero = {
 
 export const portfolioCopy = {
   identity: 'Engineer first. Business understanding as an advantage.',
-  identityBody: 'I bridge domain analysis with production software engineering, moving from stakeholder workflows to relational schemas and deterministic APIs.',
+  identityBody: 'I bridge domain analysis with production software engineering, moving from stakeholder workflows to relational schemas and predictable APIs.',
   stack: 'The stack behind the software.',
   stackBody: 'Explore the technologies, then see where I use them in real projects. Business analysis connects the requirements to the implementation.',
   work: 'Selected Engineering Work',
-  workSub: 'Featured Systems · 60+ Shipped',
-  workIntro: 'Across independent development work, I have shipped 60+ software products and client/project builds. The projects below demonstrate how I approach full-stack engineering, system design, and production delivery.',
+  workSub: 'Featured Systems · 50+ Shipped',
+  workIntro: 'Across remote engineering teams, client contracts, and independent builds, I have shipped 50+ software products and systems. The projects below demonstrate how I approach full-stack engineering, system design, and production delivery.',
   process: 'How I engineer software.',
   education: 'The foundations behind the frameworks.',
   contact: 'Open to Remote Engineering Roles',
@@ -95,10 +95,10 @@ export const teleOwnershipCode = [
 
 export const seo = {
   "title": "Biswodip Goj — Full-Stack Software Engineer",
-  "description": "Biswodip Goj is a Full-Stack Software Engineer with 60+ independently shipped products and systems across TypeScript, React, Next.js, Node.js, and PostgreSQL.",
+  "description": "Biswodip Goj is a Full-Stack Software Engineer with 50+ shipped products and systems delivered across remote teams and independent builds using TypeScript, React, Next.js, Node.js, and PostgreSQL.",
   "canonical": "https://biswodip.in",
   "socialTitle": "Biswodip Goj | Full-Stack Software Engineer",
-  "socialDescription": "Full-Stack Software Engineer with 60+ independently shipped products and systems across TypeScript, React, Next.js, Node.js, and PostgreSQL."
+  "socialDescription": "Full-Stack Software Engineer with 50+ shipped products and systems delivered across remote teams and independent builds using TypeScript, React, Next.js, Node.js, and PostgreSQL."
 } as const;
 
 export const foundations = [
@@ -220,7 +220,7 @@ export const stackCopy = {
     },
     {
       "name": "Backend APIs & Validation",
-      "body": "Deterministic REST APIs with Zod runtime boundary validation, token authentication, and role-based access control."
+      "body": "REST APIs with Zod request validation, token authentication, and role-based access control."
     },
     {
       "name": "Business Workflow Modeling",
@@ -240,7 +240,7 @@ export const capabilities = [
   },
   {
     title: "Backend APIs & Validation",
-    body: "Deterministic REST endpoints with Zod runtime boundary validation, session auth, and Prisma ORM."
+    body: "REST endpoints with Zod request validation, session auth, and Prisma ORM."
   },
   {
     title: "Database Design & Security",
@@ -255,7 +255,7 @@ export const capabilities = [
 export const engineeringEvidence = [
   {
     "domain": "Requirements → System Design",
-    "summary": "Translating ambiguous stakeholder friction into concrete data boundaries and deterministic system rules.",
+    "summary": "Turning unclear stakeholder needs into concrete data boundaries and clear system rules.",
     "items": [
       "Requirement analysis & functional specifications",
       "Domain workflow modeling & state machines",
@@ -266,7 +266,7 @@ export const engineeringEvidence = [
   },
   {
     "domain": "Data & Backend",
-    "summary": "Engineering relational schemas, persistent data layers, and deterministic RESTful service APIs.",
+    "summary": "Designing relational schemas, data layers, and RESTful APIs.",
     "items": [
       "Relational schema design (PostgreSQL)",
       "Prisma ORM & SQL data modeling",
@@ -277,7 +277,7 @@ export const engineeringEvidence = [
   },
   {
     "domain": "Frontend Engineering",
-    "summary": "Developing responsive, accessible web interfaces with clean component architectures and robust state.",
+    "summary": "Developing responsive, accessible web interfaces with clean component structure and predictable state.",
     "items": [
       "React & Next.js App Router applications",
       "Strict TypeScript component boundaries",
@@ -299,7 +299,7 @@ export const engineeringEvidence = [
   },
   {
     "domain": "Quality & Verification",
-    "summary": "Verifying complete operational journeys through deterministic tests and disciplined debugging.",
+    "summary": "Checking complete user journeys with repeatable tests and careful debugging.",
     "items": [
       "API route testing & payload validation",
       "Critical user journey & workflow testing",
@@ -350,7 +350,7 @@ export const engineeringDecisions = [
     "decision": "Why Relational Data Modeling for Financial Flows?",
     "project": "Tripmate & TelePoint",
     "context": "Expense Split & Installment Calculations",
-    "reasoning": "Multi-party balances, installments, and payment records require strict foreign key constraints, ACID transaction guarantees, and deterministic calculations that document stores cannot reliably guarantee without custom distributed locking."
+    "reasoning": "Multi-party balances, installments, and payment records require strict foreign key constraints, ACID transaction guarantees, and exact calculations that document stores cannot reliably guarantee without custom distributed locking."
   }
 ] as const;
 
@@ -373,7 +373,7 @@ export const processStages = [
     "step": "03",
     "title": "Build",
     "phase": "Interface → Application Logic → APIs → Database",
-    "body": "Implement type-safe React/Next.js interfaces, deterministic REST endpoints, authentication handshakes, and persistent database transactions.",
+    "body": "Implement type-safe React/Next.js interfaces, REST endpoints, authentication, and persistent database transactions.",
     "evidence": "Shipped TypeScript, Next.js, and PostgreSQL codebases."
   },
   {
@@ -459,8 +459,8 @@ export const experience = [
     location: "Remote",
     highlights: [
       "Contracted across multiple client companies and startups, engineering production web applications, API integrations, and database architectures.",
-      "Architected and shipped 60+ full-stack software products and production systems independently and for client workflows.",
-      "Implemented distributed caching with Redis, containerized microservice deployments with Docker & Kubernetes, and deterministic Zod API boundary validation.",
+      "Architected and shipped 50+ full-stack software products and production systems across remote team collaborations and independent client workflows.",
+      "Implemented distributed caching with Redis, containerized microservice deployments with Docker & Kubernetes, and Zod request validation.",
       "Formulated multi-tenant data isolation with PostgreSQL Row-Level Security (RLS) to restrict access to organization-owned records."
     ]
   },
@@ -734,18 +734,18 @@ export const projectCodeSnippets: Record<string, { file: string; label: string; 
 
 export const storyCopy = {
   "projectsTitle": "Selected Engineering Work",
-  "projectsIntro": "Across independent development work, I have shipped 60+ software products and client/project builds. The projects below are the five publicly documented examples I use to show how I approach engineering, architecture, and production delivery.",
+  "projectsIntro": "Across remote team collaboration, client contracts, and independent builds, I have shipped 50+ software products and systems. The projects below are the five publicly documented examples I use to show how I approach engineering, architecture, and production delivery.",
   "focus": "Engineering focus",
   "work": "What I engineered",
   "evidenceTitle": "Engineering Evidence",
   "evidenceSub": "The parts of software development I repeatedly handle across real builds.",
   "decisionsTitle": "Engineering Decisions",
   "decisionsSub": "Real architectural choices, trade-offs, and technical justifications from shipped projects.",
-  "shippedTitle": "60+ Products Shipped",
-  "shippedSub": "Independent development track record and open production architectures.",
-  "shippedBody": "Independent development has taken me through 60+ software products and project builds across different requirements, workflows, and delivery constraints. The featured projects below provide clear technical evidence of my architectural discipline.",
+  "shippedTitle": "50+ Products Shipped",
+  "shippedSub": "Remote teams & independent client track record with open production architectures.",
+  "shippedBody": "Engineering across distributed remote teams and client contracts has taken me through 50+ software products and project builds across different requirements, workflows, and delivery constraints. The featured projects below provide clear technical evidence of my architectural discipline.",
   "githubTitle": "Public Engineering Work",
-  "githubSub": "Featured open-source repositories with live production implementations and verified codebases.",
+  "githubSub": "The public repositories behind the live projects above.",
   "nano": {
     "title": "A long URL. A short link.",
     "note": "Illustrative link transformation. The real create-link workflow validates the request and saves the destination.",
@@ -985,9 +985,9 @@ export const projects: Project[] = [
     whatItIs: "Production-style URL management application with custom aliases, password protection, expiration, and one-time-use deactivation.",
     problem: "Standard URL shorteners lack security controls, expose private redirects to scraping, and lack programmatic lifecycle and one-time deactivation rules.",
     engineeringSummary: "Engineered Next.js App Router REST API routes with runtime Zod boundary validation, Prisma ORM transactions, and conditional redirect resolution.",
-    technicalEvidence: "Deterministic Zod boundary schemas, PostgreSQL Link model with compound unique indexes, password hashing, and click telemetry updates.",
+    technicalEvidence: "Zod request schemas, a PostgreSQL Link model with compound unique indexes, password hashing, and click telemetry updates.",
     role: "Full-Stack Software Engineer (Sole Developer)",
-    result: "Deterministic redirect resolution with database-enforced expiration and single-use deactivation.",
+    result: "Redirects check the stored expiry date and deactivate single-use links after their first visit.",
     liveLink: "https://nanl.vercel.app/",
     sourceLink: "https://github.com/Biswadipgoj/nl",
     techStack: [
@@ -1362,7 +1362,7 @@ export const techSystemProof: Record<string, TechProof> = {
     title: "Distributed Caching, Session Store & Sliding-Window Rate Limiting",
     category: "Databases & Caching",
     architecture: "High-throughput in-memory caching tier deployed in front of PostgreSQL to cache expensive query results, store distributed session states, and enforce sliding-window rate limiting on public API endpoints with sub-millisecond latency.",
-    context: "Deployed across client contracts and 60+ shipped production systems for high-concurrency request handling and pub/sub message brokering."
+    context: "Deployed across remote client contracts and 50+ shipped production systems for high-concurrency request handling and pub/sub message brokering."
   },
   "Kubernetes": {
     title: "Container Cluster Orchestration, Ingress & Pod Autoscaling",
@@ -1463,7 +1463,7 @@ export const techSystemProof: Record<string, TechProof> = {
   "Supabase": {
     title: "Managed PostgreSQL, Row-Level Security & Auth Service",
     category: "Databases & Caching",
-    architecture: "PostgreSQL platform leveraging database-enforced Row-Level Security (RLS) policies, session token validation, and instant database migrations.",
+    architecture: "PostgreSQL platform using database-enforced Row-Level Security (RLS) policies, session token validation, and instant database migrations.",
     context: "Production persistence and authentication provider for TelePoint and Erpixa."
   }
 };
@@ -1494,9 +1494,9 @@ export const primaryTechnologies = [
 
 export const resumeCopy = {
   title: 'The experience behind the work.',
-  summary: 'Computer Science graduate and independent software/product developer with hands-on experience taking applications from ambiguous requirements to deployed, working systems. Comfortable translating business problems into technical workflows, integrating APIs and databases, debugging production issues, and iterating on real user feedback. Has delivered 15+ independent projects with meaningful product scope — spanning multi-tenant SaaS, financial/payment workflows, and cross-platform apps — contracting across client engagements while retaining full ownership of architecture, testing, and delivery.',
-  preview: 'Inspect ATS Document',
-  pdf: 'Download ATS PDF',
+  summary: 'Computer Science graduate and full-stack software engineer with hands-on experience taking applications from ambiguous requirements to deployed, working systems. Comfortable translating business problems into technical workflows, integrating APIs and databases, debugging production issues, and iterating on real user feedback. Has delivered 50+ projects and production builds — spanning multi-tenant SaaS, financial/payment workflows, and cross-platform apps — contributing across remote teams and independent client engagements while retaining full ownership of architecture, testing, and delivery.',
+  preview: 'Open PDF',
+  pdf: 'Download résumé',
   experience: 'Professional experience',
   skills: 'Technical skills',
 } as const;

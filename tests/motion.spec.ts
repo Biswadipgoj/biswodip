@@ -1,4 +1,8 @@
 import { test, expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
+
+// Lenis attaches after hydration; `portfolioScroll?.scrollTo` before then is a silent no-op.
+const scrollerReady = (page: Page) => page.waitForFunction(() => Boolean(window.portfolioScroll));
 
 test('recruiter facts, functional resume and accessible animated text', async ({ page, request }) => {
   await page.goto('/');
@@ -10,6 +14,7 @@ test('recruiter facts, functional resume and accessible animated text', async ({
   expect((await resume.body()).length).toBeGreaterThan(4000);
   // Letter detail is prepared as scenes approach, keeping initial layout light.
   expect(await page.locator('[data-glyph]').count()).toBeLessThan(200);
+  await scrollerReady(page);
   for (const id of ['about','stack','projects','erpixa','nanolink','telepoint','nexora','tripmate','process','journey','contact']) {
     await page.evaluate(id => window.portfolioScroll?.scrollTo(document.getElementById(id)!, { immediate: true }), id);
     await expect.poll(() => page.locator('#' + id + ' [data-glyph]').count()).toBeGreaterThan(0);
@@ -68,6 +73,7 @@ test('opening transforms reverse with scroll', async ({ page }) => {
   test.skip((page.viewportSize()?.width || 0) < 1000, 'Desktop cinematic stage');
   await page.goto('/');
   await expect(page.locator('#opening')).toHaveAttribute('data-animated', 'true');
+  await scrollerReady(page);
   const read = () => page.locator('.hero-main-image').evaluate(el => {
     const matrix = new DOMMatrix(getComputedStyle(el).transform);
     return [matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f].map(n => Number(n.toFixed(3)));
@@ -93,6 +99,7 @@ test('the portfolio is complete without JavaScript', async ({ browser }) => {
 
 test('project interfaces move through 3D depth and direct project anchors remain readable', async ({ page }) => {
   await page.goto('/#nanolink');
+  await scrollerReady(page);
   await expect(page.locator('#nanolink h3')).toBeVisible();
   const screen = page.locator('#nanolink .project-visual [data-depth="screen"]');
   const positions = await screen.evaluate(el => {
@@ -168,6 +175,41 @@ test('all interactive buttons and click functions respond properly across the jo
   await analysis.locator('summary').click();
   await expect(analysis).toHaveAttribute('open', '');
   await expect(analysis).toContainText('Requirements elicitation');
+ });
+
+ test('display headings use the display type scale, not the body size', async ({ page }) => {
+  await page.goto('/');
+  // --text-display was once referenced but undefined, which silently rendered every display heading at 16px.
+  const size = await page.locator('h1').evaluate(el => parseFloat(getComputedStyle(el).fontSize));
+  expect(size).toBeGreaterThanOrEqual(30);
+ });
+
+ test('controls settle at rest after motion is torn down and rebuilt', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  // Reverting and rebuilding the scene (preference change, breakpoint, StrictMode) once let a
+  // `from` tween read a mid-transition transform and park the buttons short of their place.
+  // Rebuild while the entrance is still in flight: that is when the CSS transition is running.
+  await expect(page.locator('#opening')).toHaveAttribute('data-animated', 'true');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await expect.poll(() => page.locator('.hero-actions > *').evaluateAll(nodes => nodes.map(node => {
+    const matrix = new DOMMatrix(getComputedStyle(node).transform);
+    return Math.round(Math.abs(matrix.m42)) + Math.round(Math.abs(1 - matrix.a) * 100) + Math.round((1 - parseFloat(getComputedStyle(node).opacity)) * 100);
+  }))).toEqual([0, 0, 0]);
+ });
+
+ test('mobile quick-action dock appears between the hero and the footer', async ({ page }) => {
+  test.skip((page.viewportSize()?.width || 1440) > 1099, 'Phone and tablet dock');
+  await page.goto('/');
+  const dock = page.getByRole('navigation', { name: 'Quick actions' });
+  await expect(dock).toBeHidden();
+  await page.evaluate(() => document.getElementById('projects')!.scrollIntoView());
+  await expect(dock).toBeVisible();
+  await expect(dock.locator('a[download]')).toHaveAttribute('href', /\.pdf$/);
+  await page.evaluate(() => document.getElementById('contact')!.scrollIntoView());
+  await expect(dock).toBeHidden();
  });
 
  test('mobile opening offers work and resume before the first scroll', async ({ page }) => {

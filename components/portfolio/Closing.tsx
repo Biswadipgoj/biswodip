@@ -17,9 +17,8 @@ import {
 } from '@/lib/data';
 import { useEditorialReveal } from '@/components/cinematic/useScene';
 import { AnimatedText } from '@/components/cinematic/AnimatedText';
-import { ArrowDownIcon, ArrowUpRightIcon, ArrowRightIcon } from '@/components/icons';
+import { ArrowDownIcon, ArrowUpRightIcon, ArrowRightIcon, CheckIcon } from '@/components/icons';
 import { FlowLine } from '@/components/cinematic/SoftwarePrimitives';
-import { Button } from '@/components/ui/button';
 
 export function Process() {
   const ref = useEditorialReveal();
@@ -35,7 +34,7 @@ export function Process() {
       {/* From Requirement to Production Lifecycle */}
       <div className="lifecycle-panel glass-panel" data-spatial="panel">
         <span className="document-tab">From Requirement to Production</span>
-        <p className="lifecycle-sub">Translating real operational workflows into verified, deployed software systems.</p>
+        <p className="lifecycle-sub">Turning real operational workflows into deployed, working software.</p>
         <FlowLine steps={[
           "Requirement",
           "Workflow",
@@ -243,10 +242,12 @@ export function Contact() {
           </a>
 
           <div className="contact-tools">
-            <Button className={'copy-email ' + (copied ? 'copied' : '')} variant="outline" onClick={copyEmail} aria-live="polite">
-              {copied ? 'Copied! ✓' : 'Copy email'}
-            </Button>
-            <a href={personal.resume} download className="action action-quiet">
+            <button type="button" className={'copy-email copy-chip' + (copied ? ' copied' : '')} onClick={copyEmail} aria-live="polite">
+              {copied
+                ? <><CheckIcon aria-hidden="true" />Copied</>
+                : <><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5" /><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8" /></svg>Copy email</>}
+            </button>
+            <a href={personal.resume} download className="btn-block">
               Download resume<ArrowDownIcon aria-hidden="true" />
             </a>
             <a href="https://github.com/Biswadipgoj" target="_blank" rel="noopener noreferrer" className="text-link">
@@ -264,21 +265,21 @@ export function Contact() {
                 <span className="term-dot term-green" />
               </div>
               <span className="terminal-title">biswodip@workstation: ~</span>
-              <span className="terminal-session">candidate-brief</span>
+              <span className="terminal-session">summary</span>
             </div>
 
-            <div className="terminal-controls" role="toolbar" aria-label="Candidate brief inspection tabs">
+            <div className="terminal-controls" role="toolbar" aria-label="Profile summary">
               <button type="button" className={'term-pill ' + (activeCmd === 'profile' ? 'active' : '')} onClick={() => setActiveCmd('profile')} data-spatial="chip">
                 profile
               </button>
               <button type="button" className={'term-pill ' + (activeCmd === 'projects' ? 'active' : '')} onClick={() => setActiveCmd('projects')} data-spatial="chip">
-                shipped-work
+                projects
               </button>
               <button type="button" className={'term-pill ' + (activeCmd === 'stack' ? 'active' : '')} onClick={() => setActiveCmd('stack')} data-spatial="chip">
-                tech-summary
+                stack
               </button>
               <button type="button" className={'term-pill ' + (activeCmd === 'contact' ? 'active' : '')} onClick={() => setActiveCmd('contact')} data-spatial="chip">
-                hiring-info
+                contact
               </button>
             </div>
 
@@ -287,7 +288,7 @@ export function Contact() {
                 <div className="term-line">
                   <p className="term-res green-text">Engineer: {personal.name}</p>
                   <p className="term-res">Role: Full-Stack Software Engineer &amp; Systems Developer</p>
-                  <p className="term-res">Experience: Freelance &amp; Contract Developer (Multiple Companies) · 60+ Shipped</p>
+                  <p className="term-res">Experience: Remote Teams &amp; Contract Developer (Multiple Companies) · 50+ Shipped</p>
                   <p className="term-res">Training: Certified Industrial Training in ASP.NET Core 6.0 MVC (Logicrack Infosystem)</p>
                   <p className="term-res cyan-text">Education: B.Tech CSE (2024) &amp; Diploma CSE (2021) · Brainware University, Kolkata</p>
                 </div>
@@ -295,7 +296,7 @@ export function Contact() {
 
               {activeCmd === 'projects' && (
                 <div className="term-line">
-                  <p className="term-res green-text">Track Record: 60+ software products &amp; systems shipped + client contract engineering</p>
+                  <p className="term-res green-text">Track Record: 50+ software products &amp; systems shipped (remote teams + independent client builds)</p>
                   <p className="term-res">Selected Open Architectures &amp; Source Repositories on GitHub:</p>
                   <p className="term-res">1. Erpixa · Multi-tenant business app with PostgreSQL RLS</p>
                   <p className="term-res">2. NanoLink · Next.js URL service with runtime Zod boundary validation</p>
@@ -339,7 +340,7 @@ export function Contact() {
           <div className="source-index-heading">
             <div>
               <h3>{storyCopy.footer.sourceTitle}</h3>
-              <span className="source-count">05 Verified Repositories</span>
+              <span className="source-count">5 public repositories</span>
             </div>
             <span className="repo-cube-badge" aria-hidden="true">⎇ main</span>
           </div>
@@ -376,7 +377,7 @@ export function Contact() {
         <p>{personal.tagline}</p>
       </div>
 
-      <div className="footer-signature" aria-hidden="true">
+      <div className="footer-signature" aria-hidden="true" data-velocity-skew="0.7">
         <span data-parallax="40" data-drift>{storyCopy.footer.signature}</span>
       </div>
 
@@ -384,7 +385,7 @@ export function Contact() {
         <span>{storyCopy.footer.credit}</span>
         <span>{personal.location}</span>
         <a href="#opening" className="back-to-top" aria-label="Back to top of page">
-          Back to top<ArrowUpRightIcon aria-hidden="true" />
+          Back to top<span className="back-to-top-orb" aria-hidden="true"><ArrowUpRightIcon /></span>
         </a>
       </div>
     </footer>

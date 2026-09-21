@@ -40,7 +40,7 @@ export default function Stack() {
                 <TechLogo craft={selected!} size={26} />
                 <div>
                   <h4>{activeProof.title}</h4>
-                  <span className="tech-system-cat">{activeProof.category} · 60+ Shipped Systems &amp; Client Contracts</span>
+                  <span className="tech-system-cat">{activeProof.category} · 50+ Shipped Systems &amp; Remote Contracts</span>
                 </div>
               </div>
               <a href="https://github.com/Biswodipgoj" target="_blank" rel="noopener noreferrer" className="text-link">
@@ -70,7 +70,7 @@ export default function Stack() {
         </li>)}
       </ol>
     </div>
-    <div className="kinetic-band" aria-hidden="true">
+    <div className="kinetic-band" aria-hidden="true" data-velocity-skew="-0.9">
       <span data-drift>{skillExperience.workflow}</span>
     </div>
   </section>;

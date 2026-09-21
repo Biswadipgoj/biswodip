@@ -18,11 +18,11 @@ export default function Identity() {
         <div className="identity-facts" data-stagger>
           <span>Role<strong>Full-Stack Software Engineer &amp; Business Analyst</strong></span>
           <span>Education<strong>B.Tech CSE (2024) &amp; Diploma CSE (2021)<br />Brainware University, Kolkata</strong></span>
-          <span>Track Record<strong>60+ Software Projects Shipped</strong></span>
+          <span>Track Record<strong>50+ Software Projects Shipped</strong></span>
           <span>Availability<strong>Remote / Relocation</strong></span>
         </div>
         <div className="identity-links">
-          <a href="#projects" className="action">Explore Featured Projects<ArrowUpRightIcon aria-hidden="true"/></a>
+          <a href="#projects" className="circle-link">Explore featured projects<span className="circle-link-orb" aria-hidden="true"><ArrowUpRightIcon/></span></a>
           <a href={socials[1].url} className="text-link" target="_blank" rel="noopener noreferrer">GitHub<ArrowUpRightIcon aria-hidden="true"/></a>
           <a href={socials[2].url} target="_blank" rel="noopener noreferrer" className="text-link">LinkedIn<ArrowUpRightIcon aria-hidden="true"/></a>
           <a href={personal.resume} download className="text-link">Resume<ArrowUpRightIcon aria-hidden="true"/></a>

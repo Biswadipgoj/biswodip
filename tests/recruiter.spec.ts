@@ -16,7 +16,21 @@ test('resume is reachable and serves a real PDF', async ({ page, request }) => {
   const response = await request.get('/Biswodip-Goj-Resume.pdf');
   expect(response.ok()).toBeTruthy();
   expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-');
-  await expect.poll(() => page.locator('#resume img').evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  await expect.poll(() => page.locator('#resume .document-preview-img').evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+  // The résumé card carries the candidate's real portrait.
+  await expect.poll(() => page.locator('#resume .candidate-photo img').evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
+});
+
+test('the PDF résumé links to repositories that exist in lib/data.ts', async ({ request }) => {
+  const pdf = (await (await request.get('/Biswodip-Goj-Resume.pdf')).body()).toString('latin1');
+  // Every GitHub link in the document points at the account the site links to.
+  expect(pdf).not.toContain('github.com/Biswodipgoj');
+  for (const repo of ['Erpixa', 'nl', 'telepoint', 'nexora', 'trip']) expect(pdf).toContain(`https://github.com/Biswadipgoj/${repo}`);
+});
+
+test('public copy avoids ATS and filler wording recruiters discount', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('body')).not.toContainText(/\bATS\b|dossier|deterministic|shielded/i);
 });
 
 test('canonical and sitemap use the same source domain', async ({ page, request }) => {

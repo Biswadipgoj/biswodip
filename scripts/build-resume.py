@@ -1,23 +1,55 @@
-"""Generate a high-scoring, ATS-optimized, 2-page vector resume exclusively from lib/data.ts."""
+"""Generate the two-page résumé PDF from lib/data.ts."""
 import json
 from html import escape
 from pathlib import Path
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, KeepTogether, PageBreak, HRFlowable
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, KeepTogether, PageBreak, HRFlowable, Table, TableStyle
+from reportlab.platypus import Image as PdfImage
 from pypdf import PdfReader
 import fitz
-from PIL import Image
+from PIL import Image, ImageDraw
 
 data = json.loads(Path('artifacts/resume/content.json').read_text(encoding='utf-8'))
 person = data['personal']
+socials = {s['label']: s['url'] for s in data['socials']}
+repos = {p['slug']: p for p in data['projects']}
 
 def safe(value):
     return escape(str(value)).replace('\u2013', '-').replace('\u2014', '-').replace('\u2019', "'")
 
 def link(url, label):
     return f'<link href="{escape(url, quote=True)}" color="#0969da">{safe(label)}</link>'
+
+def bare(url):
+    return url.split('://', 1)[-1].rstrip('/')
+
+def project_links(slug):
+    # Repository and live URLs come from lib/data.ts; hand-typed copies had drifted to a 404 account.
+    project = repos[slug]
+    return f"{link(project['repo'], bare(project['repo']))} &middot; {link(project['url'], bare(project['url']))}"
+
+def portrait(size_pt=66):
+    """Circular head-and-shoulders crop of public/biswodip.png, antialiased by supersampling."""
+    source = Image.open('public/biswodip.png').convert('RGB')
+    w, h = source.size
+    side = int(w * 0.78)
+    left = (w - side) // 2
+    top = int(h * 0.08)
+    crop = source.crop((left, top, left + side, top + side)).resize((720, 720), Image.LANCZOS)
+    scale = 4
+    mask = Image.new('L', (720 * scale, 720 * scale), 0)
+    ImageDraw.Draw(mask).ellipse((0, 0, 720 * scale - 1, 720 * scale - 1), fill=255)
+    mask = mask.resize((720, 720), Image.LANCZOS)
+    avatar = Image.new('RGBA', (720, 720), (255, 255, 255, 0))
+    avatar.paste(crop, (0, 0), mask)
+    ring = Image.new('RGBA', (720 * scale, 720 * scale), (0, 0, 0, 0))
+    ImageDraw.Draw(ring).ellipse((6, 6, 720 * scale - 7, 720 * scale - 7), outline=(148, 163, 184, 255), width=10)
+    avatar = Image.alpha_composite(avatar, ring.resize((720, 720), Image.LANCZOS))
+    path = Path('artifacts/resume/portrait.png')
+    avatar.save(path)
+    return PdfImage(str(path), width=size_pt, height=size_pt)
 
 styles = {
     'name': ParagraphStyle('name', fontName='Helvetica-Bold', fontSize=18, leading=21, textColor=colors.HexColor('#0f172a'), spaceAfter=2),
@@ -41,30 +73,44 @@ def section_hr():
 story = []
 
 # --- HEADER ---
-story.append(p(safe(person['name']).upper(), 'name'))
-story.append(p('Independent Software & Product Developer', 'role'))
-story.append(p('TypeScript &middot; Next.js &middot; PostgreSQL &middot; Supabase &middot; Row-Level Security &middot; Distributed Systems', 'tags'))
-
+# Text stays in its own column so parsers read name, role and contacts in order; the photo sits beside it.
 contact_parts = [
     f"{safe(person['location'])}",
     f"{safe(person['phone'])}",
     link(f"mailto:{person['email']}", person['email']),
-    link("https://www.linkedin.com/in/biswodipgoj", "www.linkedin.com/in/biswodipgoj"),
-    link("https://github.com/Biswodipgoj", "github.com/Biswodipgoj"),
-    link(person['canonicalUrl'], "biswodip.in")
+    link(socials['LinkedIn'], bare(socials['LinkedIn'])),
+    link(socials['GitHub'], bare(socials['GitHub'])),
+    link(person['canonicalUrl'], bare(person['canonicalUrl']))
 ]
-story.append(p(' | '.join(contact_parts), 'contact'))
+header_text = [
+    p(safe(person['name']).upper(), 'name'),
+    p('Independent Software & Product Developer', 'role'),
+    p('TypeScript &middot; Next.js &middot; PostgreSQL &middot; Supabase &middot; Row-Level Security &middot; Distributed Systems', 'tags'),
+    p(' | '.join(contact_parts), 'contact'),
+]
+PHOTO = 66
+FRAME = A4[0] - 72 - 12  # page minus margins minus the frame's own 6pt padding on each side
+header = Table([[header_text, portrait(PHOTO)]], colWidths=[FRAME - PHOTO - 14, PHOTO + 14])
+header.setStyle(TableStyle([
+    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
+    ('LEFTPADDING', (0, 0), (-1, -1), 0),
+    ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+    ('TOPPADDING', (0, 0), (-1, -1), 0),
+    ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+]))
+story.append(header)
 story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#334155'), spaceBefore=2, spaceAfter=5))
 
 # --- SUMMARY ---
 story.append(p('SUMMARY', 'heading'))
 story.append(section_hr())
 summary_text = (
-    "Computer Science graduate and independent software/product developer with hands-on experience taking applications "
+    "Computer Science graduate and full-stack software engineer with hands-on experience taking applications "
     "from ambiguous requirements to deployed, working systems. Comfortable translating business problems into technical "
     "workflows, integrating APIs and databases, debugging production issues, and iterating on real user feedback. Has delivered "
-    "15+ independent projects with meaningful product scope — spanning multi-tenant SaaS, financial/payment workflows, and "
-    "cross-platform apps — contracting across client engagements while retaining full ownership of architecture, testing, and delivery."
+    "50+ projects and production builds — spanning multi-tenant SaaS, financial/payment workflows, and "
+    "cross-platform apps — contributing across remote teams and independent client engagements while retaining full ownership of architecture, testing, and delivery."
 )
 story.append(p(safe(summary_text), 'body'))
 story.append(Spacer(1, 3))
@@ -73,7 +119,7 @@ story.append(Spacer(1, 3))
 story.append(p('SKILLS', 'heading'))
 story.append(section_hr())
 
-# Targeted ATS skill categories exactly matching user's PDF specification
+# Skill categories, matching the résumé the user supplied
 ats_skills = [
     ("Programming", "TypeScript, JavaScript, Python, SQL, C#"),
     ("Software & Product", "Requirements Analysis, API Integration, REST APIs, Database Design, Debugging, Software Testing, Product Development, System Design"),
@@ -131,7 +177,7 @@ story.append(section_hr())
 # Project 1: TelePoint (starts on Page 1)
 story.append(p("<b>TelePoint</b> &mdash; Role-based EMI (loan installment) portal for customer, retailer, and admin operations.", 'item_title'))
 story.append(p("Next.js &middot; TypeScript &middot; Supabase (PostgreSQL) &middot; AWS S3 &middot; PDF/QR Generation", 'tags'))
-story.append(p(f"{link('https://github.com/Biswodipgoj/telepoint', 'github.com/Biswodipgoj/telepoint')} &middot; {link('https://telepoint-topaz.vercel.app', 'telepoint-topaz.vercel.app')}", 'contact'))
+story.append(p(project_links('telepoint'), 'contact'))
 story.append(p("&bull; Maintain and extend an EMI portal with separate customer, retailer, and administrator dashboards, backed by Supabase (Auth + Postgres) and a direct pg client for lower-level database access.", 'bullet'))
 story.append(p("&bull; Built payment receipt/report generation (PDF export via jsPDF), QR-code payment support, and analytics dashboards (Recharts) for tracking dues and collections.", 'bullet'))
 
@@ -147,7 +193,7 @@ story.append(Spacer(1, 5))
 # Project 2: Nexora
 story.append(p("<b>Nexora</b> &mdash; Work/task management platform running from one codebase on web, Windows, and Android.", 'item_title'))
 story.append(p("Next.js &middot; TypeScript &middot; React &middot; Electron &middot; Capacitor &middot; Supabase (PostgreSQL, RLS) &middot; Vitest", 'tags'))
-story.append(p(f"{link('https://github.com/Biswodipgoj/nexora', 'github.com/Biswodipgoj/nexora')} &middot; {link('https://nexora-xi-rust.vercel.app', 'nexora-xi-rust.vercel.app')}", 'contact'))
+story.append(p(project_links('nexora'), 'contact'))
 story.append(p("&bull; Built a single Next.js codebase that ships as a responsive web app, a native Windows desktop app (Electron), and an Android app (Capacitor).", 'bullet'))
 story.append(p("&bull; Implemented a multi-tenant workspace data model with PostgreSQL Row-Level Security, reaching full RLS coverage across all data-access paths.", 'bullet'))
 story.append(p("&bull; Wrote 103 automated security tests (Vitest) verifying tenant isolation, resistance to insecure direct object reference (IDOR) access, and role-hierarchy enforcement.", 'bullet'))
@@ -157,7 +203,7 @@ story.append(Spacer(1, 5))
 # Project 3: TripMate / Tripmate
 story.append(p("<b>TripMate (Tripmate)</b> &mdash; Group trip expense-splitting and settlement application with UPI payment collection.", 'item_title'))
 story.append(p("Next.js &middot; TypeScript &middot; Supabase (PostgreSQL, RLS) &middot; Zustand", 'tags'))
-story.append(p(f"{link('https://github.com/Biswodipgoj/trip', 'github.com/Biswodipgoj/trip')} &middot; {link('https://trip-mu-coral.vercel.app', 'trip-mu-coral.vercel.app')}", 'contact'))
+story.append(p(project_links('tripmate'), 'contact'))
 story.append(p("&bull; Implemented four expense-split types (equal, custom amount, percentage, quantity) plus independent per-room cost allocation for shared hotel stays.", 'bullet'))
 story.append(p("&bull; Built a minimized-transaction settlement algorithm that nets group balances &mdash; including sponsorships, where one member covers another's share &mdash; down to the fewest necessary payments.", 'bullet'))
 story.append(p("&bull; Integrated UPI payment collection with QR codes and deep links, and added PDF export of full trip expense and settlement reports.", 'bullet'))
@@ -167,7 +213,7 @@ story.append(Spacer(1, 5))
 # Project 4: Erpixa
 story.append(p("<b>Erpixa</b> &mdash; Modular ERP (CRM, sales, inventory, accounting, HR, manufacturing, helpdesk, marketing) for small and mid-sized businesses.", 'item_title'))
 story.append(p("React &middot; TypeScript &middot; Vite &middot; Supabase (PostgreSQL, RLS) &middot; Zustand", 'tags'))
-story.append(p(f"{link('https://github.com/Biswodipgoj/Erpixa', 'github.com/Biswodipgoj/Erpixa')} &middot; {link('https://erpixa.vercel.app', 'erpixa.vercel.app')}", 'contact'))
+story.append(p(project_links('erpixa'), 'contact'))
 story.append(p("&bull; Designed a multi-tenant data model where every record belongs to exactly one organization, enforced with PostgreSQL Row-Level Security so no tenant can read another's data.", 'bullet'))
 story.append(p("&bull; Built an onboarding flow that activates only the modules relevant to a business's type &mdash; CRM, sales, inventory, accounting, HR, projects, manufacturing, helpdesk, and marketing &mdash; so different business types each get a workspace shaped for their workflow.", 'bullet'))
 story.append(p("&bull; Implemented Google sign-in and Zustand state stores covering auth/organization, currency, UI, notifications, and core business data.", 'bullet'))
@@ -176,7 +222,7 @@ story.append(Spacer(1, 5))
 # Project 5: NanoLink
 story.append(p("<b>NanoLink</b> &mdash; Production-style URL shortener with password protection, expiry, and click tracking.", 'item_title'))
 story.append(p("Next.js &middot; TypeScript &middot; Prisma &middot; PostgreSQL &middot; Supabase Auth", 'tags'))
-story.append(p(f"{link('https://github.com/Biswodipgoj/nl', 'github.com/Biswodipgoj/nl')} &middot; {link('https://nanl.vercel.app', 'nanl.vercel.app')}", 'contact'))
+story.append(p(project_links('nanolink'), 'contact'))
 story.append(p("&bull; Built a URL shortener with custom short codes (nanoid) and QR-code generation for each link, validating and normalizing submitted URLs before creating the record.", 'bullet'))
 story.append(p("&bull; Implemented bcrypt-hashed password protection and expiry dates on links, with click tracking and form validation (React Hook Form + Zod).", 'bullet'))
 story.append(p("&bull; Used Prisma with a direct Postgres adapter alongside Supabase for authentication, structuring the schema through migrations.", 'bullet'))
@@ -216,6 +262,9 @@ assert 'Uluberia High School' in text
 
 urls = [a.get_object().get('/A', {}).get('/URI', '') for page in reader.pages for a in page.get('/Annots', [])]
 assert 'https://www.linkedin.com/in/biswodipgoj' in urls
+assert socials['GitHub'] in urls, 'GitHub profile link must come from lib/data.ts'
+assert all(project['repo'] in urls for project in data['projects']), 'Every repository link must come from lib/data.ts'
+assert len(reader.pages[0].images) == 1, 'Page one carries the portrait'
 
 Path('artifacts/resume/resume.txt').write_text(text, encoding='utf-8')
 pdf = fitz.open(output)
