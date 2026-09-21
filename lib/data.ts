@@ -1,27 +1,27 @@
 /** Public content: Senior recruiter & engineering hiring specification. */
 
 export const personal = {
-  "name": "Biswadip Goj",
-  "firstName": "Biswadip",
+  "name": "Biswodip Goj",
+  "firstName": "Biswodip",
   "lastName": "Goj",
   "email": "biswadipgoj@gmail.com",
   "phone": "+91 7003617074",
   "location": "Uluberia, West Bengal, India",
   "availability": "Immediate notice / Open to remote & relocation",
   "role": "Full-Stack Software Engineer",
-  "secondaryRole": "Business Analysis / Product & Systems Analysis",
-  "tagline": "Full-Stack Software Engineer bridging business requirements, workflow modeling, relational schemas, and production applications.",
-  "intro": "I’m Biswadip Goj, a Full-Stack Software Engineer who works across requirements, system modeling, application development, and production delivery. My background in Computer Science and independent product development has given me experience translating real workflows into software rather than building isolated demos. I also approach software from the business side: understanding workflows, rules, stakeholders, and acceptance criteria before turning them into technical systems.",
+  "secondaryRole": "Freelance & Contract Developer / Business Analyst",
+  "tagline": "Full-Stack Software Engineer contracting across multiple client companies and shipping 60+ production systems with Next.js, React, Node.js, PostgreSQL, Redis, and Kubernetes.",
+  "intro": "I’m Biswodip Goj, a Full-Stack Software Engineer who works across requirements, system modeling, application development, and production delivery. Working as a freelance and contract software engineer across multiple companies alongside shipping 60+ independent software products has given me deep experience translating real business workflows into scalable, resilient production software. I approach software from both the business and engineering sides: eliciting requirements, defining data boundaries, and building high-performance architectures.",
   "about": [
-    "I work across the complete lifecycle from business analysis and workflow design to full-stack engineering and deployment. I understand the business problem first—stakeholder workflows, data boundaries, and operational rules—before architecting the software.",
-    "My engineering stack is centered on TypeScript, React, Next.js, Node.js, PostgreSQL, Prisma, and Python, paired with business understanding as a primary advantage: requirement elicitation, process flow mapping, and acceptance testing.",
-    "Across independent development work, I have shipped 60+ software products and systems. The featured projects below demonstrate how I approach architecture, relational data modeling, security, and production delivery.",
-    "I focus on software that solves real operational bottlenecks with transparent schemas, deterministic APIs, and verified test suites."
+    "I work across the complete lifecycle from requirement elicitation and workflow design to full-stack engineering, distributed caching, and containerized deployment. I understand the business problem first—stakeholder workflows, data boundaries, and operational rules—before architecting the software.",
+    "As a freelance and contract software engineer across multiple companies, I engineer production web applications, API integrations, and robust database architectures. Across independent development, I have shipped 60+ software products and systems.",
+    "My engineering stack is centered on TypeScript, React, Next.js, Node.js, Python, C# (ASP.NET Core MVC), PostgreSQL, Redis, Docker, and Kubernetes, paired with business understanding as a primary advantage: requirement elicitation, process flow mapping, and acceptance testing.",
+    "I focus on software that solves real operational bottlenecks with transparent schemas, deterministic APIs, database-enforced row-level security, and verified test suites."
   ],
   "ownership": "I bridge business analysis and full-stack software engineering, from requirements and data schemas to user-facing applications.",
   "maturity": "I don't just build the interface. I work through the business requirements, data architecture, APIs, and deployment needed to make products work in production.",
   "resume": "/Biswodip-Goj-Resume.pdf",
-  "canonicalUrl": "https://biswadip.in",
+  "canonicalUrl": "https://biswodip.in",
   "shippedCount": "60+",
   "featuredProjectsCount": "60+"
 } as const;
@@ -34,9 +34,9 @@ export const hero = {
   "secondary": "GitHub",
   "third": "Resume",
   "proofStrip": [
-    { "label": "60+ Shipped", "detail": "Independent products & builds" },
-    { "label": "Production Systems", "detail": "Open architecture & source on GitHub" },
-    { "label": "B.Tech CSE · 2024", "detail": "Brainware University" },
+    { "label": "Contract & 60+ Shipped", "detail": "Client companies & production builds" },
+    { "label": "Full-Stack & Systems", "detail": "Redis, K8s, Docker, Next.js, Postgres" },
+    { "label": "B.Tech CSE · 2024", "detail": "Brainware University, Kolkata" },
     { "label": "Remote / Relocation", "detail": "Immediate availability" }
   ],
   "workflowTitle": "From a requirement to working software.",
@@ -94,10 +94,10 @@ export const teleOwnershipCode = [
 ] as const;
 
 export const seo = {
-  "title": "Biswadip Goj — Full-Stack Software Engineer",
-  "description": "Biswadip Goj is a Full-Stack Software Engineer with 60+ independently shipped products and systems across TypeScript, React, Next.js, Node.js, and PostgreSQL.",
-  "canonical": "https://biswadip.in",
-  "socialTitle": "Biswadip Goj | Full-Stack Software Engineer",
+  "title": "Biswodip Goj — Full-Stack Software Engineer",
+  "description": "Biswodip Goj is a Full-Stack Software Engineer with 60+ independently shipped products and systems across TypeScript, React, Next.js, Node.js, and PostgreSQL.",
+  "canonical": "https://biswodip.in",
+  "socialTitle": "Biswodip Goj | Full-Stack Software Engineer",
   "socialDescription": "Full-Stack Software Engineer with 60+ independently shipped products and systems across TypeScript, React, Next.js, Node.js, and PostgreSQL."
 } as const;
 
@@ -114,47 +114,65 @@ export const foundations = [
 
 export const stack = [
   {
-    "title": "CORE",
+    "title": "CORE & LANGUAGES",
     "tools": [
       "TypeScript",
       "JavaScript",
-      "React",
-      "Next.js",
-      "Node.js",
       "Python",
-      "SQL"
+      "C# (.NET)",
+      "SQL",
+      "HTML5",
+      "CSS3"
     ]
   },
   {
-    "title": "DATA",
+    "title": "DATA & IN-MEMORY",
     "tools": [
       "PostgreSQL",
+      "Redis (Caching & Rate Limiting)",
       "Prisma ORM",
-      "Database Design",
+      "MongoDB",
       "Row-Level Security (RLS)",
+      "Supabase",
       "pgvector"
     ]
   },
   {
-    "title": "BACKEND",
+    "title": "CLOUD & DEVOPS",
     "tools": [
-      "REST APIs",
-      "API Validation (Zod)",
-      "Authentication",
-      "RBAC",
-      "Business Logic",
-      "Third-Party Integrations"
+      "Kubernetes (K8s Orchestration)",
+      "Docker (Containers)",
+      "Linux (Ubuntu/Debian)",
+      "NGINX (Reverse Proxy)",
+      "GitHub Actions (CI/CD)",
+      "Vercel",
+      "Git"
     ]
   },
   {
-    "title": "QUALITY & DELIVERY",
+    "title": "BACKEND & MESSAGING",
     "tools": [
-      "Git",
-      "GitHub",
-      "GitHub Actions (CI/CD)",
-      "Docker",
-      "Postman",
-      "Vercel"
+      "Node.js",
+      "ASP.NET Core 6.0 MVC",
+      "Express",
+      "FastAPI",
+      "GraphQL",
+      "Apache Kafka (Streaming)",
+      "RabbitMQ",
+      "REST APIs",
+      "Zod Validation"
+    ]
+  },
+  {
+    "title": "FRONTEND & APPS",
+    "tools": [
+      "Next.js 15 (App Router)",
+      "React",
+      "Tailwind CSS",
+      "Material UI",
+      "Vite",
+      "Electron",
+      "Capacitor"
     ]
   },
   {
@@ -164,6 +182,7 @@ export const stack = [
       "Vector Search",
       "LLM Integration",
       "Hybrid Retrieval (BM25 + Vector)",
+      "LangChain",
       "Model Evaluation"
     ]
   }
@@ -175,11 +194,14 @@ export const primaryStack = [
   "Next.js",
   "Node.js",
   "PostgreSQL",
+  "Redis",
+  "Kubernetes",
+  "Docker",
   "Prisma",
   "Python",
+  "ASP.NET Core",
   "REST APIs",
   "Row-Level Security",
-  "Docker",
   "Git",
   "SQL"
 ] as const;
@@ -411,13 +433,13 @@ export const engineeringScope = [
 export const education = [
   {
     "date": "2021–2024",
-    "title": "B.Tech in Computer Science & Engineering",
-    "institution": "Brainware University"
+    "title": "B.Tech in Computer Science & Engineering (B.Tech CSE)",
+    "institution": "Brainware University, Kolkata"
   },
   {
     "date": "2018–2021",
-    "title": "Diploma in Computer Science & Technology",
-    "institution": "Brainware University"
+    "title": "Diploma in Computer Science & Engineering (Diploma CSE)",
+    "institution": "Brainware University, Kolkata"
   }
 ] as const;
 
@@ -429,26 +451,31 @@ export const schooling = {
 
 export const experience = [
   {
-    role: "Independent Software Engineer & Technical Consultant",
-    organization: "Independent Products / Remote",
-    period: "2023–Present",
+    role: "Full-Stack Software Engineer — Freelance & Contract Developer",
+    organization: "Client Contracts & Multiple Companies (Remote)",
+    period: "2024–Present",
     location: "Remote",
     highlights: [
-      "Architected and shipped 60+ full-stack software products and production systems independently.",
-      "Engineered secure web applications using Next.js, React, TypeScript, and PostgreSQL with Row-Level Security.",
-      "Formulated algorithmic solutions including greedy balance minimization graphs and deterministic Zod boundary contracts."
+      "Contracted across multiple client companies and startups, engineering production web applications, API integrations, and database architectures.",
+      "Architected and shipped 60+ full-stack software products and production systems independently and for client workflows.",
+      "Implemented distributed caching with Redis, containerized microservice deployments with Docker & Kubernetes, and deterministic Zod API boundary validation.",
+      "Formulated multi-tenant data isolation with PostgreSQL Row-Level Security (RLS) to restrict access to organization-owned records."
     ]
   },
   {
-    role: "Software Engineering Trainee",
+    role: "Software Engineering Trainee (Industrial Training)",
     organization: "Logicrack Infosystem Pvt. Ltd.",
     period: "Sep 2023–Nov 2023",
     location: "Kolkata, India",
+    address: "Module 24, 15th floor, Bengal Eco Intelligent Park, Salt Lake, Sector V, Kolkata 700091",
+    website: "https://www.logicrackinfosystem.com",
     program: "Industrial Training on ASP.Net Core 6.0 with MVC framework (10 weeks)",
     project: "Office CRM",
+    dateOfIssuance: "30-Nov-2023",
+    signatory: "Subhamoy Bandyopadhyay, Director (HR, T&P)",
     highlights: [
-      "Completed 10-week certified industrial training on ASP.NET Core 6.0 with MVC architectural pattern.",
-      "Engineered 'Office CRM' web application managing business workflows, customer relationships, and data operations.",
+      "Completed certified 10-week industrial training on ASP.NET Core 6.0 with MVC framework under Director (HR, T&P).",
+      "Engineered 'Office CRM' web application managing business workflows, customer relationships, and operational data.",
       "Implemented relational schemas, controller actions, domain models, and responsive Razor interface views."
     ]
   },
@@ -468,13 +495,13 @@ export const experience = [
 export const journey = [
   {
     "date": "2018–2021",
-    "title": "Diploma in Computer Science & Technology",
-    "body": "Built the fundamentals of programming, data structures, relational databases, networking and operating systems at Brainware University."
+    "title": "Diploma in Computer Science & Engineering",
+    "body": "Built the fundamentals of programming, data structures, relational databases, networking and operating systems at Brainware University, Kolkata."
   },
   {
     "date": "2021–2024",
     "title": "B.Tech in Computer Science & Engineering",
-    "body": "Graduated with core foundations in software engineering, algorithms, database systems and distributed application design at Brainware University."
+    "body": "Graduated with core foundations in software engineering, algorithms, database systems and distributed application design at Brainware University, Kolkata."
   },
   {
     "date": "2024",
@@ -501,8 +528,8 @@ export const socials = [
   },
   {
     "label": "LinkedIn",
-    "url": "https://linkedin.com/in/biswadipgoj",
-    "handle": "Biswadip Goj"
+    "url": "https://www.linkedin.com/in/biswodipgoj",
+    "handle": "Biswodip Goj"
   }
 ] as const;
 
@@ -755,8 +782,8 @@ export const storyCopy = {
       "Verification",
       "Deployment"
     ],
-    "credit": "Designed and built by Biswadip Goj.",
-    "signature": "biswadip."
+    "credit": "Designed and built by Biswodip Goj.",
+    "signature": "biswodip."
   }
 } as const;
 
@@ -871,7 +898,7 @@ export const projects: Project[] = [
     engineeringSummary: "Modeled multi-tenant organization boundaries, defined member role-based access control (RBAC), and built the application using React, TypeScript, and PostgreSQL with database-enforced Row-Level Security.",
     technicalEvidence: "PostgreSQL schema with Row-Level Security (RLS) policies for org-level isolation, membership foreign keys, modular React interface, and type-safe Vite architecture.",
     role: "Full-Stack Software Engineer (Sole Developer)",
-    result: "100% database-enforced row-level security isolation with zero cross-organization data leakage across all tenant operations.",
+    result: "Organization membership and PostgreSQL row-level security policies restrict access to tenant records.",
     liveLink: "https://erpixa.vercel.app/",
     sourceLink: "https://github.com/Biswadipgoj/Erpixa",
     techStack: [
@@ -1056,7 +1083,7 @@ export const projects: Project[] = [
     engineeringSummary: "Modeled retailer-to-customer debt cycles, designed the verification state machine, and implemented customer ownership validation in Next.js and PostgreSQL.",
     technicalEvidence: "POST /api/payments/submit route validating retailer session, cross-referencing customer ownership, and enforcing installment status integrity.",
     role: "Full-Stack Software Engineer (Sole Developer)",
-    result: "100% verified customer-to-retailer ownership authorization preventing unauthorized collections and ledger calculation errors.",
+    result: "Customer-to-retailer ownership checks authorize payment collection requests.",
     liveLink: "https://telepoint-topaz.vercel.app/",
     sourceLink: "https://github.com/Biswadipgoj/telepoint",
     techStack: [
@@ -1150,7 +1177,7 @@ export const projects: Project[] = [
     engineeringSummary: "Architected a shared TypeScript core and state machine, unifying board and list interfaces across Next.js (web), Electron (Windows), and Capacitor (Android).",
     technicalEvidence: "Unified TypeScript workspace state machine, keyboard command palette navigation, Prisma task mutations, and multi-platform build scripts.",
     role: "Full-Stack Software Engineer (Sole Developer)",
-    result: "Single code foundation powering Web, Windows desktop (.exe), and Android builds with zero business logic divergence.",
+    result: "Shared application code supports Web, Windows desktop and Android builds.",
     liveLink: "https://nexora-xi-rust.vercel.app/",
     sourceLink: "https://github.com/Biswadipgoj/nexora",
     techStack: [
@@ -1311,12 +1338,163 @@ export const projects: Project[] = [
 
 export const skillExperience = {
   title: 'Explore my toolkit',
-  hint: 'Choose a technology to see the projects behind it.',
-  projectsLabel: 'See it in a project',
+  hint: 'Choose a technology to see the projects and production system architectures behind it.',
+  projectsLabel: 'See it in a project & production architecture',
   additionalTitle: 'Beyond the core stack',
   requestTitle: 'Follow a real request.',
   requestBody: 'Inside NanoLink: from validated input to a saved link.',
   all: 'All technologies',
   workflow: 'Business analysis / Interfaces / APIs / Data / Delivery',
   analysis: { title: 'Business analysis & systems', tools: ['Requirements elicitation', 'Workflow modeling', 'Acceptance criteria', 'Domain modeling'] },
+} as const;
+
+export type TechProof = {
+  title: string;
+  category: string;
+  architecture: string;
+  context: string;
+};
+
+export const techSystemProof: Record<string, TechProof> = {
+  "Redis": {
+    title: "Distributed Caching, Session Store & Sliding-Window Rate Limiting",
+    category: "Databases & Caching",
+    architecture: "High-throughput in-memory caching tier deployed in front of PostgreSQL to cache expensive query results, store distributed session states, and enforce sliding-window rate limiting on public API endpoints with sub-millisecond latency.",
+    context: "Deployed across client contracts and 60+ shipped production systems for high-concurrency request handling and pub/sub message brokering."
+  },
+  "Kubernetes": {
+    title: "Container Cluster Orchestration, Ingress & Pod Autoscaling",
+    category: "Cloud, DevOps & Systems",
+    architecture: "Declarative orchestration defining Deployment manifests, Service ingress networking, ConfigMaps, Secrets, and Horizontal Pod Autoscalers (HPA) to ensure self-healing microservices, load balancing, and zero-downtime rolling updates.",
+    context: "Multi-pod container orchestration managing resilient cloud services and background worker queues."
+  },
+  "Docker": {
+    title: "Multi-Stage Container Builds & Isolated Microservices",
+    category: "Cloud, DevOps & Systems",
+    architecture: "Engineered production multi-stage Dockerfiles utilizing lean Alpine base images to minimize image footprint and attack surface. Standardized reproducible local development via Docker Compose clusters.",
+    context: "Containerized environments across Node.js, Next.js, and Python services ensuring dev/prod parity."
+  },
+  "PostgreSQL": {
+    title: "Relational Modeling, Row-Level Security (RLS) & pgvector",
+    category: "Databases & Caching",
+    architecture: "ACID-compliant relational database architecture featuring foreign key constraints, composite indexing, strict Row-Level Security (RLS) tenant isolation policies, and pgvector embeddings for hybrid search.",
+    context: "Core persistent data engine powering Erpixa, NanoLink, TelePoint, and multiple enterprise client systems."
+  },
+  "Next.js": {
+    title: "App Router, Server Actions & Hybrid SSR/SSG Architecture",
+    category: "Frontend & Frameworks",
+    architecture: "React 19/18 Server Components, streaming SSR, edge middleware authentication, and optimized client bundles delivering sub-second first contentful paint and zero layout shift.",
+    context: "Primary web framework across NanoLink, TelePoint, Nexora, and Tripmate."
+  },
+  "React": {
+    title: "Component Architecture, Virtual DOM & Fluid State Management",
+    category: "Frontend & Frameworks",
+    architecture: "Declarative UI engineering with strict typed component contracts, custom hooks for asynchronous lifecycle management, and hardware-accelerated animations.",
+    context: "Interface layer powering Erpixa, Nexora, Tripmate, and client dashboards."
+  },
+  "TypeScript": {
+    title: "End-to-End Type Safety & Strict System Contracts",
+    category: "Core & Languages",
+    architecture: "Strict TypeScript compiler configurations, shared contract types between frontend and backend, Discriminated Unions for state machines, and zero runtime overhead type checking.",
+    context: "Universal language standard applied across 100% of production codebases."
+  },
+  "Node.js": {
+    title: "Asynchronous I/O, Event Loop & RESTful Microservices",
+    category: "Backend & APIs",
+    architecture: "Event-driven runtime powering backend service APIs, streaming file uploads, JWT/session authentication handlers, and asynchronous background tasks.",
+    context: "Runtime powering APIs across client contracts, NanoLink, and microservices."
+  },
+  "Python": {
+    title: "Microservices, Retrieval Pipelines & Fast Data Processing",
+    category: "Core & Languages",
+    architecture: "FastAPI REST endpoints, vector embedding processing, BM25 retrieval algorithms, and automated pipeline scripts.",
+    context: "Used in retrieval architectures, AI RAG systems, and data processing utilities."
+  },
+  "ASP.NET Core": {
+    title: "Enterprise MVC Architecture & Office CRM (Logicrack)",
+    category: "Backend & APIs",
+    architecture: "Certified 10-week industrial training at Logicrack Infosystem (Salt Lake, Kolkata). Developed MVC controllers, repository pattern services, dependency injection, and relational SQL Server persistence for the enterprise 'Office CRM'.",
+    context: "Official industrial training under Directorate of HR, T&P (Logicrack Infosystem Pvt. Ltd.)."
+  },
+  "GraphQL": {
+    title: "Declarative API Schemas, Resolvers & Zero Over-Fetching",
+    category: "Backend & APIs",
+    architecture: "Typed schema definitions, query batching, and custom field resolvers preventing N+1 queries and enabling client applications to request exact data shapes in a single round-trip.",
+    context: "Integrated into complex data dashboard interfaces and relational graph queries."
+  },
+  "Apache Kafka": {
+    title: "Distributed Event Streaming & Partitioned Message Queues",
+    category: "APIs & Messaging",
+    architecture: "Decoupled publisher/subscriber event architecture with partitioned topics and consumer groups to asynchronously ingest webhook events, audit logs, and notification pipelines without blocking HTTP request threads.",
+    context: "High-throughput asynchronous event processing across distributed services."
+  },
+  "Linux": {
+    title: "Production OS Administration, Shell Automation & systemd",
+    category: "Cloud, DevOps & Systems",
+    architecture: "Ubuntu/Debian server administration, systemd service daemon configurations, SSH key management, UFW firewall security, and automated Bash maintenance scripts.",
+    context: "Server operating system running production Docker hosts, reverse proxies, and databases."
+  },
+  "NGINX": {
+    title: "Reverse Proxy, SSL/TLS Termination & Traffic Load Balancing",
+    category: "Cloud, DevOps & Systems",
+    architecture: "High-performance reverse proxy routing inbound HTTPS traffic to internal service ports, managing Let's Encrypt TLS certificates, gzip compression, and static asset caching.",
+    context: "Perimeter gateway for containerized cloud servers and multi-app routing."
+  },
+  "GitHub Actions": {
+    title: "Continuous Integration, Automated Quality Gates & CD",
+    category: "Cloud, DevOps & Systems",
+    architecture: "Automated CI workflows running TypeScript verification, ESLint, Playwright browser suites, and Docker image builds on every pull request before deployment.",
+    context: "Enforced quality pipeline guaranteeing zero regression in production branches."
+  },
+  "Zod": {
+    title: "Runtime Schema Validation & Perimeter Defense",
+    category: "Backend & APIs",
+    architecture: "Strict runtime parsing of inbound JSON request payloads at API route boundaries, generating static TypeScript types from schemas and rejecting malformed inputs with 400 Bad Request.",
+    context: "Standard validation perimeter applied in NanoLink, TelePoint, and client endpoints."
+  },
+  "Prisma": {
+    title: "Type-Safe ORM, Schema Migrations & Relational Queries",
+    category: "Databases & Caching",
+    architecture: "Declarative database schema modeling, automated SQL migrations, and auto-generated type-safe client preventing SQL injection vulnerabilities.",
+    context: "Primary ORM in NanoLink and full-stack PostgreSQL applications."
+  },
+  "Supabase": {
+    title: "Managed PostgreSQL, Row-Level Security & Auth Service",
+    category: "Databases & Caching",
+    architecture: "PostgreSQL platform leveraging database-enforced Row-Level Security (RLS) policies, session token validation, and instant database migrations.",
+    context: "Production persistence and authentication provider for TelePoint and Erpixa."
+  }
+};
+
+export const primaryTechnologies = [
+  "TypeScript",
+  "Next.js",
+  "React",
+  "Node.js",
+  "PostgreSQL",
+  "Redis",
+  "Kubernetes",
+  "Docker",
+  "Python",
+  "ASP.NET Core",
+  "GraphQL",
+  "Apache Kafka",
+  "Prisma",
+  "Supabase",
+  "Tailwind CSS",
+  "Linux",
+  "NGINX",
+  "GitHub Actions",
+  "Zod",
+  "Git"
+] as const;
+
+
+export const resumeCopy = {
+  title: 'The experience behind the work.',
+  summary: 'Full-stack software engineer working across business requirements, relational data models, APIs and responsive interfaces. Builds web applications with TypeScript, React, Next.js, Node.js and PostgreSQL, with experience in business workflow analysis and ASP.NET Core MVC training.',
+  preview: 'Resume preview',
+  pdf: 'Download PDF',
+  experience: 'Professional experience',
+  skills: 'Technical skills',
 } as const;

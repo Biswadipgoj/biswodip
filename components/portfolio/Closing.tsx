@@ -82,8 +82,8 @@ export function Process() {
               </div>
               <p className="evidence-summary">{ev.summary}</p>
               <ul className="evidence-items">
-                {ev.items.map((item) => (
-                  <li key={item}>{item}</li>
+                {ev.items.map((item, itemIdx) => (
+                  <li key={item} data-spatial="chip" data-dir={itemIdx % 2 === 0 ? 1 : -1}>{item}</li>
                 ))}
               </ul>
             </article>
@@ -141,7 +141,7 @@ export function Journey() {
         {education.map((item, i) => (
           <article key={item.title} data-spatial="card">
             <span className="degree-number" aria-hidden="true">0{i + 1}</span>
-            <Image src="/brainware-university-logo.svg" alt="Brainware University" width={48} height={48} className="university-logo" priority={false} />
+            <Image src="/brainware-university-logo.svg" alt="Brainware University, Kolkata" width={48} height={48} className="university-logo" priority={false} />
             <div>
               <span className="degree-date">{item.date}</span>
               <h3>{item.title}</h3>
@@ -167,8 +167,8 @@ export function Journey() {
       <div className="foundations">
         <h3><AnimatedText>{storyCopy.foundationsTitle}</AnimatedText></h3>
         <ul data-stagger>
-          {foundations.map((item) => (
-            <li key={item}>{item}</li>
+          {foundations.map((item, fi) => (
+            <li key={item} data-spatial="chip" data-dir={fi % 2 === 0 ? 1 : -1}>{item}</li>
           ))}
         </ul>
       </div>
@@ -263,21 +263,21 @@ export function Contact() {
                 <span className="term-dot term-yellow" />
                 <span className="term-dot term-green" />
               </div>
-              <span className="terminal-title">biswadip@workstation: ~</span>
+              <span className="terminal-title">biswodip@workstation: ~</span>
               <span className="terminal-session">candidate-brief</span>
             </div>
 
             <div className="terminal-controls" role="toolbar" aria-label="Candidate brief inspection tabs">
-              <button type="button" className={'term-pill ' + (activeCmd === 'profile' ? 'active' : '')} onClick={() => setActiveCmd('profile')}>
+              <button type="button" className={'term-pill ' + (activeCmd === 'profile' ? 'active' : '')} onClick={() => setActiveCmd('profile')} data-spatial="chip">
                 profile
               </button>
-              <button type="button" className={'term-pill ' + (activeCmd === 'projects' ? 'active' : '')} onClick={() => setActiveCmd('projects')}>
+              <button type="button" className={'term-pill ' + (activeCmd === 'projects' ? 'active' : '')} onClick={() => setActiveCmd('projects')} data-spatial="chip">
                 shipped-work
               </button>
-              <button type="button" className={'term-pill ' + (activeCmd === 'stack' ? 'active' : '')} onClick={() => setActiveCmd('stack')}>
+              <button type="button" className={'term-pill ' + (activeCmd === 'stack' ? 'active' : '')} onClick={() => setActiveCmd('stack')} data-spatial="chip">
                 tech-summary
               </button>
-              <button type="button" className={'term-pill ' + (activeCmd === 'contact' ? 'active' : '')} onClick={() => setActiveCmd('contact')}>
+              <button type="button" className={'term-pill ' + (activeCmd === 'contact' ? 'active' : '')} onClick={() => setActiveCmd('contact')} data-spatial="chip">
                 hiring-info
               </button>
             </div>
@@ -285,16 +285,17 @@ export function Contact() {
             <div className="terminal-output" aria-live="polite">
               {activeCmd === 'profile' && (
                 <div className="term-line">
-                  <p className="term-res green-text">Engineer: Biswadip Goj</p>
-                  <p className="term-res">Role: Full-Stack Software Engineer &amp; Business Analyst</p>
-                  <p className="term-res">Advantage: Business workflow analysis, relational data modeling, system contracts</p>
-                  <p className="term-res cyan-text">Degree: B.Tech CSE (2024) · Brainware University</p>
+                  <p className="term-res green-text">Engineer: {personal.name}</p>
+                  <p className="term-res">Role: Full-Stack Software Engineer &amp; Systems Developer</p>
+                  <p className="term-res">Experience: Freelance &amp; Contract Developer (Multiple Companies) · 60+ Shipped</p>
+                  <p className="term-res">Training: Certified Industrial Training in ASP.NET Core 6.0 MVC (Logicrack Infosystem)</p>
+                  <p className="term-res cyan-text">Education: B.Tech CSE (2024) &amp; Diploma CSE (2021) · Brainware University, Kolkata</p>
                 </div>
               )}
 
               {activeCmd === 'projects' && (
                 <div className="term-line">
-                  <p className="term-res green-text">Track Record: 60+ software products &amp; systems shipped independently</p>
+                  <p className="term-res green-text">Track Record: 60+ software products &amp; systems shipped + client contract engineering</p>
                   <p className="term-res">Selected Open Architectures &amp; Source Repositories on GitHub:</p>
                   <p className="term-res">1. Erpixa · Multi-tenant business app with PostgreSQL RLS</p>
                   <p className="term-res">2. NanoLink · Next.js URL service with runtime Zod boundary validation</p>
@@ -306,10 +307,10 @@ export function Contact() {
 
               {activeCmd === 'stack' && (
                 <div className="term-line">
-                  <p className="term-res green-text">Core: TypeScript, React, Next.js, Node.js, Python, SQL</p>
-                  <p className="term-res">Data: PostgreSQL, Prisma ORM, Database Design, Row-Level Security, pgvector</p>
-                  <p className="term-res">Backend: REST APIs, Zod Validation, Authentication, RBAC, Business Logic</p>
-                  <p className="term-res">Quality &amp; Delivery: Git, GitHub Actions, Docker, CI/CD, Production Deployment</p>
+                  <p className="term-res green-text">Core: TypeScript, React, Next.js 15, Node.js, Python, C# (.NET), SQL</p>
+                  <p className="term-res">Data &amp; In-Memory: PostgreSQL, Redis (Caching &amp; Rate Limiting), Prisma, Supabase, RLS</p>
+                  <p className="term-res">Cloud &amp; DevOps: Kubernetes, Docker, Linux, NGINX, GitHub Actions CI/CD</p>
+                  <p className="term-res">APIs &amp; Messaging: RESTful APIs, GraphQL, Apache Kafka, Zod Validation, Postman</p>
                 </div>
               )}
 

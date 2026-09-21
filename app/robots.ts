@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next'
+import { personal } from '@/lib/data'
  
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -6,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://biswadip.in/sitemap.xml',
+    sitemap: personal.canonicalUrl + '/sitemap.xml',
   }
 }

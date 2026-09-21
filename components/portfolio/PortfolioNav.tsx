@@ -41,10 +41,11 @@ export default function PortfolioNav() {
     <header className="portfolio-nav" ref={root}>
       <a className="wordmark" href="#opening" aria-label="biswodip. Home">biswodip<span>.</span></a>
       <nav aria-label="Main navigation" className="desktop-nav">{nav.map(item=><a key={item.id} data-nav={item.id} href={'#'+item.id}>{item.label}</a>)}</nav>
-      <a className="nav-resume" href={personal.resume} download>Resume<ArrowDownIcon aria-hidden="true"/></a>
+      <a className="nav-resume" href="#resume">Resume<ArrowDownIcon aria-hidden="true"/></a>
       <div className="mobile-nav-actions"><a href="#projects">Projects</a><Button ref={trigger} variant="ghost" size="icon" className="menu-button" aria-expanded={open} aria-controls="mobile-navigation" aria-label={open?'Close navigation':'Open navigation'} onClick={()=>setOpen(!open)}>{open?<XmarkIcon aria-hidden="true"/>:<MenuIcon aria-hidden="true"/>}</Button></div>
       <nav id="mobile-navigation" aria-label="More navigation" className="mobile-navigation" hidden={!open}>{nav.map(item=><a key={item.id} data-nav={item.id} href={'#'+item.id} onClick={()=>setOpen(false)}>{item.label}</a>)}<a href={personal.resume} download>Download resume</a></nav>
       <div className="scroll-progress-bar" aria-hidden="true"><div ref={progressRef} className="scroll-progress-fill"/></div>
     </header>
   </>;
 }
+

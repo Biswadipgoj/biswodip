@@ -16,7 +16,7 @@ Show software being built through code, application layers, real project interfa
 
 ## Product truth
 
-Owner: Biswodip Goj, Full-Stack Software Engineer. Uluberia, West Bengal, India. biswadipgoj@gmail.com. B.Tech CSE 2021–2024 at MAKAUT, lateral entry; Diploma CST 2018–2021 at WBSCTE. No invented employment, metrics, clients or testimonials.
+Owner: Biswodip Goj, Full-Stack Software Engineer & Business Analyst. Uluberia, West Bengal, India. biswadipgoj@gmail.com. B.Tech CSE 2021–2024 at Brainware University, Kolkata, lateral entry; Diploma CSE 2018–2021 at Brainware University, Kolkata. No invented employment, metrics, clients or testimonials.
 
 Preserve Erpixa, NanoLink, Nexora, TelePoint and Tripmate, all existing project routes and verified links. Source code outranks old portfolio descriptions. Technical claims must carry source evidence. Illustrative code and conceptual diagrams must be labelled. Discrepancies are recorded in docs/evidence.md.
 

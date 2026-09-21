@@ -85,20 +85,58 @@
   - `npm run test:browser`: 39 passed, 3 skipped, 0 failures across 42 test cases on Desktop Edge and Mobile Viewport.
 - Fresh mobile screenshots captured and validated across `#opening`, `#stack`, `#projects`, `#nanolink`, and `#contact` without horizontal overflow or layout regressions.
 
-## ATS Résumé & Complete Responsive Verification Checkpoint — 2026-09-21
-- Incorporated all verified credentials into `lib/data.ts`, `scripts/build-resume.py`, and `scripts/build-resume.mjs`:
-  - Contact: `+91 7003617074`, `biswadipgoj@gmail.com`, `Uluberia, West Bengal, India`.
-  - Roles: `Full-Stack Software Engineer & Business Analyst`.
-  - Experience & Industrial Training:
-    - Remote Independent Software Engineer & Technical Consultant (2023–Present, 60+ shipped builds).
-    - Logicrack Infosystem Pvt. Ltd., Kolkata (10-week industrial training, ASP.NET Core 6.0 MVC, Office CRM project).
-    - Webguru Technology (Web development field training).
-  - Education: B.Tech CSE (2021–2024) Brainware University, Diploma CST (2018–2021) Brainware University, Uluberia High School.
-- Generated 1-page ATS-optimized selectable PDF résumé (`public/Biswodip-Goj-Resume.pdf`) with 3,780 selectable characters and zero page overflow.
-- Ran full automated verification suite:
+## Mobile & Desktop Overlap Elimination + Universal Scroll Animation Checkpoint — 2026-09-21
+- Resolved root layout collisions across mobile and desktop:
+  - Mobile Hero Gallery: Increased gallery clearance (`height: 375px; margin-top: 28px; margin-bottom: 24px;`), bound `.hero-small-image` and `.hero-mini-label` coordinates cleanly above `.hero-workflow` (30px+ clearance). Made `.hero-workflow` and `.hero-bottom` normal flow to eliminate card-on-workflow overlay.
+  - Desktop Hero: Repositioned orbital badge `.chip-center` ("B.Tech CSE · 2024") to `left: 46%; bottom: 135px`, eliminating collision with `.hero-small-image` and workflow line.
+  - Mobile Identity / About: Fixed `.identity-links` with `flex-wrap: wrap; gap: 12px 18px;` and `.identity-composition` full width alignment, preventing 468px overflow from shifting `.identity-intro` left to -39px. Headings, intro paragraph, and facts table now align cleanly at `left: 24px` with 0 cutoff.
+  - Mobile Contact / Footer: Bound `.availability-badge` with `max-width: 100%; white-space: normal`, `.terminal-controls` with `flex-wrap: wrap; gap: 6px`, and `.contact-tools` wrapping, eliminating horizontal container blowouts.
+  - Global overflow: Set `overflow: clip` on `.kinetic-band` and `.hero-stage` to prevent drifting headers from creating horizontal scrollbars.
+- Universal Scroll Animation Engine:
+  - Enabled scene builder `build` on both mobile and desktop in `components/cinematic/useScene.ts`.
+  - Added mobile-calibrated scroll scrub timeline in `components/portfolio/Opening.tsx` (upward drift and 3D tilts on scroll).
+  - Switched `[data-spatial]`, `[data-depth]`, and `[data-parallax]` triggers to element-relative triggers (`start: 'top 98%', end: 'bottom 8%', scrub: 0.45`), providing fluid 3D spatial motion (pitch, yaw, scale, and depth) linked to scroll on every section across both mobile and desktop.
+- Verified Gates & Metrics:
+  - `npm run typecheck`: Passed (0 errors).
+  - `npm run lint`: Passed (0 warnings, 0 errors).
+  - `npm run build`: Passed (13/13 static pages).
+  - `node scripts/verify-responsive.mjs`: 28 states across 7 viewports passed with strictly `maxOverflow: 0`.
+  - `npm run test:browser`: 39 passed, 3 skipped, 0 failures across 42 test cases.
+
+## Creative Studio & Diploma CSE / Full University Name Checkpoint — 2026-09-21
+- **Education Qualifications Fully Unabbreviated & Corrected**:
+  - Full Institution Name: **`Brainware University, Kolkata`** everywhere (no "Univ" truncation).
+  - Diploma Credential: Corrected from CST to **`Diploma in Computer Science & Engineering (Diploma CSE)`** (2018–2021).
+  - B.Tech Credential: **`B.Tech in Computer Science & Engineering (B.Tech CSE)`** (2021–2024).
+  - Updated in [lib/data.ts](file:///c:/Users/biswa/biswodip/lib/data.ts), [components/portfolio/Identity.tsx](file:///c:/Users/biswa/biswodip/components/portfolio/Identity.tsx), [components/portfolio/Closing.tsx](file:///c:/Users/biswa/biswodip/components/portfolio/Closing.tsx), [PRODUCT.md](file:///c:/Users/biswa/biswodip/PRODUCT.md), and [AGENTS.md](file:///c:/Users/biswa/biswodip/AGENTS.md).
+  - Regenerated 1-page text-selectable PDF résumé ([public/Biswodip-Goj-Resume.pdf](file:///c:/Users/biswa/biswodip/public/Biswodip-Goj-Resume.pdf)) with 4,008 selectable characters, 0 page overflow, full Logicrack training details, and verified credentials.
+- **Creative Studio Hero Opening**:
+  - Replaced static preview cards and removed matrix grid in favor of **`CreativeStudio`** ([components/portfolio/CreativeStudio.tsx](file:///c:/Users/biswa/biswodip/components/portfolio/CreativeStudio.tsx)):
+    - **Architecture Pipeline**: 4 connected interactive stages (`01 / INPUT: Requirement & Flow`, `02 / CONTRACT: Zod API Boundary`, `03 / SECURITY: PostgreSQL RLS`, `04 / PRODUCTION: Deterministic Delivery`) with active detail panel, `⚡ Dispatch Request` propagating wave, `🛡️ Tenant RLS: ACTIVE/BYPASS` toggle, and traffic speed selector (`1x`, `10x`, `turbo`).
+    - **Schema & Contracts**: Color-coded syntax-highlighted interactive editor showcasing real `contract.ts` (Zod perimeter validation), `schema.prisma` (multi-tenant model), and `rls_policy.sql` (PostgreSQL 16 row security) with clipboard copy feedback.
+    - **Live Telemetry**: Real-time stats (60+ shipped systems, 14ms latency, RLS security model, 100% validation) with packet counter.
+    - **Ambient Constellation Field**: Over 1,000 animated kinetic elements/particles drifting smoothly in CSS (`@keyframes kineticFloat`).
+    - **Reversible 3D Motion**: Single GSAP timeline control on `.hero-main-image.creative-studio` ensuring exact mathematical reversal on scroll back to 0.
+- **Verification Gates**:
   - `npm run typecheck`: Passed (0 errors).
   - `npm run lint`: Passed (0 warnings, 0 errors).
   - `npm run build`: Passed (13/13 static routes).
-  - `npm run test:browser`: 39 passed, 3 skipped, 0 failures across 42 tests.
-  - `node scripts/verify-responsive.mjs`: Tested 28 states across 7 viewports (320px–1728px); max document overflow is strictly 0px.
+  - `node scripts/verify-responsive.mjs`: 28 states across 7 viewports passed with strictly `maxOverflow: 0`.
+  - `npm run test:browser`: 39 passed, 3 skipped, 0 failures across 42 test cases.
+  - Browser visual inspection verified across Desktop (1440×900) and Mobile (390×844) with zero overlaps and zero text truncation.
 
+
+
+
+## Master brief implementation � 2026-09-21
+- Latest user explicitly requests dark cinematic styling; this overrides the older neither-white-nor-dark direction. Existing uncommitted work preserved.
+- Hero uses real Erpixa screenshot and direct recruiter actions. CreativeStudio retained on disk but no longer imported; its simulated telemetry and example code are not presented as evidence.
+- Anime.js 4.5.0 installed and official v4 scope API checked. useEntrance scopes brief entrances to child elements; GSAP retains reversible scroll motion with separate transform ownership. Reduced-motion scope cleanup included.
+- Added Resume.tsx with experience timeline, skills, PDF preview and download. Public text remains in lib/data.ts. PDF rebuilt as two readable pages with 4290 selectable characters and 14 links; both pages rendered and visually checked.
+- LinkedIn exact URL https://www.linkedin.com/in/biswodipgoj now comes from socials; no LinkedIn profile fetch performed.
+- Canonical/robots/sitemap/JSON-LD use personal.canonicalUrl https://biswodip.in. Sitemap includes five detail pages.
+- Removed unsupported absolute security outcomes from three project result statements and PDF. Remaining source verification concerns are in PORTFOLIO-REVIEW.md.
+- Better Design required tools attempted; all HTTP 402 ANON_QUOTA_EXHAUSTED. Existing installed system retained. No remote review claimed.
+- Removed unused global --scroll-kinetic update; reduced backdrop sampling. Narrow browserslist/baseline updates leave two Next/PostCSS audit advisories. No forced Next major migration.
+- DOCX not generated; PDF source and builder are editable.
+- Final production Lighthouse audit: performance 70 (target not met), accessibility/best practices/SEO 100, LCP 3369ms, TBT 858ms, CLS 0. Report artifacts/lighthouse-mobile.html. Startup/scene layout work remains an optimization item.

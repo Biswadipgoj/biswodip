@@ -6,7 +6,7 @@ const url = process.env.PORTFOLIO_URL || 'http://127.0.0.1:3029';
 const browser = await puppeteer.launch({ executablePath: process.env.CHROME_PATH || 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', headless: true });
 fs.mkdirSync('artifacts', { recursive: true });
 try {
-  const result = await lighthouse(url, { port: Number(new URL(browser.wsEndpoint()).port), output: ['html', 'json'], onlyCategories: ['performance', 'accessibility'], logLevel: 'error', throttlingMethod: 'simulate' });
+  const result = await lighthouse(url, { port: Number(new URL(browser.wsEndpoint()).port), output: ['html', 'json'], onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'], logLevel: 'error', throttlingMethod: 'simulate' });
   if (!result) throw new Error('No Lighthouse result');
   const { lhr, report } = result;
   fs.writeFileSync('artifacts/lighthouse-mobile.html', report[0]);
@@ -14,6 +14,8 @@ try {
   const summary = {
     performance: Math.round(lhr.categories.performance.score * 100),
     accessibility: Math.round(lhr.categories.accessibility.score * 100),
+    bestPractices: Math.round(lhr.categories['best-practices'].score * 100),
+    seo: Math.round(lhr.categories.seo.score * 100),
     lcpMs: Math.round(lhr.audits['largest-contentful-paint'].numericValue),
     fcpMs: Math.round(lhr.audits['first-contentful-paint'].numericValue),
     tbtMs: Math.round(lhr.audits['total-blocking-time'].numericValue),

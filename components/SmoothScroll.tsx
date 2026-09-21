@@ -30,7 +30,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     media.add('(prefers-reduced-motion: no-preference)',()=>{
       const lenis = new Lenis({ duration:1.05, smoothWheel:true, syncTouch:false, anchors:false });
       const tick = (seconds:number)=>lenis.raf(seconds*1000);
-      lenis.on('scroll',ScrollTrigger.update);
+      lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add(tick);
       window.portfolioScroll=lenis;
       const focusTarget = (target:HTMLElement)=>{

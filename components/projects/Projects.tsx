@@ -31,29 +31,29 @@ function ProjectChapter({project,index}: {project: Project;index: number}) {
       <header className="project-heading">
         <h3><Link href={'/project/'+project.slug}><AnimatedText>{project.name}</AnimatedText><ArrowUpRightIcon aria-hidden="true"/><span className="sr-only"> project details</span></Link></h3>
         <p data-reveal><AnimatedText>{project.whatItIs || project.blurb}</AnimatedText></p>
-        <ul className="project-stack" data-stagger aria-label={project.name+' stack'}>{project.techStack.map(tech=><li key={tech}>{tech}</li>)}</ul>
+        <ul className="project-stack" data-stagger aria-label={project.name+' stack'}>{project.techStack.map((tech, ti)=><li key={tech} data-spatial="chip" data-dir={ti % 2 === 0 ? 1 : -1}>{tech}</li>)}</ul>
         <ProjectActions project={project} notes/>
       </header>
     </div>
     <div className="project-insight glass-panel recruiter-signal-panel" data-spatial="panel">
       <div className="recruiter-signal-grid">
-        <div className="signal-item">
+        <div className="signal-item" data-spatial="card">
           <span className="signal-badge">01 · What It Is</span>
           <p className="signal-text">{project.whatItIs || project.blurb}</p>
         </div>
-        <div className="signal-item">
+        <div className="signal-item" data-spatial="card">
           <span className="signal-badge">02 · Problem</span>
           <p className="signal-text">{project.problem}</p>
         </div>
-        <div className="signal-item">
+        <div className="signal-item" data-spatial="card">
           <span className="signal-badge">03 · Engineering</span>
           <p className="signal-text">{project.engineeringSummary || project.technicalNote}</p>
         </div>
-        <div className="signal-item">
+        <div className="signal-item" data-spatial="card">
           <span className="signal-badge">04 · Technical Evidence</span>
           <p className="signal-text">{project.technicalEvidence}</p>
         </div>
-        <div className="signal-item highlight-result">
+        <div className="signal-item highlight-result" data-spatial="card">
           <span className="signal-badge">05 · Verifiable Result</span>
           <p className="signal-text result-highlight">{project.result}</p>
         </div>
@@ -84,7 +84,7 @@ export default function Projects() {
           <p className="shipped-description">{storyCopy.projectsIntro}</p>
         </div>
       </div>
-      <nav aria-label="Featured projects" data-stagger>{projects.map(p=><a href={'#'+p.slug} key={p.slug}><span>{p.chapter.index}</span>{p.name}<ArrowUpRightIcon aria-hidden="true"/></a>)}</nav>
+      <nav aria-label="Featured projects" data-stagger>{projects.map((p, pi)=><a href={'#'+p.slug} key={p.slug} data-spatial="chip" data-dir={pi % 2 === 0 ? 1 : -1}><span>{p.chapter.index}</span>{p.name}<ArrowUpRightIcon aria-hidden="true"/></a>)}</nav>
     </header>
     {projects.map((project,i)=><ProjectChapter project={project} index={i} key={project.slug}/>)}
   </section>;

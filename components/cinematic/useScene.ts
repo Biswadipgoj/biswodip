@@ -76,12 +76,12 @@ export function useEditorialReveal(build?: SceneBuilder) {
         });
       }
       for (const element of owned('[data-media]:not([data-spatial])')) {
-        gsap.fromTo(element, { y: desktop ? 60 : 24, scale: 0.94, rotation: desktop ? -1.5 : 0 }, {
+        gsap.fromTo(element, { y: desktop ? 60 : 36, scale: 0.94, rotation: desktop ? -1.5 : -1.0 }, {
           y: 0, scale: 1, rotation: 0, ease: 'none', scrollTrigger: scroll(element, 'top 30%'),
         });
       }
       for (const element of owned('[data-parallax]:not([data-plane]):not([data-spatial])')) {
-        const amount = Number(element.dataset.parallax || 24) * (desktop ? 1 : 0.3);
+        const amount = Number(element.dataset.parallax || 24) * (desktop ? 1 : 0.85);
         gsap.fromTo(element, { y: amount }, { y: -amount, ease: 'none', scrollTrigger: {
           trigger: element.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.5,
         } });
@@ -94,8 +94,8 @@ export function useEditorialReveal(build?: SceneBuilder) {
         });
       }
       for (const element of owned('[data-drift]')) {
-        gsap.fromTo(element, { xPercent: desktop ? 8 : 3 }, {
-          xPercent: desktop ? -8 : -3, ease: 'none', scrollTrigger: {
+        gsap.fromTo(element, { xPercent: desktop ? 8 : 6 }, {
+          xPercent: desktop ? -8 : -6, ease: 'none', scrollTrigger: {
             trigger: element, start: 'top bottom', end: 'bottom top', scrub: 0.5,
           },
         });
@@ -103,88 +103,76 @@ export function useEditorialReveal(build?: SceneBuilder) {
       // Interface planes arrive in depth, square up for reading, and gently recede.
       for (const element of owned('[data-depth]:not([data-spatial])')) {
         const screen = element.dataset.depth === 'screen';
-        const depth = desktop ? 1 : 0.45;
+        const depth = desktop ? 1 : 0.9;
         const timeline = gsap.timeline({ scrollTrigger: {
-          trigger: element.parentElement, start: 'top 95%', end: 'bottom 8%', scrub: 0.5,
+          trigger: element, start: 'top 95%', end: 'bottom 10%', scrub: 0.45,
           invalidateOnRefresh: true,
         } });
         timeline.fromTo(element, {
-          transformPerspective: 1400, rotationX: (screen ? 16 : 9) * depth,
-          rotationY: (screen ? -7 : 4) * depth, z: -55 * depth,
+          transformPerspective: 1400, rotationX: (screen ? 14 : 8) * depth,
+          rotationY: (screen ? -6 : 3) * depth, z: -45 * depth,
         }, { rotationX: 0, rotationY: 0, z: 0, duration: 0.45, ease: 'none' })
-          .to(element, { rotationX: -4 * depth, rotationY: 2 * depth, z: -24 * depth, duration: 0.35, ease: 'none' }, 0.65);
+          .to(element, { rotationX: -4 * depth, rotationY: 2 * depth, z: -20 * depth, duration: 0.35, ease: 'none' }, 0.65);
       }
       for (const plane of owned('[data-plane]')) {
         const direction = Number(plane.dataset.plane || 1);
-        gsap.fromTo(plane, { transformPerspective: 900, rotationY: -16 * direction, rotationX: 8, z: -35 }, {
-          rotationY: 12 * direction, rotationX: -5, z: 35, ease: 'none', scrollTrigger: {
-            trigger: plane.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.55,
+        gsap.fromTo(plane, { transformPerspective: 900, rotationY: -14 * direction, rotationX: 7, z: -30 }, {
+          rotationY: 10 * direction, rotationX: -4, z: 30, ease: 'none', scrollTrigger: {
+            trigger: plane, start: 'top bottom', end: 'bottom top', scrub: 0.5,
           },
         });
       }
       for (const element of owned('[data-spatial]')) {
         const type = element.dataset.spatial;
-        const depth = desktop ? 1 : 0.45;
+        const depth = desktop ? 1 : 0.6;
         const timeline = gsap.timeline({ scrollTrigger: {
-          trigger: element.parentElement || element, start: 'top 98%', end: 'bottom 5%', scrub: 0.5,
+          trigger: element, start: 'top 98%', end: 'bottom 8%', scrub: 0.45,
           invalidateOnRefresh: true,
         } });
         if (type === 'hero') {
           timeline.fromTo(element, {
-            transformPerspective: 1400, rotationX: 15 * depth, rotationY: -12 * depth, z: -80 * depth, scale: 0.94
+            transformPerspective: 1400, rotationX: 14 * depth, rotationY: -10 * depth, z: -70 * depth, scale: 0.95
           }, { rotationX: 0, rotationY: 0, z: 0, scale: 1, duration: 0.5, ease: 'none' })
-            .to(element, { rotationX: -12 * depth, rotationY: 8 * depth, z: -60 * depth, scale: 0.95, duration: 0.5, ease: 'none' });
+            .to(element, { rotationX: -10 * depth, rotationY: 7 * depth, z: -50 * depth, scale: 0.96, duration: 0.5, ease: 'none' });
         } else if (type === 'card') {
           timeline.fromTo(element, {
-            transformPerspective: 1200, rotationX: 13 * depth, rotationY: -6 * depth, z: -50 * depth, y: 32, scale: 0.96
+            transformPerspective: 1200, rotationX: 12 * depth, rotationY: -5 * depth, z: -40 * depth, y: 24, scale: 0.97
           }, { rotationX: 0, rotationY: 0, z: 0, y: 0, scale: 1, duration: 0.45, ease: 'none' })
-            .to(element, { rotationX: -8 * depth, rotationY: 4 * depth, z: -28 * depth, y: -20, scale: 0.97, duration: 0.25, ease: 'none' }, 0.75);
+            .to(element, { rotationX: -7 * depth, rotationY: 3 * depth, z: -24 * depth, y: -16, scale: 0.98, duration: 0.3, ease: 'none' }, 0.7);
         } else if (type === 'panel') {
           timeline.fromTo(element, {
-            transformPerspective: 1300, rotationX: 10 * depth, rotationY: 7 * depth, z: -40 * depth, y: 26
+            transformPerspective: 1300, rotationX: 9 * depth, rotationY: 6 * depth, z: -35 * depth, y: 20
           }, { rotationX: 0, rotationY: 0, z: 0, y: 0, duration: 0.48, ease: 'none' })
-            .to(element, { rotationX: -6 * depth, rotationY: -4 * depth, z: -20 * depth, y: -16, duration: 0.48, ease: 'none' });
+            .to(element, { rotationX: -5 * depth, rotationY: -3 * depth, z: -18 * depth, y: -14, duration: 0.48, ease: 'none' });
         } else if (type === 'chip' || type === 'float') {
           const dir = Number(element.dataset.dir || 1);
+          const chipAmp = desktop ? 16 : 8;
           timeline.fromTo(element, {
-            transformPerspective: 1000, y: 45 * depth * dir, z: -35 * depth, rotationZ: -8 * dir, rotationX: 10 * depth
-          }, { y: 0, z: 25 * depth, rotationZ: 0, rotationX: 0, duration: 0.5, ease: 'none' })
-            .to(element, { y: -45 * depth * dir, z: -20 * depth, rotationZ: 8 * dir, rotationX: -10 * depth, duration: 0.5, ease: 'none' });
+            transformPerspective: 1000, y: chipAmp * depth * dir, z: -16 * depth, rotationZ: -2.5 * dir, rotationX: 4 * depth
+          }, { y: 0, z: 10 * depth, rotationZ: 0, rotationX: 0, duration: 0.5, ease: 'none' })
+            .to(element, { y: -chipAmp * depth * dir, z: -10 * depth, rotationZ: 2.5 * dir, rotationX: -4 * depth, duration: 0.5, ease: 'none' });
         } else if (type === 'orb') {
           timeline.fromTo(element, {
-            yPercent: 30 * depth, xPercent: -15 * depth, scale: 0.85
-          }, { yPercent: 0, xPercent: 0, scale: 1.15, duration: 0.5, ease: 'none' })
-            .to(element, { yPercent: -30 * depth, xPercent: 15 * depth, scale: 0.9, duration: 0.5, ease: 'none' });
+            yPercent: 25 * depth, xPercent: -12 * depth, scale: 0.88
+          }, { yPercent: 0, xPercent: 0, scale: 1.12, duration: 0.5, ease: 'none' })
+            .to(element, { yPercent: -25 * depth, xPercent: 12 * depth, scale: 0.92, duration: 0.5, ease: 'none' });
         } else if (type === 'stagger-3d') {
           const children = [...element.children].filter(child => !child.hasAttribute('data-spatial'));
           if (children.length) {
             gsap.fromTo(children, {
-              transformPerspective: 1000, rotationX: 16 * depth, z: -35 * depth, y: 26, opacity: 1
+              transformPerspective: 1000, rotationX: 14 * depth, z: -30 * depth, y: 22, opacity: 1
             }, {
               rotationX: 0, z: 0, y: 0, opacity: 1, ease: 'none', stagger: { amount: 0.45 }, scrollTrigger: scroll(element, 'top 55%')
             });
           }
         } else {
           timeline.fromTo(element, {
-            transformPerspective: 1000, rotationX: 8 * depth, z: -30 * depth, y: 20
+            transformPerspective: 1000, rotationX: 7 * depth, z: -25 * depth, y: 16
           }, { rotationX: 0, z: 0, y: 0, duration: 0.5, ease: 'none' })
-            .to(element, { rotationX: -4 * depth, z: -15 * depth, y: -10, duration: 0.5, ease: 'none' });
+            .to(element, { rotationX: -3 * depth, z: -12 * depth, y: -8, duration: 0.5, ease: 'none' });
         }
       }
 
-      // Mobile keeps native scrolling while the opening screenshots separate in depth.
-      if (!desktop && root.id === 'opening') {
-        gsap.fromTo(root.querySelector('.hero-main-image'), { rotationX: 7, rotationY: -8, y: 12 }, {
-          rotationX: -3, rotationY: 3, y: -18, ease: 'none', scrollTrigger: {
-            trigger: root.querySelector('.hero-gallery'), start: 'top bottom', end: 'bottom top', scrub: 0.45,
-          },
-        });
-        gsap.fromTo(root.querySelector('.hero-small-image'), { rotationZ: 7, y: 22 }, {
-          rotationZ: -3, y: -28, ease: 'none', scrollTrigger: {
-            trigger: root.querySelector('.hero-gallery'), start: 'top bottom', end: 'bottom top', scrub: 0.45,
-          },
-        });
-      }
       // Pointer tracking for dynamic VisionOS specular reflection on spatial cards
       if (desktop) {
         const tiltTargets = owned('.glass-panel, .project-card, .source-index, .footer-person, .process-document, .schema-sheet');
@@ -198,11 +186,24 @@ export function useEditorialReveal(build?: SceneBuilder) {
           cleanup.push(() => card.removeEventListener('mousemove', onMove));
         });
       }
-      if (build && desktop) {
+      if (build) {
         root.dataset.animated = 'true';
-        const timeline = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
-          trigger: root, start: 'top 72px', end: 'bottom bottom', scrub: 0.45, invalidateOnRefresh: true,
-        } });
+        const timeline = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: desktop ? {
+            trigger: root,
+            start: 'top 72px',
+            end: 'bottom bottom',
+            scrub: 0.45,
+            invalidateOnRefresh: true,
+          } : {
+            trigger: root,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 0.45,
+            invalidateOnRefresh: true,
+          }
+        });
         build(timeline, root, desktop);
       }
       return () => { cleanup.forEach(reset => reset()); delete root.dataset.animated; };

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test('recruiter facts, functional resume and accessible animated text', async ({ page, request }) => {
   await page.goto('/');
-  await expect(page.locator('.education-degrees p')).toHaveText(['Brainware University', 'Brainware University']);
+  await expect(page.locator('.education-degrees p')).toHaveText([/Brainware University/, /Brainware University/]);
   await expect(page.locator('h1')).toHaveAccessibleName('From real problems to working software.');
   await expect(page.locator('main')).not.toContainText(/vibe.cod|MAKAUT|WBSCTE|gateway callback/i);
   const resume = await request.get('/Biswodip-Goj-Resume.pdf');
@@ -85,7 +85,7 @@ test('the portfolio is complete without JavaScript', async ({ browser }) => {
   await page.goto('/');
   await expect(page.locator('h1')).toHaveAccessibleName('From real problems to working software.');
   await expect(page.locator('.project-chapter')).toHaveCount(5);
-  await expect(page.locator('.education-degrees p')).toHaveText(['Brainware University', 'Brainware University']);
+  await expect(page.locator('.education-degrees p')).toHaveText([/Brainware University/, /Brainware University/]);
   await page.locator('#contact').scrollIntoViewIfNeeded();
   await expect(page.locator('.contact-email')).toBeVisible();
   await context.close();

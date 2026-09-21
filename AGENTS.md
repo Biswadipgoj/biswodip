@@ -8,7 +8,7 @@ Build a recruiter-facing, continuous software journey with premium reversible an
 ## Source and identity
 - All public content comes from lib/data.ts. Never invent metrics, employers, credentials or product capabilities.
 - Biswodip Goj; biswadipgoj@gmail.com; Uluberia, West Bengal, India.
-- User confirmed both qualifications at **Brainware University**: B.Tech CSE 2021–2024; Diploma CST 2018–2021.
+- User confirmed both qualifications at **Brainware University**: B.Tech CSE 2021–2024; Diploma CSE 2018–2021.
 - Projects in order: Erpixa (business management), NanoLink (URL shortening), TelePoint (EMI/payment portal), Nexora (workspace), Tripmate (group expenses).
 - Real project source and explicit user corrections override historical descriptions.
 

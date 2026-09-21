@@ -35,7 +35,26 @@ const MAP = {
   "FastAPI": "fastapi",
   "LangChain": "langchain",
   "Prisma": "prisma",
-  "Supabase": "supabase"
+  "Supabase": "supabase",
+  "Redis": "redis",
+  "Kubernetes": "kubernetes",
+  "GraphQL": "graphql",
+  "Apache Kafka": "apachekafka",
+  "RabbitMQ": "rabbitmq",
+  "NGINX": "nginx",
+  "Linux": "linux",
+  "ASP.NET Core": "dotnet",
+  ".NET": "dotnet",
+  "C#": "dotnet",
+  "Express": "express",
+  "GitHub Actions": "githubactions",
+  "Zod": "zod",
+  "Swagger": "swagger",
+  "Google Cloud": "googlecloud",
+  "Cloudflare": "cloudflare",
+  "MySQL": "mysql",
+  "SQLite": "sqlite",
+  "Jest": "jest"
 };
 
 /** Extra marks used by the hero, stack ribbon and project chips. */
