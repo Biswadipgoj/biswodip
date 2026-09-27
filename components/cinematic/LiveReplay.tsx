@@ -14,7 +14,7 @@ type Step =
   | { kind: 'move'; x: number; y: number; ms?: number }
   | { kind: 'click' }
   | { kind: 'type'; box: Box; text: string; mask?: boolean }
-  | { kind: 'drag'; from: Box; x: number; y: number; ms?: number }
+  | { kind: 'drag'; from: Box; x: number; y: number; ms?: number; hole?: string }
   | { kind: 'toast'; x: number; y: number; text: string }
   | { kind: 'wait'; ms: number };
 type Script = { ratio: number; start: { x: number; y: number }; steps: Step[] };
@@ -22,13 +22,14 @@ type Script = { ratio: number; start: { x: number; y: number }; steps: Step[] };
 const SCRIPTS: Record<string, Script> = {
   erpixa: {
     ratio: 1.6,
-    start: { x: 70, y: 82 },
+    start: { x: 30, y: 30 },
     steps: [
-      { kind: 'move', x: 46, y: 54.6 }, { kind: 'click' },
-      { kind: 'type', box: { x: 41.2, y: 53.1, w: 17.6, h: 3 }, text: 'recruiter@company.com' },
-      { kind: 'move', x: 46, y: 61.4, ms: 520 }, { kind: 'click' },
-      { kind: 'type', box: { x: 41.2, y: 59.9, w: 15.5, h: 3 }, text: '••••••••••', mask: true },
-      { kind: 'move', x: 50, y: 66, ms: 560 }, { kind: 'click' },
+      { kind: 'move', x: 24, y: 27.5, ms: 640 },
+      { kind: 'move', x: 76, y: 54.3, ms: 820 }, { kind: 'click' },
+      { kind: 'type', box: { x: 64.3, y: 52.9, w: 24.6, h: 2.9 }, text: 'recruiter@company.com' },
+      { kind: 'move', x: 69.4, y: 64.1, ms: 520 }, { kind: 'click' },
+      { kind: 'type', box: { x: 64.3, y: 62.7, w: 22.4, h: 2.9 }, text: '••••••••••', mask: true },
+      { kind: 'move', x: 76, y: 71, ms: 560 }, { kind: 'click' },
       { kind: 'wait', ms: 900 },
     ],
   },
@@ -36,46 +37,47 @@ const SCRIPTS: Record<string, Script> = {
     ratio: 1.6,
     start: { x: 78, y: 30 },
     steps: [
-      { kind: 'move', x: 44, y: 49.1 }, { kind: 'click' },
-      { kind: 'type', box: { x: 40.4, y: 47.8, w: 8.1, h: 2.7 }, text: 'example.com/launch' },
-      { kind: 'move', x: 58.8, y: 49.1, ms: 620 }, { kind: 'click' },
-      { kind: 'toast', x: 50, y: 58.5, text: 'nanl.vercel.app/read' },
-      { kind: 'move', x: 63, y: 62.5, ms: 700 },
+      { kind: 'move', x: 40.3, y: 65.2 }, { kind: 'click' },
+      { kind: 'type', box: { x: 37.2, y: 63.9, w: 8.9, h: 2.7 }, text: 'example.com/launch' },
+      { kind: 'move', x: 61.5, y: 65.2, ms: 620 }, { kind: 'click' },
+      { kind: 'toast', x: 50, y: 75.5, text: 'nanl.vercel.app/read' },
+      { kind: 'move', x: 61, y: 80, ms: 700 },
       { kind: 'wait', ms: 1100 },
     ],
   },
   telepoint: {
-    ratio: 1.44,
+    ratio: 1.6,
     start: { x: 76, y: 24 },
     steps: [
-      { kind: 'move', x: 55.6, y: 45.3 }, { kind: 'click' },
-      { kind: 'move', x: 44.4, y: 45.3, ms: 520 }, { kind: 'click' },
-      { kind: 'move', x: 46, y: 56.6, ms: 560 }, { kind: 'click' },
-      { kind: 'type', box: { x: 41.5, y: 55.1, w: 19, h: 3 }, text: 'admin' },
-      { kind: 'move', x: 46, y: 64.8, ms: 520 }, { kind: 'click' },
-      { kind: 'type', box: { x: 41.5, y: 63.3, w: 16.3, h: 3 }, text: '••••••••••', mask: true },
-      { kind: 'move', x: 50, y: 71, ms: 560 }, { kind: 'click' },
+      { kind: 'move', x: 55.4, y: 44.4 }, { kind: 'click' },
+      { kind: 'move', x: 44.6, y: 44.4, ms: 520 }, { kind: 'click' },
+      { kind: 'move', x: 48.6, y: 57.2, ms: 560 }, { kind: 'click' },
+      { kind: 'type', box: { x: 41.8, y: 55.9, w: 18.6, h: 2.7 }, text: 'admin' },
+      { kind: 'move', x: 48.6, y: 66.3, ms: 520 }, { kind: 'click' },
+      { kind: 'type', box: { x: 41.8, y: 65, w: 16.5, h: 2.7 }, text: '••••••••••', mask: true },
+      { kind: 'move', x: 50, y: 73.2, ms: 560 }, { kind: 'click' },
       { kind: 'wait', ms: 900 },
     ],
   },
   nexora: {
     ratio: 1.6,
-    start: { x: 80, y: 20 },
+    start: { x: 70, y: 16 },
     steps: [
-      { kind: 'move', x: 56.4, y: 32.6 }, { kind: 'click' },
-      { kind: 'move', x: 20, y: 59.5, ms: 780 },
-      { kind: 'drag', from: { x: 9.4, y: 56.2, w: 25.6, h: 7.6 }, x: 75.7, y: 68.6, ms: 1500 },
+      { kind: 'move', x: 30.8, y: 18.7 },
+      { kind: 'move', x: 18.1, y: 54.4, ms: 820 },
+      { kind: 'drag', from: { x: 12.4, y: 51.1, w: 23.7, h: 11.2 }, x: 69.7, y: 66.4, ms: 1500, hole: '#edede8' },
       { kind: 'wait', ms: 1200 },
     ],
   },
   tripmate: {
     ratio: 1.6,
-    start: { x: 72, y: 76 },
+    start: { x: 40, y: 80 },
     steps: [
-      { kind: 'move', x: 50, y: 26.2 }, { kind: 'click' },
-      { kind: 'move', x: 50, y: 37.3, ms: 560 }, { kind: 'click' },
-      { kind: 'move', x: 44, y: 45.6, ms: 620 },
-      { kind: 'move', x: 57, y: 47.8, ms: 900 },
+      { kind: 'move', x: 14.4, y: 55, ms: 760 },
+      { kind: 'move', x: 85.8, y: 33.7, ms: 900 },
+      { kind: 'move', x: 74.4, y: 33.7, ms: 520 }, { kind: 'click' },
+      { kind: 'move', x: 75, y: 45.6, ms: 620 },
+      { kind: 'move', x: 14.4, y: 55, ms: 900 }, { kind: 'click' },
       { kind: 'wait', ms: 900 },
     ],
   },
@@ -162,7 +164,7 @@ export function LiveReplay({ slug, image }: { slug: string; image: string }) {
       const r = boxPx(box);
       const field = document.createElement('span');
       field.className = 'replay-field' + (mask ? ' is-mask' : '');
-      Object.assign(field.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', fontSize: Math.max(7, r.f.iw * 0.0105) + 'px' });
+      Object.assign(field.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', fontSize: Math.max(5.5, r.f.iw * 0.0105) + 'px' });
       const caret = document.createElement('i');
       field.appendChild(caret);
       layer.appendChild(field);
@@ -183,11 +185,12 @@ export function LiveReplay({ slug, image }: { slug: string; image: string }) {
       layer.appendChild(el);
       el.animate([{ opacity: 0, translate: '-50% 30%' }, { opacity: 1, translate: '-50% -50%' }], { duration: 420, easing: 'cubic-bezier(.2,1.3,.4,1)', fill: 'forwards' });
     };
-    const drag = async (id: number, from: Box, x: number, y: number, ms = 1400) => {
+    const drag = async (id: number, from: Box, x: number, y: number, ms = 1400, holeBg?: string) => {
       const r = boxPx(from);
       const hole = document.createElement('span');
       hole.className = 'replay-hole';
       Object.assign(hole.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
+      if (holeBg) hole.style.background = holeBg;
       const card = document.createElement('span');
       card.className = 'replay-card';
       Object.assign(card.style, {
@@ -225,7 +228,7 @@ export function LiveReplay({ slug, image }: { slug: string; image: string }) {
           if (step.kind === 'move') await moveTo(id, step.x, step.y, step.ms);
           else if (step.kind === 'click') await click();
           else if (step.kind === 'type') await type(id, step.box, step.text, step.mask);
-          else if (step.kind === 'drag') await drag(id, step.from, step.x, step.y, step.ms);
+          else if (step.kind === 'drag') await drag(id, step.from, step.x, step.y, step.ms, step.hole);
           else if (step.kind === 'toast') toast(step.x, step.y, step.text);
           else await sleep(step.ms);
           await sleep(140);
