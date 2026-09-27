@@ -134,7 +134,7 @@
 134| - Anime.js 4.5.0 installed and official v4 scope API checked. useEntrance scopes brief entrances to child elements; GSAP retains reversible scroll motion with separate transform ownership. Reduced motion remains intact.
 135| - Added Resume.tsx with experience timeline, skills, PDF preview and download. Public text remains in lib/data.ts. PDF rebuilt as two readable pages with 4290 selectable characters and 14 links; no unsupported claims added.
 136| - LinkedIn exact URL https://www.linkedin.com/in/biswodipgoj now comes from socials; no LinkedIn profile fetch performed.
-137| - Canonical/robots/sitemap/JSON-LD use personal.canonicalUrl https://biswodip.in. Sitemap includes five detail pages.
+137| - Canonical/robots/sitemap/JSON-LD use personal.canonicalUrl https://biswadip.in. Sitemap includes five detail pages.
 138| - Removed unsupported absolute security outcomes from three project result statements and PDF. Remaining source verification concerns are in PORTFOLIO-REVIEW.md.
 139| - Better Design required tools attempted; all HTTP 402 ANON_QUOTA_EXHAUSTED. Existing installed system retained. No remote review claimed.
 140| - Removed unused global --scroll-kinetic update; reduced backdrop sampling. Narrow browserslist/baseline updates leave two Next/PostCSS audit advisories. No forced Next major migration.
@@ -245,3 +245,10 @@
 245| - Refined the opening section motion with deeper ambient depth, floating proof-card movement, and richer 3D staging without changing the reading structure or reduced-motion fallback.
 246| - Public copy remains tied to lib/data.ts and the live brand at https://biswadip.in instead of inventing metrics, employers or product capabilities.
 247| 
+
+## Domain, Tripmate link and live replays — 2026-09-27
+- Portfolio domain is **https://biswadip.in** everywhere (canonical, sitemap, JSON-LD, tests, résumé). No remaining biswodip.in references.
+- Tripmate live link is **https://tripmate.boats/** (data.ts url/liveLink, capture script, résumé PDF regenerated).
+- components/cinematic/LiveReplay.tsx plays a looping recorded-style session over each real screenshot inside ProjectMedia (home chapters and /project/[slug]): loading bar opens the site, cursor moves/clicks, types into real fields, Nexora card drag, NanoLink short-link result, REC badge with timer. Coordinates are screenshot percentages mapped through cover/top. Pauses off-screen; hidden for reduced motion and no-JS.
+- Real browser recordings of the live sites were not captured: loading them in headless Chromium required a proxy certificate flag that was not permitted in the cloud session. The Tripmate screenshot is still the old splash capture; re-capture from tripmate.boats locally with scripts/capture-4k.js.
+- tests/motion.spec.ts:100 (desktop 3D depth scrub) is flaky on the unmodified base too (~2/5 failures in Chromium).

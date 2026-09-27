@@ -229,7 +229,7 @@ story.append(p("&bull; Used Prisma with a direct Postgres adapter alongside Supa
 story.append(Spacer(1, 4))
 
 # Additional mention
-story.append(p("<b>Additional:</b> delivered a fine-tuned customer-support LLM (Qwen2.5-3B-Instruct via QLoRA, served through FastAPI) for a client engagement &mdash; details at biswodip.in.", 'item_meta'))
+story.append(p("<b>Additional:</b> delivered a fine-tuned customer-support LLM (Qwen2.5-3B-Instruct via QLoRA, served through FastAPI) for a client engagement &mdash; details at biswadip.in.", 'item_meta'))
 story.append(Spacer(1, 5))
 
 # --- EDUCATION ---

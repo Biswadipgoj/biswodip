@@ -5,7 +5,7 @@ const { chromium } = require('playwright');
     { file: 'nanolink', url: 'https://nanl.vercel.app/' },
     { file: 'nexora', url: 'https://nexora-xi-rust.vercel.app/' },
     { file: 'telepoint', url: 'https://telepoint-topaz.vercel.app/' },
-    { file: 'tripmate', url: 'https://trip-mu-coral.vercel.app/' },
+    { file: 'tripmate', url: 'https://tripmate.boats/' },
   ];
   const b = await chromium.launch({ channel: 'msedge' });
   for (const t of targets) {

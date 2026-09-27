@@ -21,7 +21,7 @@ export const personal = {
   "ownership": "I bridge business analysis and full-stack software engineering, from requirements and data schemas to user-facing applications.",
   "maturity": "I don't just build the interface. I work through the business requirements, data architecture, APIs, and deployment needed to make products work in production.",
   "resume": "/Biswodip-Goj-Resume.pdf",
-  "canonicalUrl": "https://biswodip.in",
+  "canonicalUrl": "https://biswadip.in",
   "shippedCount": "50+",
   "featuredProjectsCount": "50+"
 } as const;
@@ -96,7 +96,7 @@ export const teleOwnershipCode = [
 export const seo = {
   "title": "Biswodip Goj — Full-Stack Software Engineer",
   "description": "Biswodip Goj is a Full-Stack Software Engineer with 50+ shipped products and systems delivered across remote teams and independent builds using TypeScript, React, Next.js, Node.js, and PostgreSQL.",
-  "canonical": "https://biswodip.in",
+  "canonical": "https://biswadip.in",
   "socialTitle": "Biswodip Goj | Full-Stack Software Engineer",
   "socialDescription": "Full-Stack Software Engineer with 50+ shipped products and systems delivered across remote teams and independent builds using TypeScript, React, Next.js, Node.js, and PostgreSQL."
 } as const;
@@ -1256,7 +1256,7 @@ export const projects: Project[] = [
   {
     name: "Tripmate",
     slug: "tripmate",
-    url: "https://trip-mu-coral.vercel.app/",
+    url: "https://tripmate.boats/",
     repo: "https://github.com/Biswadipgoj/trip",
     blurb: "Group expense management and settlement application with greedy debt resolution.",
     description: "Tripmate helps groups record shared expenses, calculate who owes whom and simplify the final settlement between members using a greedy graph resolution algorithm.",
@@ -1267,7 +1267,7 @@ export const projects: Project[] = [
     technicalEvidence: "Minimized-debt greedy balance resolution algorithm (settleGreedy), relational balance mapping, and client-side PDF export generation.",
     role: "Full-Stack Software Engineer (Sole Developer)",
     result: "Minimizes total required cash transactions across participants using a greedy debt-simplification algorithm.",
-    liveLink: "https://trip-mu-coral.vercel.app/",
+    liveLink: "https://tripmate.boats/",
     sourceLink: "https://github.com/Biswadipgoj/trip",
     techStack: [
       "Next.js",
