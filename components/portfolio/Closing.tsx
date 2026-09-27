@@ -309,7 +309,7 @@ export function Contact() {
               {activeCmd === 'stack' && (
                 <div className="term-line">
                   <p className="term-res green-text">Core: TypeScript, React, Next.js 15, Node.js, Python, C# (.NET), SQL</p>
-                  <p className="term-res">Data &amp; In-Memory: PostgreSQL, Redis (Caching &amp; Rate Limiting), Prisma, Supabase, RLS</p>
+                  <p className="term-res">Data &amp; In-Memory: PostgreSQL, Redis (Caching &amp; Rate Limiting), Prisma, Row-Level Security</p>
                   <p className="term-res">Cloud &amp; DevOps: Kubernetes, Docker, Linux, NGINX, GitHub Actions CI/CD</p>
                   <p className="term-res">APIs &amp; Messaging: RESTful APIs, GraphQL, Apache Kafka, Zod Validation, Postman</p>
                 </div>

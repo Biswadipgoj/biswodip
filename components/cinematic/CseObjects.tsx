@@ -72,7 +72,7 @@ export function ProjectsCseObjects() {
     <div className="cse-layer" aria-hidden="true">
       <Chip label="nanoid(8)" variant="code" className="cse-p1" />
       <Chip label="bcrypt hash" variant="pill" className="cse-p2" />
-      <Chip label="supabase.from()" variant="code" className="cse-p3" />
+      <Chip label="SELECT … WHERE" variant="code" className="cse-p3" />
       <Chip label="redirect 301" variant="node" className="cse-p4" />
       <Chip label="UPI split" variant="symbol" className="cse-p5" />
       <Chip label="10011011" variant="bit" className="cse-p6" />

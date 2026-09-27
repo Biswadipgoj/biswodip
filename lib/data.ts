@@ -133,7 +133,6 @@ export const stack = [
       "Prisma ORM",
       "MongoDB",
       "Row-Level Security (RLS)",
-      "Supabase",
       "pgvector"
     ]
   },
@@ -1459,12 +1458,6 @@ export const techSystemProof: Record<string, TechProof> = {
     category: "Databases & Caching",
     architecture: "Declarative database schema modeling, automated SQL migrations, and auto-generated type-safe client preventing SQL injection vulnerabilities.",
     context: "Primary ORM in NanoLink and full-stack PostgreSQL applications."
-  },
-  "Supabase": {
-    title: "Managed PostgreSQL, Row-Level Security & Auth Service",
-    category: "Databases & Caching",
-    architecture: "PostgreSQL platform using database-enforced Row-Level Security (RLS) policies, session token validation, and instant database migrations.",
-    context: "Production persistence and authentication provider for TelePoint and Erpixa."
   }
 };
 
@@ -1482,7 +1475,6 @@ export const primaryTechnologies = [
   "GraphQL",
   "Apache Kafka",
   "Prisma",
-  "Supabase",
   "Tailwind CSS",
   "Linux",
   "NGINX",
@@ -1494,7 +1486,7 @@ export const primaryTechnologies = [
 
 export const resumeCopy = {
   title: 'The experience behind the work.',
-  summary: 'Computer Science graduate and full-stack software engineer with hands-on experience taking applications from ambiguous requirements to deployed, working systems. Comfortable translating business problems into technical workflows, integrating APIs and databases, debugging production issues, and iterating on real user feedback. Has delivered 50+ projects and production builds — spanning multi-tenant SaaS, financial/payment workflows, and cross-platform apps — contributing across remote teams and independent client engagements while retaining full ownership of architecture, testing, and delivery.',
+  summary: 'Full-stack engineer (B.Tech CSE, 2024) who takes features from business requirements to production: PostgreSQL data models, validated APIs, React/Next.js interfaces, automated tests and deployment. 50+ builds shipped for client companies and remote teams, including a live EMI/payment portal, a multi-tenant ERP and a task platform released on web, Windows and Android from one codebase. Strongest where correctness matters: money movement, tenant isolation and access control.',
   preview: 'Open PDF',
   pdf: 'Download résumé',
   experience: 'Professional experience',

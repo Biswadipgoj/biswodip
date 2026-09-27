@@ -57,7 +57,7 @@ URL management software with custom aliases, password protection, expiry dates, 
 ### TelePoint
 An EMI and payment portal built around customer ownership checks, retailer workflows, installment records, and payment collection flows.
 
-**Next.js · TypeScript · PostgreSQL · Supabase** · [Explore the project](https://biswadip.in/#telepoint)
+**Next.js · TypeScript · PostgreSQL · AWS S3** · [Explore the project](https://biswadip.in/#telepoint)
 
 ### Nexora
 A workspace for projects and tasks, with cross-platform product thinking, shared TypeScript architecture, workspace boundaries, and task-state workflows.
