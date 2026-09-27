@@ -1486,7 +1486,7 @@ export const primaryTechnologies = [
 
 export const resumeCopy = {
   title: 'The experience behind the work.',
-  summary: 'Full-stack engineer (B.Tech CSE, 2024) who takes features from business requirements to production: PostgreSQL data models, validated APIs, React/Next.js interfaces, automated tests and deployment. 50+ builds shipped for client companies and remote teams, including a live EMI/payment portal, a multi-tenant ERP and a task platform released on web, Windows and Android from one codebase. Strongest where correctness matters: money movement, tenant isolation and access control.',
+  summary: 'Full-stack software engineer (B.Tech CSE, 2024) building production SaaS with TypeScript, React/Next.js, Node.js and PostgreSQL. Owns features end to end: requirements, API and schema design, secure multi-tenant data access, automated testing, CI/CD and deployment. 50+ builds shipped for client companies and remote teams, including a live EMI/payment platform, a multi-tenant ERP, a cross-platform (web, Windows, Android) task app and LLM work (QLoRA fine-tuning, FastAPI model serving).',
   preview: 'Open PDF',
   pdf: 'Download résumé',
   experience: 'Professional experience',

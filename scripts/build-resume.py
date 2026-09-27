@@ -25,10 +25,16 @@ def link(url, label):
 def bare(url):
     return url.split('://', 1)[-1].rstrip('/')
 
+ICONS = Path('artifacts/resume/icons')
+
+def icon(name, size=8.2):
+    return f'<img src="{ICONS / (name + ".png")}" width="{size}" height="{size}" valign="-1.6"/>'
+
 def project_links(slug):
     # Repository and live URLs come from lib/data.ts; hand-typed copies had drifted to a 404 account.
     project = repos[slug]
-    return f"{link(project['repo'], bare(project['repo']))} &middot; {link(project['url'], bare(project['url']))}"
+    return (f"{icon('github', 7.6)}&nbsp;{link(project['repo'], bare(project['repo']).split('/', 1)[1])}"
+            f"&nbsp;&nbsp;&nbsp;{icon('website', 7.6)}&nbsp;{link(project['url'], bare(project['url']))}")
 
 def portrait(size_pt=66):
     """Circular head-and-shoulders crop of public/biswodip.png, antialiased by supersampling."""
@@ -62,7 +68,7 @@ styles = {
     'role': ParagraphStyle('role', fontName='Helvetica-Bold', fontSize=10.5, leading=13.5, textColor=ACCENT, spaceAfter=2),
     'pitch': ParagraphStyle('pitch', fontName='Helvetica', fontSize=8.6, leading=11.4, textColor=TEXT, spaceAfter=3),
     'contact': ParagraphStyle('contact', fontName='Helvetica', fontSize=8, leading=10.8, textColor=MUTED),
-    'heading': ParagraphStyle('heading', fontName='Helvetica-Bold', fontSize=9, leading=11, textColor=ACCENT, spaceBefore=4.5, spaceAfter=0),
+    'heading': ParagraphStyle('heading', fontName='Helvetica-Bold', fontSize=9, leading=11, textColor=ACCENT, spaceBefore=6.5, spaceAfter=0),
     'title': ParagraphStyle('title', fontName='Helvetica-Bold', fontSize=8.8, leading=11, textColor=INK),
     'date': ParagraphStyle('date', fontName='Helvetica-Bold', fontSize=8.2, leading=11, textColor=INK, alignment=2),
     'meta': ParagraphStyle('meta', fontName='Helvetica-Oblique', fontSize=7.8, leading=9.8, textColor=MUTED),
@@ -98,21 +104,25 @@ story = []
 
 # --- HEADER ---
 # Text stays in its own column so parsers read name, role and contacts in order; the photo sits beside it.
-contact_parts = [
-    safe(person['location']),
-    safe(person['phone']),
-    link(f"mailto:{person['email']}", person['email']),
-    link(person['canonicalUrl'], bare(person['canonicalUrl'])),
-    link(socials['LinkedIn'], bare(socials['LinkedIn'])),
-    link(socials['GitHub'], bare(socials['GitHub'])),
+def contact(kind, content):
+    return f'{icon(kind)}&nbsp;{content}'
+line_one = [
+    contact('location', safe(person['location'])),
+    contact('phone', link('tel:' + person['phone'].replace(' ', ''), person['phone'])),
+    contact('email', link(f"mailto:{person['email']}", person['email'])),
+]
+line_two = [
+    contact('website', link(person['canonicalUrl'], bare(person['canonicalUrl']))),
+    contact('linkedin', link(socials['LinkedIn'], bare(socials['LinkedIn']).replace('www.', ''))),
+    contact('github', link(socials['GitHub'], bare(socials['GitHub']))),
 ]
 header_text = [
     p(safe(person['name']), 'name'),
-    p(safe(person['role']) + ' &nbsp;&middot;&nbsp; TypeScript, React / Next.js, Node.js, PostgreSQL', 'role'),
-    p(' &nbsp;|&nbsp; '.join(contact_parts[:3]), 'contact'),
-    p(' &nbsp;|&nbsp; '.join(contact_parts[3:]), 'contact'),
+    p(safe(person['role']) + ' &nbsp;|&nbsp; TypeScript &middot; React &middot; Next.js &middot; Node.js &middot; PostgreSQL &middot; AI', 'role'),
+    p('&nbsp;&nbsp;&nbsp;'.join(line_one), 'contact'),
+    p('&nbsp;&nbsp;&nbsp;'.join(line_two), 'contact'),
 ]
-PHOTO = 64
+PHOTO = 62
 header = Table([[header_text, portrait(PHOTO)]], colWidths=[FRAME - PHOTO - 12, PHOTO + 12])
 header.setStyle(TableStyle([
     ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
@@ -125,27 +135,28 @@ story.append(header)
 # --- SUMMARY ---
 story += heading('Summary')
 story.append(p(
-    "Full-stack engineer (B.Tech CSE, 2024) who takes features from business requirements to production: PostgreSQL data "
-    "models, validated APIs, React/Next.js interfaces, automated tests and deployment. 50+ builds shipped for client companies "
-    "and remote teams, including a live EMI/payment portal, a multi-tenant ERP and a task platform released on web, Windows "
-    "and Android from one codebase. Strongest where correctness matters: money movement, tenant isolation and access control.", 'body'))
+    "Full-stack software engineer (B.Tech CSE, 2024) building production SaaS with TypeScript, React/Next.js, Node.js and PostgreSQL. "
+    "Owns features end to end: requirements, API and schema design, secure multi-tenant data access, automated testing, CI/CD and deployment. "
+    "50+ builds shipped for client companies and remote teams, including a live EMI/payment platform, a multi-tenant ERP, a cross-platform "
+    "(web, Windows, Android) task app and LLM work (QLoRA fine-tuning, FastAPI model serving).", 'body'))
 
 # --- SKILLS ---
 story += heading('Technical Skills')
 skills = [
     ("Languages", "TypeScript, JavaScript, SQL, Python, C#"),
-    ("Frontend", "React, Next.js (App Router), Tailwind CSS, Zustand, React Hook Form, Electron, Capacitor"),
-    ("Backend &amp; APIs", "Node.js, Next.js Route Handlers, REST API design, Zod validation, ASP.NET Core MVC, FastAPI"),
-    ("Data", "PostgreSQL (schema design, Row-Level Security, migrations, triggers), Prisma ORM, Redis, AWS S3"),
-    ("Security", "Multi-tenant isolation, role-based access control, OAuth (Google), bcrypt password hashing"),
-    ("Quality &amp; Delivery", "Vitest, Playwright, GitHub Actions CI, Docker, Kubernetes, Linux, Vercel, Git"),
-    ("Practice", "Requirements analysis, system design, root-cause debugging, technical documentation"),
+    ("Frontend", "React, Next.js (App Router, Server Components), Tailwind CSS, Zustand, React Hook Form, Electron, Capacitor"),
+    ("Backend &amp; APIs", "Node.js, Next.js Route Handlers, RESTful API design, Zod schema validation, FastAPI, ASP.NET Core MVC"),
+    ("Databases", "PostgreSQL (data modelling, Row-Level Security, migrations, triggers, indexing), Prisma ORM, Redis"),
+    ("Cloud &amp; DevOps", "Docker, Kubernetes, GitHub Actions CI/CD, Vercel, AWS S3, Linux, Git"),
+    ("AI / LLM", "LLM fine-tuning (QLoRA), model serving with FastAPI, retrieval-augmented generation (RAG) design, prompt engineering"),
+    ("Security &amp; Testing", "Multi-tenant isolation, RBAC, OAuth 2.0 (Google), bcrypt; Vitest unit/security tests, Playwright end-to-end tests"),
+    ("Engineering", "System design, requirements analysis, debugging &amp; root-cause analysis, technical documentation"),
 ]
-grid = Table([[p(f'<b>{k}</b>', 'skill'), p(v, 'skill')] for k, v in skills], colWidths=[82, FRAME - 82])
+grid = Table([[p(f'<b>{k}</b>', 'skill'), p(v, 'skill')] for k, v in skills], colWidths=[84, FRAME - 84])
 grid.setStyle(TableStyle([
     ('VALIGN', (0, 0), (-1, -1), 'TOP'),
     ('LEFTPADDING', (0, 0), (-1, -1), 0), ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-    ('TOPPADDING', (0, 0), (-1, -1), 0.6), ('BOTTOMPADDING', (0, 0), (-1, -1), 0.6),
+    ('TOPPADDING', (0, 0), (-1, -1), 0.5), ('BOTTOMPADDING', (0, 0), (-1, -1), 0.5),
 ]))
 story.append(grid)
 
@@ -155,17 +166,18 @@ story.append(KeepTogether([
     row('Full-Stack Software Engineer &mdash; Freelance &amp; Contract', '2024 &ndash; Present'),
     row('Client companies, startups and remote teams', 'Remote', 'meta', 'meta_r'),
     *bullets([
-        "Own delivery from requirements to production for multi-tenant SaaS, payment and productivity products: data model, API, interface, tests and release.",
-        "Model relational schemas and REST APIs on Node.js/Next.js and PostgreSQL, enforcing per-tenant isolation with Row-Level Security policies in the database rather than in UI code.",
-        "Fixed production defects in payment flows: rewrote an approval route that intermittently returned invalid JSON and removed legacy triggers that could apply a payment twice.",
-        "Guard releases with automated tests (Vitest, Playwright) for tenant isolation, access control and business rules.",
+        "Deliver multi-tenant SaaS, fintech/payment and productivity products end to end: requirements, data model, API, UI, tests and release.",
+        "Design PostgreSQL schemas and REST APIs on Node.js/Next.js with tenant isolation enforced in the database through Row-Level Security.",
+        "Fixed production payment defects: an approval endpoint that intermittently returned invalid JSON and triggers that could double-apply payments.",
+        "Fine-tuned Qwen2.5-3B-Instruct with QLoRA and served it through a FastAPI endpoint for a client's customer-support assistant.",
+        "Ship behind automated checks: Vitest and Playwright suites in GitHub Actions CI covering access control and core business rules.",
     ]),
 ]))
 story.append(Spacer(1, 3))
 story.append(KeepTogether([
     row('Software Engineering Trainee (Industrial Training)', 'Sep 2023 &ndash; Nov 2023'),
     row('Logicrack Infosystem Pvt. Ltd.', 'Kolkata', 'meta', 'meta_r'),
-    *bullets(["Completed 10-week certified training in ASP.NET Core 6.0 MVC; built <i>Office CRM</i>, an internal customer and workflow application, covering relational schema, controllers and Razor views."]),
+    *bullets(["Built <i>Office CRM</i> in ASP.NET Core 6.0 MVC during a 10-week certified programme: relational schema, controllers and Razor views."]),
 ]))
 story.append(Spacer(1, 3))
 story.append(KeepTogether([
@@ -178,41 +190,41 @@ story += heading('Selected Projects')
 
 def project(slug, title, stack, items):
     return KeepTogether([
-        row(f'<b>{safe(repos[slug]["name"])}</b> &mdash; <font name="Helvetica">{title}</font>', project_links(slug), 'title', 'meta_r', split=0.58),
+        row(f'<b>{safe(repos[slug]["name"])}</b> &mdash; <font name="Helvetica">{title}</font>', project_links(slug), 'title', 'meta_r', split=0.55),
         p(stack, 'meta'),
         *bullets(items),
-        Spacer(1, 3.5),
+        Spacer(1, 3),
     ])
 
-story.append(project('telepoint', 'EMI and payment collection portal',
+story.append(project('telepoint', 'Fintech EMI and payment collection platform',
     'Next.js &middot; TypeScript &middot; PostgreSQL &middot; AWS S3 &middot; jsPDF &middot; Recharts', [
-    "Role-based dashboards for customers, retailers and admins; every write verifies record ownership server-side and returns 403 on cross-account access.",
-    "Added a PARTIALLY_PAID state so EMI records keep paid and outstanding amounts instead of a binary paid flag.",
-    "Made payment deletion reverse its EMI, fine and balance effects; added PDF receipts, QR-code payments and collection analytics.",
+    "Role-based portals for customers, retailers and admins; every write verifies record ownership server-side (403 on cross-account access).",
+    "Modelled partial payments and made payment reversal undo EMI, fine and balance effects; built PDF receipts, QR payments and analytics.",
 ]))
-story.append(project('nexora', 'Projects and tasks on web, Windows and Android',
-    'Next.js &middot; TypeScript &middot; React &middot; PostgreSQL (RLS) &middot; Electron &middot; Capacitor &middot; Vitest', [
-    "One Next.js codebase shipped as a web app, a Windows desktop app (Electron) and an Android app (Capacitor).",
-    "Multi-tenant workspace model with Row-Level Security on every data-access path.",
-    "103 automated security tests covering tenant isolation, IDOR attempts and role hierarchy; GitHub Actions builds the Android APK in CI.",
+story.append(project('nexora', 'Multi-tenant project and task management',
+    'Next.js &middot; TypeScript &middot; PostgreSQL (RLS) &middot; Electron &middot; Capacitor &middot; Vitest &middot; GitHub Actions', [
+    "One codebase shipped to web, Windows (Electron) and Android (Capacitor); CI builds the Android APK.",
+    "Row-Level Security on every data path, verified by 103 automated tests for tenant isolation, IDOR and role hierarchy.",
 ]))
 story.append(project('erpixa', 'Modular ERP for small and mid-sized businesses',
-    'React &middot; TypeScript &middot; Vite &middot; PostgreSQL (RLS) &middot; Zustand', [
-    "Every record belongs to exactly one organization, enforced by PostgreSQL Row-Level Security so tenants cannot read each other's data.",
-    "Onboarding enables only the modules a business needs (CRM, sales, inventory, accounting, HR, projects, manufacturing, helpdesk, marketing); Google sign-in.",
+    'React &middot; TypeScript &middot; Vite &middot; PostgreSQL (RLS) &middot; Zustand &middot; OAuth', [
+    "Organization-scoped data enforced by Row-Level Security; onboarding switches on only the modules a business needs (9 domains).",
 ]))
-story.append(project('tripmate', 'Group trip expenses and settlements',
+story.append(project('tripmate', 'Group expense splitting and settlement',
     'Next.js &middot; TypeScript &middot; PostgreSQL (RLS) &middot; Zustand', [
-    "Four split types (equal, amount, percentage, quantity) plus per-room allocation for shared stays.",
-    "Greedy settlement algorithm that nets balances, including sponsored shares, into the fewest possible payments.",
-    "UPI collection via QR codes and deep links, PDF trip reports, and an offline mode that works without the backend.",
+    "Greedy settlement algorithm nets group balances into the fewest payments; 4 split types, UPI QR payments, PDF reports, offline mode.",
 ]))
 story.append(project('nanolink', 'URL shortener with protected and expiring links',
     'Next.js &middot; TypeScript &middot; Prisma &middot; PostgreSQL &middot; Zod &middot; bcrypt', [
-    "API validates input with Zod, normalizes the URL, checks alias uniqueness, hashes optional passwords with bcrypt and returns 201.",
-    "Short codes via nanoid, QR codes, expiry dates, click tracking and one-time links deactivated on first redirect.",
+    "Zod-validated REST API with unique aliases, bcrypt-protected and expiring links, click tracking and one-time links.",
 ]))
-story.append(p("<b>Also:</b> fine-tuned a customer-support LLM (Qwen2.5-3B-Instruct, QLoRA) served through FastAPI for a client engagement.", 'body'))
+sp = data['supportPilot']
+story.append(KeepTogether([
+    row(f'<b>{safe(sp["name"])}</b> &mdash; <font name="Helvetica">AI customer-support product</font>',
+        f"{icon('website', 7.6)}&nbsp;{link(sp['demoUrl'], bare(sp['demoUrl']))}", 'title', 'meta_r', split=0.55),
+    p('Retrieval-grounded LLM answers &middot; human-in-the-loop approvals', 'meta'),
+    *bullets(["Answers from approved sources with citations, routes high-risk replies to a human approval queue and tracks resolution analytics."]),
+]))
 
 # --- EDUCATION ---
 story += heading('Education')
@@ -230,8 +242,8 @@ SimpleDocTemplate(
     pagesize=A4,
     leftMargin=36,
     rightMargin=36,
-    topMargin=22,
-    bottomMargin=18,
+    topMargin=28,
+    bottomMargin=24,
     title=f"{person['name']} - Resume",
     author=person['name']
 ).build(story)
@@ -242,14 +254,15 @@ assert len(reader.pages) == 1, f'Expected one readable page, got {len(reader.pag
 assert 'supabase' not in text.lower(), 'Supabase is not listed as a skill'
 assert text.count('Brainware University, Kolkata') == 2
 assert all(project['name'] in text for project in data['projects'])
-assert person['email'] in text and 'www.linkedin.com/in/biswodipgoj' in text
+assert person['email'] in text and 'linkedin.com/in/biswodipgoj' in text
 assert 'Uluberia High School' in text
 
 urls = [a.get_object().get('/A', {}).get('/URI', '') for page in reader.pages for a in page.get('/Annots', [])]
 assert 'https://www.linkedin.com/in/biswodipgoj' in urls
 assert socials['GitHub'] in urls, 'GitHub profile link must come from lib/data.ts'
 assert all(project['repo'] in urls for project in data['projects']), 'Every repository link must come from lib/data.ts'
-assert len(reader.pages[0].images) == 1, 'Page one carries the portrait'
+assert len(reader.pages[0].images) >= 7, 'Page one carries the portrait and contact icons'
+assert 'tel:' + person['phone'].replace(' ', '') in urls, 'Phone number is tappable'
 
 Path('artifacts/resume/resume.txt').write_text(text, encoding='utf-8')
 pdf = fitz.open(output)
