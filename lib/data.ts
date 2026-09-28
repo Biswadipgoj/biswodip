@@ -1418,7 +1418,7 @@ export const primaryTechnologies = [
 
 export const resumeCopy = {
   title: 'The experience behind the work.',
-  summary: 'Full-stack software engineer (B.Tech CSE, 2024) building production SaaS with TypeScript, React/Next.js, Node.js and PostgreSQL. Owns features end to end: requirements, API and schema design, secure multi-tenant data access, automated testing, CI/CD and deployment. 50+ builds shipped for client companies and remote teams, including a live EMI/payment platform, a multi-tenant ERP, a cross-platform (web, Windows, Android) task app and LLM work (QLoRA fine-tuning, FastAPI model serving).',
+  summary: 'Full-Stack Software Engineer (B.Tech Computer Science, 2024) building production web applications with React, Next.js, Node.js, TypeScript and PostgreSQL. Owns delivery end to end: requirements, REST API and database design, secure multi-tenant access control, automated testing, CI/CD and deployment. 50+ projects shipped for client companies and remote teams, including a live fintech EMI/payment platform, a multi-tenant SaaS ERP and a fine-tuned LLM for a client support assistant.',
   preview: 'Open PDF',
   pdf: 'Download résumé',
   experience: 'Professional experience',
