@@ -35,10 +35,10 @@ test('public copy avoids ATS and filler wording recruiters discount', async ({ p
 
 test('canonical and sitemap use the same source domain', async ({ page, request }) => {
   await page.goto('/');
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://biswodip.in');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://biswadip.in');
   const sitemap = await (await request.get('/sitemap.xml')).text();
   for (const slug of ['erpixa', 'nanolink', 'telepoint', 'nexora', 'tripmate']) {
-    expect(sitemap).toContain(`https://biswodip.in/project/${slug}`);
+    expect(sitemap).toContain(`https://biswadip.in/project/${slug}`);
   }
 });
 

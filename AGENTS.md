@@ -1,4 +1,4 @@
-# Workspace rules: biswodip.in
+# Workspace rules: biswadip.in
 
 Read MEMORY.md first and keep it current. Never reset existing uncommitted work.
 

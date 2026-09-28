@@ -5,6 +5,7 @@ import { ArrowUpRightIcon, ArrowRightIcon } from '@/components/icons';
 import { hero, type Project } from '@/lib/data';
 import TechLogo from '@/components/ui/TechLogo';
 import { codeMarkup } from '@/lib/motion-markup';
+import { LiveReplay } from '@/components/cinematic/LiveReplay';
 
 
 export function ActionLink({href,children,quiet=false,external=false,className=''}:{href:string;children:React.ReactNode;quiet?:boolean;external?:boolean;className?:string}) {
@@ -51,6 +52,7 @@ export function ProjectMedia({project,className='',priority=false}:{project:Proj
       </div>
       <div className="product-image-content">
         <Image src={project.previewImage} alt={project.imageAlt} fill sizes="(max-width: 799px) 92vw, (max-width: 1200px) 62vw, 900px" priority={priority} fetchPriority={priority?'high':undefined}/>
+        <LiveReplay slug={project.slug} image={project.previewImage} />
         <div className="product-glass-sheen" aria-hidden="true" />
       </div>
     </figure>

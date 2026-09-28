@@ -21,7 +21,7 @@ export const personal = {
   "ownership": "I bridge business analysis and full-stack software engineering, from requirements and data schemas to user-facing applications.",
   "maturity": "I don't just build the interface. I work through the business requirements, data architecture, APIs, and deployment needed to make products work in production.",
   "resume": "/Biswodip-Goj-Resume.pdf",
-  "canonicalUrl": "https://biswodip.in",
+  "canonicalUrl": "https://biswadip.in",
   "shippedCount": "50+",
   "featuredProjectsCount": "50+"
 } as const;
@@ -96,7 +96,7 @@ export const teleOwnershipCode = [
 export const seo = {
   "title": "Biswodip Goj — Full-Stack Software Engineer",
   "description": "Biswodip Goj is a Full-Stack Software Engineer with 50+ shipped products and systems delivered across remote teams and independent builds using TypeScript, React, Next.js, Node.js, and PostgreSQL.",
-  "canonical": "https://biswodip.in",
+  "canonical": "https://biswadip.in",
   "socialTitle": "Biswodip Goj | Full-Stack Software Engineer",
   "socialDescription": "Full-Stack Software Engineer with 50+ shipped products and systems delivered across remote teams and independent builds using TypeScript, React, Next.js, Node.js, and PostgreSQL."
 } as const;
@@ -133,7 +133,6 @@ export const stack = [
       "Prisma ORM",
       "MongoDB",
       "Row-Level Security (RLS)",
-      "Supabase",
       "pgvector"
     ]
   },
@@ -1256,7 +1255,7 @@ export const projects: Project[] = [
   {
     name: "Tripmate",
     slug: "tripmate",
-    url: "https://trip-mu-coral.vercel.app/",
+    url: "https://tripmate.boats/",
     repo: "https://github.com/Biswadipgoj/trip",
     blurb: "Group expense management and settlement application with greedy debt resolution.",
     description: "Tripmate helps groups record shared expenses, calculate who owes whom and simplify the final settlement between members using a greedy graph resolution algorithm.",
@@ -1267,7 +1266,7 @@ export const projects: Project[] = [
     technicalEvidence: "Minimized-debt greedy balance resolution algorithm (settleGreedy), relational balance mapping, and client-side PDF export generation.",
     role: "Full-Stack Software Engineer (Sole Developer)",
     result: "Minimizes total required cash transactions across participants using a greedy debt-simplification algorithm.",
-    liveLink: "https://trip-mu-coral.vercel.app/",
+    liveLink: "https://tripmate.boats/",
     sourceLink: "https://github.com/Biswadipgoj/trip",
     techStack: [
       "Next.js",
@@ -1459,12 +1458,6 @@ export const techSystemProof: Record<string, TechProof> = {
     category: "Databases & Caching",
     architecture: "Declarative database schema modeling, automated SQL migrations, and auto-generated type-safe client preventing SQL injection vulnerabilities.",
     context: "Primary ORM in NanoLink and full-stack PostgreSQL applications."
-  },
-  "Supabase": {
-    title: "Managed PostgreSQL, Row-Level Security & Auth Service",
-    category: "Databases & Caching",
-    architecture: "PostgreSQL platform using database-enforced Row-Level Security (RLS) policies, session token validation, and instant database migrations.",
-    context: "Production persistence and authentication provider for TelePoint and Erpixa."
   }
 };
 
@@ -1482,7 +1475,6 @@ export const primaryTechnologies = [
   "GraphQL",
   "Apache Kafka",
   "Prisma",
-  "Supabase",
   "Tailwind CSS",
   "Linux",
   "NGINX",
@@ -1494,7 +1486,7 @@ export const primaryTechnologies = [
 
 export const resumeCopy = {
   title: 'The experience behind the work.',
-  summary: 'Computer Science graduate and full-stack software engineer with hands-on experience taking applications from ambiguous requirements to deployed, working systems. Comfortable translating business problems into technical workflows, integrating APIs and databases, debugging production issues, and iterating on real user feedback. Has delivered 50+ projects and production builds — spanning multi-tenant SaaS, financial/payment workflows, and cross-platform apps — contributing across remote teams and independent client engagements while retaining full ownership of architecture, testing, and delivery.',
+  summary: 'Full-stack software engineer (B.Tech CSE, 2024) building production SaaS with TypeScript, React/Next.js, Node.js and PostgreSQL. Owns features end to end: requirements, API and schema design, secure multi-tenant data access, automated testing, CI/CD and deployment. 50+ builds shipped for client companies and remote teams, including a live EMI/payment platform, a multi-tenant ERP, a cross-platform (web, Windows, Android) task app and LLM work (QLoRA fine-tuning, FastAPI model serving).',
   preview: 'Open PDF',
   pdf: 'Download résumé',
   experience: 'Professional experience',

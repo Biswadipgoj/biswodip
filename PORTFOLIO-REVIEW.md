@@ -6,7 +6,7 @@
 - Anime.js 4.5.0 owns short entrance animations on dedicated child elements. GSAP retains reversible scroll timelines; the two engines do not write to the same elements. Scope cleanup and live reduced-motion changes are handled by Anime.js scopes.
 - Dedicated resume preview, download, experience timeline and expandable skills section. Header Resume navigates to this section; hero and contact downloads remain direct.
 - Correct LinkedIn URL in public data, hero, identity, contact/footer, JSON-LD and PDF. LinkedIn was not fetched or used as a source.
-- Canonical URLs, Open Graph, robots and the six-entry sitemap derive from the existing personal.canonicalUrl (https://biswodip.in).
+- Canonical URLs, Open Graph, robots and the six-entry sitemap derive from the existing personal.canonicalUrl (https://biswadip.in).
 - PDF now has two single-column pages with 9–10pt body text, conventional headings, selectable text and 14 usable link annotations. Both pages were rendered and visually inspected. All professional content derives from lib/data.ts.
 
 ## Resume findings and facts requiring owner review

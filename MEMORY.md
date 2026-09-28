@@ -134,7 +134,7 @@
 134| - Anime.js 4.5.0 installed and official v4 scope API checked. useEntrance scopes brief entrances to child elements; GSAP retains reversible scroll motion with separate transform ownership. Reduced motion remains intact.
 135| - Added Resume.tsx with experience timeline, skills, PDF preview and download. Public text remains in lib/data.ts. PDF rebuilt as two readable pages with 4290 selectable characters and 14 links; no unsupported claims added.
 136| - LinkedIn exact URL https://www.linkedin.com/in/biswodipgoj now comes from socials; no LinkedIn profile fetch performed.
-137| - Canonical/robots/sitemap/JSON-LD use personal.canonicalUrl https://biswodip.in. Sitemap includes five detail pages.
+137| - Canonical/robots/sitemap/JSON-LD use personal.canonicalUrl https://biswadip.in. Sitemap includes five detail pages.
 138| - Removed unsupported absolute security outcomes from three project result statements and PDF. Remaining source verification concerns are in PORTFOLIO-REVIEW.md.
 139| - Better Design required tools attempted; all HTTP 402 ANON_QUOTA_EXHAUSTED. Existing installed system retained. No remote review claimed.
 140| - Removed unused global --scroll-kinetic update; reduced backdrop sampling. Narrow browserslist/baseline updates leave two Next/PostCSS audit advisories. No forced Next major migration.
@@ -245,3 +245,13 @@
 245| - Refined the opening section motion with deeper ambient depth, floating proof-card movement, and richer 3D staging without changing the reading structure or reduced-motion fallback.
 246| - Public copy remains tied to lib/data.ts and the live brand at https://biswadip.in instead of inventing metrics, employers or product capabilities.
 247| 
+
+## Domain, Tripmate link and live replays — 2026-09-27
+- Portfolio domain is **https://biswadip.in** everywhere (canonical, sitemap, JSON-LD, tests, résumé). No remaining biswodip.in references.
+- Tripmate live link is **https://tripmate.boats/** (data.ts url/liveLink, capture script, résumé PDF regenerated).
+- components/cinematic/LiveReplay.tsx plays a looping recorded-style session over each real screenshot inside ProjectMedia (home chapters and /project/[slug]): loading bar opens the site, cursor moves/clicks, types into real fields, Nexora card drag, NanoLink short-link result, REC badge with timer. Coordinates are screenshot percentages mapped through cover/top. Pauses off-screen; hidden for reduced motion and no-JS.
+- 2026-09-27: User approved capturing the live sites. All five screenshots were re-captured from the redesigned live apps at 1440×900 @2x (Nexora scrolled 440px to show its board), converted with scripts/convert-4k.js, showcase-bookend rebuilt. Replay coordinates re-mapped to the new layouts. After replacing previews locally, clear .next/cache/images or next start serves stale optimized images.
+- tests/motion.spec.ts:100 (desktop 3D depth scrub) and :45 (reduced-motion glyph opacity) fail intermittently on the unmodified base 7a8a645 too in cloud Chromium (:45 failed 7/8 there).
+- Supabase removed as a skill (site stack, techSystemProof, primaryTechnologies, terminal, decorative chip, README, résumé). Only the real Erpixa source path supabase/schema.sql remains as evidence. Project stacks say PostgreSQL (RLS).
+- Résumé rewritten as a single A4 page (scripts/build-resume.py asserts 1 page and no "Supabase"): title Full-Stack Software Engineer, engineer-style skills grid, table-aligned dates and repo/live links, tightened project bullets drawn from existing facts. resumeCopy.summary on the site matches the PDF summary.
+- Résumé v3 (industry-tuned): headline adds AI; skills grouped Languages/Frontend/Backend/Databases/Cloud & DevOps/AI-LLM/Security & Testing/Engineering; Qwen2.5-3B QLoRA + FastAPI client work moved into experience; SupportPilot listed with live demo only (repo not accessible, so only demo-visible features are claimed). Contact and project links carry icons (location, phone tel:, Gmail, globe, LinkedIn "in" mark, GitHub mark) rendered by scripts/build-resume.mjs via sharp into artifacts/resume/icons. Full browser suite 54/54 passed (4 viewport skips).
