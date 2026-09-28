@@ -19,8 +19,8 @@ export const metadata: Metadata = {
     'PostgreSQL',
     'Prisma',
     'Python',
-    'RAG',
-    'pgvector'
+    'REST API',
+    'Full-Stack Developer'
   ],
   authors: [{ name: personal.name }],
   creator: personal.name,

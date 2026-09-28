@@ -84,7 +84,7 @@ export default function Resume() {
           <div className="resume-dossier-card glass-panel">
             <div className="dossier-candidate">
               <div className="candidate-photo">
-                <Image src="/biswodip.png" alt={`${personal.name}, portrait`} width={160} height={160} sizes="80px" />
+                <Image src="/biswodip.png" alt={`${personal.name}, portrait`} width={160} height={160} sizes="160px" />
               </div>
               <div>
                 <p className="candidate-name">{personal.name}</p>

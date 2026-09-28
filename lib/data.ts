@@ -10,7 +10,7 @@ export const personal = {
   "availability": "Immediate notice / Open to remote & relocation",
   "role": "Full-Stack Software Engineer",
   "secondaryRole": "Freelance & Contract Developer / Business Analyst",
-  "tagline": "Full-Stack Software Engineer collaborating with remote teams and shipping 50+ production systems with Next.js, React, Node.js, PostgreSQL, Redis, and Kubernetes.",
+  "tagline": "Full-Stack Software Engineer collaborating with remote teams and shipping 50+ production systems with React, Next.js, Node.js, TypeScript and PostgreSQL.",
   "intro": "I’m Biswodip Goj, a Full-Stack Software Engineer who works across requirements, system modeling, application development, and production delivery. Collaborating with distributed teams on remote engineering contracts alongside shipping 50+ software builds and systems has taught me to turn real business workflows into software that holds up in production. I work from both sides: gathering requirements, defining data boundaries, and building the application end to end.",
   "about": [
     "I work across the complete lifecycle from requirement elicitation and workflow design to full-stack engineering, distributed caching, and containerized deployment. I understand the business problem first—stakeholder workflows, data boundaries, and operational rules—before architecting the software.",
@@ -35,7 +35,7 @@ export const hero = {
   "third": "Resume",
   "proofStrip": [
     { "label": "Remote & 50+ Shipped", "detail": "Distributed teams & production builds" },
-    { "label": "Full-Stack & Systems", "detail": "Redis, K8s, Docker, Next.js, Postgres" },
+    { "label": "Full-Stack & Systems", "detail": "React, Next.js, Node.js, PostgreSQL" },
     { "label": "B.Tech CSE · 2024", "detail": "Brainware University, Kolkata" },
     { "label": "Remote / Relocation", "detail": "Immediate availability" }
   ],
@@ -112,77 +112,87 @@ export const foundations = [
   "Distributed Applications"
 ] as const;
 
+// Every group mirrors the PDF résumé and is backed by a project, the client LLM work or training.
 export const stack = [
   {
-    "title": "CORE & LANGUAGES",
+    "title": "LANGUAGES",
     "tools": [
       "TypeScript",
-      "JavaScript",
-      "Python",
-      "C# (.NET)",
+      "JavaScript (ES6+)",
       "SQL",
+      "Python",
+      "C#",
       "HTML5",
       "CSS3"
     ]
   },
   {
-    "title": "DATA & IN-MEMORY",
+    "title": "FRONTEND",
+    "tools": [
+      "React",
+      "Next.js (App Router, Server Components)",
+      "Tailwind CSS",
+      "Zustand",
+      "React Hook Form",
+      "Vite",
+      "Electron (Windows)",
+      "Capacitor (Android)"
+    ]
+  },
+  {
+    "title": "BACKEND & APIS",
+    "tools": [
+      "Node.js",
+      "REST API design",
+      "Next.js Route Handlers",
+      "Zod validation",
+      "Authentication & authorization",
+      "FastAPI",
+      "ASP.NET Core MVC"
+    ]
+  },
+  {
+    "title": "DATABASES",
     "tools": [
       "PostgreSQL",
-      "Redis (Caching & Rate Limiting)",
-      "Prisma ORM",
-      "MongoDB",
+      "Data modelling",
       "Row-Level Security (RLS)",
-      "pgvector"
+      "Migrations & triggers",
+      "Indexing",
+      "Prisma ORM",
+      "Redis"
     ]
   },
   {
     "title": "CLOUD & DEVOPS",
     "tools": [
-      "Kubernetes (K8s Orchestration)",
-      "Docker (Containers)",
-      "Linux (Ubuntu/Debian)",
-      "NGINX (Reverse Proxy)",
-      "GitHub Actions (CI/CD)",
+      "Docker",
+      "Kubernetes",
+      "CI/CD with GitHub Actions",
+      "AWS S3",
       "Vercel",
-      "Git"
+      "Linux",
+      "Git & GitHub"
     ]
   },
   {
-    "title": "BACKEND & MESSAGING",
+    "title": "TESTING & SECURITY",
     "tools": [
-      "Node.js",
-      "ASP.NET Core 6.0 MVC",
-      "Express",
-      "FastAPI",
-      "GraphQL",
-      "Apache Kafka (Streaming)",
-      "RabbitMQ",
-      "REST APIs",
-      "Zod Validation"
+      "Unit testing (Vitest)",
+      "End-to-end testing (Playwright)",
+      "Role-based access control (RBAC)",
+      "OAuth 2.0",
+      "bcrypt",
+      "Multi-tenant isolation"
     ]
   },
   {
-    "title": "FRONTEND & APPS",
+    "title": "AI / ML",
     "tools": [
-      "Next.js 15 (App Router)",
-      "React",
-      "Tailwind CSS",
-      "Material UI",
-      "Vite",
-      "Electron",
-      "Capacitor"
-    ]
-  },
-  {
-    "title": "AI & RETRIEVAL",
-    "tools": [
-      "RAG Architecture",
-      "Vector Search",
-      "LLM Integration",
-      "Hybrid Retrieval (BM25 + Vector)",
-      "LangChain",
-      "Model Evaluation"
+      "LLM fine-tuning (QLoRA)",
+      "Model serving (FastAPI)",
+      "RAG",
+      "Prompt engineering"
     ]
   }
 ] as const;
@@ -215,7 +225,7 @@ export const stackCopy = {
     },
     {
       "name": "PostgreSQL & Database Design",
-      "body": "Relational schema modeling, foreign key constraints, Row-Level Security, and pgvector embeddings."
+      "body": "Relational schema modeling, foreign key constraints, Row-Level Security, migrations and indexing."
     },
     {
       "name": "Backend APIs & Validation",
@@ -424,8 +434,8 @@ export const engineeringScope = [
     "description": "Application logic, REST APIs, authentication, and database access controls."
   },
   {
-    "category": "Data & AI Retrieval",
-    "description": "Relational data modeling with PostgreSQL, pgvector hybrid retrieval, and automated evaluation harnesses."
+    "category": "Data & AI",
+    "description": "Relational data modeling with PostgreSQL, plus LLM fine-tuning (QLoRA) and model serving with FastAPI."
   }
 ] as const;
 
@@ -452,15 +462,16 @@ export const schooling = {
 
 export const experience = [
   {
-    role: "Full-Stack Software Engineer — Freelance & Contract Developer",
-    organization: "Client Contracts & Multiple Companies (Remote)",
+    role: "Full-Stack Software Engineer",
+    organization: "Freelance / Contract — client companies, startups and remote teams",
     period: "2024–Present",
     location: "Remote",
     highlights: [
-      "Contracted across multiple client companies and startups, engineering production web applications, API integrations, and database architectures.",
-      "Architected and shipped 50+ full-stack software products and production systems across remote team collaborations and independent client workflows.",
-      "Implemented distributed caching with Redis, containerized microservice deployments with Docker & Kubernetes, and Zod request validation.",
-      "Formulated multi-tenant data isolation with PostgreSQL Row-Level Security (RLS) to restrict access to organization-owned records."
+      "Delivered multi-tenant SaaS, fintech/payment and productivity apps end to end: requirements, data model, REST API, React UI, tests, release.",
+      "Designed PostgreSQL schemas and Node.js/Next.js REST APIs with tenant isolation enforced in the database through Row-Level Security.",
+      "Fixed production payment defects: an approval API returning invalid JSON intermittently and triggers that could double-apply payments.",
+      "Fine-tuned Qwen2.5-3B-Instruct with QLoRA and served it through a FastAPI endpoint for a client's customer-support assistant.",
+      "Protected releases with Vitest and Playwright suites in GitHub Actions CI/CD covering access control and core business rules."
     ]
   },
   {
@@ -475,9 +486,8 @@ export const experience = [
     dateOfIssuance: "30-Nov-2023",
     signatory: "Subhamoy Bandyopadhyay, Director (HR, T&P)",
     highlights: [
-      "Completed certified 10-week industrial training on ASP.NET Core 6.0 with MVC framework under Director (HR, T&P).",
-      "Engineered 'Office CRM' web application managing business workflows, customer relationships, and operational data.",
-      "Implemented relational schemas, controller actions, domain models, and responsive Razor interface views."
+      "Built Office CRM, a customer and workflow management app, in C# / ASP.NET Core 6.0 MVC during a 10-week certified programme.",
+      "Designed the relational schema, controllers, domain models and Razor views."
     ]
   },
   {
@@ -487,8 +497,7 @@ export const experience = [
     location: "Kolkata, India",
     program: "Web and Field Industrial Training",
     highlights: [
-      "Trained on modern web development standards, client-server workflows, and UI component integration.",
-      "Developed responsive web interfaces and practiced end-to-end frontend deployment practices."
+      "Built responsive web interfaces and learned client-server fundamentals and UI component integration."
     ]
   }
 ] as const;
@@ -512,7 +521,7 @@ export const journey = [
   {
     "date": "2024–Now",
     "title": "Full-Stack & AI Systems Engineering",
-    "body": "Building end-to-end web software and AI architectures: pgvector hybrid retrieval, QLoRA fine-tuning workflows, and automated evaluation test suites running in CI."
+    "body": "Delivering full-stack products for clients and remote teams, plus LLM work: QLoRA fine-tuning and FastAPI model serving for a client support assistant."
   }
 ] as const;
 
@@ -1289,107 +1298,101 @@ export type TechProof = {
 };
 
 export const techSystemProof: Record<string, TechProof> = {
-  "Redis": {
-    title: "Distributed Caching, Session Store & Sliding-Window Rate Limiting",
-    category: "Databases & Caching",
-    architecture: "High-throughput in-memory caching tier deployed in front of PostgreSQL to cache expensive query results, store distributed session states, and enforce sliding-window rate limiting on public API endpoints with sub-millisecond latency.",
-    context: "Deployed across remote client contracts and 50+ shipped production systems for high-concurrency request handling and pub/sub message brokering."
-  },
-  "Kubernetes": {
-    title: "Container Cluster Orchestration, Ingress & Pod Autoscaling",
-    category: "Cloud, DevOps & Systems",
-    architecture: "Declarative orchestration defining Deployment manifests, Service ingress networking, ConfigMaps, Secrets, and Horizontal Pod Autoscalers (HPA) to ensure self-healing microservices, load balancing, and zero-downtime rolling updates.",
-    context: "Multi-pod container orchestration managing resilient cloud services and background worker queues."
-  },
-  "Docker": {
-    title: "Multi-Stage Container Builds & Isolated Microservices",
-    category: "Cloud, DevOps & Systems",
-    architecture: "Engineered production multi-stage Dockerfiles utilizing lean Alpine base images to minimize image footprint and attack surface. Standardized reproducible local development via Docker Compose clusters.",
-    context: "Containerized environments across Node.js, Next.js, and Python services ensuring dev/prod parity."
-  },
-  "PostgreSQL": {
-    title: "Relational Modeling, Row-Level Security (RLS) & pgvector",
-    category: "Databases & Caching",
-    architecture: "ACID-compliant relational database architecture featuring foreign key constraints, composite indexing, strict Row-Level Security (RLS) tenant isolation policies, and pgvector embeddings for hybrid search.",
-    context: "Core persistent data engine powering Erpixa, NanoLink, TelePoint, and multiple enterprise client systems."
+  "TypeScript": {
+    title: "Typed application and API code",
+    category: "Languages",
+    architecture: "Strict TypeScript across UI, API routes and shared types, with Zod schemas at the API boundary so runtime input matches the compile-time types.",
+    context: "Used in all five featured projects."
   },
   "Next.js": {
-    title: "App Router, Server Actions & Hybrid SSR/SSG Architecture",
-    category: "Frontend & Frameworks",
-    architecture: "React 19/18 Server Components, streaming SSR, edge middleware authentication, and optimized client bundles delivering sub-second first contentful paint and zero layout shift.",
-    context: "Primary web framework across NanoLink, TelePoint, Nexora, and Tripmate."
+    title: "App Router, Route Handlers and server rendering",
+    category: "Frontend",
+    architecture: "App Router pages and Server Components for rendering, Route Handlers for REST endpoints, and static generation for content pages.",
+    context: "NanoLink, TelePoint, Nexora, Tripmate and this portfolio."
   },
   "React": {
-    title: "Component Architecture, Virtual DOM & Fluid State Management",
-    category: "Frontend & Frameworks",
-    architecture: "Declarative UI engineering with strict typed component contracts, custom hooks for asynchronous lifecycle management, and hardware-accelerated animations.",
-    context: "Interface layer powering Erpixa, Nexora, Tripmate, and client dashboards."
-  },
-  "TypeScript": {
-    title: "End-to-End Type Safety & Strict System Contracts",
-    category: "Core & Languages",
-    architecture: "Strict TypeScript compiler configurations, shared contract types between frontend and backend, Discriminated Unions for state machines, and zero runtime overhead type checking.",
-    context: "Universal language standard applied across 100% of production codebases."
+    title: "Component UI and client state",
+    category: "Frontend",
+    architecture: "Typed components, custom hooks, React Hook Form for forms and Zustand stores for client state.",
+    context: "Interfaces for all five projects; Erpixa uses React with Vite."
   },
   "Node.js": {
-    title: "Asynchronous I/O, Event Loop & RESTful Microservices",
+    title: "REST APIs and server-side logic",
     category: "Backend & APIs",
-    architecture: "Event-driven runtime powering backend service APIs, streaming file uploads, JWT/session authentication handlers, and asynchronous background tasks.",
-    context: "Runtime powering APIs across client contracts, NanoLink, and microservices."
+    architecture: "REST endpoints that validate input, check ownership and permissions, write to PostgreSQL and return proper status codes (201, 400, 403).",
+    context: "NanoLink link API and TelePoint payment and ownership routes."
   },
-  "Python": {
-    title: "Microservices, Retrieval Pipelines & Fast Data Processing",
-    category: "Core & Languages",
-    architecture: "FastAPI REST endpoints, vector embedding processing, BM25 retrieval algorithms, and automated pipeline scripts.",
-    context: "Used in retrieval architectures, AI RAG systems, and data processing utilities."
-  },
-  "ASP.NET Core": {
-    title: "Enterprise MVC Architecture & Office CRM (Logicrack)",
-    category: "Backend & APIs",
-    architecture: "Certified 10-week industrial training at Logicrack Infosystem (Salt Lake, Kolkata). Developed MVC controllers, repository pattern services, dependency injection, and relational SQL Server persistence for the enterprise 'Office CRM'.",
-    context: "Official industrial training under Directorate of HR, T&P (Logicrack Infosystem Pvt. Ltd.)."
-  },
-  "GraphQL": {
-    title: "Declarative API Schemas, Resolvers & Zero Over-Fetching",
-    category: "Backend & APIs",
-    architecture: "Typed schema definitions, query batching, and custom field resolvers preventing N+1 queries and enabling client applications to request exact data shapes in a single round-trip.",
-    context: "Integrated into complex data dashboard interfaces and relational graph queries."
-  },
-  "Apache Kafka": {
-    title: "Distributed Event Streaming & Partitioned Message Queues",
-    category: "APIs & Messaging",
-    architecture: "Decoupled publisher/subscriber event architecture with partitioned topics and consumer groups to asynchronously ingest webhook events, audit logs, and notification pipelines without blocking HTTP request threads.",
-    context: "High-throughput asynchronous event processing across distributed services."
-  },
-  "Linux": {
-    title: "Production OS Administration, Shell Automation & systemd",
-    category: "Cloud, DevOps & Systems",
-    architecture: "Ubuntu/Debian server administration, systemd service daemon configurations, SSH key management, UFW firewall security, and automated Bash maintenance scripts.",
-    context: "Server operating system running production Docker hosts, reverse proxies, and databases."
-  },
-  "NGINX": {
-    title: "Reverse Proxy, SSL/TLS Termination & Traffic Load Balancing",
-    category: "Cloud, DevOps & Systems",
-    architecture: "High-performance reverse proxy routing inbound HTTPS traffic to internal service ports, managing Let's Encrypt TLS certificates, gzip compression, and static asset caching.",
-    context: "Perimeter gateway for containerized cloud servers and multi-app routing."
-  },
-  "GitHub Actions": {
-    title: "Continuous Integration, Automated Quality Gates & CD",
-    category: "Cloud, DevOps & Systems",
-    architecture: "Automated CI workflows running TypeScript verification, ESLint, Playwright browser suites, and Docker image builds on every pull request before deployment.",
-    context: "Enforced quality pipeline guaranteeing zero regression in production branches."
-  },
-  "Zod": {
-    title: "Runtime Schema Validation & Perimeter Defense",
-    category: "Backend & APIs",
-    architecture: "Strict runtime parsing of inbound JSON request payloads at API route boundaries, generating static TypeScript types from schemas and rejecting malformed inputs with 400 Bad Request.",
-    context: "Standard validation perimeter applied in NanoLink, TelePoint, and client endpoints."
+  "PostgreSQL": {
+    title: "Relational modelling and Row-Level Security",
+    category: "Databases",
+    architecture: "Normalised schemas with foreign keys, migrations and indexes; Row-Level Security policies so every query is scoped to the caller's organisation.",
+    context: "Erpixa, Nexora and Tripmate use RLS; TelePoint and NanoLink use relational models."
   },
   "Prisma": {
-    title: "Type-Safe ORM, Schema Migrations & Relational Queries",
-    category: "Databases & Caching",
-    architecture: "Declarative database schema modeling, automated SQL migrations, and auto-generated type-safe client preventing SQL injection vulnerabilities.",
-    context: "Primary ORM in NanoLink and full-stack PostgreSQL applications."
+    title: "Type-safe ORM and migrations",
+    category: "Databases",
+    architecture: "Schema-first models, generated type-safe client and migration history for the database.",
+    context: "NanoLink."
+  },
+  "Redis": {
+    title: "Caching",
+    category: "Databases",
+    architecture: "In-memory caching in front of the database for repeated reads.",
+    context: "Client contract work."
+  },
+  "Python": {
+    title: "LLM fine-tuning and model serving",
+    category: "Languages",
+    architecture: "QLoRA fine-tuning of Qwen2.5-3B-Instruct and a FastAPI endpoint serving the model.",
+    context: "Client customer-support assistant."
+  },
+  "ASP.NET Core": {
+    title: "MVC application (Office CRM)",
+    category: "Backend & APIs",
+    architecture: "C# MVC controllers, domain models, relational schema and Razor views.",
+    context: "10-week certified industrial training at Logicrack Infosystem, Kolkata."
+  },
+  "Docker": {
+    title: "Containerised builds",
+    category: "Cloud & DevOps",
+    architecture: "Dockerfiles for reproducible builds and matching local and production environments.",
+    context: "Client contract work."
+  },
+  "Kubernetes": {
+    title: "Container deployment",
+    category: "Cloud & DevOps",
+    architecture: "Deploying containerised services with Kubernetes manifests.",
+    context: "Client contract work."
+  },
+  "GitHub Actions": {
+    title: "CI/CD pipelines",
+    category: "Cloud & DevOps",
+    architecture: "Workflows that run type checks, linting and tests on every change, and build the Nexora Android APK in the cloud.",
+    context: "Nexora and client projects."
+  },
+  "Linux": {
+    title: "Development and server environment",
+    category: "Cloud & DevOps",
+    architecture: "Ubuntu/Debian shell, packages, SSH and scripting for development and deployment.",
+    context: "Daily development environment."
+  },
+  "Zod": {
+    title: "Runtime validation at the API boundary",
+    category: "Backend & APIs",
+    architecture: "Request bodies parsed with Zod schemas; malformed input is rejected before it reaches business logic or the database.",
+    context: "NanoLink link creation API."
+  },
+  "Tailwind CSS": {
+    title: "Utility-first styling",
+    category: "Frontend",
+    architecture: "Responsive layouts and design tokens with Tailwind CSS.",
+    context: "Project interfaces and this portfolio."
+  },
+  "Git": {
+    title: "Version control",
+    category: "Cloud & DevOps",
+    architecture: "Branches, pull requests and reviewable commit history on GitHub.",
+    context: "All public repositories."
   }
 };
 
@@ -1399,19 +1402,16 @@ export const primaryTechnologies = [
   "React",
   "Node.js",
   "PostgreSQL",
+  "Prisma",
   "Redis",
-  "Kubernetes",
-  "Docker",
   "Python",
   "ASP.NET Core",
-  "GraphQL",
-  "Apache Kafka",
-  "Prisma",
-  "Tailwind CSS",
-  "Linux",
-  "NGINX",
+  "Docker",
+  "Kubernetes",
   "GitHub Actions",
+  "Linux",
   "Zod",
+  "Tailwind CSS",
   "Git"
 ] as const;
 
