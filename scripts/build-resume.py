@@ -1,7 +1,8 @@
 """Generate the one-page, ATS-safe résumé PDF from lib/data.ts.
 
 ATS rules this file follows (and checks at the end):
-- one column, no tables, no photo, no text inside images; icons are decorative and every value is real text
+- one column, no tables, no text inside images; icons are decorative and every value is real text
+- the photo is drawn on the page outside the text flow, so it never breaks the reading order
 - standard section headings (Professional Summary, Technical Skills, Professional Experience, Projects, Education)
 - each role/project/degree line keeps title and dates on one baseline so parsers read them as one line
 - standard embedded font (Liberation Sans, Arial metrics) with a Unicode map, plain bullets, contact details in the body (not a header/footer)
@@ -127,6 +128,44 @@ def bullets(items):
 
 story = []
 
+# --- PHOTO ---
+# Drawn straight onto the page (top right), outside the text flow: parsers still read name, title and contacts
+# first and in order, and the photo never sits inside a table cell or between words.
+PHOTO = 62
+TOP_MARGIN = 30
+
+def portrait_png():
+    """Circular head-and-shoulders crop of public/biswodip.png, antialiased by supersampling."""
+    from PIL import ImageDraw
+    source = Image.open('public/biswodip.png').convert('RGB')
+    w, h = source.size
+    side = int(w * 0.78)
+    left, top = (w - side) // 2, int(h * 0.08)
+    crop = source.crop((left, top, left + side, top + side)).resize((600, 600), Image.LANCZOS)
+    mask = Image.new('L', (2400, 2400), 0)
+    ImageDraw.Draw(mask).ellipse((0, 0, 2399, 2399), fill=255)
+    avatar = Image.new('RGBA', (600, 600), (255, 255, 255, 0))
+    avatar.paste(crop, (0, 0), mask.resize((600, 600), Image.LANCZOS))
+    path = Path('artifacts/resume/portrait.png')
+    avatar.save(path)
+    return str(path)
+
+PORTRAIT = portrait_png()
+
+def draw_photo(canvas, doc):
+    canvas.saveState()
+    x = A4[0] - doc.rightMargin - 6 - PHOTO
+    y = A4[1] - TOP_MARGIN - 4 - PHOTO
+    canvas.drawImage(PORTRAIT, x, y, PHOTO, PHOTO, mask='auto')
+    canvas.setStrokeColor(colors.HexColor('#cbd5e1'))
+    canvas.setLineWidth(0.8)
+    canvas.circle(x + PHOTO / 2, y + PHOTO / 2, PHOTO / 2)
+    canvas.restoreState()
+
+# Header lines stop short of the photo.
+for key in ('name', 'role', 'contact'):
+    styles['head_' + key] = ParagraphStyle('head_' + key, parent=styles[key], rightIndent=PHOTO + 12)
+
 # --- CONTACT ---
 contact_one = ' &nbsp;|&nbsp; '.join([
     f"{icon('location')} {safe(person['location'])}",
@@ -137,13 +176,13 @@ contact_two = ' &nbsp;|&nbsp; '.join([
     f"{icon('linkedin')} {link(socials['LinkedIn'], bare(socials['LinkedIn']).replace('www.', ''))}",
     f"{icon('github')} {link(socials['GitHub'], bare(socials['GitHub']))}",
     f"{icon('website')} Portfolio: {link(person['canonicalUrl'], bare(person['canonicalUrl']))}",
-    'Open to remote &amp; relocation, available immediately',
 ])
 story += [
-    p(safe(person['name']), 'name'),
-    p('Full-Stack Software Engineer &nbsp;|&nbsp; React, Next.js, Node.js, TypeScript, PostgreSQL', 'role'),
-    p(contact_one, 'contact'),
-    p(contact_two, 'contact'),
+    p(safe(person['name']), 'head_name'),
+    p('Full-Stack Software Engineer &nbsp;|&nbsp; React, Next.js, Node.js, TypeScript, PostgreSQL', 'head_role'),
+    p(contact_one, 'head_contact'),
+    p(contact_two, 'head_contact'),
+    p('Open to remote &amp; relocation, available immediately', 'head_contact'),
 ]
 
 # --- SUMMARY ---
@@ -244,13 +283,13 @@ SimpleDocTemplate(
     pagesize=A4,
     leftMargin=36,
     rightMargin=36,
-    topMargin=30,
+    topMargin=TOP_MARGIN,
     bottomMargin=26,
     title=f"{person['name']} - Full-Stack Software Engineer - Resume",
     author=person['name'],
     subject='Resume: Full-Stack Software Engineer (React, Next.js, Node.js, TypeScript, PostgreSQL)',
     keywords='Full-Stack Software Engineer, Full-Stack Developer, React, Next.js, Node.js, TypeScript, JavaScript, PostgreSQL, REST API, Docker, CI/CD, AWS',
-).build(story)
+).build(story, onFirstPage=draw_photo)
 
 # --- ATS CHECKS: read the PDF back the way a parser does ---
 reader = PdfReader(output)
@@ -277,7 +316,12 @@ assert 'https://www.linkedin.com/in/biswodipgoj' in urls
 assert socials['GitHub'] in urls, 'GitHub profile link must come from lib/data.ts'
 assert all(project['repo'] in urls for project in data['projects']), 'Every repository link must come from lib/data.ts'
 assert 'tel:' + person['phone'].replace(' ', '') in urls, 'Phone number is tappable'
-assert all(img.image.size[0] <= 200 for img in reader.pages[0].images), 'Only small icons: no photo or text-in-image'
+large = [img for img in reader.pages[0].images if img.image.size[0] > 200]
+assert len(large) == 1, 'Exactly one large image: the portrait (everything else is a small icon)'
+assert 'biswadip.in' in text and 'biswodip.in' not in text, 'Portfolio domain is biswadip.in'
+assert 'https://biswadip.in' in urls, 'Portfolio link points to biswadip.in'
+assert 'tripmate.boats' in text and 'https://tripmate.boats/' in urls, 'Tripmate links to tripmate.boats'
+assert 'trip-mu-coral' not in text and not any('trip-mu-coral' in u for u in urls), 'Old Tripmate URL is gone'
 
 Path('artifacts/resume/resume.txt').write_text(text, encoding='utf-8')
 pdf = fitz.open(output)
