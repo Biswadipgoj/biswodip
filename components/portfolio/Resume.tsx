@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { personal, resumeCopy, experience, stack, schooling, education } from '@/lib/data';
 import { useEditorialReveal } from '@/components/cinematic/useScene';
-import { ArrowDownIcon, ArrowUpRightIcon } from '@/components/icons';
+import { ArrowDownIcon, ArrowUpRightIcon, MapPinIcon, PageIcon } from '@/components/icons';
 
 export default function Resume() {
   const ref = useEditorialReveal();
@@ -89,12 +89,12 @@ export default function Resume() {
               <div>
                 <p className="candidate-name">{personal.name}</p>
                 <p className="candidate-role">{personal.role}</p>
-                <p className="candidate-meta"><span className="status-dot" aria-hidden="true" />{personal.location}</p>
+                <p className="candidate-meta"><MapPinIcon aria-hidden="true" className="lead-icon" />{personal.location}</p>
               </div>
             </div>
             <div className="dossier-header">
               <h4 className="dossier-title">Résumé</h4>
-              <p className="dossier-meta">PDF · 2 pages · selectable text</p>
+              <p className="dossier-meta">PDF · 1 page · selectable text</p>
             </div>
 
             {/* The preview starts hidden so the phone number on page one is not on show by default. */}
@@ -148,11 +148,11 @@ export default function Resume() {
             </div>
 
             <div className="dossier-actions">
-              <a href={personal.resume} download className="file-download" aria-label="Download résumé PDF, 2 pages">
-                <span className="file-download-icon" aria-hidden="true">PDF</span>
+              <a href={personal.resume} download className="file-download" aria-label="Download résumé PDF, 1 page">
+                <span className="file-download-icon" aria-hidden="true"><PageIcon width={18} height={18} />PDF</span>
                 <span className="file-download-text">
                   <strong>{resumeCopy.pdf}</strong>
-                  <span>Biswodip-Goj-Resume.pdf · 2 pages</span>
+                  <span>Biswodip-Goj-Resume.pdf · 1 page</span>
                 </span>
                 <ArrowDownIcon aria-hidden="true" />
               </a>

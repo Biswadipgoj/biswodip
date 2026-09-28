@@ -17,7 +17,8 @@ import {
 } from '@/lib/data';
 import { useEditorialReveal } from '@/components/cinematic/useScene';
 import { AnimatedText } from '@/components/cinematic/AnimatedText';
-import { ArrowDownIcon, ArrowUpRightIcon, ArrowRightIcon, CheckIcon } from '@/components/icons';
+import { ArrowDownIcon, ArrowUpRightIcon, ArrowRightIcon, CheckIcon, MapPinIcon, PageIcon } from '@/components/icons';
+import { BrandIcon } from '@/components/ui/BrandIcon';
 import { FlowLine } from '@/components/cinematic/SoftwarePrimitives';
 
 export function Process() {
@@ -237,7 +238,7 @@ export function Contact() {
           <p className="contact-secondary-note" data-reveal>{storyCopy.footer.secondary}</p>
 
           <a className="contact-email" href={'mailto:' + personal.email}>
-            {personal.email}
+            <BrandIcon brand="gmail" size={22} />{personal.email}
             <ArrowUpRightIcon aria-hidden="true" />
           </a>
 
@@ -248,10 +249,10 @@ export function Contact() {
                 : <><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5" /><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8" /></svg>Copy email</>}
             </button>
             <a href={personal.resume} download className="btn-block">
-              Download resume<ArrowDownIcon aria-hidden="true" />
+              <PageIcon aria-hidden="true" className="lead-icon" />Download resume<ArrowDownIcon aria-hidden="true" />
             </a>
             <a href="https://github.com/Biswadipgoj" target="_blank" rel="noopener noreferrer" className="text-link">
-              GitHub<ArrowUpRightIcon aria-hidden="true" />
+              <BrandIcon brand="github" />GitHub<ArrowUpRightIcon aria-hidden="true" />
             </a>
           </div>
           <p className="copy-status" role="status">{copyState}</p>
@@ -329,7 +330,7 @@ export function Contact() {
           <nav aria-label="Contact links" className="contact-socials" data-stagger>
             {socials.map((link) => (
               <a key={link.label} href={link.url} target={link.label === 'Email' ? undefined : '_blank'} rel={link.label === 'Email' ? undefined : 'noopener noreferrer'}>
-                {link.label}
+                <BrandIcon brand={link.label === 'Email' ? 'gmail' : link.label === 'GitHub' ? 'github' : 'linkedin'} />{link.label}
                 <ArrowUpRightIcon aria-hidden="true" />
               </a>
             ))}
@@ -383,7 +384,7 @@ export function Contact() {
 
       <div className="contact-colophon">
         <span>{storyCopy.footer.credit}</span>
-        <span>{personal.location}</span>
+        <span><MapPinIcon aria-hidden="true" className="lead-icon" />{personal.location}</span>
         <a href="#opening" className="back-to-top" aria-label="Back to top of page">
           Back to top<span className="back-to-top-orb" aria-hidden="true"><ArrowUpRightIcon /></span>
         </a>

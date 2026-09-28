@@ -7,9 +7,9 @@ import { siGithub, siGmail } from 'simple-icons';
 // Public portfolio content is the only source for the downloadable resume.
 const source = readFileSync('lib/data.ts', 'utf8');
 const { outputText } = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2020 } });
-const { personal, projects, education, schooling, experience, stack, socials, resumeCopy, supportPilot } = await import('data:text/javascript;base64,' + Buffer.from(outputText).toString('base64'));
+const { personal, projects, education, schooling, experience, stack, socials, resumeCopy } = await import('data:text/javascript;base64,' + Buffer.from(outputText).toString('base64'));
 mkdirSync('artifacts/resume', { recursive: true });
-writeFileSync('artifacts/resume/content.json', JSON.stringify({ personal, projects, education, schooling, experience, stack, socials, resumeCopy, supportPilot: { name: supportPilot.name, demoUrl: supportPilot.demoUrl } }));
+writeFileSync('artifacts/resume/content.json', JSON.stringify({ personal, projects, education, schooling, experience, stack, socials, resumeCopy }));
 
 // Contact and link icons: brand marks in their own colours, generic glyphs in the résumé accent.
 // Rendered at high resolution so they stay sharp when printed next to 8pt text.

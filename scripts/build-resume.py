@@ -218,14 +218,6 @@ story.append(project('nanolink', 'URL shortener with protected and expiring link
     'Next.js &middot; TypeScript &middot; Prisma &middot; PostgreSQL &middot; Zod &middot; bcrypt', [
     "Zod-validated REST API with unique aliases, bcrypt-protected and expiring links, click tracking and one-time links.",
 ]))
-sp = data['supportPilot']
-story.append(KeepTogether([
-    row(f'<b>{safe(sp["name"])}</b> &mdash; <font name="Helvetica">AI customer-support product</font>',
-        f"{icon('website', 7.6)}&nbsp;{link(sp['demoUrl'], bare(sp['demoUrl']))}", 'title', 'meta_r', split=0.55),
-    p('Retrieval-grounded LLM answers &middot; human-in-the-loop approvals', 'meta'),
-    *bullets(["Answers from approved sources with citations, routes high-risk replies to a human approval queue and tracks resolution analytics."]),
-]))
-
 # --- EDUCATION ---
 story += heading('Education')
 for degree, place, years in [
@@ -252,6 +244,7 @@ reader = PdfReader(output)
 text = '\n'.join(page.extract_text() or '' for page in reader.pages)
 assert len(reader.pages) == 1, f'Expected one readable page, got {len(reader.pages)}'
 assert 'supabase' not in text.lower(), 'Supabase is not listed as a skill'
+assert 'supportpilot' not in text.lower(), 'Confidential client project must stay unnamed'
 assert text.count('Brainware University, Kolkata') == 2
 assert all(project['name'] in text for project in data['projects'])
 assert person['email'] in text and 'linkedin.com/in/biswodipgoj' in text
