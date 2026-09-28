@@ -12,3 +12,7 @@ export { MenuIcon } from "./menu";
 export { XmarkIcon } from "./xmark";
 export { PlusIcon } from "./plus";
 export { MinusIcon } from "./minus";
+export { MapPinIcon } from "./map-pin";
+export { MailIcon } from "./mail";
+export { PageIcon } from "./page";
+export { GlobeIcon } from "./globe";

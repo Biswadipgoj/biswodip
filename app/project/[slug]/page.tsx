@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { projects, personal, projectSchemas, projectCodeSnippets } from '@/lib/data';
 import { CodeWindow, FlowLine, ProjectActions, ProjectMedia } from '@/components/cinematic/SoftwarePrimitives';
 import { ArrowRightIcon, ArrowUpRightIcon } from '@/components/icons';
+import { BrandIcon } from '@/components/ui/BrandIcon';
 
 export function generateStaticParams() {
   return projects.map(project => ({ slug: project.slug }));
@@ -206,7 +207,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       </main>
       <footer className="detail-footer">
         <span>{personal.name} · {personal.role}</span>
-        <a href={'mailto:' + personal.email}>{personal.email}</a>
+        <a href={'mailto:' + personal.email}><BrandIcon brand="gmail" />{personal.email}</a>
       </footer>
     </div>
   );

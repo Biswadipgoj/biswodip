@@ -14,7 +14,7 @@
 - Existing portfolio data still claims 60+ shipped systems. Supply a project inventory and distinguish public projects, client builds and experiments before using this as a quantified achievement in applications.
 - Freelance experience is dated 2024–Present without named clients, individual engagement dates or references. Existing data is preserved; please verify the period and add discloseable client details.
 - Training organizations, dates and skills come from existing data, not independently authenticated certificates. Confirm Logicrack and Webguru details against original records.
-- Existing AI/RAG skills and advanced infrastructure/messaging skills are retained from the source; confirm hands-on evidence before targeting jobs around these. SupportPilot has historical unverified evaluation numbers in lib/data.ts but is not added to the resume.
+- Existing AI/RAG skills and advanced infrastructure/messaging skills are retained from the source; confirm hands-on evidence before targeting jobs around these.
 - No employment gap was invented from missing dates. No new credentials, metrics or employers were added.
 - A DOCX is not generated in this pass. The required document runtime/rendering setup was not available; the PDF builder and source data remain editable.
 

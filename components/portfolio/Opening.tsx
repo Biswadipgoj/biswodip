@@ -2,7 +2,8 @@
 import Image from 'next/image';
 import { hero, personal, socials } from '@/lib/data';
 import { ActionLink } from '@/components/cinematic/SoftwarePrimitives';
-import { ArrowDownIcon, ArrowRightIcon, ArrowUpRightIcon } from '@/components/icons';
+import { ArrowDownIcon, ArrowRightIcon, ArrowUpRightIcon, PageIcon } from '@/components/icons';
+import { BrandIcon } from '@/components/ui/BrandIcon';
 import { gsap } from 'gsap';
 import { useScene, type SceneBuilder } from '@/components/cinematic/useScene';
 import { AnimatedText } from '@/components/cinematic/AnimatedText';
@@ -106,7 +107,7 @@ export default function Opening() {
             <div className="hero-actions">
               <ActionLink href="#projects">{hero.primary}</ActionLink>
               <a href={personal.resume} download className="action action-quiet">
-                Resume<ArrowDownIcon aria-hidden="true" />
+                <PageIcon aria-hidden="true" className="lead-icon" />Resume<ArrowDownIcon aria-hidden="true" />
               </a>
               <a href="#contact" className="action action-quiet">
                 Contact<ArrowRightIcon aria-hidden="true" />
@@ -115,12 +116,12 @@ export default function Opening() {
             <ul className="hero-links" aria-label="Profiles">
               <li>
                 <a href={socials[1].url} target="_blank" rel="noopener noreferrer" className="link-chip">
-                  GitHub<ArrowUpRightIcon aria-hidden="true" />
+                  <BrandIcon brand="github" />GitHub<ArrowUpRightIcon aria-hidden="true" />
                 </a>
               </li>
               <li>
                 <a href={socials[2].url} target="_blank" rel="noopener noreferrer" className="link-chip">
-                  LinkedIn<ArrowUpRightIcon aria-hidden="true" />
+                  <BrandIcon brand="linkedin" />LinkedIn<ArrowUpRightIcon aria-hidden="true" />
                 </a>
               </li>
             </ul>

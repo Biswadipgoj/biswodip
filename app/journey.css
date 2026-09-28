@@ -1790,3 +1790,11 @@ html[data-scroll] :is([data-motion-root],.portfolio-nav):not([data-inview]) :is(
 @keyframes replay-blink{50%{opacity:.25}}
 @media (max-width:599px){.replay-rec{right:6px;bottom:6px;padding:3px 7px;font-size:8px;gap:4px}.replay-rec i{width:5px;height:5px}}
 @media (prefers-reduced-motion: reduce){.replay{display:none}}
+
+/* Leading icons on contact, profile and résumé links: brand marks keep their colours, glyphs follow the text. */
+.lead-icon{width:1.1em;height:1.1em;margin-right:.45em;vertical-align:-.18em;flex-shrink:0}
+.contact-email .brand-icon{width:.9em;height:.9em;margin-right:.35em}
+.file-download-icon{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.identity-portrait figcaption span{display:inline-flex;align-items:center}
+.link-chip .brand-icon,.link-chip:hover .brand-icon{opacity:1;transform:none}
+.contact-colophon span:has(> .lead-icon),.detail-footer a:has(> .lead-icon){display:inline-flex;align-items:center}

@@ -3,7 +3,8 @@ import Image from 'next/image';
 import { personal, engineeringScope, projects, socials, education, portfolioCopy } from '@/lib/data';
 import { useEditorialReveal } from '@/components/cinematic/useScene';
 import { AnimatedText } from '@/components/cinematic/AnimatedText';
-import { ArrowUpRightIcon } from '@/components/icons';
+import { ArrowUpRightIcon, MapPinIcon, PageIcon } from '@/components/icons';
+import { BrandIcon } from '@/components/ui/BrandIcon';
 
 export default function Identity() {
   const ref = useEditorialReveal();
@@ -23,15 +24,15 @@ export default function Identity() {
         </div>
         <div className="identity-links">
           <a href="#projects" className="circle-link">Explore featured projects<span className="circle-link-orb" aria-hidden="true"><ArrowUpRightIcon/></span></a>
-          <a href={socials[1].url} className="text-link" target="_blank" rel="noopener noreferrer">GitHub<ArrowUpRightIcon aria-hidden="true"/></a>
-          <a href={socials[2].url} target="_blank" rel="noopener noreferrer" className="text-link">LinkedIn<ArrowUpRightIcon aria-hidden="true"/></a>
-          <a href={personal.resume} download className="text-link">Resume<ArrowUpRightIcon aria-hidden="true"/></a>
+          <a href={socials[1].url} className="text-link" target="_blank" rel="noopener noreferrer"><BrandIcon brand="github" />GitHub<ArrowUpRightIcon aria-hidden="true"/></a>
+          <a href={socials[2].url} target="_blank" rel="noopener noreferrer" className="text-link"><BrandIcon brand="linkedin" />LinkedIn<ArrowUpRightIcon aria-hidden="true"/></a>
+          <a href={personal.resume} download className="text-link"><PageIcon aria-hidden="true" className="lead-icon"/>Resume<ArrowUpRightIcon aria-hidden="true"/></a>
         </div>
       </div>
       <figure className="identity-portrait" data-media data-spatial="card">
         <div className="portrait-sheet" aria-hidden="true" data-parallax="25" data-plane="-1"/>
         <div data-depth="portrait"><Image src="/biswodip.png" alt="Biswodip Goj, full-stack software engineer" width={1086} height={1448} sizes="(max-width: 799px) 82vw, 32vw"/></div>
-        <figcaption><span>Biswodip Goj</span><span>{personal.location}</span></figcaption>
+        <figcaption><span>Biswodip Goj</span><span><MapPinIcon aria-hidden="true" className="lead-icon"/>{personal.location}</span></figcaption>
       </figure>
     </div>
     <div className="identity-statement">
